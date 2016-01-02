@@ -1,0 +1,7 @@
+[
+  {
+    "id": "greeting",
+    "description": "Welcome greeting to the user",
+    "defaultMessage": "Hello, {name}! How are you today?"
+  }
+]
