@@ -62,6 +62,9 @@ var webpackConfig = {
 
     plugins: [
         new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(isProduction ? 'production' : 'dev')
+            },
             __DEV__: !isProduction,
             __TEST__: isTest,
             __PROD__: isProduction
