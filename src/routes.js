@@ -4,6 +4,8 @@ import { Link } from 'react-router';
 
 import { FormattedMessage } from 'react-intl';
 
+import styles from 'index.scss';
+
 function CoreLayout(props) {
     return (
         <div>
@@ -23,7 +25,7 @@ function HomeView() {
     return (
         <div>
             Home!
-            <Link to="/auth">Auth</Link>
+            <Link className={styles.testClass} to="/auth">Auth</Link>
         </div>
     );
 }

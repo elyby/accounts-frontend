@@ -4,11 +4,14 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var cssnano = require('cssnano');
 
 const API_HOST = 'http://account.l';
 
 // TODO: https://babeljs.io/docs/plugins/
 // TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
+// https://github.com/glenjamin/ultimate-hot-reloading-example ( обратить внимание на плагины babel )
+// https://github.com/gajus/react-css-modules ( + BrowserSync)
 
 var isProduction = process.argv.some(function(arg) {
     return arg === '-p';
@@ -17,6 +20,8 @@ var isProduction = process.argv.some(function(arg) {
 var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
+
+const CSS_LOADER = 'style!css?modules&importLoaders=1&localIdentName=[path][name]-[local]!postcss';
 
 var webpackConfig = {
     entry: {
@@ -90,7 +95,7 @@ var webpackConfig = {
             {
                 test: /\.scss$/,
                 extractInProduction: true,
-                loader: 'style!css!autoprefixer?browsers=last 3 versions!sass'
+                loader: CSS_LOADER + '!sass'
             },
             {
                 test: /\.jsx?$/,
@@ -103,16 +108,31 @@ var webpackConfig = {
             },
             { // DEPRECATED
                 test: /i18n\/.*\.less$/,
-                loader: 'style!css!autoprefixer?browsers=last 3 versions!less'
+                loader: CSS_LOADER + '!less'
             },
             { // DEPRECATED
                 test: /\.less$/,
                 extractInProduction: true,
                 exclude: /i18n\/.*\.less$/,
-                loader: 'style!css!autoprefixer?browsers=last 3 versions!less'
+                loader: CSS_LOADER + '!less'
             }
         ]
-    }
+    },
+
+    postcss: [
+        cssnano({
+            sourcemap: !isProduction,
+            autoprefixer: {
+                add: true,
+                remove: true,
+                browsers: ['last 2 versions']
+            },
+            safe: true,
+            discardComments: {
+                removeAll: true
+            }
+        })
+    ]
 };
 
 
@@ -124,7 +144,7 @@ if (isProduction) {
         }
     });
 
-    webpackConfig.plugins.push(new ExtractTextPlugin('dist/styles.css', {
+    webpackConfig.plugins.push(new ExtractTextPlugin('styles.css', {
         allChunks: true
     }));
 
