@@ -20,6 +20,8 @@ import { IntlProvider } from 'react-intl';
 import reducers from 'reducers';
 import routes from 'routes';
 
+import 'index.scss';
+
 const reducer = combineReducers({
     ...reducers,
     routing: routeReducer

@@ -1,0 +1,52 @@
+.root {
+    background: #ebe8e1;
+    min-height: 100%;
+}
+
+.wrapper {
+    width: 736px;
+    margin: 0 auto;
+}
+
+.header {
+    height: 50px;
+    background: #207e5c;
+}
+
+.headerContent {
+    composes: wrapper;
+}
+
+.logo {
+    line-height: 50px;
+    padding: 0 20px;
+    display: inline-block;
+    background: #1a6449;
+}
+
+.body {
+    composes: wrapper;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 300px;
+
+    background: #232323;
+}
+
+.content {
+    margin-left: 300px;
+}
+
+.userbar {
+    float: right;
+}
