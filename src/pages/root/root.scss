@@ -1,5 +1,8 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
 .root {
-    background: #ebe8e1;
+    background: $light;
     min-height: 100%;
 }
 
@@ -10,7 +13,7 @@
 
 .header {
     height: 50px;
-    background: #207e5c;
+    background: $green;
 }
 
 .headerContent {
@@ -21,7 +24,11 @@
     line-height: 50px;
     padding: 0 20px;
     display: inline-block;
-    background: #1a6449;
+    background: darker($green);
+
+    font-family: $robotoCondensed;
+    font-size: 33px;
+    color: #fff;
 }
 
 .body {
@@ -40,7 +47,7 @@
     left: 0;
     width: 300px;
 
-    background: #232323;
+    background: $black;
 }
 
 .content {

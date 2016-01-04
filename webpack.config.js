@@ -76,6 +76,7 @@ var webpackConfig = {
         }),
         new HtmlWebpackPlugin({
             template: 'src/index.html',
+            favicon: 'src/favicon.ico',
             hash: isProduction,
             filename: 'index.html',
             inject: 'body',

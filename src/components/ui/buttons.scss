@@ -1,0 +1,24 @@
+@import './colors.scss';
+@import './fonts.scss';
+
+.button {
+    display: inline-block;
+    height: 50px;
+    padding: 0 15px;
+
+    font-family: $robotoCondensed;
+    color: #fff;
+    font-size: 18px;
+    line-height: 50px;
+    text-decoration: none;
+}
+
+.blue {
+    composes: button;
+
+    background: $blue;
+
+    &:hover {
+        background: lighter($blue);
+    }
+}

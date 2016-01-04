@@ -1,0 +1,41 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+.appInfo {
+    padding: 55px 15px;
+}
+
+.logoContainer {
+    position: relative;
+    padding: 15px;
+
+    &:after {
+        content: '';
+        display: block;
+
+        position: absolute;
+        left: 25px;
+        bottom: 0;
+        height: 3px;
+        width: 40px;
+
+        background: $green;
+    }
+}
+
+.logo {
+    font-family: $robotoCondensed;
+    color: #fff;
+    font-size: 22px;
+}
+
+.descriptionContainer {
+    margin: 20px 0;
+}
+
+.description {
+    font-family: $roboto;
+    color: #cccccc;
+    font-size: 13px;
+    line-height: 1.7;
+}

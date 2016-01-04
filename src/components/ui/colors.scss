@@ -1,0 +1,18 @@
+$green: #207e5c;
+$blue: #5b9aa9;
+$red: #e66c69;
+$violet: #6b5b8c;
+$dark_blue: #28555b;
+$light_violet: #8b5d79;
+$orange: #dd8650;
+$light: #ebe8e1;
+
+$black: #232323;
+
+@function darker($color) {
+    @return darken($color, 4%);
+}
+
+@function lighter($color) {
+    @return lighten($color, 3%);
+}

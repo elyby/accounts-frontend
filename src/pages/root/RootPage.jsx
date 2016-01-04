@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router';
 
-import UserBar from 'components/userBar/UserBar';
+import Userbar from 'components/userbar/Userbar';
 
 import styles from './root.scss';
 
@@ -11,13 +11,11 @@ export default function RootPage(props) {
         <div className={styles.root}>
             <div className={styles.header}>
                 <div className={styles.headerContent}>
-                    <div className={styles.logo}>
-                        <Link to="/">
-                            Ely.by
-                        </Link>
-                    </div>
+                    <Link to="/" className={styles.logo}>
+                        Ely.by
+                    </Link>
                     <div className={styles.userbar}>
-                        <UserBar />
+                        <Userbar />
                     </div>
                 </div>
             </div>
