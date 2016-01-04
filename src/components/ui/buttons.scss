@@ -1,24 +1,48 @@
 @import './colors.scss';
 @import './fonts.scss';
 
+@mixin button-color($colorName, $backgroundColor, $textColor : $defaultButtonTextColor) {
+    .#{$colorName} {
+        composes: button;
+
+        @if ($textColor != $defaultButtonTextColor) {
+            color: $textColor;
+        }
+
+        background-color: $backgroundColor;
+
+        &:hover {
+            background-color: lighter($backgroundColor);
+        }
+
+        &:active {
+            background-color: darker($backgroundColor);
+        }
+    }
+}
+
 .button {
     display: inline-block;
     height: 50px;
     padding: 0 15px;
 
-    font-family: $robotoCondensed;
-    color: #fff;
+    font-family: $font-family-title;
+    color: $defaultButtonTextColor;
     font-size: 18px;
     line-height: 50px;
     text-decoration: none;
-}
 
-.blue {
-    composes: button;
+    transition: background-color 0.25s;
 
-    background: $blue;
+    background-color: $black;
 
     &:hover {
-        background: lighter($blue);
+        background-color: $black-button-light;
+    }
+
+    &:active {
+        background-color: $black-button-dark;
     }
 }
+
+@include button-color('blue', $blue);

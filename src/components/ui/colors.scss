@@ -9,10 +9,44 @@ $light: #ebe8e1;
 
 $black: #232323;
 
+$defaultButtonTextColor : #fff;
+$black-button-light: #392f2c;
+$black-button-dark: #1e0b11;
+
 @function darker($color) {
-    @return darken($color, 4%);
+    $elyColorsMap : (
+        $green        : #1a6449,
+        $blue         : #568297,
+        $red          : #e15457,
+        $violet       : #66437a,
+        $dark_blue    : #233d49,
+        $light_violet : #864567,
+        $orange       : #d86e3e,
+        $black        : #1c1c1c,
+    );
+
+    @if(map_has_key($elyColorsMap, $color)) {
+        @return map-get($elyColorsMap, $color);
+    } @else {
+        @return darken($color, 4%);
+    }
 }
 
 @function lighter($color) {
-    @return lighten($color, 3%);
+    $elyColorsMap : (
+        $green        : #379070,
+        $blue         : #71a6b2,
+        $red          : #fc7872,
+        $violet       : #816795,
+        $dark_blue    : #3e6164,
+        $light_violet : #a16982,
+        $orange       : #f39259,
+        $black        : #2e2e2e,
+    );
+
+    @if(map_has_key($elyColorsMap, $color)) {
+        @return map-get($elyColorsMap, $color);
+    } @else {
+        @return lighten($color, 3%);
+    }
 }
