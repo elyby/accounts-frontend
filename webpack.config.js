@@ -21,7 +21,7 @@ var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
 
-const CSS_LOADER = 'style!css?modules&importLoaders=1&localIdentName=[path][name]-[local]!postcss';
+const CSS_LOADER = 'style!css?modules&importLoaders=2&localIdentName=[path][name]-[local]!postcss';
 
 var webpackConfig = {
     entry: {
@@ -107,15 +107,10 @@ var webpackConfig = {
                     plugins: ['transform-runtime', ['react-intl', {messagesDir: './dist/messages/'}]]
                 }
             },
-            { // DEPRECATED
-                test: /i18n\/.*\.less$/,
-                loader: CSS_LOADER + '!less'
-            },
-            { // DEPRECATED
-                test: /\.less$/,
+            {
+                test: /\.font.(js|json)$/,
                 extractInProduction: true,
-                exclude: /i18n\/.*\.less$/,
-                loader: CSS_LOADER + '!less'
+                loader: CSS_LOADER + '!fontgen?types=woff,eot,ttf'
             }
         ]
     },

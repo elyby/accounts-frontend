@@ -1,0 +1,6 @@
+{
+    "files": ["icons/webfont/*"],
+    "fontName": "ely-account-icons",
+    "fixedWidth": true,
+    "normalize": true
+}
