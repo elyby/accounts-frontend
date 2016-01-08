@@ -1,10 +1,12 @@
 /* eslint-env node */
 
 var path = require('path');
+
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var cssnano = require('cssnano');
+var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 
 const API_HOST = 'http://account.l';
 
@@ -20,8 +22,6 @@ var isProduction = process.argv.some(function(arg) {
 var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
-
-const CSS_LOADER = 'style!css?modules&importLoaders=2&localIdentName=[path][name]-[local]!postcss';
 
 var webpackConfig = {
     entry: {
@@ -66,6 +66,7 @@ var webpackConfig = {
     devtool: isTest ? 'inline-source-map' : 'eval',
 
     plugins: [
+        new iconfontImporter.Plugin(),
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify(isProduction ? 'production' : 'dev')
@@ -96,7 +97,7 @@ var webpackConfig = {
             {
                 test: /\.scss$/,
                 extractInProduction: true,
-                loader: CSS_LOADER + '!sass'
+                loader: 'style!css?modules&localIdentName=[path][name]-[local]!postcss!sass'
             },
             {
                 test: /\.jsx?$/,
@@ -106,13 +107,15 @@ var webpackConfig = {
                     presets: ['react', 'es2015', 'stage-0'],
                     plugins: ['transform-runtime', ['react-intl', {messagesDir: './dist/messages/'}]]
                 }
-            },
-            {
-                test: /\.font.(js|json)$/,
-                extractInProduction: true,
-                loader: CSS_LOADER + '!fontgen?types=woff,eot,ttf'
             }
         ]
+    },
+
+    sassLoader: {
+        importer: iconfontImporter({
+            test: /\.font.(js|json)$/,
+            types: ['woff', 'eot', 'ttf']
+        })
     },
 
     postcss: [

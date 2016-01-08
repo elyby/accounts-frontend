@@ -1,0 +1,10 @@
+@import '~icons.font.json';
+
+.arrowLeft {
+    composes: arrow;
+
+    display: inline-block;
+    transform: rotate(90deg);
+
+    font-size: 24px;
+}
