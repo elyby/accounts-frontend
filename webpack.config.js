@@ -10,10 +10,15 @@ var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 
 const API_HOST = 'http://account.l';
 
-// TODO: https://babeljs.io/docs/plugins/
-// TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
-// https://github.com/glenjamin/ultimate-hot-reloading-example ( обратить внимание на плагины babel )
-// https://github.com/gajus/react-css-modules ( + BrowserSync)
+/**
+ * TODO: https://babeljs.io/docs/plugins/
+ * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
+ * https://github.com/glenjamin/ultimate-hot-reloading-example ( обратить внимание на плагины babel )
+ * https://github.com/gajus/react-css-modules ( + BrowserSync)
+ *
+ * Inspiration projects:
+ * https://github.com/davezuko/react-redux-starter-kit
+ */
 
 var isProduction = process.argv.some(function(arg) {
     return arg === '-p';
@@ -69,7 +74,7 @@ var webpackConfig = {
         new iconfontImporter.Plugin(),
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify(isProduction ? 'production' : 'dev')
+                NODE_ENV: JSON.stringify(isProduction ? 'production' : 'development')
             },
             __DEV__: !isProduction,
             __TEST__: isTest,
@@ -105,7 +110,12 @@ var webpackConfig = {
                 loader: 'babel',
                 query: {
                     presets: ['react', 'es2015', 'stage-0'],
-                    plugins: ['transform-runtime', ['react-intl', {messagesDir: './dist/messages/'}]]
+                    plugins: ['transform-runtime', ['react-intl', {messagesDir: './dist/messages/'}]],
+                    env: {
+                        development: {
+                            presets: ['react-hmre']
+                        }
+                    }
                 }
             }
         ]
@@ -136,7 +146,7 @@ var webpackConfig = {
 
 
 if (isProduction) {
-    webpackConfig.module.loaders.forEach(function(loader) {
+    webpackConfig.module.loaders.forEach((loader) => {
         if (loader.extractInProduction) {
             var parts = loader.loader.split('!');
             loader.loader = ExtractTextPlugin.extract(parts[0], parts.slice(1).join('!'));
@@ -148,6 +158,13 @@ if (isProduction) {
     }));
 
     webpackConfig.devtool = false;
+}
+
+if (!isProduction && !isTest) {
+    webpackConfig.plugins.push(
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin()
+    );
 }
 
 module.exports = webpackConfig;
