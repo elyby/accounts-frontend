@@ -1,0 +1,56 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+.panel {
+    background: $black;
+}
+
+.header {
+    box-sizing: border-box;
+    height: 50px;
+    border-bottom: 1px solid lighter($black);
+
+    font-family: $font-family-title;
+    text-align: center;
+    line-height: 48px;
+    font-size: 20px;
+    color: #fff;
+}
+
+.headerControl {
+    float: left;
+    line-height: 1;
+    border-right: 1px solid lighter($black);
+    overflow: hidden;
+    height: 49px;
+}
+
+.body {
+    padding: 15px;
+    color: #ccc;
+    font-size: 18px;
+
+    b {
+        color: #fff;
+    }
+
+    a {
+        color: #fff;
+        border-bottom: 1px dotted #ede9e2;
+        text-decoration: none;
+        transition: .25s;
+
+        &:hover {
+            border-bottom-color: #ccc;
+            color: #ccc;
+        }
+    }
+}
+
+.footer {
+    display: flex;
+
+    > * {
+        flex-grow: 1;
+    }
+}

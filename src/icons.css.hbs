@@ -5,13 +5,17 @@
 
 .{{baseClass}} {
 	line-height: 1;
+    vertical-align: middle;
+    display: inline-block;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .{{baseClass}}:before {
 	font-family: {{fontName}} !important;
 	font-style: normal;
 	font-weight: normal !important;
-	vertical-align: top;
 }
 
 {{#each codepoints}}

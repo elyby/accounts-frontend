@@ -1,9 +1,17 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
 html,
 body,
 :global(.app) {
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: $font-family-base;
+    background: $light;
 }
 
 a {

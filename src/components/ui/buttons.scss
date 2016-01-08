@@ -21,16 +21,20 @@
     }
 }
 
-.button {
+.button,
+.black {
     display: inline-block;
+    box-sizing: border-box;
     height: 50px;
     padding: 0 15px;
+    border: none;
 
     font-family: $font-family-title;
     color: $defaultButtonTextColor;
     font-size: 18px;
     line-height: 50px;
     text-decoration: none;
+    cursor: pointer;
 
     transition: background-color 0.25s;
 
@@ -46,3 +50,4 @@
 }
 
 @include button-color('blue', $blue);
+@include button-color('green', $green);

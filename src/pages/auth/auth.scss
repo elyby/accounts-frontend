@@ -2,7 +2,7 @@
 
 .sidebar {
     position: absolute;
-    top: 0;
+    top: 50px;
     bottom: 0;
     left: 0;
     width: 300px;
@@ -12,4 +12,5 @@
 
 .content {
     margin-left: 300px;
+    padding: 55px 50px;
 }

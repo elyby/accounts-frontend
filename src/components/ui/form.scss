@@ -1,0 +1,76 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+.formRow {
+    position: relative;
+    height: 50px;
+    max-width: 100%;
+    margin: 10px 0;
+}
+
+.formIconRow {
+    composes: formRow;
+
+    .textField {
+        padding-left: 60px;
+    }
+}
+
+.textField {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+
+    border: 2px solid lighter($black);
+    background: $black;
+
+    font-size: 20px;
+    color: #aaa;
+    font-family: $font-family-base;
+    padding: 0 10px;
+
+    transition: border-color .25s;
+
+    &::placeholder {
+        opacity: 1;
+        color: #444;
+    }
+
+    &:hover {
+        border-color: #aaa;
+
+        ~ .formFieldIcon {
+            border-color: #aaa;
+        }
+    }
+
+    &:focus {
+        border-color: $green;
+        color: #fff;
+
+        ~ .formFieldIcon {
+            background: $green;
+            border-color: $green;
+            color: #fff;
+        }
+    }
+}
+
+
+.formFieldIcon {
+    box-sizing: border-box;
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    line-height: 46px;
+    text-align: center;
+    border: 2px solid lighter($black);
+    color: #444;
+
+    transition: border-color .25s;
+}
