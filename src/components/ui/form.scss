@@ -29,9 +29,9 @@
     border: 2px solid lighter($black);
     background: $black;
 
-    font-size: 20px;
+    font-size: 18px;
     color: #aaa;
-    font-family: $font-family-base;
+    font-family: $font-family-title;
     padding: 0 10px;
 
     transition: border-color .25s;
@@ -52,6 +52,7 @@
     &:focus {
         border-color: $green;
         color: #fff;
+        outline: none;
 
         ~ .formFieldIcon {
             background: $green;
@@ -72,5 +73,7 @@
     border: 2px solid lighter($black);
     color: #444;
 
-    transition: border-color .25s;
+    // Анимация фона должна быть быстрее анимации рамки, т.к. визуально фон заполняется медленнее
+    transition: border-color .25s,
+                background-color .20s;
 }

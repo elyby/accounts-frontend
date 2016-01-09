@@ -1,16 +1,18 @@
 @import "~components/ui/colors.scss";
 
+$sidebar-width: 320px;
+
 .sidebar {
     position: absolute;
     top: 50px;
     bottom: 0;
     left: 0;
-    width: 300px;
+    width: $sidebar-width;
 
     background: $black;
 }
 
 .content {
-    margin-left: 300px;
+    margin-left: $sidebar-width;
     padding: 55px 50px;
 }

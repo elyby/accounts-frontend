@@ -47,6 +47,10 @@
     &:active {
         background-color: $black-button-dark;
     }
+
+    &:focus {
+        outline: none;
+    }
 }
 
 @include button-color('blue', $blue);
