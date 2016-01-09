@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
-import { Panel, PanelBody, PanelFooter, PanelError } from 'components/ui/Panel';
+import { Panel, PanelBody, PanelFooter, PanelBodyHeader } from 'components/ui/Panel';
 import { Input, Checkbox } from 'components/ui/Form';
 
 import styles from './signIn.scss';
@@ -56,19 +56,17 @@ export default class SignIn extends Component {
                 <div className={styles.signIn}>
                     <Panel icon="arrowLeft" title={<Message {...messages.enterPassword} />}>
                         <PanelBody>
-                            <PanelError message={
-                                <span>
-                                    <Message {...messages.invalidPassword} />
-                                    <br/>
-                                    <Message {...messages.suggestResetPassword} values={{
-                                        link: (
-                                            <a href="#">
-                                                <Message {...messages.forgotYourPassword} />
-                                            </a>
-                                        )
-                                    }} />
-                                </span>
-                            } />
+                            <PanelBodyHeader type="error">
+                                <Message {...messages.invalidPassword} />
+                                <br/>
+                                <Message {...messages.suggestResetPassword} values={{
+                                    link: (
+                                        <a href="#">
+                                            <Message {...messages.forgotYourPassword} />
+                                        </a>
+                                    )
+                                }} />
+                            </PanelBodyHeader>
                             <div className={styles.miniProfile}>
                                 <div className={styles.avatar}>
                                     {/*<img src="//lorempixel.com/g/90/90" />*/}
@@ -101,17 +99,20 @@ export default class SignIn extends Component {
                 <div className={styles.signIn}>
                     <Panel title={<Message {...messages.permissionsTitle} />}>
                         <PanelBody>
-                            <div className={styles.authInfo}>
-                                <div className={styles.avatar}>
-                                    <img src="//lorempixel.com/g/90/90" />
+                            <PanelBodyHeader>
+                                <div className={styles.authInfo}>
+                                    <div className={styles.authInfoAvatar}>
+                                        {/*<img src="//lorempixel.com/g/90/90" />*/}
+                                        <span className={icons.user} />
+                                    </div>
+                                    <div className={styles.authInfoTitle}>
+                                        <Message {...messages.youAuthorizedAs} />
+                                    </div>
+                                    <div className={styles.authInfoEmail}>
+                                        erickskrauch@yandex.ru
+                                    </div>
                                 </div>
-                                <div className={styles.email}>
-                                    <Message {...messages.youAuthorizedAs} />
-                                </div>
-                                <div className={styles.email}>
-                                    erickskrauch@yandex.ru
-                                </div>
-                            </div>
+                            </PanelBodyHeader>
                             <div className={styles.disclaimer}>
                                 <Message {...messages.theAppNeedsAccess} />
                             </div>

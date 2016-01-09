@@ -56,13 +56,21 @@ export function PanelFooter(props) {
     );
 }
 
-export function PanelError(props) {
-    var { message } = props;
+export function PanelBodyHeader(props) {
+    var { type = 'default' } = props;
+
+    var close;
+
+    if (type === 'error') {
+        close = (
+            <span className={styles.close} />
+        );
+    }
 
     return (
-        <div className={styles.error}>
-            <span className={styles.close} />
-            {message}
+        <div className={styles[`${type}BodyHeader`]}>
+            {close}
+            {props.children}
         </div>
     );
 }

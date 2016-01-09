@@ -61,14 +61,31 @@
     }
 }
 
-.error {
+.bodyHeader {
     position: relative;
     padding: 10px;
     margin: -15px;
     margin-bottom: 15px;
+}
+
+.errorBodyHeader {
+    composes: bodyHeader;
 
     background: #e66c69;
     border: 1px #e15457 solid;
+
+    font-size: 14px;
+    line-height: 1.3;
+    color: #fff;
+}
+
+.defaultBodyHeader {
+    composes: bodyHeader;
+
+    background: darker($black);
+    border: lighter($black) solid;
+    border-bottom-width: 5px;
+    border-top-width: 4px;
 
     font-size: 14px;
     line-height: 1.3;
