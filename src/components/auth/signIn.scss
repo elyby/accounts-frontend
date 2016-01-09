@@ -31,6 +31,7 @@
     }
 }
 
+// sign in second step
 @import '~components/ui/fonts.scss';
 .avatar {
     width: 90px;
@@ -51,4 +52,21 @@
 
     margin-bottom: 15px;
     margin-top: 10px;
+}
+
+// account activation
+.description {
+}
+
+.descriptionImage {
+    composes: envelope from 'components/ui/icons.scss';
+
+    font-size: 100px;
+    color: $blue;
+}
+
+.descriptionText {
+    margin-bottom: 25px;
+    font-size: 16px;
+    line-height: 1.2;
 }

@@ -183,9 +183,8 @@ export default class SignIn extends Component {
                     <Panel icon="arrowLeft" title={<Message {...messages.accountActivationTitle} />}>
                         <PanelBody>
                             <div className={styles.description}>
-                                <div className={styles.descriptionImage}>
-                                    <span className={icons.envelope} />
-                                </div>
+                                <div className={styles.descriptionImage} />
+
                                 <div className={styles.descriptionText}>
                                     <Message {...messages.activationMailWasSent} values={{
                                         email: (<b>erickskrauch@yandex.ru</b>)
