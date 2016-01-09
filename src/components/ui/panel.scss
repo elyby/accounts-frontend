@@ -18,11 +18,17 @@
 }
 
 .headerControl {
+    composes: black from './buttons.scss';
+
     float: left;
-    line-height: 1;
-    border-right: 1px solid lighter($black);
     overflow: hidden;
     height: 49px;
+    width: 49px;
+    padding: 0;
+    border-right: 1px solid lighter($black);
+
+    line-height: 1;
+    text-align: center;
 }
 
 .body {

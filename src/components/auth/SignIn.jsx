@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
-import { Panel, PanelHeader, PanelBody, PanelFooter } from 'components/ui/Panel';
+import { Panel, PanelBody, PanelFooter } from 'components/ui/Panel';
 import { Input } from 'components/ui/Form';
 
 import styles from './signIn.scss';
@@ -13,7 +13,6 @@ import messages from './SignIn.messages';
 
 
 import panel from 'components/ui/panel.scss';
-styles.headerControl = panel.headerControl;
 
 // 0.5s cubic-bezier(0.075, 0.82, 0.165, 1)
 
@@ -57,15 +56,7 @@ export default class SignIn extends Component {
                     </div>
                 </div>
                 <div className={styles.signIn}>
-                    <Panel>
-                        <PanelHeader>
-                            <div className={styles.headerControl}>
-                                <button className={buttons.black}>
-                                    <span className={icons.arrowLeft} />
-                                </button>
-                            </div>
-                            <Message {...messages.enterPassword} />
-                        </PanelHeader>
+                    <Panel icon="arrowLeft" title={<Message {...messages.enterPassword} />}>
                         <PanelBody>
                             <div className={styles.error}>
                                 <Message {...messages.invalidPassword} />
@@ -206,15 +197,7 @@ export default class SignIn extends Component {
                     </div>
                 </div>
                 <div className={styles.signIn}>
-                    <Panel>
-                        <PanelHeader>
-                            <div className={styles.headerControl}>
-                                <button className={buttons.black}>
-                                    <span className={icons.arrowLeft} />
-                                </button>
-                            </div>
-                            <Message {...messages.accountActivationTitle} />
-                        </PanelHeader>
+                    <Panel icon="arrowLeft" title={<Message {...messages.accountActivationTitle} />}>
                         <PanelBody>
                             <div className={styles.description}>
                                 <div className={styles.descriptionImage}>

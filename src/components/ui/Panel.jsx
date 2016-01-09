@@ -1,13 +1,23 @@
 import React from 'react';
 
 import styles from './panel.scss';
+import icons from './icons.scss';
 
 export function Panel(props) {
-    var { title } = props;
+    var { title, icon } = props;
+
+    if (icon) {
+        icon = (
+            <button className={styles.headerControl}>
+                <span className={icons[icon]} />
+            </button>
+        );
+    }
 
     if (title) {
         title = (
             <PanelHeader>
+                {icon}
                 {title}
             </PanelHeader>
         );

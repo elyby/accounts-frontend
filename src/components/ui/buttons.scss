@@ -21,8 +21,7 @@
     }
 }
 
-.button,
-.black {
+.button {
     display: inline-block;
     box-sizing: border-box;
     height: 50px;
@@ -38,6 +37,14 @@
 
     transition: background-color 0.25s;
 
+    &:focus {
+        outline: none;
+    }
+}
+
+.black {
+    composes: button;
+
     background-color: $black;
 
     &:hover {
@@ -46,10 +53,6 @@
 
     &:active {
         background-color: $black-button-dark;
-    }
-
-    &:focus {
-        outline: none;
     }
 }
 
