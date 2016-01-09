@@ -10,6 +10,21 @@
 /**
  * Input
  */
+@mixin input-theme($themeName, $color) {
+    .#{$themeName}TextField {
+        composes: textField;
+
+        &:focus {
+            border-color: $color;
+
+            ~ .formFieldIcon {
+                background: $color;
+                border-color: $color;
+            }
+        }
+    }
+}
+
 .formRow {
     position: relative;
     height: 50px;
@@ -59,13 +74,10 @@
     }
 
     &:focus {
-        border-color: $green;
         color: #fff;
         outline: none;
 
         ~ .formFieldIcon {
-            background: $green;
-            border-color: $green;
             color: #fff;
         }
     }
@@ -87,10 +99,36 @@
     @include form-transition();
 }
 
+@include input-theme('green', $green);
+@include input-theme('blue', $blue);
+
 
 /**
  * Checkbox
  */
+@mixin checkbox-theme($themeName, $color) {
+    .#{$themeName}CheckboxRow {
+        composes: checkboxRow;
+
+        .checkboxContainer {
+            &:hover {
+                .checkbox {
+                    border-color: $color;
+                }
+            }
+        }
+
+        .checkboxInput {
+            &:checked {
+                + .checkbox {
+                    background: $color;
+                    border-color: $color;
+                }
+            }
+        }
+    }
+}
+
 .checkboxRow {
     height: 22px;
     margin-top: 15px;
@@ -107,12 +145,6 @@
     color: #fff;
 
     cursor: pointer;
-
-    &:hover {
-        .checkbox {
-            border-color: $green;
-        }
-    }
 }
 
 .checkboxPosition {
@@ -132,9 +164,6 @@
 
     &:checked {
         + .checkbox {
-            background: $green;
-            border-color: $green;
-
             &:before {
                 opacity: 1;
             }
@@ -158,3 +187,6 @@
         transition: opacity 0.3s;
     }
 }
+
+@include checkbox-theme('green', $green);
+@include checkbox-theme('blue', $blue);

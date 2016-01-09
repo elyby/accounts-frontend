@@ -149,15 +149,15 @@ export default class SignIn extends Component {
                     <Panel title={<Message {...messages.signUpTitle} />}>
                         <PanelBody>
                             {/* TODO: E-mail i18n*/}
-                            <Input icon="user" type="text" placeholder="Your nickname" />
+                            <Input icon="user" color="blue" type="text" placeholder="Your nickname" />
                             {/* TODO: E-mail i18n*/}
-                            <Input icon="envelope" type="email" placeholder="Your E-mail" />
+                            <Input icon="envelope" color="blue" type="email" placeholder="Your E-mail" />
                             {/* TODO: Account password i18n*/}
-                            <Input icon="key" type="password" placeholder="Account password" />
+                            <Input icon="key" color="blue" type="password" placeholder="Account password" />
                             {/* TODO: Account password i18n*/}
-                            <Input icon="key" type="password" placeholder="Repeat password" />
+                            <Input icon="key" color="blue" type="password" placeholder="Repeat password" />
 
-                            <Checkbox label={
+                            <Checkbox color="blue" label={
                                 <Message {...messages.acceptRules} values={{
                                     link: (
                                         <a href="#">
@@ -194,7 +194,7 @@ export default class SignIn extends Component {
                             </div>
                             <div className={styles.formRow}>
                                 {/* TODO: E-mail i18n*/}
-                                <Input type="email" placeholder="Enter the code from E-mail here" />
+                                <Input type="email" color="blue" placeholder="Enter the code from E-mail here" />
                             </div>
                         </PanelBody>
                         <PanelFooter>

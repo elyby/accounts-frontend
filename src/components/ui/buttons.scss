@@ -1,8 +1,8 @@
 @import './colors.scss';
 @import './fonts.scss';
 
-@mixin button-color($colorName, $backgroundColor, $textColor : $defaultButtonTextColor) {
-    .#{$colorName} {
+@mixin button-theme($themeName, $backgroundColor, $textColor : $defaultButtonTextColor) {
+    .#{$themeName} {
         composes: button;
 
         @if ($textColor != $defaultButtonTextColor) {
@@ -56,5 +56,5 @@
     }
 }
 
-@include button-color('blue', $blue);
-@include button-color('green', $green);
+@include button-theme('blue', $blue);
+@include button-theme('green', $green);
