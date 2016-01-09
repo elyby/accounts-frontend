@@ -2,6 +2,7 @@
 
 .signIn {
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .decline {
@@ -28,4 +29,26 @@
             color: #777;
         }
     }
+}
+
+@import '~components/ui/fonts.scss';
+.avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 90px;
+    line-height: 90px;
+    margin: 0 auto;
+
+    img {
+        width: 100%;
+    }
+}
+
+.email {
+    font-family: $font-family-title;
+    font-size: 18px;
+    color: #fff;
+
+    margin-bottom: 15px;
+    margin-top: 10px;
 }

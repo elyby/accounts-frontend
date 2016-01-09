@@ -55,3 +55,14 @@ export function PanelFooter(props) {
         </div>
     );
 }
+
+export function PanelError(props) {
+    var { message } = props;
+
+    return (
+        <div className={styles.error}>
+            <span className={styles.close} />
+            {message}
+        </div>
+    );
+}

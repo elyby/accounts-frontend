@@ -5,14 +5,12 @@ import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
-import { Panel, PanelBody, PanelFooter } from 'components/ui/Panel';
-import { Input } from 'components/ui/Form';
+import { Panel, PanelBody, PanelFooter, PanelError } from 'components/ui/Panel';
+import { Input, Checkbox } from 'components/ui/Form';
 
 import styles from './signIn.scss';
 import messages from './SignIn.messages';
 
-
-import panel from 'components/ui/panel.scss';
 
 // 0.5s cubic-bezier(0.075, 0.82, 0.165, 1)
 
@@ -58,35 +56,31 @@ export default class SignIn extends Component {
                 <div className={styles.signIn}>
                     <Panel icon="arrowLeft" title={<Message {...messages.enterPassword} />}>
                         <PanelBody>
-                            <div className={styles.error}>
-                                <Message {...messages.invalidPassword} />
-                                <br/>
-                                <Message {...messages.suggestResetPassword} values={{
-                                    link: (
-                                        <a href="#">
-                                            <Message {...messages.forgotYourPassword} />
-                                        </a>
-                                    )
-                                }} />
-                            </div>
+                            <PanelError message={
+                                <span>
+                                    <Message {...messages.invalidPassword} />
+                                    <br/>
+                                    <Message {...messages.suggestResetPassword} values={{
+                                        link: (
+                                            <a href="#">
+                                                <Message {...messages.forgotYourPassword} />
+                                            </a>
+                                        )
+                                    }} />
+                                </span>
+                            } />
                             <div className={styles.miniProfile}>
                                 <div className={styles.avatar}>
-                                    <img src="//lorempixel.com/g/90/90" />
+                                    {/*<img src="//lorempixel.com/g/90/90" />*/}
+                                    <span className={icons.user} />
                                 </div>
                                 <div className={styles.email}>
                                     erickskrauch@yandex.ru
                                 </div>
                             </div>
-                            <div className={styles.formIconRow}>
-                                <Input icon="key" type="password" placeholder="Account password" />
-                            </div>
+                            <Input icon="key" type="password" placeholder="Account password" />
 
-                            <div className={styles.checkboxRow}>
-                                <label>
-                                    <input type="checkbox" />
-                                    <Message {...messages.rememberMe} />
-                                </label>
-                            </div>
+                            <Checkbox label={<Message {...messages.rememberMe} />} />
                         </PanelBody>
                         <PanelFooter>
                             <button className={buttons.green}>
@@ -154,35 +148,24 @@ export default class SignIn extends Component {
                 <div className={styles.signIn}>
                     <Panel title={<Message {...messages.signUpTitle} />}>
                         <PanelBody>
-                            <div className={styles.formIconRow}>
-                                {/* TODO: E-mail i18n*/}
-                                <Input icon="user" type="text" placeholder="Your nickname" />
-                            </div>
-                            <div className={styles.formIconRow}>
-                                {/* TODO: E-mail i18n*/}
-                                <Input icon="envelope" type="email" placeholder="Your E-mail" />
-                            </div>
-                            <div className={styles.formIconRow}>
-                                {/* TODO: Account password i18n*/}
-                                <Input icon="key" type="password" placeholder="Account password" />
-                            </div>
-                            <div className={styles.formIconRow}>
-                                {/* TODO: Account password i18n*/}
-                                <Input icon="key" type="password" placeholder="Repeat password" />
-                            </div>
+                            {/* TODO: E-mail i18n*/}
+                            <Input icon="user" type="text" placeholder="Your nickname" />
+                            {/* TODO: E-mail i18n*/}
+                            <Input icon="envelope" type="email" placeholder="Your E-mail" />
+                            {/* TODO: Account password i18n*/}
+                            <Input icon="key" type="password" placeholder="Account password" />
+                            {/* TODO: Account password i18n*/}
+                            <Input icon="key" type="password" placeholder="Repeat password" />
 
-                            <div className={styles.checkboxRow}>
-                                <label>
-                                    <input type="checkbox" />
-                                    <Message {...messages.acceptRules} values={{
-                                        link: (
-                                            <a href="#">
-                                                <Message {...messages.termsOfService} />
-                                            </a>
-                                        )
-                                    }} />
-                                </label>
-                            </div>
+                            <Checkbox label={
+                                <Message {...messages.acceptRules} values={{
+                                    link: (
+                                        <a href="#">
+                                            <Message {...messages.termsOfService} />
+                                        </a>
+                                    )
+                                }} />
+                            } />
                         </PanelBody>
                         <PanelFooter>
                             <button className={buttons.blue}>

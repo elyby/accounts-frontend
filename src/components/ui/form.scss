@@ -1,6 +1,15 @@
 @import '~components/ui/colors.scss';
 @import '~components/ui/fonts.scss';
 
+@mixin form-transition() {
+    // Анимация фона должна быть быстрее анимации рамки, т.к. визуально фон заполняется медленнее
+    transition: border-color .25s,
+                background-color .20s;
+}
+
+/**
+ * Input
+ */
 .formRow {
     position: relative;
     height: 50px;
@@ -66,6 +75,8 @@
 .formFieldIcon {
     box-sizing: border-box;
     position: absolute;
+    left: 0;
+    top: 0;
     height: 50px;
     width: 50px;
     line-height: 46px;
@@ -73,7 +84,77 @@
     border: 2px solid lighter($black);
     color: #444;
 
-    // Анимация фона должна быть быстрее анимации рамки, т.к. визуально фон заполняется медленнее
-    transition: border-color .25s,
-                background-color .20s;
+    @include form-transition();
+}
+
+
+/**
+ * Checkbox
+ */
+.checkboxRow {
+    height: 22px;
+    margin-top: 15px;
+}
+
+.checkboxContainer {
+    display: inline-block;
+    position: relative;
+    padding-left: 27px;
+
+    font-family: $font-family-title;
+    font-size: 16px;
+    line-height: 24px;
+    color: #fff;
+
+    cursor: pointer;
+
+    &:hover {
+        .checkbox {
+            border-color: $green;
+        }
+    }
+}
+
+.checkboxPosition {
+    position: absolute;
+    box-sizing: border-box;
+    left: 0;
+    top: 0;
+    margin: 0;
+
+    width: 22px;
+    height: 22px;
+}
+
+.checkboxInput {
+    composes: checkboxPosition;
+    opacity: 0;
+
+    &:checked {
+        + .checkbox {
+            background: $green;
+            border-color: $green;
+
+            &:before {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.checkbox {
+    composes: checkboxPosition;
+    composes: checkmark from './icons.scss';
+
+    border: 2px #fff solid;
+
+    font-size: 10px;
+    line-height: 18px;
+
+    @include form-transition();
+
+    &:before {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
 }

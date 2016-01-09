@@ -27,7 +27,7 @@ var isTest = process.argv.some(function(arg) {
 });
 
 const API_HOST = 'http://account.l';
-const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64]' : '[path][name]-[local]';
+const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
 
 var webpackConfig = {
     entry: {
@@ -131,7 +131,7 @@ var webpackConfig = {
 
     postcss: [
         cssnano({
-            sourcemap: !isProduction,
+            // sourcemap: !isProduction,
             autoprefixer: {
                 add: true,
                 remove: true,
@@ -153,7 +153,12 @@ if (isProduction) {
     webpackConfig.module.loaders.forEach((loader) => {
         if (loader.extractInProduction) {
             var parts = loader.loader.split('!');
-            loader.loader = ExtractTextPlugin.extract(parts[0], parts.slice(1).join('!'));
+            loader.loader = ExtractTextPlugin.extract(
+                parts[0],
+                parts.slice(1)
+                    .join('!')
+                    .replace(/[&?]sourcemap/, '')
+            );
         }
     });
 

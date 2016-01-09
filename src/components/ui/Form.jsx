@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import classNames from 'classnames';
 
@@ -26,4 +26,22 @@ export function Input(props) {
             {icon}
         </div>
     );
+}
+
+export class Checkbox extends Component {
+    displayName = 'Checkbox';
+
+    render() {
+        var { label } = this.props;
+
+        return (
+            <div className={styles.checkboxRow}>
+                <label className={styles.checkboxContainer}>
+                    <input className={styles.checkboxInput} type="checkbox" />
+                    <div className={styles.checkbox} />
+                    {label}
+                </label>
+            </div>
+        );
+    }
 }
