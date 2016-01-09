@@ -102,7 +102,7 @@ var webpackConfig = {
             {
                 test: /\.scss$/,
                 extractInProduction: true,
-                loader: 'style!css?modules&localIdentName=[path][name]-[local]!postcss!sass'
+                loader: 'style!css?modules&importLoaders=2&localIdentName[=path][name]-[local]!postcss!sass'
             },
             {
                 test: /\.jsx?$/,
@@ -137,6 +137,9 @@ var webpackConfig = {
                 browsers: ['last 2 versions']
             },
             safe: true,
+            // отключаем минификацию цветов, что бы она не ломала такие выражения:
+            // composes: black from './buttons.scss';
+            colormin: false,
             discardComments: {
                 removeAll: true
             }
