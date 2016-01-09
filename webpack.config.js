@@ -8,8 +8,6 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var cssnano = require('cssnano');
 var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 
-const API_HOST = 'http://account.l';
-
 /**
  * TODO: https://babeljs.io/docs/plugins/
  * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
@@ -27,6 +25,9 @@ var isProduction = process.argv.some(function(arg) {
 var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
+
+const API_HOST = 'http://account.l';
+const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64]' : '[path][name]-[local]';
 
 var webpackConfig = {
     entry: {
@@ -102,7 +103,7 @@ var webpackConfig = {
             {
                 test: /\.scss$/,
                 extractInProduction: true,
-                loader: 'style!css?modules&importLoaders=2&localIdentName[=path][name]-[local]!postcss!sass'
+                loader: 'style!css?modules&importLoaders=2&localIdentName=' + CSS_CLASS_TEMPLATE + '!postcss!sass'
             },
             {
                 test: /\.jsx?$/,
