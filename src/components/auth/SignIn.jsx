@@ -35,7 +35,7 @@ export default class SignIn extends Component {
                 <div className={styles.signIn}>
                     <Panel title={<Message {...messages.signInTitle} />}>
                         <PanelBody>
-                            <Input icon="envelope" type="email" placeholder="E-mail" />
+                            <Input icon="envelope" type="email" placeholder="E-mail or username" />
                         </PanelBody>
                         <PanelFooter>
                             <button className={buttons.green}>
@@ -46,10 +46,6 @@ export default class SignIn extends Component {
                     <div className={styles.helpLinks}>
                         <a href="#">
                             <Message {...messages.forgotPassword} />
-                        </a>
-                        {' | '}
-                        <a href="#">
-                            <Message {...messages.contactSupport} />
                         </a>
                     </div>
                 </div>
@@ -73,6 +69,7 @@ export default class SignIn extends Component {
                                     <span className={icons.user} />
                                 </div>
                                 <div className={styles.email}>
+                                    {/* На деле тут может быть и ник, в зависимости от того, что введут в 1 вьюху */}
                                     erickskrauch@yandex.ru
                                 </div>
                             </div>
@@ -90,16 +87,12 @@ export default class SignIn extends Component {
                         <a href="#">
                             <Message {...messages.forgotPassword} />
                         </a>
-                        {' | '}
-                        <a href="#">
-                            <Message {...messages.contactSupport} />
-                        </a>
                     </div>
                 </div>
                 <div className={styles.signIn}>
                     <Panel title={<Message {...messages.permissionsTitle} />}>
-                        <PanelBody>
-                            <PanelBodyHeader>
+                        <PanelBody className={styles.authBody}>
+                            <PanelBodyHeader className={styles.authBodyHeader}>
                                 <div className={styles.authInfo}>
                                     <div className={styles.authInfoAvatar}>
                                         {/*<img src="//lorempixel.com/g/90/90" />*/}
@@ -117,24 +110,13 @@ export default class SignIn extends Component {
                                 <Message {...messages.theAppNeedsAccess} />
                             </div>
                             <ul className={styles.permissionsList}>
-                                <li>
-                                    one two three
-                                </li>
-                                <li>
-                                    one two three
-                                </li>
-                                <li>
-                                    one two three
-                                </li>
-                                <li>
-                                    one two three
-                                </li>
+                                <li>Authorization for Minecraft servers</li>
+                                <li>Manage your skins directory and additional rows for multiline</li>
+                                <li>Change the active skin</li>
+                                <li>View your E-mail address</li>
                             </ul>
                         </PanelBody>
                         <PanelFooter>
-                            <button className={classNames(buttons.black, styles.decline)}>
-                                <Message {...messages.decline} />
-                            </button>
                             <button className={buttons.green}>
                                 <Message {...messages.approve} />
                             </button>
@@ -142,7 +124,7 @@ export default class SignIn extends Component {
                     </Panel>
                     <div className={styles.helpLinks}>
                         <a href="#">
-                            <Message {...messages.contactSupport} />
+                            <Message {...messages.decline} />
                         </a>
                     </div>
                 </div>
@@ -176,7 +158,7 @@ export default class SignIn extends Component {
                     </Panel>
                     <div className={styles.helpLinks}>
                         <a href="#">
-                            <Message {...messages.contactSupport} />
+                            <Message {...messages.didNotReceivedEmail} />
                         </a>
                     </div>
                 </div>
@@ -194,7 +176,7 @@ export default class SignIn extends Component {
                             </div>
                             <div className={styles.formRow}>
                                 {/* TODO: E-mail i18n*/}
-                                <Input type="email" color="blue" placeholder="Enter the code from E-mail here" />
+                                <Input type="email" color="blue" className={styles.activationCodeInput} placeholder="Enter the code from E-mail here" />
                             </div>
                         </PanelBody>
                         <PanelFooter>
@@ -206,10 +188,6 @@ export default class SignIn extends Component {
                     <div className={styles.helpLinks}>
                         <a href="#">
                             <Message {...messages.didNotReceivedEmail} />
-                        </a>
-                        {' | '}
-                        <a href="#">
-                            <Message {...messages.contactSupport} />
                         </a>
                     </div>
                 </div>

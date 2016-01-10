@@ -34,7 +34,7 @@ export function Panel(props) {
 
 export function PanelHeader(props) {
     return (
-        <div className={styles.header}>
+        <div className={styles.header} {...props}>
             {props.children}
         </div>
     );
@@ -42,7 +42,7 @@ export function PanelHeader(props) {
 
 export function PanelBody(props) {
     return (
-        <div className={styles.body}>
+        <div className={styles.body} {...props}>
             {props.children}
         </div>
     );
@@ -50,7 +50,7 @@ export function PanelBody(props) {
 
 export function PanelFooter(props) {
     return (
-        <div className={styles.footer}>
+        <div className={styles.footer} {...props}>
             {props.children}
         </div>
     );
@@ -68,7 +68,7 @@ export function PanelBodyHeader(props) {
     }
 
     return (
-        <div className={styles[`${type}BodyHeader`]}>
+        <div className={styles[`${type}BodyHeader`]} {...props}>
             {close}
             {props.children}
         </div>

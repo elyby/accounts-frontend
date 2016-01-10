@@ -65,7 +65,8 @@ export default defineMessages({
 
     theAppNeedsAccess: {
         id: 'theAppNeedsAccess',
-        defaultMessage: 'This applications needs access to your data'
+        // Мне нельзя html? Получите неразрывный пробел! ˅˅˅˅˅˅˅˅˅˅˅
+        defaultMessage: 'This applications needs access              to your data'
     },
 
     decline: {

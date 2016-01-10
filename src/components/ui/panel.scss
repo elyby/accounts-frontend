@@ -5,14 +5,16 @@
     background: $black;
 }
 
+$headerHeight: 60px;
+
 .header {
     box-sizing: border-box;
-    height: 50px;
+    height: $headerHeight;
     border-bottom: 1px solid lighter($black);
 
     font-family: $font-family-title;
     text-align: center;
-    line-height: 50px;
+    line-height: $headerHeight + 2px; // Шрифт Roboto Condensed имеет странную высоту линии, так что компенсируем это
     font-size: 20px;
     color: #fff;
 }
@@ -22,7 +24,7 @@
 
     float: left;
     overflow: hidden;
-    height: 49px;
+    height: $headerHeight - 1px;
     width: 49px;
     padding: 0;
     border-right: 1px solid lighter($black);
@@ -31,12 +33,16 @@
     text-align: center;
 }
 
+$bodyLeftRightPadding: 20px;
+$bodyTopBottomPadding: 15px;
+
 .body {
-    padding: 15px;
+    padding: $bodyTopBottomPadding $bodyLeftRightPadding;
     color: #ccc;
     font-size: 18px;
 
     b {
+        font-weight: normal;
         color: #fff;
     }
 
@@ -64,15 +70,15 @@
 .bodyHeader {
     position: relative;
     padding: 10px;
-    margin: -15px;
+    margin: (-$bodyTopBottomPadding) (-$bodyLeftRightPadding);
     margin-bottom: 15px;
 }
 
 .errorBodyHeader {
     composes: bodyHeader;
 
-    background: #e66c69;
-    border: 1px #e15457 solid;
+    background: $red;
+    border: 1px darker($red) solid;
 
     font-size: 14px;
     line-height: 1.3;
