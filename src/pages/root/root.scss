@@ -1,6 +1,8 @@
 @import '~components/ui/colors.scss';
 @import '~components/ui/fonts.scss';
 
+$userBarHeight: 50px;
+
 .root {
     height: 100%;
 }
@@ -11,8 +13,11 @@
 }
 
 .header {
-    position: relative;
-    height: 50px;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    height: $userBarHeight;
+    width: 100%;
     background: $green;
 }
 
@@ -38,8 +43,7 @@
     // place for header
     min-height: 100%;
     box-sizing: border-box;
-    padding-top: 50px;
-    margin-top: -50px;
+    padding-top: $userBarHeight;
 }
 
 .userbar {
