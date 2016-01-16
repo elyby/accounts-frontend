@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 
-import SignIn from 'components/auth/SignIn';
 import AppInfo from 'components/auth/AppInfo';
 
 import styles from './auth.scss';
 
-export default class SignInPage extends Component {
+export default class AuthPage extends Component {
+    displayName = 'AuthPage';
+
     render() {
         var appInfo = {
             name: 'TLauncher',
@@ -18,7 +19,7 @@ export default class SignInPage extends Component {
                     <AppInfo {...appInfo} />
                 </div>
                 <div className={styles.content}>
-                    <SignIn />
+                    {this.props.children}
                 </div>
             </div>
         );

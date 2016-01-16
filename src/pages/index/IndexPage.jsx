@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 
-import SignInPage from 'pages/auth/SignInPage';
+import AuthPage from 'pages/auth/AuthPage';
+import Login from 'components/auth/Login';
 
 export default class IndexPage extends Component {
+    displayName = 'IndexPage';
+
     render() {
         return (
-            <SignInPage />
+            <AuthPage>
+                <Login />
+            </AuthPage>
         );
     }
 }

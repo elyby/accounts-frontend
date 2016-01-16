@@ -48,6 +48,7 @@ var webpackConfig = {
 
     output: {
         path: path.join(__dirname, 'dist'),
+        publicPath: '/',
         filename: '[name].js'
     },
 

@@ -3,11 +3,25 @@ import { Route, IndexRoute } from 'react-router';
 
 import RootPage from 'pages/root/RootPage';
 import IndexPage from 'pages/index/IndexPage';
-import SignInPage from 'pages/auth/SignInPage';
+import AuthPage from 'pages/auth/AuthPage';
+
+import Register from 'components/auth/Register';
+import Login from 'components/auth/Login';
+import Permissions from 'components/auth/Permissions';
+import Activation from 'components/auth/Activation';
+import Password from 'components/auth/Password';
 
 export default (
   <Route path="/" component={RootPage}>
     <IndexRoute component={IndexPage} />
-    <Route path="/signin" component={SignInPage} />
+
+    <Route path="auth" component={AuthPage}>
+        <Route path="/login" component={Login} />
+        <Route path="/password" component={Password} />
+        <Route path="/register" component={Register} />
+        <Route path="/activation" component={Activation} />
+        <Route path="/oauth/permissions" component={Permissions} />
+        <Route path="/oauth/:id" component={Permissions} />
+    </Route>
   </Route>
 );
