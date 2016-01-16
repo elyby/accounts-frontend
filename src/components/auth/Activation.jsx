@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
+import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
 import { Panel, PanelBody, PanelFooter } from 'components/ui/Panel';
@@ -15,6 +16,8 @@ export default class Activation extends Component {
     render() {
         return (
             <div className={styles.signIn}>
+                <Helmet title="Activation" />
+
                 <Panel icon="arrowLeft" title={<Message {...messages.accountActivationTitle} />}>
                     <PanelBody>
                         <div className={styles.description}>

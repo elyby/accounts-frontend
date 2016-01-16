@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
+import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
@@ -16,6 +17,8 @@ export default class Login extends Component {
     render() {
         return (
             <div className={styles.signIn}>
+                <Helmet title="Login" />
+
                 <Panel title={<Message {...messages.signInTitle} />}>
                     <PanelBody>
                         <Input icon="envelope" type="email" placeholder="E-mail or username" />
