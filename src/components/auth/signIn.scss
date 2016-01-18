@@ -67,31 +67,16 @@
 }
 
 .activationCodeInput {
-    composes: blueTextField from './../ui/form.scss';
+    composes: blueTextField from 'components/ui/form.scss';
 
     text-align: center;
 }
 
 // app permissions
-$authBodyLeftRightPadding: 32px;
-$authBodyTopBottomPadding: 30px;
-
-.authBody {
-    composes: body from 'components/ui/panel.scss';
-
-    padding: $authBodyTopBottomPadding $authBodyLeftRightPadding;
-    text-align: left;
-}
-
-.authBodyHeader {
-    composes: defaultBodyHeader from 'components/ui/panel.scss';
-
-    // Отступы сверху и снизу разные т.к. мы ужимаем высоту линии строки с логином на 2 пикселя и из-за этого теряем отступ снизу
-    padding: 15px $authBodyLeftRightPadding 17px;
-    margin: (-$authBodyTopBottomPadding) (-$authBodyLeftRightPadding) $authBodyTopBottomPadding;
-}
-
 .authInfo {
+    // Отступы сверху и снизу разные т.к. мы ужимаем высоту линии строки с логином на 2 пикселя и из-за этого теряем отступ снизу
+    padding: 5px 20px 7px;
+    text-align: left;
 }
 
 .authInfoAvatar {
@@ -123,7 +108,12 @@ $authBodyTopBottomPadding: 30px;
     color: #fff;
 }
 
-.disclaimer {
+.permissionsContainer {
+    padding: 15px 12px;
+    text-align: left;
+}
+
+.permissionsTitle {
     font-family: $font-family-title;
     font-size: 18px;
     color: #dd8650;

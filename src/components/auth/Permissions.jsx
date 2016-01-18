@@ -20,8 +20,8 @@ export default class Permissions extends Component {
                 <Helmet title="App premissions" />
 
                 <Panel title={<Message {...messages.permissionsTitle} />}>
-                    <PanelBody className={styles.authBody}>
-                        <PanelBodyHeader className={styles.authBodyHeader}>
+                    <PanelBody>
+                        <PanelBodyHeader>
                             <div className={styles.authInfo}>
                                 <div className={styles.authInfoAvatar}>
                                     {/*<img src="//lorempixel.com/g/90/90" />*/}
@@ -35,15 +35,17 @@ export default class Permissions extends Component {
                                 </div>
                             </div>
                         </PanelBodyHeader>
-                        <div className={styles.disclaimer}>
-                            <Message {...messages.theAppNeedsAccess} />
+                        <div className={styles.permissionsContainer}>
+                            <div className={styles.permissionsTitle}>
+                                <Message {...messages.theAppNeedsAccess} />
+                            </div>
+                            <ul className={styles.permissionsList}>
+                                <li>Authorization for Minecraft servers</li>
+                                <li>Manage your skins directory and additional rows for multiline</li>
+                                <li>Change the active skin</li>
+                                <li>View your E-mail address</li>
+                            </ul>
                         </div>
-                        <ul className={styles.permissionsList}>
-                            <li>Authorization for Minecraft servers</li>
-                            <li>Manage your skins directory and additional rows for multiline</li>
-                            <li>Change the active skin</li>
-                            <li>View your E-mail address</li>
-                        </ul>
                     </PanelBody>
                     <PanelFooter>
                         <button className={buttons.green}>
