@@ -11,9 +11,20 @@ import Permissions from 'components/auth/Permissions';
 import Activation from 'components/auth/Activation';
 import Password from 'components/auth/Password';
 
+function requireAuth(nextState, replace) {
+    // if (!auth.loggedIn()) {
+        replace({
+            pathname: '/login',
+            state: {
+                nextPathname: nextState.location.pathname
+            }
+        });
+    // }
+}
+
 export default (
   <Route path="/" component={RootPage}>
-    <IndexRoute component={IndexPage} />
+    <IndexRoute component={IndexPage} onEnter={requireAuth} />
 
     <Route path="auth" component={AuthPage}>
         <Route path="/login" component={Login} />

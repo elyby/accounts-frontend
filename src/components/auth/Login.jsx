@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { routeActions } from 'redux-simple-router';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -11,7 +13,7 @@ import { Input, Checkbox } from 'components/ui/Form';
 import styles from './signIn.scss';
 import messages from './SignIn.messages';
 
-export default class Login extends Component {
+class Login extends Component {
     displayName = 'Login';
 
     render() {
@@ -24,7 +26,7 @@ export default class Login extends Component {
                         <Input icon="envelope" type="email" placeholder="E-mail or username" />
                     </PanelBody>
                     <PanelFooter>
-                        <button className={buttons.green}>
+                        <button className={buttons.green} onClick={this.onSubmit}>
                             <Message {...messages.next} />
                         </button>
                     </PanelFooter>
@@ -37,4 +39,15 @@ export default class Login extends Component {
             </div>
         );
     }
+
+    onSubmit = (event) => {
+        event.preventDefault();
+
+        this.props.push('/password');
+    };
 }
+
+
+export default connect(null, {
+    push: routeActions.push
+})(Login);

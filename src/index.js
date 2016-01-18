@@ -13,7 +13,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import thunk from 'redux-thunk';
 
 import { Router, browserHistory } from 'react-router';
-import { syncReduxAndRouter, routeReducer } from 'redux-simple-router';
+import { syncHistory, routeReducer } from 'redux-simple-router';
 
 import { IntlProvider } from 'react-intl';
 
@@ -27,19 +27,20 @@ const reducer = combineReducers({
     routing: routeReducer
 });
 
+const reduxRouterMiddleware = syncHistory(browserHistory);
+
 const store = applyMiddleware(
+    reduxRouterMiddleware,
     thunk
 )(createStore)(reducer);
 
-syncReduxAndRouter(browserHistory, store);
-
 ReactDOM.render(
-  <IntlProvider locale="en" messages={{}}>
-      <ReduxProvider store={store}>
-        <Router history={browserHistory}>
-            {routes}
-        </Router>
-      </ReduxProvider>
-  </IntlProvider>,
-  document.getElementById('app')
+    <IntlProvider locale="en" messages={{}}>
+        <ReduxProvider store={store}>
+            <Router history={browserHistory}>
+                {routes}
+            </Router>
+        </ReduxProvider>
+    </IntlProvider>,
+    document.getElementById('app')
 );

@@ -11,6 +11,7 @@ var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 /**
  * TODO: https://babeljs.io/docs/plugins/
  * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
+ * TODO: dev tools https://github.com/freeqaz/redux-simple-router-example/blob/master/index.jsx
  * https://github.com/glenjamin/ultimate-hot-reloading-example ( обратить внимание на плагины babel )
  * https://github.com/gajus/react-css-modules ( + BrowserSync)
  *

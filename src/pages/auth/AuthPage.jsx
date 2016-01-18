@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+import { TransitionMotion, spring } from 'react-motion';
 
 import AppInfo from 'components/auth/AppInfo';
 
 import styles from './auth.scss';
 
-export default class AuthPage extends Component {
+class AuthPage extends Component {
     displayName = 'AuthPage';
 
     render() {
@@ -13,15 +16,65 @@ export default class AuthPage extends Component {
             description: `Лучший альтернативный лаунчер для Minecraft с большим количеством версий и их модификаций, а также возмоностью входа как с лицензионным аккаунтом, так и без него.`
         };
 
+        var { path, children } = this.props;
+
         return (
             <div>
                 <div className={styles.sidebar}>
                     <AppInfo {...appInfo} />
                 </div>
                 <div className={styles.content}>
-                    {this.props.children}
+                    <TransitionMotion
+                        willEnter={this.willEnter}
+                        willLeave={this.willLeave}
+                        styles={{
+                            [path]: {
+                                children,
+                                x: spring(0)
+                            }
+                        }}
+                    >
+                        {(items) => (
+                            <div style={{position: 'relative', overflow: 'hidden', width: '100%', height: '600px'}}>
+                                {Object.keys(items).map((path) => {
+                                    const {children, x} = items[path];
+
+                                    const style = {
+                                        position: 'absolute',
+                                        top: 0,
+                                        width: '100%',
+                                        left: `${x}%`
+                                    };
+
+                                    return (
+                                        <div key={path} style={style}>
+                                            {children}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </TransitionMotion>
                 </div>
             </div>
         );
     }
+
+    willEnter(key, styles) {
+        return {
+            ...styles,
+            x: spring(100)
+        };
+    }
+
+    willLeave(key, styles) {
+        return {
+            ...styles,
+            x: spring(-100)
+        };
+    }
 }
+
+export default connect((state) => ({
+    path: state.routing.location.pathname
+}))(AuthPage);

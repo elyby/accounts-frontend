@@ -77,14 +77,14 @@ $authBodyLeftRightPadding: 32px;
 $authBodyTopBottomPadding: 30px;
 
 .authBody {
-    composes: body from './../ui/panel.scss';
+    composes: body from 'components/ui/panel.scss';
 
     padding: $authBodyTopBottomPadding $authBodyLeftRightPadding;
     text-align: left;
 }
 
 .authBodyHeader {
-    composes: defaultBodyHeader from './../ui/panel.scss';
+    composes: defaultBodyHeader from 'components/ui/panel.scss';
 
     // Отступы сверху и снизу разные т.к. мы ужимаем высоту линии строки с логином на 2 пикселя и из-за этого теряем отступ снизу
     padding: 15px $authBodyLeftRightPadding 17px;
