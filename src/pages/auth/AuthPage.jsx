@@ -7,6 +7,8 @@ import AppInfo from 'components/auth/AppInfo';
 
 import styles from './auth.scss';
 
+const springConfig = [200, 20];
+
 class AuthPage extends Component {
     displayName = 'AuthPage';
 
@@ -30,7 +32,7 @@ class AuthPage extends Component {
                         styles={{
                             [path]: {
                                 children,
-                                x: spring(0)
+                                x: spring(0, springConfig)
                             }
                         }}
                     >
@@ -63,14 +65,14 @@ class AuthPage extends Component {
     willEnter(key, styles) {
         return {
             ...styles,
-            x: spring(100)
+            x: spring(100, springConfig)
         };
     }
 
     willLeave(key, styles) {
         return {
             ...styles,
-            x: spring(-100)
+            x: spring(-100, springConfig)
         };
     }
 }
