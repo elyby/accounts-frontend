@@ -7,16 +7,19 @@ import buttons from 'components/ui/buttons.scss';
 import { Panel, PanelBody, PanelFooter } from 'components/ui/Panel';
 import { Input } from 'components/ui/Form';
 
-import styles from './signIn.scss';
-import messages from './SignIn.messages';
+import styles from './activation.scss';
+import {helpLinks as helpLinksStyles} from './helpLinks.scss';
+import messages from './Activation.messages';
 
 export default class Activation extends Component {
     displayName = 'Activation';
 
     render() {
         return (
-            <div className={styles.signIn}>
-                <Helmet title="Activation" />
+            <div>
+                <Message {...messages.accountActivationTitle}>
+                    {(msg) => <Helmet title={msg} />}
+                </Message>
 
                 <Panel icon="arrowLeft" title={<Message {...messages.accountActivationTitle} />}>
                     <PanelBody>
@@ -30,8 +33,7 @@ export default class Activation extends Component {
                             </div>
                         </div>
                         <div className={styles.formRow}>
-                            {/* TODO: E-mail i18n*/}
-                            <Input type="email" color="blue" className={styles.activationCodeInput} placeholder="Enter the code from E-mail here" />
+                            <Input color="blue" className={styles.activationCodeInput} placeholder={messages.enterTheCode} />
                         </div>
                     </PanelBody>
                     <PanelFooter>
@@ -40,7 +42,7 @@ export default class Activation extends Component {
                         </button>
                     </PanelFooter>
                 </Panel>
-                <div className={styles.helpLinks}>
+                <div className={helpLinksStyles}>
                     <a href="#">
                         <Message {...messages.didNotReceivedEmail} />
                     </a>

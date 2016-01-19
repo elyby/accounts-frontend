@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
 
 import classNames from 'classnames';
+import {injectIntl, intlShape} from 'react-intl';
 
 import icons from './icons.scss';
 import styles from './form.scss';
 
-export function Input(props) {
+function Input(props) {
     var { icon, color = 'green' } = props;
 
     props = {
         type: 'text',
         ...props
     };
+
+    if (props.placeholder && props.placeholder.id) {
+        props.placeholder = props.intl.formatMessage(props.placeholder);
+    }
 
     var baseClass = styles.formRow;
     if (icon) {
@@ -29,20 +34,27 @@ export function Input(props) {
     );
 }
 
-export class Checkbox extends Component {
-    displayName = 'Checkbox';
+Input.displayName = 'Input';
+Input.propTypes = {
+    intl: intlShape.isRequired
+};
 
-    render() {
-        var { label, color = 'green' } = this.props;
+const IntlInput = injectIntl(Input);
 
-        return (
-            <div className={styles[`${color}CheckboxRow`]}>
-                <label className={styles.checkboxContainer}>
-                    <input className={styles.checkboxInput} type="checkbox" />
-                    <div className={styles.checkbox} />
-                    {label}
-                </label>
-            </div>
-        );
-    }
+export {IntlInput as Input};
+
+export function Checkbox(props) {
+    var { label, color = 'green' } = props;
+
+    return (
+        <div className={styles[`${color}CheckboxRow`]}>
+            <label className={styles.checkboxContainer}>
+                <input className={styles.checkboxInput} type="checkbox" />
+                <div className={styles.checkbox} />
+                {label}
+            </label>
+        </div>
+    );
 }
+
+Checkbox.displayName = 'Checkbox';

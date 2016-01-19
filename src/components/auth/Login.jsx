@@ -6,24 +6,26 @@ import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
-import icons from 'components/ui/icons.scss';
-import { Panel, PanelBody, PanelFooter, PanelBodyHeader } from 'components/ui/Panel';
-import { Input, Checkbox } from 'components/ui/Form';
+import { Panel, PanelBody, PanelFooter } from 'components/ui/Panel';
+import { Input } from 'components/ui/Form';
 
-import styles from './signIn.scss';
-import messages from './SignIn.messages';
+import messages from './Login.messages';
+import {helpLinks as helpLinksStyles} from './helpLinks.scss';
+import passwordMessages from './Password.messages';
 
 class Login extends Component {
     displayName = 'Login';
 
     render() {
         return (
-            <div className={styles.signIn}>
-                <Helmet title="Login" />
+            <div>
+                <Message {...messages.signInTitle}>
+                    {(msg) => <Helmet title={msg} />}
+                </Message>
 
                 <Panel title={<Message {...messages.signInTitle} />}>
                     <PanelBody>
-                        <Input icon="envelope" type="email" placeholder="E-mail or username" />
+                        <Input icon="envelope" type="email" placeholder={messages.emailOrUsername} />
                     </PanelBody>
                     <PanelFooter>
                         <button className={buttons.green} onClick={this.onSubmit}>
@@ -31,9 +33,9 @@ class Login extends Component {
                         </button>
                     </PanelFooter>
                 </Panel>
-                <div className={styles.helpLinks}>
+                <div className={helpLinksStyles}>
                     <a href="#">
-                        <Message {...messages.forgotPassword} />
+                        <Message {...passwordMessages.forgotPassword} />
                     </a>
                 </div>
             </div>

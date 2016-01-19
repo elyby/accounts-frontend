@@ -6,18 +6,20 @@ import Helmet from 'react-helmet';
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
 import { Panel, PanelBody, PanelFooter, PanelBodyHeader } from 'components/ui/Panel';
-import { Input, Checkbox } from 'components/ui/Form';
 
-import styles from './signIn.scss';
-import messages from './SignIn.messages';
+import styles from './permissions.scss';
+import {helpLinks as helpLinksStyles} from './helpLinks.scss';
+import messages from './Permissions.messages';
 
 export default class Permissions extends Component {
     displayName = 'Permissions';
 
     render() {
         return (
-            <div className={styles.signIn}>
-                <Helmet title="App premissions" />
+            <div>
+                <Message {...messages.permissionsTitle}>
+                    {(msg) => <Helmet title={msg} />}
+                </Message>
 
                 <Panel title={<Message {...messages.permissionsTitle} />}>
                     <PanelBody>
@@ -53,7 +55,7 @@ export default class Permissions extends Component {
                         </button>
                     </PanelFooter>
                 </Panel>
-                <div className={styles.helpLinks}>
+                <div className={helpLinksStyles}>
                     <a href="#">
                         <Message {...messages.decline} />
                     </a>

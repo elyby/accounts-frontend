@@ -4,31 +4,29 @@ import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
-import icons from 'components/ui/icons.scss';
-import { Panel, PanelBody, PanelFooter, PanelBodyHeader } from 'components/ui/Panel';
+import { Panel, PanelBody, PanelFooter } from 'components/ui/Panel';
 import { Input, Checkbox } from 'components/ui/Form';
 
-import styles from './signIn.scss';
-import messages from './SignIn.messages';
+import {helpLinks as helpLinksStyles} from './helpLinks.scss';
+import messages from './Register.messages';
+import activationMessages from './Activation.messages';
 
 export default class Register extends Component {
     displayName = 'Register';
 
     render() {
         return (
-            <div className={styles.signIn}>
-                <Helmet title="Register" />
+            <div>
+                <Message {...messages.signUpTitle}>
+                    {(msg) => <Helmet title={msg} />}
+                </Message>
 
                 <Panel title={<Message {...messages.signUpTitle} />}>
                     <PanelBody>
-                        {/* TODO: E-mail i18n*/}
-                        <Input icon="user" color="blue" type="text" placeholder="Your nickname" />
-                        {/* TODO: E-mail i18n*/}
-                        <Input icon="envelope" color="blue" type="email" placeholder="Your E-mail" />
-                        {/* TODO: Account password i18n*/}
-                        <Input icon="key" color="blue" type="password" placeholder="Account password" />
-                        {/* TODO: Account password i18n*/}
-                        <Input icon="key" color="blue" type="password" placeholder="Repeat password" />
+                        <Input icon="user" color="blue" type="text" placeholder={messages.yourNickname} />
+                        <Input icon="envelope" color="blue" type="email" placeholder={messages.yourEmail} />
+                        <Input icon="key" color="blue" type="password" placeholder={messages.accountPassword} />
+                        <Input icon="key" color="blue" type="password" placeholder={messages.repeatPassword} />
 
                         <Checkbox color="blue" label={
                             <Message {...messages.acceptRules} values={{
@@ -46,9 +44,9 @@ export default class Register extends Component {
                         </button>
                     </PanelFooter>
                 </Panel>
-                <div className={styles.helpLinks}>
+                <div className={helpLinksStyles}>
                     <a href="#">
-                        <Message {...messages.didNotReceivedEmail} />
+                        <Message {...activationMessages.didNotReceivedEmail} />
                     </a>
                 </div>
             </div>

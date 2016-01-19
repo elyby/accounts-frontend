@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
+import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
 import { Panel, PanelBody, PanelFooter, PanelBodyHeader } from 'components/ui/Panel';
 import { Input, Checkbox } from 'components/ui/Form';
 
-import styles from './signIn.scss';
-import messages from './SignIn.messages';
+import styles from './password.scss';
+import {helpLinks as helpLinksStyles} from './helpLinks.scss';
+import messages from './Password.messages';
 
 export default class Password extends Component {
     displayName = 'Password';
 
     render() {
         return (
-            <div className={styles.signIn}>
-                <Panel icon="arrowLeft" title={<Message {...messages.enterPassword} />}>
+            <div>
+                <Message {...messages.passwordTitle}>
+                    {(msg) => <Helmet title={msg} />}
+                </Message>
+
+                <Panel icon="arrowLeft" title={<Message {...messages.passwordTitle} />}>
                     <PanelBody>
                         <PanelBodyHeader type="error">
                             <Message {...messages.invalidPassword} />
@@ -39,7 +45,7 @@ export default class Password extends Component {
                                 erickskrauch@yandex.ru
                             </div>
                         </div>
-                        <Input icon="key" type="password" placeholder="Account password" />
+                        <Input icon="key" type="password" placeholder={messages.accountPassword} />
 
                         <Checkbox label={<Message {...messages.rememberMe} />} />
                     </PanelBody>
@@ -49,7 +55,7 @@ export default class Password extends Component {
                         </button>
                     </PanelFooter>
                 </Panel>
-                <div className={styles.helpLinks}>
+                <div className={helpLinksStyles}>
                     <a href="#">
                         <Message {...messages.forgotPassword} />
                     </a>

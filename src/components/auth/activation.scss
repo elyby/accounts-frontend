@@ -1,0 +1,24 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+.description {
+}
+
+.descriptionImage {
+    composes: envelope from 'components/ui/icons.scss';
+
+    font-size: 100px;
+    color: $blue;
+}
+
+.descriptionText {
+    font-family: $font-family-title;
+    margin: 5px 0 19px;
+    line-height: 1.4;
+}
+
+.activationCodeInput {
+    composes: blueTextField from 'components/ui/form.scss';
+
+    text-align: center;
+}
