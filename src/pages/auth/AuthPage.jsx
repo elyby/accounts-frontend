@@ -44,8 +44,9 @@ class AuthPage extends Component {
                                     const style = {
                                         position: 'absolute',
                                         top: 0,
+                                        left: 0,
                                         width: '100%',
-                                        left: `${x}%`
+                                        transform: `translateX(${x}%)`
                                     };
 
                                     return (
