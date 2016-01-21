@@ -1,8 +1,8 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-    signUpTitle: {
-        id: 'signUpTitle',
+    registerTitle: {
+        id: 'registerTitle',
         defaultMessage: 'Sign Up'
     },
 

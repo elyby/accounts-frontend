@@ -19,11 +19,11 @@ class Login extends Component {
     render() {
         return (
             <div>
-                <Message {...messages.signInTitle}>
+                <Message {...messages.loginTitle}>
                     {(msg) => <Helmet title={msg} />}
                 </Message>
 
-                <Panel title={<Message {...messages.signInTitle} />}>
+                <Panel title={<Message {...messages.loginTitle} />}>
                     <PanelBody>
                         <Input icon="envelope" type="email" placeholder={messages.emailOrUsername} />
                     </PanelBody>

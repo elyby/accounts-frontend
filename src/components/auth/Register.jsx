@@ -17,11 +17,11 @@ export default class Register extends Component {
     render() {
         return (
             <div>
-                <Message {...messages.signUpTitle}>
+                <Message {...messages.registerTitle}>
                     {(msg) => <Helmet title={msg} />}
                 </Message>
 
-                <Panel title={<Message {...messages.signUpTitle} />}>
+                <Panel title={<Message {...messages.registerTitle} />}>
                     <PanelBody>
                         <Input icon="user" color="blue" type="text" placeholder={messages.yourNickname} />
                         <Input icon="envelope" color="blue" type="email" placeholder={messages.yourEmail} />
