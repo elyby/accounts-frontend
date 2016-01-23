@@ -94,11 +94,13 @@ import regMessages from 'components/auth/Register.messages';
 import {helpLinks as helpLinksStyles} from 'components/auth/helpLinks.scss';
 import passwordMessages from 'components/auth/Password.messages';
 
-const opacitySpringConfig = [60, 15];
-const heightSpringConfig = springConfig;
-const transformSpringConfig = [400, 15];
+const opacitySpringConfig = [200, 20];
+const heightSpringConfig = [200, 18];
+const transformSpringConfig = [500, 20];
 const firstPageHeight = 70;
 const secondPageHeight = 280;
+
+// TODO: сделать более быстрый фейд на горизонтальном скролле
 
 class TheDemo extends Component {
     state = {
@@ -137,11 +139,12 @@ class TheDemo extends Component {
                                         {keys.map((key) => this.getHeader(key, items[key]))}
                                     </div>
                                 </PanelHeader>
-                                <PanelBody>
+                                <PanelBody style={{
+                                    overflow: 'hidden'
+                                }}>
                                     <div style={{
                                         position: 'relative',
-                                        height: `${items.common.heightSpring}px`,
-                                        overflow: 'hidden'
+                                        height: `${items.common.heightSpring}px`
                                     }}>
                                         {keys.map((key) => this.getBody(key, items[key]))}
                                     </div>
@@ -194,6 +197,7 @@ class TheDemo extends Component {
             top: 0,
             left: 0,
             width: '100%',
+            WebkitTransform: `translateX(${transformSpring}%)`,
             transform: `translateX(${transformSpring}%)`,
             opacity: opacitySpring
         };
@@ -255,12 +259,14 @@ class TheDemo extends Component {
         };
 
         var scrollStyle = {
+            WebkitTransform: `translateY(${transformSpring}%)`,
             transform: `translateY(${transformSpring}%)`
         };
 
         var sideScrollStyle = {
             position: 'relative',
             zIndex: 2,
+            WebkitTransform: `translateX(${-Math.abs(transformSpring)}%)`,
             transform: `translateX(${-Math.abs(transformSpring)}%)`
         };
 
