@@ -82,6 +82,7 @@ class AuthPage extends Component {
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
+import ReactHeight from 'react-height';
 
 import panelStyles from 'components/ui/panel.scss';
 import buttons from 'components/ui/buttons.scss';
@@ -97,29 +98,30 @@ import passwordMessages from 'components/auth/Password.messages';
 const opacitySpringConfig = [200, 20];
 const heightSpringConfig = [200, 18];
 const transformSpringConfig = [500, 20];
-const firstPageHeight = 70;
-const secondPageHeight = 280;
 
 // TODO: сделать более быстрый фейд на горизонтальном скролле
 
 class TheDemo extends Component {
     state = {
-        isFirstPage: true
+        isFirstPage: true,
+        height: {}
     };
 
     render() {
         var {isFirstPage} = this.state;
 
+        var path = `page${isFirstPage ? '1' : '2'}`;
+
         return (
             <TransitionMotion
                 styles={{
-                    [`page${isFirstPage ? '1' : '2'}`]: {
+                    [path]: {
                         isFirstPage,
                         transformSpring: spring(0),
                         opacitySpring: spring(1)
                     },
                     common: {
-                        heightSpring: spring(this.state.isFirstPage ? firstPageHeight : secondPageHeight, heightSpringConfig)
+                        heightSpring: spring(this.state.height[path] || 0, heightSpringConfig)
                     }
                 }}
                 willEnter={this.willEnter}
@@ -128,7 +130,7 @@ class TheDemo extends Component {
                 {(items) => {
                     var keys = Object.keys(items).filter((key) => key !== 'common');
                     return (
-                        <div style={{height: '500px'}}>
+                        <div>
                             <Panel>
                                 <PanelHeader>
                                     <div style={{
@@ -203,11 +205,11 @@ class TheDemo extends Component {
         };
 
         return (isFirstPage ? (
-            <div key={`body${key}`} style={style}>
+            <ReactHeight key={`body${key}`} style={style} onHeightReady={this.updateHeight}>
                 <Input icon="envelope" type="email" placeholder={messages.emailOrUsername} />
-            </div>
+            </ReactHeight>
         ) : (
-            <div key={`body${key}`} style={style}>
+            <ReactHeight key={`body${key}`} style={style} onHeightReady={this.updateHeight}>
                 <Input icon="user" color="blue" type="text" placeholder={regMessages.yourNickname} />
                 <Input icon="envelope" color="blue" type="email" placeholder={regMessages.yourEmail} />
                 <Input icon="key" color="blue" type="password" placeholder={regMessages.accountPassword} />
@@ -222,9 +224,18 @@ class TheDemo extends Component {
                         )
                     }} />
                 } />
-            </div>
+            </ReactHeight>
         ));
     }
+
+    updateHeight = (height) => {
+        this.setState({
+            height: {
+                ...this.state.height,
+                [`page${this.state.isFirstPage ? '1' : '2'}`]: height
+            }
+        });
+    };
 
     getFooter(key, props) {
         var {isFirstPage, opacitySpring} = props;
