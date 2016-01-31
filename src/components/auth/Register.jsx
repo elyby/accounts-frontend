@@ -11,7 +11,49 @@ import {helpLinks as helpLinksStyles} from './helpLinks.scss';
 import messages from './Register.messages';
 import activationMessages from './Activation.messages';
 
-export default class Register extends Component {
+export default function Register() {
+    return {
+        Title: () => ( // TODO: separate component for PageTitle
+            <Message {...messages.registerTitle}>
+                {(msg) => <span>{msg}<Helmet title={msg} /></span>}
+            </Message>
+        ),
+        Body: () => (
+            <div>
+                <Input icon="user" color="blue" type="text" placeholder={messages.yourNickname} />
+                <Input icon="envelope" color="blue" type="email" placeholder={messages.yourEmail} />
+                <Input icon="key" color="blue" type="password" placeholder={messages.accountPassword} />
+                <Input icon="key" color="blue" type="password" placeholder={messages.repeatPassword} />
+
+                <Checkbox color="blue" label={
+                    <Message {...messages.acceptRules} values={{
+                        link: (
+                            <a href="#">
+                                <Message {...messages.termsOfService} />
+                            </a>
+                        )
+                    }} />
+                } />
+            </div>
+        ),
+        Footer: (props) => (
+            <button className={buttons.blue} onClick={(event) => {
+                event.preventDefault();
+
+                props.history.push('/activation');
+            }}>
+                <Message {...messages.signUpButton} />
+            </button>
+        ),
+        Links: () => (
+            <a href="#">
+                <Message {...activationMessages.didNotReceivedEmail} />
+            </a>
+        )
+    };
+}
+
+export class _Register extends Component {
     displayName = 'Register';
 
     render() {

@@ -65,6 +65,10 @@ $bodyTopBottomPadding: 15px;
     > * {
         flex-grow: 1;
     }
+
+    button { // TODO: добавленно временно, пока не устаканится лейаут панелек
+        width: 100%;
+    }
 }
 
 .bodyHeader {

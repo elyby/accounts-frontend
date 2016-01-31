@@ -24,10 +24,5 @@ export default defineMessages({
     enterTheCode: {
         id: 'enterTheCode',
         defaultMessage: 'Enter the code from E-mail here'
-    },
-
-    didNotReceivedEmail: {
-        id: 'didNotReceivedEmail',
-        defaultMessage: 'Did not received E-mail?'
     }
 });

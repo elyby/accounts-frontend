@@ -27,11 +27,11 @@ export default (
     <IndexRoute component={IndexPage} onEnter={requireAuth} />
 
     <Route path="auth" component={AuthPage}>
-        <Route path="/login" component={Login} />
-        <Route path="/password" component={Password} />
-        <Route path="/register" component={Register} />
-        <Route path="/activation" component={Activation} />
-        <Route path="/oauth/permissions" component={Permissions} />
+        <Route path="/login" components={new Login()} />
+        <Route path="/password" components={new Password()} />
+        <Route path="/register" components={new Register()} />
+        <Route path="/activation" components={new Activation()} />
+        <Route path="/oauth/permissions" components={new Permissions()} />
         <Route path="/oauth/:id" component={Permissions} />
     </Route>
   </Route>

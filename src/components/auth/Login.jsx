@@ -13,7 +13,40 @@ import messages from './Login.messages';
 import {helpLinks as helpLinksStyles} from './helpLinks.scss';
 import passwordMessages from './Password.messages';
 
-class Login extends Component {
+export default function Login() {
+    var context = {
+        onSubmit(event) {
+            event.preventDefault();
+
+            this.props.push('/password');
+        }
+    };
+
+    return {
+        Title: () => ( // TODO: separate component for PageTitle
+            <Message {...messages.loginTitle}>
+                {(msg) => <span>{msg}<Helmet title={msg} /></span>}
+            </Message>
+        ),
+        Body: () => <Input icon="envelope" type="email" placeholder={messages.emailOrUsername} />,
+        Footer: (props) => (
+            <button className={buttons.green} onClick={(event) => {
+                event.preventDefault();
+
+                props.history.push('/password');
+            }}>
+                <Message {...messages.next} />
+            </button>
+        ),
+        Links: () => (
+            <a href="#">
+                <Message {...passwordMessages.forgotPassword} />
+            </a>
+        )
+    };
+}
+
+class _Login extends Component {
     displayName = 'Login';
 
     render() {
@@ -50,6 +83,6 @@ class Login extends Component {
 }
 
 
-export default connect(null, {
-    push: routeActions.push
-})(Login);
+// export connect(null, {
+//     push: routeActions.push
+// })(Login);

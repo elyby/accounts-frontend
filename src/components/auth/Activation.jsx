@@ -11,7 +11,51 @@ import styles from './activation.scss';
 import {helpLinks as helpLinksStyles} from './helpLinks.scss';
 import messages from './Activation.messages';
 
-export default class Activation extends Component {
+export default function Activation() {
+    var Title = () => ( // TODO: separate component for PageTitle
+        <Message {...messages.accountActivationTitle}>
+            {(msg) => <span>{msg}<Helmet title={msg} /></span>}
+        </Message>
+    );
+    Title.goBack = '/register';
+
+    return {
+        Title,
+        Body: () => (
+            <div>
+                <div className={styles.description}>
+                    <div className={styles.descriptionImage} />
+
+                    <div className={styles.descriptionText}>
+                        <Message {...messages.activationMailWasSent} values={{
+                            email: (<b>erickskrauch@yandex.ru</b>)
+                        }} />
+                    </div>
+                </div>
+                <div className={styles.formRow}>
+                    <Input color="blue" className={styles.activationCodeInput} placeholder={messages.enterTheCode} />
+                </div>
+            </div>
+        ),
+        Footer: (props) => (
+            <button className={buttons.blue} onClick={(event) => {
+                event.preventDefault();
+
+                props.history.push('/oauth/permissions');
+            }}>
+                <Message {...messages.confirmEmail} />
+            </button>
+        ),
+        Links: () => (
+            <a href="#">
+                <Message {...messages.didNotReceivedEmail} />
+            </a>
+        )
+    };
+}
+
+
+export class _Activation extends Component {
     displayName = 'Activation';
 
     render() {

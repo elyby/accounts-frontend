@@ -15,6 +15,9 @@ export default class Userbar extends Component {
                 <Link to="/register" className={buttons.blue}>
                     <Message {...messages.register} />
                 </Link>
+                <Link to="/oauth/permissions" className={buttons.blue}>
+                    Test oAuth
+                </Link>
             </div>
         );
     }

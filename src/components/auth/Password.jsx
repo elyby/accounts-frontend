@@ -12,7 +12,62 @@ import styles from './password.scss';
 import {helpLinks as helpLinksStyles} from './helpLinks.scss';
 import messages from './Password.messages';
 
-export default class Password extends Component {
+export default function Password() {
+    var Title = () => ( // TODO: separate component for PageTitle
+        <Message {...messages.passwordTitle}>
+            {(msg) => <span>{msg}<Helmet title={msg} /></span>}
+        </Message>
+    );
+    Title.goBack = '/login';
+
+    return {
+        Title,
+        Body: () => (
+            <div>
+                <PanelBodyHeader type="error">
+                    <Message {...messages.invalidPassword} />
+                    <br/>
+                    <Message {...messages.suggestResetPassword} values={{
+                        link: (
+                            <a href="#">
+                                <Message {...messages.forgotYourPassword} />
+                            </a>
+                        )
+                    }} />
+                </PanelBodyHeader>
+                <div className={styles.miniProfile}>
+                    <div className={styles.avatar}>
+                        {/*<img src="//lorempixel.com/g/90/90" />*/}
+                        <span className={icons.user} />
+                    </div>
+                    <div className={styles.email}>
+                        {/* На деле тут может быть и ник, в зависимости от того, что введут в 1 вьюху */}
+                        erickskrauch@yandex.ru
+                    </div>
+                </div>
+                <Input icon="key" type="password" placeholder={messages.accountPassword} />
+
+                <Checkbox label={<Message {...messages.rememberMe} />} />
+            </div>
+        ),
+        Footer: (props) => (
+            <button className={buttons.green} onClick={(event) => {
+                event.preventDefault();
+
+                props.history.push('/oauth/permissions');
+            }}>
+                <Message {...messages.signInButton} />
+            </button>
+        ),
+        Links: () => (
+            <a href="#">
+                <Message {...messages.forgotPassword} />
+            </a>
+        )
+    };
+}
+
+export class _Password extends Component {
     displayName = 'Password';
 
     render() {
