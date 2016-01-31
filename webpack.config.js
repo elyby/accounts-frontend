@@ -28,6 +28,8 @@ var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
 
+process.env.NODE_ENV = JSON.stringify(isProduction ? 'production' : 'development');
+
 const API_HOST = 'http://account.l';
 const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
 
@@ -77,9 +79,7 @@ var webpackConfig = {
     plugins: [
         new iconfontImporter.Plugin(),
         new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify(isProduction ? 'production' : 'development')
-            },
+            'process.env.NODE_ENV': process.env.NODE_ENV,
             __DEV__: !isProduction,
             __TEST__: isTest,
             __PROD__: isProduction
@@ -111,16 +111,7 @@ var webpackConfig = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel',
-                query: {
-                    presets: ['react', 'es2015', 'stage-0'],
-                    plugins: ['transform-runtime', ['react-intl', {messagesDir: './dist/messages/'}]],
-                    env: {
-                        development: {
-                            presets: ['react-hmre']
-                        }
-                    }
-                }
+                loader: 'babel'
             }
         ]
     },
