@@ -37,16 +37,22 @@ var webpackConfig = {
     entry: {
         app: path.join(__dirname, 'src'),
         vendor: [
+            'babel-polyfill',
+            'classnames',
             'history',
+            'intl-format-cache',
+            'intl-messageformat',
             'react',
+            'react-dom',
+            'react-height',
+            'react-helmet',
+            'react-intl',
+            'react-motion',
             'react-redux',
             'react-router',
-            'redux-simple-router',
+            'react-router-redux',
             'redux',
-
-            // I18n
-            'intl-format-cache',
-            'intl-messageformat'
+            'redux-thunk'
         ]
     },
 

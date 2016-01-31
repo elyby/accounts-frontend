@@ -13,7 +13,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import thunk from 'redux-thunk';
 
 import { Router, browserHistory } from 'react-router';
-import { syncHistory, routeReducer } from 'redux-simple-router';
+import { syncHistory, routeReducer } from 'react-router-redux';
 
 import { IntlProvider } from 'react-intl';
 
