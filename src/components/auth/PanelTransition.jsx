@@ -22,8 +22,14 @@ export default class PanelTransition extends Component {
 
     componentWillReceiveProps() {
         this.setState({
+            forceHeight: window.forceHeight,
             previousRoute: this.props.location
         });
+
+        setTimeout(() => {
+            this.setState({forceHeight: 0});
+            window.forceHeight = 0;
+        }, 100);
     }
 
     render() {
@@ -44,7 +50,7 @@ export default class PanelTransition extends Component {
                         opacitySpring: spring(1)
                     },
                     common: {
-                        heightSpring: spring(height[path] || 0, heightSpringConfig)
+                        heightSpring: spring(this.state.forceHeight || height[path] || 0, heightSpringConfig)
                     }
                 }}
                 willEnter={this.willEnter}
@@ -100,7 +106,7 @@ export default class PanelTransition extends Component {
             '/register': -1,
             '/password': 1,
             '/activation': 1,
-            '/oauth/permissions': 1
+            '/oauth/permissions': -1
         };
         var sign = map[key];
 
@@ -117,7 +123,7 @@ export default class PanelTransition extends Component {
             '/register': -1,
             '/password': 1,
             '/activation': 1,
-            '/oauth/permissions': 1
+            '/oauth/permissions': -1
         };
         var sign = map[key];
 
@@ -201,16 +207,20 @@ export default class PanelTransition extends Component {
 
         var direction = map[key];
 
+        var verticalOrigin = 'top';
         if (direction === 'Y') {
             transformSpring = Math.abs(transformSpring);
             if (prev === key) {
                 transformSpring *= -1;
             }
+
+            verticalOrigin = 'bottom';
+            window.forceHeight = 1;
         }
 
         var style = {
             position: 'absolute',
-            top: 0,
+            [verticalOrigin]: 0,
             left: 0,
             width: '100%',
             WebkitTransform: `translate${direction}(${transformSpring}%)`,
