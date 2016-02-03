@@ -20,16 +20,25 @@ export default class PanelTransition extends Component {
         height: {}
     };
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(nextProps) {
+        var previousRoute = this.props.location;
+
+        var next = nextProps.path;
+        var prev = previousRoute && previousRoute.pathname;
+
+        var direction = this.getDirection(next, next, prev);
+        var forceHeight = direction === 'Y' ? 1 : 0;
+
         this.setState({
-            forceHeight: window.forceHeight,
+            forceHeight: forceHeight,
             previousRoute: this.props.location
         });
 
-        setTimeout(() => {
-            this.setState({forceHeight: 0});
-            window.forceHeight = 0;
-        }, 100);
+        if (forceHeight) {
+            setTimeout(() => {
+                this.setState({forceHeight: 0});
+            }, 100);
+        }
     }
 
     render() {
@@ -46,11 +55,11 @@ export default class PanelTransition extends Component {
                         Footer,
                         Links,
                         hasBackButton: previousRoute && previousRoute.pathname === Title.type.goBack,
-                        transformSpring: spring(0),
-                        opacitySpring: spring(1)
+                        transformSpring: spring(0, transformSpringConfig),
+                        opacitySpring: spring(1, opacitySpringConfig)
                     },
                     common: {
-                        heightSpring: spring(this.state.forceHeight || height[path] || 0, heightSpringConfig)
+                        heightSpring: spring(this.state.forceHeight || height[path] || 0, transformSpringConfig)
                     }
                 }}
                 willEnter={this.willEnter}
@@ -189,33 +198,21 @@ export default class PanelTransition extends Component {
 
     getBody(key, props) {
         var {transformSpring, opacitySpring, Body} = props;
-
         var {previousRoute} = this.state;
 
         var next = this.props.path;
         var prev = previousRoute && previousRoute.pathname;
 
-        var not = (path) => prev !== path && next !== path;
-
-        var map = {
-            '/login': not('/password') ? 'Y' : 'X',
-            '/password': not('/login') ? 'Y' : 'X',
-            '/register': not('/activation') ? 'Y' : 'X',
-            '/activation': not('/register') ? 'Y' : 'X',
-            '/oauth/permissions': 'Y'
-        };
-
-        var direction = map[key];
+        var direction = this.getDirection(key, next, prev);
 
         var verticalOrigin = 'top';
-        if (direction === 'Y') {
+        if (direction === 'Y') { // TODO: do not activate animation when nothing was unmounted
             transformSpring = Math.abs(transformSpring);
             if (prev === key) {
                 transformSpring *= -1;
             }
 
             verticalOrigin = 'bottom';
-            window.forceHeight = 1;
         }
 
         var style = {
@@ -233,6 +230,20 @@ export default class PanelTransition extends Component {
                 {Body}
             </ReactHeight>
         );
+    }
+
+    getDirection(key, next, prev) {
+        var not = (path) => prev !== path && next !== path;
+
+        var map = {
+            '/login': not('/password') ? 'Y' : 'X',
+            '/password': not('/login') ? 'Y' : 'X',
+            '/register': not('/activation') ? 'Y' : 'X',
+            '/activation': not('/register') ? 'Y' : 'X',
+            '/oauth/permissions': 'Y'
+        };
+
+        return map[key];
     }
 
     getFooter(key, props) {
