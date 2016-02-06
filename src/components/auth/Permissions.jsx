@@ -36,7 +36,8 @@ export default function Permissions() {
                 </PanelBodyHeader>
                 <div className={styles.permissionsContainer}>
                     <div className={styles.permissionsTitle}>
-                        <Message {...messages.theAppNeedsAccess} />
+                        <Message {...messages.theAppNeedsAccess1} /><br />
+                        <Message {...messages.theAppNeedsAccess2} />
                     </div>
                     <ul className={styles.permissionsList}>
                         <li>Authorization for Minecraft servers</li>

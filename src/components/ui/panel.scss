@@ -11,6 +11,8 @@ $headerHeight: 60px;
     box-sizing: border-box;
     height: $headerHeight;
     border-bottom: 1px solid lighter($black);
+    position: relative;
+    overflow: hidden;
 
     font-family: $font-family-title;
     text-align: center;
@@ -37,6 +39,7 @@ $bodyLeftRightPadding: 20px;
 $bodyTopBottomPadding: 15px;
 
 .body {
+    overflow: hidden;
     padding: $bodyTopBottomPadding $bodyLeftRightPadding;
     color: #ccc;
     font-size: 18px;
@@ -60,13 +63,11 @@ $bodyTopBottomPadding: 15px;
 }
 
 .footer {
-    display: flex;
+    position: relative;
+    overflow: hidden;
+    height: 50px;
 
-    > * {
-        flex-grow: 1;
-    }
-
-    button { // TODO: добавленно временно, пока не устаканится лейаут панелек
+    button {
         width: 100%;
     }
 }

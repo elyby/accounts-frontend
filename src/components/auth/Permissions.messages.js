@@ -11,10 +11,14 @@ export default defineMessages({
         defaultMessage: 'You authorized as:'
     },
 
-    theAppNeedsAccess: {
-        id: 'theAppNeedsAccess',
-        // Мне нельзя html? Получите неразрывный пробел! ˅˅˅˅˅˅˅˅˅˅˅
-        defaultMessage: 'This applications needs access              to your data'
+    theAppNeedsAccess1: {
+        id: 'theAppNeedsAccess1',
+        defaultMessage: 'This application needs access'
+    },
+
+    theAppNeedsAccess2: {
+        id: 'theAppNeedsAccess2',
+        defaultMessage: 'to your data'
     },
 
     decline: {

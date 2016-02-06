@@ -9,10 +9,9 @@ import panelStyles from 'components/ui/panel.scss';
 import icons from 'components/ui/icons.scss';
 
 
-const opacitySpringConfig = [200, 20];
+const opacitySpringConfig = [300, 20];
 const transformSpringConfig = [500, 50];
-
-// TODO: сделать более быстрый фейд на горизонтальном скролле
+const changeContextSpringConfig = [500, 20];
 
 export default class PanelTransition extends Component {
     state = {
@@ -31,8 +30,8 @@ export default class PanelTransition extends Component {
 
         this.setState({
             direction,
-            forceHeight: forceHeight,
-            previousRoute: this.props.location
+            forceHeight,
+            previousRoute
         });
 
         if (forceHeight) {
@@ -61,7 +60,7 @@ export default class PanelTransition extends Component {
                     },
                     common: {
                         heightSpring: spring(forceHeight || height[path] || 0, transformSpringConfig),
-                        switchContextHeightSpring: spring(forceHeight || contextHeight, [500, 20])
+                        switchContextHeightSpring: spring(forceHeight || contextHeight, changeContextSpringConfig)
                     }
                 }}
                 willEnter={this.willEnter}
@@ -69,46 +68,33 @@ export default class PanelTransition extends Component {
             >
                 {(items) => {
                     var keys = Object.keys(items).filter((key) => key !== 'common');
+
                     return (
                         <div>
                             <Panel>
                                 <PanelHeader>
-                                    <div style={{
-                                        position: 'relative',
-                                        height: '59px',
-                                        overflow: 'hidden'
-                                    }}>
-                                        {keys.map((key) => this.getHeader(key, items[key]))}
-                                    </div>
+                                    {keys.map((key) => this.getHeader(key, items[key]))}
                                 </PanelHeader>
                                 <div style={{
                                     overflow: 'hidden',
                                     height: forceHeight ? items.common.switchContextHeightSpring : 'auto'
                                 }}>
                                     <ReactHeight onHeightReady={this.updateContextHeight}>
-                                        <PanelBody style={{
-                                            overflow: 'hidden'
-                                        }}>
+                                        <PanelBody>
                                             <div style={{
                                                 position: 'relative',
-                                                height: previousRoute ? `${items.common.heightSpring}px` : `${height[path]}px`
+                                                height: `${previousRoute ? items.common.heightSpring : height[path]}px`
                                             }}>
                                                 {keys.map((key) => this.getBody(key, items[key]))}
                                             </div>
                                         </PanelBody>
                                         <PanelFooter>
-                                            <div style={{
-                                                position: 'relative',
-                                                height: '50px',
-                                                overflow: 'hidden'
-                                            }}>
-                                                {keys.map((key) => this.getFooter(key, items[key]))}
-                                            </div>
+                                            {keys.map((key) => this.getFooter(key, items[key]))}
                                         </PanelFooter>
                                     </ReactHeight>
                                 </div>
                             </Panel>
-                            <div className={helpLinksStyles} style={{position: 'relative', height: '20px'}}>
+                            <div className={helpLinksStyles}>
                                 {keys.map((key) => this.getLinks(key, items[key]))}
                             </div>
                         </div>
@@ -119,23 +105,24 @@ export default class PanelTransition extends Component {
     }
 
     willEnter = (key, styles) => {
-        var map = {
-            '/login': -1,
-            '/register': -1,
-            '/password': 1,
-            '/activation': 1,
-            '/oauth/permissions': -1
-        };
-        var sign = map[key];
-
-        return {
-            ...styles,
-            transformSpring: spring(sign * 100, transformSpringConfig),
-            opacitySpring: spring(1, opacitySpringConfig)
-        };
+        return this.getTransitionStyles(key, styles);
     };
 
     willLeave = (key, styles) => {
+        return this.getTransitionStyles(key, styles, {isLeave: true});
+    };
+
+    /**
+     * @param  {string} key
+     * @param  {Object} styles
+     * @param  {Object} [options]
+     * @param  {Object} [options.isLeave=false] - true, if this is a leave transition
+     *
+     * @return {Object}
+     */
+    getTransitionStyles(key, styles, options = {}) {
+        var {isLeave = false} = options;
+
         var map = {
             '/login': -1,
             '/register': -1,
@@ -147,10 +134,11 @@ export default class PanelTransition extends Component {
 
         return {
             ...styles,
+            pointerEvents: isLeave ? 'none' : 'auto',
             transformSpring: spring(sign * 100, transformSpringConfig),
-            opacitySpring: spring(0, opacitySpringConfig)
+            opacitySpring: spring(isLeave ? 0 : 1, opacitySpringConfig)
         };
-    };
+    }
 
     updateHeight = (height) => {
         this.setState({
@@ -191,22 +179,16 @@ export default class PanelTransition extends Component {
         var {hasBackButton, transformSpring, Title} = props;
 
         var style = {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%'
+            ...this.getDefaultTransitionStyles(props),
+            opacity: 1 // reset default
         };
 
-        var scrollStyle = {
-            WebkitTransform: `translateY(${transformSpring}%)`,
-            transform: `translateY(${transformSpring}%)`
-        };
+        var scrollStyle = this.translate(transformSpring, 'Y');
 
         var sideScrollStyle = {
             position: 'relative',
             zIndex: 2,
-            WebkitTransform: `translateX(${-Math.abs(transformSpring)}%)`,
-            transform: `translateX(${-Math.abs(transformSpring)}%)`
+            ...this.translate(-Math.abs(transformSpring))
         };
 
         var backButton = (
@@ -226,13 +208,10 @@ export default class PanelTransition extends Component {
     }
 
     getBody(key, props) {
-        var {transformSpring, opacitySpring, Body} = props;
+        var {transformSpring, Body} = props;
         var {direction} = this.state;
 
-        var transform = {
-            WebkitTransform: `translate${direction}(${transformSpring}%)`,
-            transform: `translate${direction}(${transformSpring}%)`
-        };
+        var transform = this.translate(transformSpring, direction);
 
 
         var verticalOrigin = 'top';
@@ -242,11 +221,9 @@ export default class PanelTransition extends Component {
         }
 
         var style = {
-            position: 'absolute',
+            ...this.getDefaultTransitionStyles(props),
+            top: 'auto', // reset default
             [verticalOrigin]: 0,
-            left: 0,
-            width: '100%',
-            opacity: opacitySpring,
             ...transform
         };
 
@@ -258,15 +235,9 @@ export default class PanelTransition extends Component {
     }
 
     getFooter(key, props) {
-        var {opacitySpring, Footer} = props;
+        var {Footer} = props;
 
-        var style = {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            opacity: opacitySpring
-        };
+        var style = this.getDefaultTransitionStyles(props);
 
         return (
             <div key={`footer${key}`} style={style}>
@@ -276,21 +247,49 @@ export default class PanelTransition extends Component {
     }
 
     getLinks(key, props) {
-        var {opacitySpring, Links} = props;
+        var {Links} = props;
 
-        var style = {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            opacity: opacitySpring
-        };
+        var style = this.getDefaultTransitionStyles(props);
 
         return (
             <div key={`links${key}`} style={style}>
                 {Links}
             </div>
         );
+    }
+
+    /**
+     * @param  {Object} props
+     * @param  {string} props.pointerEvents
+     * @param  {number} props.opacitySpring
+     *
+     * @return {Object}
+     */
+    getDefaultTransitionStyles(props) {
+        var {pointerEvents, opacitySpring} = props;
+
+        return {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            opacity: opacitySpring,
+            pointerEvents
+        };
+    }
+
+    /**
+     * @param  {number} value
+     * @param  {string} direction='X' - X|Y
+     * @param  {string} unit='%' - %|px etc
+     *
+     * @return {Object}
+     */
+    translate(value, direction = 'X', unit = '%') {
+        return {
+            WebkitTransform: `translate${direction}(${value}${unit})`,
+            transform: `translate${direction}(${value}${unit})`
+        };
     }
 }
 
