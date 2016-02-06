@@ -7,9 +7,15 @@ import PanelTransition from 'components/auth/PanelTransition';
 import styles from './auth.scss';
 
 class AuthPage extends Component {
-    displayName = 'AuthPage';
+    static displayName = 'AuthPage';
+
+    state = {
+        isSidebarHidden: false
+    };
 
     render() {
+        var {isSidebarHidden} = this.state;
+
         var appInfo = {
             name: 'TLauncher',
             description: `Лучший альтернативный лаунчер для Minecraft с большим количеством версий и их модификаций, а также возмоностью входа как с лицензионным аккаунтом, так и без него.`
@@ -17,8 +23,8 @@ class AuthPage extends Component {
 
         return (
             <div>
-                <div className={styles.sidebar}>
-                    <AppInfo {...appInfo} />
+                <div className={isSidebarHidden ? styles.hiddenSidebar : styles.sidebar}>
+                    <AppInfo {...appInfo} onGoToAuth={this.onGoToAuth} />
                 </div>
                 <div className={styles.content}>
                     <PanelTransition {...this.props} />
@@ -26,6 +32,12 @@ class AuthPage extends Component {
             </div>
         );
     }
+
+    onGoToAuth = () => {
+        this.setState({
+            isSidebarHidden: true
+        });
+    };
 }
 
 export default connect((state) => ({

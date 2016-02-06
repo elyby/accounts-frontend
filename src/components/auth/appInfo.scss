@@ -2,6 +2,8 @@
 @import '~components/ui/fonts.scss';
 
 .appInfo {
+    max-width: 270px;
+    margin: 0 auto;
     padding: 55px 25px;
 }
 
@@ -38,4 +40,13 @@
     color: #cccccc;
     font-size: 13px;
     line-height: 1.7;
+}
+
+.goToAuth {
+}
+
+@media (min-width: 720px) {
+    .goToAuth {
+        display: none;
+    }
 }
