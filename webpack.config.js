@@ -30,8 +30,15 @@ var isTest = process.argv.some(function(arg) {
 
 process.env.NODE_ENV = JSON.stringify(isProduction ? 'production' : 'development');
 
-const API_HOST = 'http://account.l';
 const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
+var config;
+
+try {
+    config = require('./config/dev.json');
+} catch (err) {
+    console.error('\n\n===\nPlease create dev.json config under ./config based on template.dev.json\n===\n\n');
+    throw err;
+}
 
 var webpackConfig = {
     entry: {
@@ -72,7 +79,10 @@ var webpackConfig = {
         port: 8080,
         proxy: {
             '/api*': {
-                target: API_HOST
+                headers: {
+                    host: config.apiHost.replace(/https?:|\//g, '')
+                },
+                target: config.apiHost
             }
         },
         hot: true,
