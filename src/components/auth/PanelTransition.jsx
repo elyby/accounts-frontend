@@ -10,14 +10,14 @@ import icons from 'components/ui/icons.scss';
 
 
 const opacitySpringConfig = [200, 20];
-const heightSpringConfig = [200, 18];
-const transformSpringConfig = [500, 20];
+const transformSpringConfig = [500, 50];
 
 // TODO: сделать более быстрый фейд на горизонтальном скролле
 
 export default class PanelTransition extends Component {
     state = {
-        height: {}
+        height: {},
+        contextHeight: 0
     };
 
     componentWillReceiveProps(nextProps) {
@@ -27,9 +27,10 @@ export default class PanelTransition extends Component {
         var prev = previousRoute && previousRoute.pathname;
 
         var direction = this.getDirection(next, next, prev);
-        var forceHeight = direction === 'Y' ? 1 : 0;
+        var forceHeight = direction === 'Y' && next !== prev ? 1 : 0;
 
         this.setState({
+            direction,
             forceHeight: forceHeight,
             previousRoute: this.props.location
         });
@@ -42,9 +43,9 @@ export default class PanelTransition extends Component {
     }
 
     render() {
-        var {previousRoute, height} = this.state;
+        var {previousRoute, height, contextHeight, forceHeight} = this.state;
 
-        var {path, Title, Body, Footer, Links} = this.props;
+        const {path, Title, Body, Footer, Links} = this.props;
 
         return (
             <TransitionMotion
@@ -59,7 +60,8 @@ export default class PanelTransition extends Component {
                         opacitySpring: spring(1, opacitySpringConfig)
                     },
                     common: {
-                        heightSpring: spring(this.state.forceHeight || height[path] || 0, transformSpringConfig)
+                        heightSpring: spring(forceHeight || height[path] || 0, transformSpringConfig),
+                        switchContextHeightSpring: spring(forceHeight || contextHeight, [500, 20])
                     }
                 }}
                 willEnter={this.willEnter}
@@ -79,25 +81,32 @@ export default class PanelTransition extends Component {
                                         {keys.map((key) => this.getHeader(key, items[key]))}
                                     </div>
                                 </PanelHeader>
-                                <PanelBody style={{
-                                    overflow: 'hidden'
+                                <div style={{
+                                    overflow: 'hidden',
+                                    height: forceHeight ? items.common.switchContextHeightSpring : 'auto'
                                 }}>
-                                    <div style={{
-                                        position: 'relative',
-                                        height: previousRoute ? `${items.common.heightSpring}px` : `${height[path]}px`
-                                    }}>
-                                        {keys.map((key) => this.getBody(key, items[key]))}
-                                    </div>
-                                </PanelBody>
-                                <PanelFooter>
-                                    <div style={{
-                                        position: 'relative',
-                                        height: '50px',
-                                        overflow: 'hidden'
-                                    }}>
-                                        {keys.map((key) => this.getFooter(key, items[key]))}
-                                    </div>
-                                </PanelFooter>
+                                    <ReactHeight onHeightReady={this.updateContextHeight}>
+                                        <PanelBody style={{
+                                            overflow: 'hidden'
+                                        }}>
+                                            <div style={{
+                                                position: 'relative',
+                                                height: previousRoute ? `${items.common.heightSpring}px` : `${height[path]}px`
+                                            }}>
+                                                {keys.map((key) => this.getBody(key, items[key]))}
+                                            </div>
+                                        </PanelBody>
+                                        <PanelFooter>
+                                            <div style={{
+                                                position: 'relative',
+                                                height: '50px',
+                                                overflow: 'hidden'
+                                            }}>
+                                                {keys.map((key) => this.getFooter(key, items[key]))}
+                                            </div>
+                                        </PanelFooter>
+                                    </ReactHeight>
+                                </div>
                             </Panel>
                             <div className={helpLinksStyles} style={{position: 'relative', height: '20px'}}>
                                 {keys.map((key) => this.getLinks(key, items[key]))}
@@ -152,11 +161,31 @@ export default class PanelTransition extends Component {
         });
     };
 
+    updateContextHeight = (height) => {
+        this.setState({
+            contextHeight: height
+        });
+    };
+
     onGoBack = (event) => {
         event.preventDefault();
 
         this.props.history.goBack();
     };
+
+    getDirection(key, next, prev) {
+        var not = (path) => prev !== path && next !== path;
+
+        var map = {
+            '/login': not('/password') ? 'Y' : 'X',
+            '/password': not('/login') ? 'Y' : 'X',
+            '/register': not('/activation') ? 'Y' : 'X',
+            '/activation': not('/register') ? 'Y' : 'X',
+            '/oauth/permissions': 'Y'
+        };
+
+        return map[key];
+    }
 
     getHeader(key, props) {
         var {hasBackButton, transformSpring, Title} = props;
@@ -198,21 +227,18 @@ export default class PanelTransition extends Component {
 
     getBody(key, props) {
         var {transformSpring, opacitySpring, Body} = props;
-        var {previousRoute} = this.state;
+        var {direction} = this.state;
 
-        var next = this.props.path;
-        var prev = previousRoute && previousRoute.pathname;
+        var transform = {
+            WebkitTransform: `translate${direction}(${transformSpring}%)`,
+            transform: `translate${direction}(${transformSpring}%)`
+        };
 
-        var direction = this.getDirection(key, next, prev);
 
         var verticalOrigin = 'top';
-        if (direction === 'Y') { // TODO: do not activate animation when nothing was unmounted
-            transformSpring = Math.abs(transformSpring);
-            if (prev === key) {
-                transformSpring *= -1;
-            }
-
+        if (direction === 'Y') {
             verticalOrigin = 'bottom';
+            transform = {};
         }
 
         var style = {
@@ -220,9 +246,8 @@ export default class PanelTransition extends Component {
             [verticalOrigin]: 0,
             left: 0,
             width: '100%',
-            WebkitTransform: `translate${direction}(${transformSpring}%)`,
-            transform: `translate${direction}(${transformSpring}%)`,
-            opacity: opacitySpring
+            opacity: opacitySpring,
+            ...transform
         };
 
         return (
@@ -230,20 +255,6 @@ export default class PanelTransition extends Component {
                 {Body}
             </ReactHeight>
         );
-    }
-
-    getDirection(key, next, prev) {
-        var not = (path) => prev !== path && next !== path;
-
-        var map = {
-            '/login': not('/password') ? 'Y' : 'X',
-            '/password': not('/login') ? 'Y' : 'X',
-            '/register': not('/activation') ? 'Y' : 'X',
-            '/activation': not('/register') ? 'Y' : 'X',
-            '/oauth/permissions': 'Y'
-        };
-
-        return map[key];
     }
 
     getFooter(key, props) {
