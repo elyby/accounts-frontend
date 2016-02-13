@@ -28,7 +28,7 @@ var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
 
-process.env.NODE_ENV = JSON.stringify(isProduction ? 'production' : 'development');
+process.env.NODE_ENV = isProduction ? 'production' : 'development';
 
 const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
 var config;
@@ -95,7 +95,9 @@ var webpackConfig = {
     plugins: [
         new iconfontImporter.Plugin(),
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': process.env.NODE_ENV,
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            },
             __DEV__: !isProduction,
             __TEST__: isTest,
             __PROD__: isProduction
