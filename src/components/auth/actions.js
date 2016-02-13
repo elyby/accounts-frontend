@@ -50,6 +50,11 @@ export function register({
             {email, username, password, rePassword, rulesAgreement}
         )
         .then(() => {
+            dispatch(updateUser({
+                username,
+                email,
+                isGuest: false
+            }));
             dispatch(routeActions.push('/activation'));
         })
         .catch((resp) => {
