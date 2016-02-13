@@ -18,7 +18,7 @@ import { syncHistory, routeReducer } from 'react-router-redux';
 import { IntlProvider } from 'react-intl';
 
 import reducers from 'reducers';
-import routes from 'routes';
+import routesFactory from 'routes';
 
 import 'index.scss';
 
@@ -51,7 +51,7 @@ ReactDOM.render(
     <IntlProvider locale="en" messages={{}}>
         <ReduxProvider store={store}>
             <Router history={browserHistory}>
-                {routes}
+                {routesFactory(store)}
             </Router>
         </ReduxProvider>
     </IntlProvider>,

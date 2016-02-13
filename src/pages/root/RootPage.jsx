@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import Userbar from 'components/userbar/Userbar';
 
 import styles from './root.scss';
 
-export default function RootPage(props) {
+function RootPage(props) {
     return (
         <div className={styles.root}>
             <div className={styles.header}>
@@ -15,7 +16,7 @@ export default function RootPage(props) {
                         Ely.by
                     </Link>
                     <div className={styles.userbar}>
-                        <Userbar />
+                        <Userbar {...props} />
                     </div>
                 </div>
             </div>
@@ -25,3 +26,12 @@ export default function RootPage(props) {
         </div>
     );
 }
+
+RootPage.displayName = 'RootPage';
+RootPage.propTypes = {
+    children: PropTypes.element
+};
+
+export default connect((state) => ({
+    user: state.user
+}))(RootPage);

@@ -66,8 +66,7 @@
     }
 
     &:hover {
-        border-color: #aaa;
-
+        &,
         ~ .formFieldIcon {
             border-color: #aaa;
         }
@@ -95,12 +94,14 @@
     text-align: center;
     border: 2px solid lighter($black);
     color: #444;
+    cursor: default;
 
     @include form-transition();
 }
 
 @include input-theme('green', $green);
 @include input-theme('blue', $blue);
+@include input-theme('red', $red);
 
 
 /**
@@ -190,3 +191,44 @@
 
 @include checkbox-theme('green', $green);
 @include checkbox-theme('blue', $blue);
+@include checkbox-theme('red', $red);
+
+/**
+ * Form validation
+ */
+
+.formTouched .textField:invalid {
+    box-shadow: none;
+
+    &,
+    ~ .formFieldIcon {
+        border-color: #3e2727;
+    }
+
+    ~ .formFieldIcon {
+        color: #3e2727;
+    }
+
+    &:hover {
+        &,
+        ~ .formFieldIcon {
+            border-color: $red;
+        }
+    }
+
+    &:focus {
+        border-color: $red;
+
+        ~ .formFieldIcon {
+            background: $red;
+            border-color: $red;
+            color: #fff;
+        }
+    }
+}
+
+.formTouched .checkboxInput:invalid {
+    ~ .checkbox {
+        border-color: $red;
+    }
+}

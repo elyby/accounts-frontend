@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import AppInfo from 'components/auth/AppInfo';
 import PanelTransition from 'components/auth/PanelTransition';
 
 import styles from './auth.scss';
 
-class AuthPage extends Component {
+export default class AuthPage extends Component {
     static displayName = 'AuthPage';
 
     state = {
@@ -39,7 +38,3 @@ class AuthPage extends Component {
         });
     };
 }
-
-export default connect((state) => ({
-    path: state.routing.location.pathname
-}))(AuthPage);

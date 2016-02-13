@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+
+import classNames from 'classnames';
 
 import styles from './panel.scss';
 import icons from './icons.scss';
@@ -56,21 +58,41 @@ export function PanelFooter(props) {
     );
 }
 
-export function PanelBodyHeader(props) {
-    var { type = 'default' } = props;
+export class PanelBodyHeader extends Component {
+    static displayName = 'PanelBodyHeader';
 
-    var close;
+    static propTypes = {
+        type: PropTypes.oneOf(['default', 'error']),
+        onClose: PropTypes.func
+    };
 
-    if (type === 'error') {
-        close = (
-            <span className={styles.close} />
+    render() {
+        const {type = 'default', children} = this.props;
+
+        let close;
+        if (type === 'error') {
+            close = (
+                <span className={styles.close} onClick={this.onClose} />
+            );
+        }
+
+        const className = classNames(styles[`${type}BodyHeader`], {
+            [styles.isClosed]: this.state && this.state.isClosed
+        });
+
+        return (
+            <div className={className} {...this.props}>
+                {close}
+                {children}
+            </div>
         );
     }
 
-    return (
-        <div className={styles[`${type}BodyHeader`]} {...props}>
-            {close}
-            {props.children}
-        </div>
-    );
+    onClose = (event) => {
+        event.preventDefault();
+
+        this.setState({isClosed: true});
+
+        this.props.onClose();
+    };
 }
