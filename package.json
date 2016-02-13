@@ -28,7 +28,8 @@
     "react-router": "^2.0.0-rc5",
     "react-router-redux": "^2.1.0",
     "redux": "^3.0.4",
-    "redux-thunk": "^1.0.0"
+    "redux-thunk": "^1.0.0",
+    "whatwg-fetch": "^0.11.0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
@@ -47,9 +48,10 @@
     "cssnano": "^3.4.0",
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.13.1",
+    "exports-loader": "^0.6.3",
     "extract-text-webpack-plugin": "^0.9.1",
     "html-webpack-plugin": "^1.7.0",
-    "imports-loader": "^0.6.4",
+    "imports-loader": "^0.6.5",
     "karma": "*",
     "karma-chai": "*",
     "karma-es5-shim": "*",

@@ -45,6 +45,7 @@ var webpackConfig = {
         app: path.join(__dirname, 'src'),
         vendor: [
             'babel-polyfill',
+            'whatwg-fetch',
             'classnames',
             'history',
             'intl-format-cache',
@@ -111,6 +112,10 @@ var webpackConfig = {
             minify: {
                 collapseWhitespace: isProduction
             }
+        }),
+        new webpack.ProvidePlugin({
+            // window.fetch polyfill
+            fetch: 'imports?this=>self!exports?self.fetch!whatwg-fetch'
         })
     ].concat(isTest ? [] : [
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js')
