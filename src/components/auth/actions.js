@@ -46,7 +46,7 @@ export function register({
 }) {
     return (dispatch) =>
         request.post(
-            '/api/signup/register',
+            '/api/signup',
             {email, username, password, rePassword, rulesAgreement}
         )
         .then(() => {
