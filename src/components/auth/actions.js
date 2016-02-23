@@ -107,3 +107,45 @@ export function logout() {
         dispatch(routeActions.push('/login'));
     };
 }
+
+// TODO: move to oAuth actions?
+// test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session
+export function oAuthValidate({clientId, redirectUrl, responseType, scope, state}) {
+    return (dispatch) =>
+        request.get(
+            '/api/oauth/validate',
+            {
+                client_id: clientId,
+                redirect_uri: redirectUrl,
+                response_type: responseType,
+                scope,
+                state
+            }
+        )
+        .then((resp) => {
+            dispatch(setClient(resp.client));
+            dispatch(routeActions.push('/oauth/permissions'));
+        })
+        .catch((resp = {}) => { // TODO
+            if (resp.statusCode === 400 && resp.error === 'invalid_request') {
+                alert(`Invalid request (${resp.parameter} required).`);
+            }
+            if (resp.statusCode === 401 && resp.error === 'invalid_client') {
+                alert('Can not find application you are trying to authorize.');
+            }
+            if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
+                alert(`Invalid response type '${resp.parameter}'.`);
+            }
+            if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
+                alert(`Invalid scope '${resp.parameter}'.`);
+            }
+        });
+}
+
+export const SET_CLIENT = 'set_client';
+export function setClient({id, name, description}) {
+    return {
+        type: SET_CLIENT,
+        payload: {id, name, description}
+    };
+}

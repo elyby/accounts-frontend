@@ -5,6 +5,7 @@ import RootPage from 'pages/root/RootPage';
 import IndexPage from 'pages/index/IndexPage';
 import AuthPage from 'pages/auth/AuthPage';
 
+import OAuthInit from 'components/auth/OAuthInit';
 import Register from 'components/auth/Register';
 import Login from 'components/auth/Login';
 import Permissions from 'components/auth/Permissions';
@@ -47,10 +48,10 @@ export default function routesFactory(store) {
                 <Route path="/register" components={new Register()} />
                 <Route path="/activation" components={new Activation()} />
                 <Route path="/oauth/permissions" components={new Permissions()} onEnter={checkAuth} />
-                <Route path="/oauth/:id" component={Permissions} />
                 <Route path="/password-change" components={new PasswordChange()} />
             </Route>
 
+            <Route path="oauth" component={OAuthInit} />
             <Route path="logout" component={Logout} />
         </Route>
     );

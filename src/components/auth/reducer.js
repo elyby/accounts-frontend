@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 
-import { ERROR } from './actions';
+import { ERROR, SET_CLIENT } from './actions';
 
 export default combineReducers({
-    error
+    error,
+    client
 });
 
 function error(
@@ -16,6 +17,23 @@ function error(
                 throw new Error('Expected payload with error');
             }
             return payload;
+
+        default:
+            return state;
+    }
+}
+
+function client(
+    state = null,
+    {type, payload = {}}
+) {
+    switch (type) {
+        case SET_CLIENT:
+            return {
+                id: payload.id,
+                name: payload.name,
+                description: payload.description
+            };
 
         default:
             return state;
