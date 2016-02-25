@@ -11,6 +11,7 @@ import Permissions from 'components/auth/Permissions';
 import Activation from 'components/auth/Activation';
 import Password from 'components/auth/Password';
 import Logout from 'components/auth/Logout';
+import PasswordChange from 'components/auth/PasswordChange';
 
 export default function routesFactory(store) {
     function checkAuth(nextState, replace) {
@@ -47,6 +48,7 @@ export default function routesFactory(store) {
                 <Route path="/activation" components={new Activation()} />
                 <Route path="/oauth/permissions" components={new Permissions()} onEnter={checkAuth} />
                 <Route path="/oauth/:id" component={Permissions} />
+                <Route path="/password-change" components={new PasswordChange()} />
             </Route>
 
             <Route path="logout" component={Logout} />
