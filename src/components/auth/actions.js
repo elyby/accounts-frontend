@@ -1,6 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser } from 'components/user/actions';
+import { updateUser, logout as logoutUser, fetchUserData } from 'components/user/actions';
 import request from 'services/request';
 
 export function login({login = '', password = '', rememberMe = false}) {
@@ -12,10 +12,14 @@ export function login({login = '', password = '', rememberMe = false}) {
             '/api/authentication/login',
             {login, password, rememberMe}
         )
-        .then(() => {
+        .then((resp) => {
             dispatch(updateUser({
-                isGuest: false
+                isGuest: false,
+                token: resp.jwt
             }));
+
+            request.setAuthToken(resp.jwt);
+            dispatch(fetchUserData());
 
             dispatch(redirectToGoal());
         })

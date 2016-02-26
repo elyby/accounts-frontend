@@ -10,15 +10,27 @@ function serialize(data) {
         ;
 }
 
+let authToken;
+
 const toJSON = (resp) => resp.json();
-const handleResponse = (resp) => Promise[resp.success ? 'resolve' : 'reject'](resp);
+// if resp.success does not exist - degradating to HTTP status codes
+const handleResponse = (resp) => Promise[resp.success || typeof resp.success === 'undefined' ? 'resolve' : 'reject'](resp);
+const getDefaultHeaders = () => {
+    const header = {Accept: 'application/json'};
+
+    if (authToken) {
+        header.Authorization = `Bearer ${authToken}`;
+    }
+
+    return header;
+};
 
 export default {
     post(url, data) {
         return fetch(url, {
             method: 'POST',
             headers: {
-                Accept: 'application/json',
+                ...getDefaultHeaders(),
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
             body: serialize(data)
@@ -27,6 +39,7 @@ export default {
         .then(handleResponse)
         ;
     },
+
     get(url, data) {
         if (typeof data === 'object') {
             const separator = url.indexOf('?') === -1 ? '?' : '&';
@@ -34,12 +47,14 @@ export default {
         }
 
         return fetch(url, {
-            headers: {
-                Accept: 'application/json'
-            }
+            headers: getDefaultHeaders()
         })
         .then(toJSON)
         .then(handleResponse)
         ;
+    },
+
+    setAuthToken(tkn) {
+        authToken = tkn;
     }
 };

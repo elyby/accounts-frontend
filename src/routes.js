@@ -5,6 +5,9 @@ import RootPage from 'pages/root/RootPage';
 import IndexPage from 'pages/index/IndexPage';
 import AuthPage from 'pages/auth/AuthPage';
 
+import request from 'services/request';
+import { fetchUserData } from 'components/user/actions';
+
 import OAuthInit from 'components/auth/OAuthInit';
 import Register from 'components/auth/Register';
 import Login from 'components/auth/Login';
@@ -36,6 +39,13 @@ export default function routesFactory(store) {
         if (forcePath && state.routing.location.pathname !== forcePath) {
             replace({pathname: forcePath});
         }
+    }
+
+    const state = store.getState();
+    if (state.user.token) {
+        // authorizing user if it is possible
+        request.setAuthToken(state.user.token);
+        store.dispatch(fetchUserData());
     }
 
     return (
