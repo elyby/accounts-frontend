@@ -27,7 +27,7 @@ export function logout() {
 
 export function fetchUserData() {
     return (dispatch) =>
-        request.get('/api/users/current')
+        request.get('/api/accounts/current')
         .then((resp) => {
             dispatch(updateUser(resp));
         })
