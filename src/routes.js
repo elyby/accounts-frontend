@@ -5,8 +5,7 @@ import RootPage from 'pages/root/RootPage';
 import IndexPage from 'pages/index/IndexPage';
 import AuthPage from 'pages/auth/AuthPage';
 
-import request from 'services/request';
-import { fetchUserData } from 'components/user/actions';
+import { authenticate, updateUser } from 'components/user/actions';
 
 import OAuthInit from 'components/auth/OAuthInit';
 import Register from 'components/auth/Register';
@@ -20,13 +19,15 @@ import PasswordChange from 'components/auth/PasswordChange';
 export default function routesFactory(store) {
     function checkAuth(nextState, replace) {
         const state = store.getState();
+        const pathname = state.routing.location.pathname;
 
         let forcePath;
+        let goal;
         if (!state.user.isGuest) {
             if (!state.user.isActive) {
                 forcePath = '/activation';
-            } else {
-                forcePath = '/oauth/permissions';
+            } else if (!state.user.shouldChangePassword) {
+                forcePath = '/password-change';
             }
         } else {
             if (state.user.email || state.user.username) {
@@ -36,7 +37,23 @@ export default function routesFactory(store) {
             }
         }
 
-        if (forcePath && state.routing.location.pathname !== forcePath) {
+        if (forcePath && pathname !== forcePath) {
+            switch (pathname) {
+                case '/':
+                    goal = 'account';
+                    break;
+
+                case '/oauth/permissions':
+                    goal = 'oauth';
+                    break;
+            }
+
+            if (goal) {
+                store.dispatch(updateUser({ // TODO: mb create action resetGoal?
+                    goal
+                }));
+            }
+
             replace({pathname: forcePath});
         }
     }
@@ -44,8 +61,7 @@ export default function routesFactory(store) {
     const state = store.getState();
     if (state.user.token) {
         // authorizing user if it is possible
-        request.setAuthToken(state.user.token);
-        store.dispatch(fetchUserData());
+        store.dispatch(authenticate(state.user.token));
     }
 
     return (

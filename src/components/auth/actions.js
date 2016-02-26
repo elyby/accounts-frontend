@@ -1,6 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, fetchUserData } from 'components/user/actions';
+import { updateUser, logout as logoutUser, authenticate } from 'components/user/actions';
 import request from 'services/request';
 
 export function login({login = '', password = '', rememberMe = false}) {
@@ -18,8 +18,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                 token: resp.jwt
             }));
 
-            request.setAuthToken(resp.jwt);
-            dispatch(fetchUserData());
+            dispatch(authenticate(resp.jwt));
 
             dispatch(redirectToGoal());
         })
@@ -37,6 +36,8 @@ export function login({login = '', password = '', rememberMe = false}) {
                 const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
                 dispatch(setError(errorMessage));
             }
+
+            // TODO: log unexpected errors
         })
         ;
 }
@@ -64,6 +65,8 @@ export function register({
         .catch((resp) => {
             const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
             dispatch(setError(errorMessage));
+
+            // TODO: log unexpected errors
         })
         ;
 }
@@ -84,12 +87,31 @@ export function activate({key = ''}) {
         .catch((resp) => {
             const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
             dispatch(setError(errorMessage));
+
+            // TODO: log unexpected errors
         })
         ;
 }
 
 function redirectToGoal() {
-    return routeActions.push('/oauth/permissions');
+    return (dispatch, getState) => {
+        const {user} = getState();
+
+        switch (user.goal) {
+            case 'oauth':
+                dispatch(routeActions.push('/oauth/permissions'));
+                break;
+
+            case 'account':
+            default:
+                dispatch(routeActions.push('/'));
+                break;
+        }
+
+        // dispatch(updateUser({ // TODO: mb create action resetGoal?
+        //     goal: null
+        // }));
+    };
 }
 
 export const ERROR = 'error';

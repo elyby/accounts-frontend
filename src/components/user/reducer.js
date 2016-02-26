@@ -2,6 +2,7 @@ import { UPDATE, SET } from './actions';
 
 import User from './User';
 
+// TODO: возможно есть смысл инитить обьект User снаружи, так как редусер не должен столько знать
 export default function user(
     state = new User(),
     {type, payload = null}
@@ -16,6 +17,7 @@ export default function user(
                 ...state,
                 ...payload
             });
+
         case SET:
             return new User(payload || {});
 

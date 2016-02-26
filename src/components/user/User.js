@@ -21,8 +21,10 @@ export default class User {
             username: '',
             email: '',
             avatar: '',
+            goal: null, // the goal with wich user entered site
             isGuest: true,
-            isActive: false
+            isActive: false,
+            shouldChangePassword: false
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {

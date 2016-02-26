@@ -44,3 +44,15 @@ export function fetchUserData() {
             console.log(resp);
         });
 }
+
+
+export function authenticate(token) {
+    if (!token || token.split('.').length !== 3) {
+        throw new Error('Invalid token');
+    }
+
+    return (dispatch) => {
+        request.setAuthToken(token);
+        dispatch(fetchUserData());
+    };
+}
