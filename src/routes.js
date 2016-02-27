@@ -37,6 +37,8 @@ export default function routesFactory(store) {
             }
         }
 
+        // TODO: validate that we have all required data on premissions page
+
         if (forcePath && pathname !== forcePath) {
             switch (pathname) {
                 case '/':

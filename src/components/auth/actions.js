@@ -138,36 +138,76 @@ export function logout() {
 
 // TODO: move to oAuth actions?
 // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session
-export function oAuthValidate({clientId, redirectUrl, responseType, scope, state}) {
+export function oAuthValidate(oauth) {
     return (dispatch) =>
         request.get(
             '/api/oauth/validate',
-            {
-                client_id: clientId,
-                redirect_uri: redirectUrl,
-                response_type: responseType,
-                scope,
-                state
-            }
+            getOAuthRequest(oauth)
         )
         .then((resp) => {
             dispatch(setClient(resp.client));
-            dispatch(routeActions.push('/oauth/permissions'));
+            dispatch(setOAuthRequest(resp.oAuth));
         })
         .catch((resp = {}) => { // TODO
-            if (resp.statusCode === 400 && resp.error === 'invalid_request') {
-                alert(`Invalid request (${resp.parameter} required).`);
-            }
-            if (resp.statusCode === 401 && resp.error === 'invalid_client') {
-                alert('Can not find application you are trying to authorize.');
-            }
-            if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
-                alert(`Invalid response type '${resp.parameter}'.`);
-            }
-            if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
-                alert(`Invalid scope '${resp.parameter}'.`);
+            handleOauthParamsValidation(resp);
+            if (resp.statusCode === 401 && resp.error === 'accept_required') {
+                alert('Accept required.');
             }
         });
+}
+
+export function oAuthComplete(params = {}) {
+    return (dispatch, getState) => {
+        const oauth = getState().auth.oauth;
+        const query = request.buildQuery(getOAuthRequest(oauth));
+
+        return request.post(
+            `/api/oauth/complete?${query}`,
+            typeof params.accept === 'undefined' ? {} : {accept: params.accept}
+        )
+        .then((resp) => {
+            if (resp.redirectUri) {
+                location.href = resp.redirectUri;
+            }
+        })
+        .catch((resp = {}) => { // TODO
+            handleOauthParamsValidation(resp);
+
+            if (resp.statusCode === 401 && resp.error === 'accept_required') {
+                dispatch(routeActions.push('/oauth/permissions'));
+            }
+
+            if (resp.statusCode === 401 && resp.error === 'access_denied') {
+                // user declined permissions
+                location.href = resp.redirectUri;
+            }
+        });
+    };
+}
+
+function getOAuthRequest(oauth) {
+    return {
+        client_id: oauth.clientId,
+        redirect_uri: oauth.redirectUrl,
+        response_type: oauth.responseType,
+        scope: oauth.scope,
+        state: oauth.state
+    };
+}
+
+function handleOauthParamsValidation(resp = {}) {
+    if (resp.statusCode === 400 && resp.error === 'invalid_request') {
+        alert(`Invalid request (${resp.parameter} required).`);
+    }
+    if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
+        alert(`Invalid response type '${resp.parameter}'.`);
+    }
+    if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
+        alert(`Invalid scope '${resp.parameter}'.`);
+    }
+    if (resp.statusCode === 401 && resp.error === 'invalid_client') {
+        alert('Can not find application you are trying to authorize.');
+    }
 }
 
 export const SET_CLIENT = 'set_client';
@@ -175,5 +215,19 @@ export function setClient({id, name, description}) {
     return {
         type: SET_CLIENT,
         payload: {id, name, description}
+    };
+}
+
+export const SET_OAUTH = 'set_oauth';
+export function setOAuthRequest(oauth) {
+    return {
+        type: SET_OAUTH,
+        payload: {
+            clientId: oauth.client_id,
+            redirectUrl: oauth.redirect_uri,
+            responseType: oauth.response_type,
+            scope: oauth.scope,
+            state: oauth.state
+        }
     };
 }

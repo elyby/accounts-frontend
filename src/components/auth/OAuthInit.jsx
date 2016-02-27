@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 import { connect } from 'react-redux';
 
-import { oAuthValidate } from 'components/auth/actions';
+import { oAuthValidate, oAuthComplete } from 'components/auth/actions';
 
 class OAuthInit extends Component {
     static displayName = 'OAuthInit';
@@ -27,7 +27,7 @@ class OAuthInit extends Component {
             responseType: query.response_type,
             scope: query.scope,
             state: query.state
-        });
+        }).then(this.props.complete);
     }
 
     render() {
@@ -38,5 +38,6 @@ class OAuthInit extends Component {
 export default connect((state) => ({
     query: state.routing.location.query
 }), {
-    validate: oAuthValidate
+    validate: oAuthValidate,
+    complete: oAuthComplete
 })(OAuthInit);

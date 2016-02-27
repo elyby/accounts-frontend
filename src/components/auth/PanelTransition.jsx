@@ -345,5 +345,6 @@ export default connect((state) => ({
     register: actions.register,
     activate: actions.activate,
     clearErrors: actions.clearErrors,
+    oAuthComplete: actions.oAuthComplete,
     setError: actions.setError
 })(PanelTransition);

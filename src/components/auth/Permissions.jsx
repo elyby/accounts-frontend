@@ -15,6 +15,7 @@ class Body extends BaseAuthBody {
     static propTypes = {
         ...BaseAuthBody.propTypes,
         login: PropTypes.func.isRequired,
+        oAuthComplete: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
             login: PropTypes.shape({
@@ -24,6 +25,8 @@ class Body extends BaseAuthBody {
     };
 
     render() {
+        const {user} = this.props;
+
         return (
             <div>
                 {this.renderErrors()}
@@ -31,14 +34,16 @@ class Body extends BaseAuthBody {
                 <PanelBodyHeader>
                     <div className={styles.authInfo}>
                         <div className={styles.authInfoAvatar}>
-                            {/*<img src="//lorempixel.com/g/90/90" />*/}
-                            <span className={icons.user} />
+                            {user.avatar
+                                ? <img src={user.avatar} />
+                                : <span className={icons.user} />
+                            }
                         </div>
                         <div className={styles.authInfoTitle}>
                             <Message {...messages.youAuthorizedAs} />
                         </div>
                         <div className={styles.authInfoEmail}>
-                            {'erickskrauch@yandex.ru'}
+                            {user.email}
                         </div>
                     </div>
                 </PanelBodyHeader>
@@ -59,7 +64,9 @@ class Body extends BaseAuthBody {
     }
 
     onFormSubmit() {
-        // TODO
+        this.props.oAuthComplete({
+            accept: true
+        });
     }
 }
 

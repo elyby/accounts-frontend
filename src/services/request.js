@@ -1,4 +1,4 @@
-function serialize(data) {
+function buildQuery(data) {
     return Object.keys(data)
         .map(
             (keyName) =>
@@ -33,7 +33,7 @@ export default {
                 ...getDefaultHeaders(),
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
-            body: serialize(data)
+            body: buildQuery(data)
         })
         .then(toJSON)
         .then(handleResponse)
@@ -43,7 +43,7 @@ export default {
     get(url, data) {
         if (typeof data === 'object') {
             const separator = url.indexOf('?') === -1 ? '?' : '&';
-            url += separator + serialize(data);
+            url += separator + buildQuery(data);
         }
 
         return fetch(url, {
@@ -53,6 +53,8 @@ export default {
         .then(handleResponse)
         ;
     },
+
+    buildQuery,
 
     setAuthToken(tkn) {
         authToken = tkn;
