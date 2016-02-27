@@ -77,10 +77,12 @@ export function activate({key = ''}) {
             '/api/signup/confirm',
             {key}
         )
-        .then(() => {
+        .then((resp) => {
             dispatch(updateUser({
                 isActive: true
             }));
+
+            dispatch(authenticate(resp.jwt));
 
             dispatch(redirectToGoal());
         })
