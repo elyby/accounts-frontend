@@ -10,6 +10,8 @@ function convertQueryValue(value) {
     if (value === false) {
         return 0;
     }
+
+    return value;
 }
 
 function buildQuery(data) {
