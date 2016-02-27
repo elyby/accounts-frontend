@@ -1,8 +1,22 @@
+function convertQueryValue(value) {
+    if (typeof value === 'undefined') {
+        return '';
+    }
+
+    if (value === true) {
+        return 1;
+    }
+
+    if (value === false) {
+        return 0;
+    }
+}
+
 function buildQuery(data) {
     return Object.keys(data)
         .map(
             (keyName) =>
-                [keyName, typeof data[keyName] === 'undefined' ? '' : data[keyName]]
+                [keyName, convertQueryValue(data[keyName])]
                     .map(encodeURIComponent)
                     .join('=')
         )
