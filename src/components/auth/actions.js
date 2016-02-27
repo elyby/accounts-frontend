@@ -166,6 +166,13 @@ export function oAuthComplete(params = {}) {
             typeof params.accept === 'undefined' ? {} : {accept: params.accept}
         )
         .then((resp) => {
+            if (resp.status === 401 && resp.name === 'Unauthorized') {
+                // TODO: temporary solution for oauth init by guest
+                // TODO: request serivce should handle http status codes
+                dispatch(routeActions.push('/oauth/permissions'));
+                return;
+            }
+
             if (resp.redirectUri) {
                 location.href = resp.redirectUri;
             }
