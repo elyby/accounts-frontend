@@ -6,6 +6,7 @@ import request from 'services/request';
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';
     const LOGIN_REQUIRED = 'error.login_required';
+    const ACTIVATION_REQUIRED = 'error.account_not_activated';
 
     return (dispatch) =>
         request.post(
@@ -23,7 +24,14 @@ export function login({login = '', password = '', rememberMe = false}) {
             dispatch(redirectToGoal());
         })
         .catch((resp) => {
-            if (resp.errors.password === PASSWORD_REQUIRED) {
+            if (resp.errors.login === ACTIVATION_REQUIRED) {
+                dispatch(updateUser({
+                    isActive: false,
+                    isGuest: false
+                }));
+
+                dispatch(redirectToGoal());
+            } else if (resp.errors.password === PASSWORD_REQUIRED) {
                 dispatch(updateUser({
                     username: login,
                     email: login

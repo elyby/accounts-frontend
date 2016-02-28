@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
+import { Link } from 'react-router';
 
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
@@ -75,9 +76,9 @@ export default function PasswordChange() {
             </button>
         ),
         Links: () => (
-            <a href="/oauth/permissions">
+            <Link to="/oauth/permissions">
                 <Message {...passwordChangedMessages.skipThisStep} />
-            </a>
+            </Link>
         )
     };
 }

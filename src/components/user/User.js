@@ -23,7 +23,7 @@ export default class User {
             avatar: '',
             goal: null, // the goal with wich user entered site
             isGuest: true,
-            isActive: false,
+            isActive: true,
             shouldChangePassword: false
         };
 
