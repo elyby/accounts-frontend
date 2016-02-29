@@ -160,7 +160,9 @@ class PanelTransition extends Component {
             '/register': -1,
             '/password': 1,
             '/activation': 1,
-            '/oauth/permissions': -1
+            '/oauth/permissions': -1,
+            '/password-change': 1,
+            '/forgot-password': 1
         };
         var sign = map[key];
 
@@ -170,6 +172,22 @@ class PanelTransition extends Component {
             transformSpring: spring(sign * 100, transformSpringConfig),
             opacitySpring: spring(isLeave ? 0 : 1, opacitySpringConfig)
         };
+    }
+
+    getDirection(next, prev) {
+        var not = (path) => prev !== path && next !== path;
+
+        var map = {
+            '/login': not('/password') && not('/forgot-password') ? 'Y' : 'X',
+            '/password': not('/login') && not('/forgot-password') ? 'Y' : 'X',
+            '/register': not('/activation') ? 'Y' : 'X',
+            '/activation': not('/register') ? 'Y' : 'X',
+            '/oauth/permissions': 'Y',
+            '/password-change': 'Y',
+            '/forgot-password': not('/password') && not('/login') ? 'Y' : 'X'
+        };
+
+        return map[next];
     }
 
     onUpdateHeight = (height) => {
@@ -196,20 +214,6 @@ class PanelTransition extends Component {
         this.body.onGoBack && this.body.onGoBack();
         this.props.goBack();
     };
-
-    getDirection(next, prev) {
-        var not = (path) => prev !== path && next !== path;
-
-        var map = {
-            '/login': not('/password') ? 'Y' : 'X',
-            '/password': not('/login') ? 'Y' : 'X',
-            '/register': not('/activation') ? 'Y' : 'X',
-            '/activation': not('/register') ? 'Y' : 'X',
-            '/oauth/permissions': 'Y'
-        };
-
-        return map[next];
-    }
 
     getHeader(key, props) {
         var {hasBackButton, transformSpring, Title} = props;
