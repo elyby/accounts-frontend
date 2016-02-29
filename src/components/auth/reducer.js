@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux';
 
-import { ERROR, SET_CLIENT, SET_OAUTH } from './actions';
+import { ERROR, SET_CLIENT, SET_OAUTH, SET_SCOPES } from './actions';
 
 export default combineReducers({
     error,
     client,
-    oauth
+    oauth,
+    scopes
 });
 
 function error(
@@ -54,6 +55,19 @@ function oauth(
                 scope: payload.scope,
                 state: payload.state
             };
+
+        default:
+            return state;
+    }
+}
+
+function scopes(
+    state = [],
+    {type, payload = []}
+) {
+    switch (type) {
+        case SET_SCOPES:
+            return payload;
 
         default:
             return state;

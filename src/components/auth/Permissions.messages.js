@@ -29,5 +29,15 @@ export default defineMessages({
     approve: {
         id: 'approve',
         defaultMessage: 'Approve'
+    },
+
+    scope_minecraft_server_session: {
+        id: 'scope_minecraft_server_session',
+        defaultMessage: 'Authorization data for minecraft server'
+    },
+
+    scope_offline_access: {
+        id: 'scope_offline_access',
+        defaultMessage: 'Access to your profile data, when you offline'
     }
 });

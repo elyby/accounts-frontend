@@ -18,14 +18,13 @@ class Body extends BaseAuthBody {
         oAuthComplete: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
-            login: PropTypes.shape({
-                login: PropTypes.stirng
-            })
+            scopes: PropTypes.array.isRequired
         })
     };
 
     render() {
         const {user} = this.props;
+        const scopes = this.props.auth.scopes;
 
         return (
             <div>
@@ -53,10 +52,9 @@ class Body extends BaseAuthBody {
                         <Message {...messages.theAppNeedsAccess2} />
                     </div>
                     <ul className={styles.permissionsList}>
-                        <li>Authorization for Minecraft servers</li>
-                        <li>Manage your skins directory and additional rows for multiline</li>
-                        <li>Change the active skin</li>
-                        <li>View your E-mail address</li>
+                        {scopes.map((scope) => (
+                            <li>{<Message {...messages[`scope_${scope}`]} />}</li>
+                        ))}
                     </ul>
                 </div>
             </div>
@@ -83,8 +81,14 @@ export default function Permissions() {
                 <Message {...messages.approve} />
             </button>
         ),
-        Links: () => (
-            <a href="#">
+        Links: (props) => (
+            <a href="#" onClick={(event) => {
+                event.preventDefault();
+
+                props.onAuthComplete({
+                    accept: false
+                });
+            }}>
                 <Message {...messages.decline} />
             </a>
         )

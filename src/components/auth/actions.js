@@ -155,6 +155,7 @@ export function oAuthValidate(oauth) {
         .then((resp) => {
             dispatch(setClient(resp.client));
             dispatch(setOAuthRequest(resp.oAuth));
+            dispatch(setScopes(resp.session.scopes));
         })
         .catch((resp = {}) => { // TODO
             handleOauthParamsValidation(resp);
@@ -244,5 +245,17 @@ export function setOAuthRequest(oauth) {
             scope: oauth.scope,
             state: oauth.state
         }
+    };
+}
+
+export const SET_SCOPES = 'set_scopes';
+export function setScopes(scopes) {
+    if (!(scopes instanceof Array)) {
+        throw new Error('Scopes must be array');
+    }
+
+    return {
+        type: SET_SCOPES,
+        payload: scopes
     };
 }
