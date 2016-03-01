@@ -10,6 +10,8 @@ import styles from './userbar.scss';
 
 import { userShape } from 'components/user/User';
 
+import LoggedInPanel from './LoggedInPanel';
+
 export default class Userbar extends Component {
     static displayName = 'Userbar';
     static propTypes = {
@@ -28,9 +30,7 @@ export default class Userbar extends Component {
                         </Link>
                     )
                     : (
-                        <Link to="/logout" className={buttons.blue}>
-                            <Message {...messages.logout} />
-                        </Link>
+                        <LoggedInPanel {...this.props} />
                     )
                 }
             </div>

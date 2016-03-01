@@ -1,0 +1,19 @@
+
+.userIcon {
+    composes: user from 'components/ui/icons.scss';
+
+    position: relative;
+    bottom: 2px;
+
+    padding-right: 5px;
+}
+
+.userName {
+
+}
+
+.logoutIcon {
+    composes: exit from 'components/ui/icons.scss';
+
+    color: #cdcdcd;
+}

@@ -1,0 +1,18 @@
+.group {
+    position: relative; // это нужно только чтобы postcss не удалял пустой класс и composes мог его схавать
+}
+
+.horizontalGroup {
+    composes: group;
+}
+
+.item {
+    $borderConfig: 1px solid rgba(#fff, 0.15);
+
+    float: left;
+    border-left: $borderConfig;
+
+    &:last-child {
+        border-right: $borderConfig;
+    }
+}
