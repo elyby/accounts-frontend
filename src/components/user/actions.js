@@ -53,6 +53,6 @@ export function authenticate(token) {
 
     return (dispatch) => {
         request.setAuthToken(token);
-        dispatch(fetchUserData());
+        return dispatch(fetchUserData());
     };
 }

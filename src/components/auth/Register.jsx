@@ -82,10 +82,6 @@ class Body extends BaseAuthBody {
             </div>
         );
     }
-
-    onFormSubmit() {
-        this.props.register(this.serialize());
-    }
 }
 
 export default function Register() {

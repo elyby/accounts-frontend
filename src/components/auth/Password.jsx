@@ -15,8 +15,6 @@ import messages from './Password.messages';
 class Body extends BaseAuthBody {
     static propTypes = {
         ...BaseAuthBody.propTypes,
-        login: PropTypes.func.isRequired,
-        logout: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
             login: PropTypes.shape({
@@ -55,17 +53,6 @@ class Body extends BaseAuthBody {
                 <Checkbox {...this.bindField('rememberMe')} label={<Message {...messages.rememberMe} />} />
             </div>
         );
-    }
-
-    onFormSubmit() {
-        this.props.login({
-            ...this.serialize(),
-            login: this.props.user.email || this.props.user.username
-        });
-    }
-
-    onGoBack() {
-        this.props.logout();
     }
 }
 

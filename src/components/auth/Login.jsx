@@ -14,7 +14,6 @@ import passwordMessages from './Password.messages';
 class Body extends BaseAuthBody {
     static propTypes = {
         ...BaseAuthBody.propTypes,
-        login: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
             login: PropTypes.shape({
@@ -36,10 +35,6 @@ class Body extends BaseAuthBody {
                 />
             </div>
         );
-    }
-
-    onFormSubmit() {
-        this.props.login(this.serialize());
     }
 }
 

@@ -22,7 +22,7 @@ export default class AppInfo extends Component {
         return (
             <div className={styles.appInfo}>
                 <div className={styles.logoContainer}>
-                    <h2 className={styles.logo}>{name}</h2>
+                    <h2 className={styles.logo}>{name || 'Ely Accounts'}</h2>
                 </div>
                 <div className={styles.descriptionContainer}>
                     <p className={styles.description}>

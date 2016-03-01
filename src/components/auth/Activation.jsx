@@ -13,7 +13,6 @@ import messages from './Activation.messages';
 class Body extends BaseAuthBody {
     static propTypes = {
         ...BaseAuthBody.propTypes,
-        activate: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
             login: PropTypes.shape({
@@ -47,10 +46,6 @@ class Body extends BaseAuthBody {
                 </div>
             </div>
         );
-    }
-
-    onFormSubmit() {
-        this.props.activate(this.serialize());
     }
 }
 

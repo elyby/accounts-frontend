@@ -8,6 +8,8 @@ import AuthError from './AuthError';
 export default class BaseAuthBody extends Component {
     static propTypes = {
         clearErrors: PropTypes.func.isRequired,
+        resolve: PropTypes.func.isRequired,
+        reject: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string
         })
@@ -18,6 +20,10 @@ export default class BaseAuthBody extends Component {
             ? <AuthError error={this.props.auth.error} onClose={this.onClearErrors} />
             : ''
             ;
+    }
+
+    onFormSubmit() {
+        this.props.resolve(this.serialize());
     }
 
     onClearErrors = this.props.clearErrors;

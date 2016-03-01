@@ -28,9 +28,11 @@ function buildQuery(data) {
 
 let authToken;
 
+const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
 const toJSON = (resp) => resp.json();
-// if resp.success does not exist - degradating to HTTP status codes
+const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {throw resp;});
 const handleResponse = (resp) => Promise[resp.success || typeof resp.success === 'undefined' ? 'resolve' : 'reject'](resp);
+
 const getDefaultHeaders = () => {
     const header = {Accept: 'application/json'};
 
@@ -51,7 +53,8 @@ export default {
             },
             body: buildQuery(data)
         })
-        .then(toJSON)
+        .then(checkStatus)
+        .then(toJSON, rejectWithJSON)
         .then(handleResponse)
         ;
     },
@@ -65,7 +68,8 @@ export default {
         return fetch(url, {
             headers: getDefaultHeaders()
         })
-        .then(toJSON)
+        .then(checkStatus)
+        .then(toJSON, rejectWithJSON)
         .then(handleResponse)
         ;
     },

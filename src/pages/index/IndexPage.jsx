@@ -1,16 +1,32 @@
 import React, { Component } from 'react';
 
-import AuthPage from 'pages/auth/AuthPage';
-import Login from 'components/auth/Login';
+import { connect } from 'react-redux';
 
-export default class IndexPage extends Component {
+import authFlow from 'services/authFlow';
+
+class IndexPage extends Component {
     displayName = 'IndexPage';
 
+    componentWillMount() {
+        if (this.props.user.isGuest) {
+            authFlow.login();
+        }
+    }
+
     render() {
+        const {user, children} = this.props;
+
         return (
-            <AuthPage>
-                <Login />
-            </AuthPage>
+            <div>
+                <h1>
+                    Hello {user.username}!
+                </h1>
+                {children}
+            </div>
         );
     }
 }
+
+export default connect((state) => ({
+    user: state.user
+}))(IndexPage);

@@ -19,30 +19,26 @@ export function login({login = '', password = '', rememberMe = false}) {
                 token: resp.jwt
             }));
 
-            dispatch(authenticate(resp.jwt));
-
-            dispatch(redirectToGoal());
+            return dispatch(authenticate(resp.jwt));
         })
         .catch((resp) => {
             if (resp.errors.login === ACTIVATION_REQUIRED) {
-                dispatch(updateUser({
+                return dispatch(updateUser({
                     isActive: false,
                     isGuest: false
                 }));
-
-                dispatch(redirectToGoal());
             } else if (resp.errors.password === PASSWORD_REQUIRED) {
-                dispatch(updateUser({
+                return dispatch(updateUser({
                     username: login,
                     email: login
                 }));
-                dispatch(routeActions.push('/password'));
             } else {
                 if (resp.errors.login === LOGIN_REQUIRED && password) {
                     dispatch(logout());
                 }
                 const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
                 dispatch(setError(errorMessage));
+                throw new Error(errorMessage);
             }
 
             // TODO: log unexpected errors
@@ -73,6 +69,7 @@ export function register({
         .catch((resp) => {
             const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
             dispatch(setError(errorMessage));
+            throw new Error(errorMessage);
 
             // TODO: log unexpected errors
         })
@@ -87,41 +84,20 @@ export function activate({key = ''}) {
         )
         .then((resp) => {
             dispatch(updateUser({
+                isGuest: false,
                 isActive: true
             }));
 
-            dispatch(authenticate(resp.jwt));
-
-            dispatch(redirectToGoal());
+            return dispatch(authenticate(resp.jwt));
         })
         .catch((resp) => {
             const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
             dispatch(setError(errorMessage));
+            throw new Error(errorMessage);
 
             // TODO: log unexpected errors
         })
         ;
-}
-
-function redirectToGoal() {
-    return (dispatch, getState) => {
-        const {user} = getState();
-
-        switch (user.goal) {
-            case 'oauth':
-                dispatch(routeActions.push('/oauth/permissions'));
-                break;
-
-            case 'account':
-            default:
-                dispatch(routeActions.push('/'));
-                break;
-        }
-
-        // dispatch(updateUser({ // TODO: mb create action resetGoal?
-        //     goal: null
-        // }));
-    };
 }
 
 export const ERROR = 'error';
@@ -138,10 +114,7 @@ export function clearErrors() {
 }
 
 export function logout() {
-    return (dispatch) => {
-        dispatch(logoutUser());
-        dispatch(routeActions.push('/login'));
-    };
+    return logoutUser();
 }
 
 // TODO: move to oAuth actions?
@@ -174,28 +147,26 @@ export function oAuthComplete(params = {}) {
             `/api/oauth/complete?${query}`,
             typeof params.accept === 'undefined' ? {} : {accept: params.accept}
         )
-        .then((resp) => {
-            if (resp.status === 401 && resp.name === 'Unauthorized') {
-                // TODO: temporary solution for oauth init by guest
-                // TODO: request serivce should handle http status codes
-                dispatch(routeActions.push('/oauth/permissions'));
-                return;
-            }
-
-            if (resp.redirectUri) {
-                location.href = resp.redirectUri;
-            }
-        })
         .catch((resp = {}) => { // TODO
-            handleOauthParamsValidation(resp);
-
-            if (resp.statusCode === 401 && resp.error === 'accept_required') {
-                dispatch(routeActions.push('/oauth/permissions'));
-            }
-
             if (resp.statusCode === 401 && resp.error === 'access_denied') {
                 // user declined permissions
-                location.href = resp.redirectUri;
+                return {
+                    redirectUri: resp.redirectUri
+                };
+            }
+
+            handleOauthParamsValidation(resp);
+
+            if (resp.status === 401 && resp.name === 'Unauthorized') {
+                const error = new Error('Unauthorized');
+                error.unauthorized = true;
+                throw error;
+            }
+
+            if (resp.statusCode === 401 && resp.error === 'accept_required') {
+                const error = new Error('Permissions accept required');
+                error.acceptRequired = true;
+                throw error;
             }
         });
     };
@@ -212,17 +183,22 @@ function getOAuthRequest(oauth) {
 }
 
 function handleOauthParamsValidation(resp = {}) {
+    const error = new Error('Error completing request');
     if (resp.statusCode === 400 && resp.error === 'invalid_request') {
         alert(`Invalid request (${resp.parameter} required).`);
+        throw error;
     }
     if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
         alert(`Invalid response type '${resp.parameter}'.`);
+        throw error;
     }
     if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
         alert(`Invalid scope '${resp.parameter}'.`);
+        throw error;
     }
     if (resp.statusCode === 401 && resp.error === 'invalid_client') {
         alert('Can not find application you are trying to authorize.');
+        throw error;
     }
 }
 

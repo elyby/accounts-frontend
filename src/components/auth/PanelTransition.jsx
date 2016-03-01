@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
 import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
 import { TransitionMotion, spring } from 'react-motion';
 import ReactHeight from 'react-height';
 
@@ -10,6 +9,7 @@ import { Form } from 'components/ui/Form';
 import {helpLinks as helpLinksStyles} from 'components/auth/helpLinks.scss';
 import panelStyles from 'components/ui/panel.scss';
 import icons from 'components/ui/icons.scss';
+import authFlow from 'services/authFlow';
 
 import * as actions from './actions';
 
@@ -28,7 +28,6 @@ class PanelTransition extends Component {
                 password: PropTypes.string
             })
         }).isRequired,
-        goBack: React.PropTypes.func.isRequired,
         setError: React.PropTypes.func.isRequired,
         clearErrors: React.PropTypes.func.isRequired,
         path: PropTypes.string.isRequired,
@@ -211,8 +210,7 @@ class PanelTransition extends Component {
     onGoBack = (event) => {
         event.preventDefault();
 
-        this.body.onGoBack && this.body.onGoBack();
-        this.props.goBack();
+        authFlow.goBack();
     };
 
     getHeader(key, props) {
@@ -341,14 +339,10 @@ class PanelTransition extends Component {
 export default connect((state) => ({
     user: state.user,
     auth: state.auth,
-    path: state.routing.location.pathname
+    path: state.routing.location.pathname,
+    resolve: authFlow.resolve.bind(authFlow),
+    reject: authFlow.reject.bind(authFlow)
 }), {
-    goBack: routeActions.goBack,
-    login: actions.login,
-    logout: actions.logout,
-    register: actions.register,
-    activate: actions.activate,
     clearErrors: actions.clearErrors,
-    oAuthComplete: actions.oAuthComplete,
     setError: actions.setError
 })(PanelTransition);

@@ -15,15 +15,7 @@ import styles from './passwordChange.scss';
 
 class Body extends BaseAuthBody {
     static propTypes = {
-        ...BaseAuthBody.propTypes/*,
-        // Я так полагаю, это правила валидации?
-        login: PropTypes.func.isRequired,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            login: PropTypes.shape({
-                login: PropTypes.stirng
-            })
-        })*/
+        ...BaseAuthBody.propTypes
     };
 
     render() {
@@ -56,10 +48,6 @@ class Body extends BaseAuthBody {
             </div>
         );
     }
-
-    onFormSubmit() {
-        this.props.login(this.serialize());
-    }
 }
 
 export default function PasswordChange() {
@@ -75,10 +63,14 @@ export default function PasswordChange() {
                 <Message {...passwordChangedMessages.change} />
             </button>
         ),
-        Links: () => (
-            <Link to="/oauth/permissions">
+        Links: (props) => (
+            <a href="#" onClick={(event) => {
+                event.preventDefault();
+
+                props.reject();
+            }}>
                 <Message {...passwordChangedMessages.skipThisStep} />
-            </Link>
+            </a>
         )
     };
 }

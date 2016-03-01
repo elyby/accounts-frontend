@@ -14,8 +14,6 @@ import messages from './Permissions.messages';
 class Body extends BaseAuthBody {
     static propTypes = {
         ...BaseAuthBody.propTypes,
-        login: PropTypes.func.isRequired,
-        oAuthComplete: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
             scopes: PropTypes.array.isRequired
@@ -52,19 +50,13 @@ class Body extends BaseAuthBody {
                         <Message {...messages.theAppNeedsAccess2} />
                     </div>
                     <ul className={styles.permissionsList}>
-                        {scopes.map((scope) => (
-                            <li>{<Message {...messages[`scope_${scope}`]} />}</li>
+                        {scopes.map((scope, key) => (
+                            <li key={key}>{<Message {...messages[`scope_${scope}`]} />}</li>
                         ))}
                     </ul>
                 </div>
             </div>
         );
-    }
-
-    onFormSubmit() {
-        this.props.oAuthComplete({
-            accept: true
-        });
     }
 }
 
@@ -85,9 +77,7 @@ export default function Permissions() {
             <a href="#" onClick={(event) => {
                 event.preventDefault();
 
-                props.onAuthComplete({
-                    accept: false
-                });
+                props.reject();
             }}>
                 <Message {...messages.decline} />
             </a>
