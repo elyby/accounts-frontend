@@ -1,6 +1,7 @@
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
 import ForgotPasswordState from './ForgotPasswordState';
+import LoginState from './LoginState';
 
 export default class PasswordState extends AbstractState {
     enter(context) {
