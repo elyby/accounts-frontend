@@ -37,6 +37,7 @@ $userBarHeight: 50px;
 }
 
 .body {
+    // TODO: должны ли мы здесь описать базовый шрифт, его размер и базовую линию?
     composes: wrapper;
     position: relative;
 

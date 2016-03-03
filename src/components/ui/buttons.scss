@@ -42,6 +42,16 @@
     }
 }
 
+// TODO: не уверен на счёт этого класса. Мб может лучше добавить это как класс-модификатор для .button?
+.smallButton {
+    composes: button;
+
+    height: 30px;
+    padding: 0 7px;
+    font-size: 14px;
+    line-height: 30px;
+}
+
 .black {
     composes: button;
 
