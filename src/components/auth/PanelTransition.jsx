@@ -13,9 +13,9 @@ import authFlow from 'services/authFlow';
 
 import * as actions from './actions';
 
-const opacitySpringConfig = [300, 20];
-const transformSpringConfig = [500, 50];
-const changeContextSpringConfig = [500, 20];
+const opacitySpringConfig = {stiffness: 300, damping: 20};
+const transformSpringConfig = {stiffness: 500, damping: 50};
+const changeContextSpringConfig = {stiffness: 500, damping: 20};
 
 class PanelTransition extends Component {
     static displayName = 'PanelTransition';
@@ -72,58 +72,54 @@ class PanelTransition extends Component {
 
         return (
             <TransitionMotion
-                styles={{
-                    [path]: {
-                        Title,
-                        Body,
-                        Footer,
-                        Links,
-                        hasBackButton: Title.type.goBack,
+                styles={[
+                    {key: path, data: {Title, Body, Footer, Links, hasBackButton: Title.type.goBack}, style: {
                         transformSpring: spring(0, transformSpringConfig),
                         opacitySpring: spring(1, opacitySpringConfig)
-                    },
-                    common: {
+                    }},
+                    {key: 'common', style: {
                         heightSpring: spring(forceHeight || height[path] || 0, transformSpringConfig),
                         switchContextHeightSpring: spring(forceHeight || contextHeight, changeContextSpringConfig)
-                    }
-                }}
+                    }}
+                ]}
                 willEnter={this.willEnter}
                 willLeave={this.willLeave}
             >
                 {(items) => {
-                    const keys = Object.keys(items).filter((key) => key !== 'common');
+                    const panels = items.filter(({key}) => key !== 'common');
+                    const common = items.filter(({key}) => key === 'common')[0];
 
                     const contentHeight = {
                         overflow: 'hidden',
-                        height: forceHeight ? items.common.switchContextHeightSpring : 'auto'
+                        height: forceHeight ? common.switchContextHeightSpring : 'auto'
                     };
 
                     const bodyHeight = {
                         position: 'relative',
-                        height: `${canAnimateHeight ? items.common.heightSpring : height[path]}px`
+                        height: `${canAnimateHeight ? common.style.heightSpring : height[path]}px`
                     };
 
                     return (
                         <Form id={path} onSubmit={this.onFormSubmit} onInvalid={this.onFormInvalid}>
                             <Panel>
                                 <PanelHeader>
-                                    {keys.map((key) => this.getHeader(key, items[key]))}
+                                    {panels.map((config) => this.getHeader(config))}
                                 </PanelHeader>
                                 <div style={contentHeight}>
                                     <ReactHeight onHeightReady={this.onUpdateContextHeight}>
                                         <PanelBody>
                                             <div style={bodyHeight}>
-                                                {keys.map((key) => this.getBody(key, items[key]))}
+                                                {panels.map((config) => this.getBody(config))}
                                             </div>
                                         </PanelBody>
                                         <PanelFooter>
-                                            {keys.map((key) => this.getFooter(key, items[key]))}
+                                            {panels.map((config) => this.getFooter(config))}
                                         </PanelFooter>
                                     </ReactHeight>
                                 </div>
                             </Panel>
                             <div className={helpLinksStyles}>
-                                {keys.map((key) => this.getLinks(key, items[key]))}
+                                {panels.map((config) => this.getLinks(config))}
                             </div>
                         </Form>
                     );
@@ -140,21 +136,20 @@ class PanelTransition extends Component {
         this.props.setError(errorMessage);
     };
 
-    willEnter = (key, styles) => this.getTransitionStyles(key, styles);
-    willLeave = (key, styles) => this.getTransitionStyles(key, styles, {isLeave: true});
+    willEnter = (config) => this.getTransitionStyles(config);
+    willLeave = (config) => this.getTransitionStyles(config, {isLeave: true});
 
     /**
-     * @param  {string} key
-     * @param  {Object} styles
+     * @param  {Object} config
      * @param  {Object} [options]
      * @param  {Object} [options.isLeave=false] - true, if this is a leave transition
      *
      * @return {Object}
      */
-    getTransitionStyles(key, styles, options = {}) {
-        var {isLeave = false} = options;
+    getTransitionStyles({key}, options = {}) {
+        const {isLeave = false} = options;
 
-        var map = {
+        const map = {
             '/login': -1,
             '/register': -1,
             '/password': 1,
@@ -163,13 +158,13 @@ class PanelTransition extends Component {
             '/password-change': 1,
             '/forgot-password': 1
         };
-        var sign = map[key];
+        const sign = map[key];
+
+        const transform = sign * 100;
 
         return {
-            ...styles,
-            pointerEvents: isLeave ? 'none' : 'auto',
-            transformSpring: spring(sign * 100, transformSpringConfig),
-            opacitySpring: spring(isLeave ? 0 : 1, opacitySpringConfig)
+            transformSpring: isLeave ? spring(transform, transformSpringConfig) : transform,
+            opacitySpring: isLeave ? spring(0, opacitySpringConfig) : 1
         };
     }
 
@@ -213,23 +208,24 @@ class PanelTransition extends Component {
         authFlow.goBack();
     };
 
-    getHeader(key, props) {
-        var {hasBackButton, transformSpring, Title} = props;
+    getHeader({key, style, data}) {
+        const {Title, hasBackButton} = data;
+        const {transformSpring} = style;
 
-        var style = {
-            ...this.getDefaultTransitionStyles(props),
+        style = {
+            ...this.getDefaultTransitionStyles(key, style),
             opacity: 1 // reset default
         };
 
-        var scrollStyle = this.translate(transformSpring, 'Y');
+        const scrollStyle = this.translate(transformSpring, 'Y');
 
-        var sideScrollStyle = {
+        const sideScrollStyle = {
             position: 'relative',
             zIndex: 2,
             ...this.translate(-Math.abs(transformSpring))
         };
 
-        var backButton = (
+        const backButton = (
             <button style={sideScrollStyle} type="button" onClick={this.onGoBack} className={panelStyles.headerControl}>
                 <span className={icons.arrowLeft} />
             </button>
@@ -245,21 +241,20 @@ class PanelTransition extends Component {
         );
     }
 
-    getBody(key, props) {
-        var {transformSpring, Body} = props;
-        var {direction} = this.state;
+    getBody({key, style, data}) {
+        const {Body} = data;
+        const {transformSpring} = style;
+        const {direction} = this.state;
 
-        var transform = this.translate(transformSpring, direction);
-
-
-        var verticalOrigin = 'top';
+        let transform = this.translate(transformSpring, direction);
+        let verticalOrigin = 'top';
         if (direction === 'Y') {
             verticalOrigin = 'bottom';
             transform = {};
         }
 
-        var style = {
-            ...this.getDefaultTransitionStyles(props),
+        style = {
+            ...this.getDefaultTransitionStyles(key, style),
             top: 'auto', // reset default
             [verticalOrigin]: 0,
             ...transform
@@ -277,10 +272,10 @@ class PanelTransition extends Component {
         );
     }
 
-    getFooter(key, props) {
-        var {Footer} = props;
+    getFooter({key, style, data}) {
+        const {Footer} = data;
 
-        var style = this.getDefaultTransitionStyles(props);
+        style = this.getDefaultTransitionStyles(key, style);
 
         return (
             <div key={`footer${key}`} style={style}>
@@ -289,10 +284,10 @@ class PanelTransition extends Component {
         );
     }
 
-    getLinks(key, props) {
-        var {Links} = props;
+    getLinks({key, style, data}) {
+        const {Links} = data;
 
-        var style = this.getDefaultTransitionStyles(props);
+        style = this.getDefaultTransitionStyles(key, style);
 
         return (
             <div key={`links${key}`} style={style}>
@@ -302,22 +297,20 @@ class PanelTransition extends Component {
     }
 
     /**
+     * @param  {string} key
      * @param  {Object} props
-     * @param  {string} props.pointerEvents
      * @param  {number} props.opacitySpring
      *
      * @return {Object}
      */
-    getDefaultTransitionStyles(props) {
-        var {pointerEvents, opacitySpring} = props;
-
+    getDefaultTransitionStyles(key, {opacitySpring}) {
         return {
             position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
             opacity: opacitySpring,
-            pointerEvents
+            pointerEvents: key === this.props.path ? 'auto' : 'none'
         };
     }
 
