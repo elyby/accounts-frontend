@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import AppInfo from 'components/auth/AppInfo';
 import PanelTransition from 'components/auth/PanelTransition';
 
+import Finish from 'components/auth/Finish';
+
 import styles from './auth.scss';
 
 class AuthPage extends Component {
@@ -31,7 +33,7 @@ class AuthPage extends Component {
                     <AppInfo {...client} onGoToAuth={this.onGoToAuth} />
                 </div>
                 <div className={styles.content}>
-                    <PanelTransition {...this.props} />
+                    <Finish {...this.props} />
                 </div>
             </div>
         );

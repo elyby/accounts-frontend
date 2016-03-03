@@ -1,0 +1,67 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+.finishPage {
+    font-family: $font-family-title;
+    position: relative;
+    padding-top: 40px;
+}
+
+.iconBackground {
+    position: absolute;
+    top: -15px;
+    transform: translateX(-50%);
+    font-size: 200px;
+    color: #e0d9cf;
+    z-index: -1;
+}
+
+.successBackground {
+    composes: checkmark from 'components/ui/icons.scss';
+    @extend .iconBackground;
+}
+
+.failBackground {
+    composes: close from 'components/ui/icons.scss';
+    @extend .iconBackground;
+}
+
+.title {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.greenTitle {
+    composes: title;
+
+    color: $green;
+
+    .appName {
+        color: darker($green);
+    }
+}
+
+.redTitle {
+    composes: title;
+
+    color: $red;
+
+    .appName {
+        color: darker($red);
+    }
+}
+
+.description {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.code {
+    $border: 5px solid darker($green);
+
+    border-right: $border;
+    border-left: $border;
+    padding: 5px 0;
+    margin-bottom: 5px;
+    word-break: break-all;
+}

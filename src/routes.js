@@ -16,6 +16,7 @@ import Password from 'components/auth/Password';
 import Logout from 'components/auth/Logout';
 import PasswordChange from 'components/auth/PasswordChange';
 import ForgotPassword from 'components/auth/ForgotPassword';
+import Finish from 'components/auth/Finish';
 
 import authFlow from 'services/authFlow';
 
@@ -47,6 +48,7 @@ export default function routesFactory(store) {
                 <Route path="/oauth/permissions" components={new Permissions()} {...onEnter} />
                 <Route path="/password-change" components={new PasswordChange()} {...onEnter} />
                 <Route path="/forgot-password" components={new ForgotPassword()} {...onEnter} />
+                <Route path="/oauth/finish" components={new Finish()} />
             </Route>
         </Route>
     );
