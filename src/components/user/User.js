@@ -24,7 +24,7 @@ export default class User {
             goal: null, // the goal with wich user entered site
             isGuest: true,
             isActive: true,
-            shouldChangePassword: false
+            shouldChangePassword: false // TODO: нужно ещё пробросить причину необходимости смены
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {

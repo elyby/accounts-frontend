@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
+import ProfilePage from 'pages/profile/ProfilePage';
+
 import authFlow from 'services/authFlow';
 
 class IndexPage extends Component {
@@ -14,14 +16,9 @@ class IndexPage extends Component {
     }
 
     render() {
-        const {user, children} = this.props;
-
         return (
             <div>
-                <h1>
-                    Hello {user.username}!
-                </h1>
-                {children}
+                <ProfilePage {...this.props} />
             </div>
         );
     }

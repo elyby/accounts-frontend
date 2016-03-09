@@ -1,0 +1,121 @@
+@import '~components/ui/fonts.scss';
+@import '~components/ui/colors.scss';
+
+.title {
+    font-family: $font-family-title;
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.content {
+    display: flex;
+}
+
+.description {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #9a9a9a;
+    width: 340px;
+    padding: 12px 20px 0 0;
+    box-sizing: border-box;
+}
+
+.options {
+    background: #fff;
+    flex-grow: 1;
+    max-width: 416px;
+    border-bottom: 10px solid #ddd8ce;
+}
+
+.optionsTitle {
+    position: relative;
+    font-size: 24px;
+    font-family: $font-family-title;
+    padding-bottom: 9px;
+
+    &:after {
+        content: '';
+        display: block;
+
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 86px;
+
+        background: $green;
+    }
+}
+
+.optionsDescription {
+    font-size: 13px;
+    color: #9a9a9a;
+    line-height: 1.25;
+    margin-top: 25px;
+}
+
+.item {
+    padding: 30px;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.paramItem {
+    composes: item;
+
+    $padding: 20px;
+
+    padding-top: $padding;
+    padding-bottom: $padding;
+
+    color: #666666;
+}
+
+.paramRow {
+    display: flex;
+    align-items: baseline;
+    flex-basis: 0;
+    flex-grow: 1;
+
+    font-size: 14px;
+}
+
+.paramName {
+    width: 125px;
+    font-family: $font-family-title;
+}
+
+.paramValue {
+    flex-grow: 1;
+}
+
+.uuidValue {
+    composes: paramName;
+    composes: paramValue;
+}
+
+.paramAction {
+    text-align: center;
+}
+
+.paramEditIcon {
+    composes: pencil from 'components/ui/icons.scss';
+
+    color: $light;
+    transition: .4s;
+
+    a:hover & {
+        color: #444;
+    }
+}
+
+.paramMessage {
+    padding: 10px 40px 0 0;
+
+    color: $red;
+    font-size: 11px;
+    line-height: 1.2;
+}
