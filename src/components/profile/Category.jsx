@@ -9,7 +9,7 @@ export class Category extends Component {
 
     render() {
         var { user } = this.props;
-        var changePassDate = Date.now() - (1000 * 60 * 60 * 24 * 30 * 3);
+        console.log(user);
 
         return (
             <div>
@@ -63,7 +63,7 @@ export class Category extends Component {
                             <div className={styles.paramRow}>
                                 <div className={styles.paramName}>Пароль:</div>
                                 <div className={styles.paramValue}>
-                                    Изменён <Relative value={changePassDate} />
+                                    Изменён <Relative value={user.passwordChangedAt} />
                                 </div>
                                 <div className={styles.paramAction}>
                                     <a href="#">
@@ -94,7 +94,7 @@ export class Category extends Component {
                         <div className={styles.paramItem}>
                             <div className={styles.paramRow}>
                                 <div className={styles.paramName}>UUID:</div>
-                                <div className={styles.uuidValue}>{user.uuid || 'df936908-b2e1-544d-96f8-2977ec213022'}</div>
+                                <div className={styles.uuidValue}>{user.uuid}</div>
                             </div>
                         </div>
                     </div>
