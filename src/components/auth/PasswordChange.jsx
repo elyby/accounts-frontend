@@ -35,6 +35,7 @@ class Body extends BaseAuthBody {
                     icon="key"
                     color="darkBlue"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={passwordChangedMessages.newPassword}
                 />

@@ -91,7 +91,7 @@ class PanelTransition extends Component {
 
                     const contentHeight = {
                         overflow: 'hidden',
-                        height: forceHeight ? common.switchContextHeightSpring : 'auto'
+                        height: forceHeight ? common.style.switchContextHeightSpring : 'auto'
                     };
 
                     const bodyHeight = {
@@ -141,6 +141,7 @@ class PanelTransition extends Component {
 
     /**
      * @param  {Object} config
+     * @param  {string} config.key
      * @param  {Object} [options]
      * @param  {Object} [options.isLeave=false] - true, if this is a leave transition
      *
@@ -298,8 +299,8 @@ class PanelTransition extends Component {
 
     /**
      * @param  {string} key
-     * @param  {Object} props
-     * @param  {number} props.opacitySpring
+     * @param  {Object} style
+     * @param  {number} style.opacitySpring
      *
      * @return {Object}
      */

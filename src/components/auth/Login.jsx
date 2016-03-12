@@ -30,6 +30,7 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('login')}
                     icon="envelope"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.emailOrUsername}
                 />

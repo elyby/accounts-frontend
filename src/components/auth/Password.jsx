@@ -46,6 +46,7 @@ class Body extends BaseAuthBody {
                     icon="key"
                     type="password"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.accountPassword}
                 />

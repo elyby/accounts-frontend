@@ -40,6 +40,7 @@ class Body extends BaseAuthBody {
                         color="blue"
                         className={styles.activationCodeInput}
                         autoFocus
+                        onFocus={this.fixAutoFocus}
                         required
                         placeholder={messages.enterTheCode}
                     />

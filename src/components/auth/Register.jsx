@@ -38,6 +38,7 @@ class Body extends BaseAuthBody {
                     color="blue"
                     type="text"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.yourNickname}
                 />

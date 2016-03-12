@@ -37,6 +37,7 @@ class Body extends BaseAuthBody {
                     icon="envelope"
                     color="lightViolet"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.accountEmail}
                 />
