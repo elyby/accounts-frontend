@@ -34,7 +34,7 @@ export default function routesFactory(store) {
 
     return (
         <Route path="/" component={RootPage}>
-            <IndexRoute component={IndexPage} />
+            <IndexRoute component={IndexPage} {...onEnter} />
 
             <Route path="oauth" component={OAuthInit} {...onEnter} />
             <Route path="logout" component={Logout} {...onEnter} />
