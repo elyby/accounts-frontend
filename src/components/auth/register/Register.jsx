@@ -6,9 +6,9 @@ import Helmet from 'react-helmet';
 import buttons from 'components/ui/buttons.scss';
 import { Input, Checkbox } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
+import activationMessages from 'components/auth/activation/Activation.messages';
 import messages from './Register.messages';
-import activationMessages from './Activation.messages';
 
 // TODO: password and username can be validate for length and sameness
 

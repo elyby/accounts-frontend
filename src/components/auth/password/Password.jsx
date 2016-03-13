@@ -8,7 +8,7 @@ import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
 import { Input, Checkbox } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './password.scss';
 import messages from './Password.messages';
 

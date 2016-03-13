@@ -6,7 +6,7 @@ import Helmet from 'react-helmet';
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './activation.scss';
 import messages from './Activation.messages';
 

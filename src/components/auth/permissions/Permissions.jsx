@@ -7,7 +7,7 @@ import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
 import { PanelBodyHeader } from 'components/ui/Panel';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './permissions.scss';
 import messages from './Permissions.messages';
 

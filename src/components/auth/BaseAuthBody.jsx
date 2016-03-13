@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 
-import AuthError from './AuthError';
+import AuthError from 'components/auth/authError/AuthError';
 import { userShape } from 'components/user/User';
 
 export default class BaseAuthBody extends Component {
