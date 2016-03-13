@@ -4,29 +4,32 @@
 import React, { Component, PropTypes } from 'react';
 
 import AuthError from './AuthError';
+import { userShape } from 'components/user/User';
 
 export default class BaseAuthBody extends Component {
-    static propTypes = {
+    static contextTypes = {
         clearErrors: PropTypes.func.isRequired,
         resolve: PropTypes.func.isRequired,
         reject: PropTypes.func.isRequired,
         auth: PropTypes.shape({
-            error: PropTypes.string
-        })
+            error: PropTypes.string,
+            scopes: PropTypes.array
+        }),
+        user: userShape
     };
 
     renderErrors() {
-        return this.props.auth.error
-            ? <AuthError error={this.props.auth.error} onClose={this.onClearErrors} />
+        return this.context.auth.error
+            ? <AuthError error={this.context.auth.error} onClose={this.onClearErrors} />
             : ''
             ;
     }
 
     onFormSubmit() {
-        this.props.resolve(this.serialize());
+        this.context.resolve(this.serialize());
     }
 
-    onClearErrors = this.props.clearErrors;
+    onClearErrors = this.context.clearErrors;
 
     form = {};
 

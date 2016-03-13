@@ -11,8 +11,8 @@ export default class AppInfo extends Component {
     static displayName = 'AppInfo';
 
     static propTypes = {
-        name: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired,
+        name: PropTypes.string,
+        description: PropTypes.string,
         onGoToAuth: PropTypes.func.isRequired
     };
 

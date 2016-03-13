@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -13,20 +13,7 @@ import activationMessages from './Activation.messages';
 // TODO: password and username can be validate for length and sameness
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        register: PropTypes.func.isRequired,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            register: PropTypes.shape({
-                email: PropTypes.string,
-                username: PropTypes.stirng,
-                password: PropTypes.stirng,
-                rePassword: PropTypes.stirng,
-                rulesAgreement: PropTypes.boolean
-            })
-        })
-    };
+    static displayName = 'RegisterBody';
 
     render() {
         return (

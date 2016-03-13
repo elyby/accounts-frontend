@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -13,19 +13,10 @@ import styles from './password.scss';
 import messages from './Password.messages';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            login: PropTypes.shape({
-                login: PropTypes.stirng,
-                password: PropTypes.stirng
-            })
-        })
-    };
+    static displayName = 'PasswordBody';
 
     render() {
-        const {user} = this.props;
+        const {user} = this.context;
 
         return (
             <div>
