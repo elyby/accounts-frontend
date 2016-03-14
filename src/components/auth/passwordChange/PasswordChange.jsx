@@ -2,21 +2,18 @@ import React, { PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
 
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import passwordChangedMessages from './PasswordChange.messages';
 
 import icons from 'components/ui/icons.scss';
 import styles from './passwordChange.scss';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes
-    };
+    static displayName = 'PasswordChangeBody';
 
     render() {
         return (
@@ -35,6 +32,7 @@ class Body extends BaseAuthBody {
                     icon="key"
                     color="darkBlue"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={passwordChangedMessages.newPassword}
                 />
@@ -51,7 +49,7 @@ class Body extends BaseAuthBody {
 }
 
 export default function PasswordChange() {
-    return {
+    const componentsMap = {
         Title: () => ( // TODO: separate component for PageTitle
             <Message {...passwordChangedMessages.changePasswordTitle}>
                 {(msg) => <span>{msg}<Helmet title={msg} /></span>}
@@ -63,14 +61,20 @@ export default function PasswordChange() {
                 <Message {...passwordChangedMessages.change} />
             </button>
         ),
-        Links: (props) => (
+        Links: (props, context) => (
             <a href="#" onClick={(event) => {
                 event.preventDefault();
 
-                props.reject();
+                context.reject();
             }}>
                 <Message {...passwordChangedMessages.skipThisStep} />
             </a>
         )
     };
+
+    componentsMap.Links.contextTypes = {
+        reject: PropTypes.func.isRequired
+    };
+
+    return componentsMap;
 }

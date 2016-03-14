@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -6,20 +6,12 @@ import Helmet from 'react-helmet';
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './activation.scss';
 import messages from './Activation.messages';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            login: PropTypes.shape({
-                login: PropTypes.stirng
-            })
-        })
-    };
+    static displayName = 'ActivationBody';
 
     render() {
         return (
@@ -31,7 +23,7 @@ class Body extends BaseAuthBody {
 
                     <div className={styles.descriptionText}>
                         <Message {...messages.activationMailWasSent} values={{
-                            email: (<b>{this.props.user.email}</b>)
+                            email: (<b>{this.context.user.email}</b>)
                         }} />
                     </div>
                 </div>
@@ -40,6 +32,7 @@ class Body extends BaseAuthBody {
                         color="blue"
                         className={styles.activationCodeInput}
                         autoFocus
+                        onFocus={this.fixAutoFocus}
                         required
                         placeholder={messages.enterTheCode}
                     />

@@ -7,22 +7,16 @@ import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
 import { PanelBodyHeader } from 'components/ui/Panel';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './permissions.scss';
 import messages from './Permissions.messages';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            scopes: PropTypes.array.isRequired
-        })
-    };
+    static displayName = 'PermissionsBody';
 
     render() {
-        const {user} = this.props;
-        const scopes = this.props.auth.scopes;
+        const {user} = this.context;
+        const scopes = this.context.auth.scopes;
 
         return (
             <div>
@@ -61,7 +55,7 @@ class Body extends BaseAuthBody {
 }
 
 export default function Permissions() {
-    return {
+    const componentsMap = {
         Title: () => ( // TODO: separate component for PageTitle
             <Message {...messages.permissionsTitle}>
                 {(msg) => <span>{msg}<Helmet title={msg} /></span>}
@@ -73,14 +67,20 @@ export default function Permissions() {
                 <Message {...messages.approve} />
             </button>
         ),
-        Links: (props) => (
+        Links: (props, context) => (
             <a href="#" onClick={(event) => {
                 event.preventDefault();
 
-                props.reject();
+                context.reject();
             }}>
                 <Message {...messages.decline} />
             </a>
         )
     };
+
+    componentsMap.Links.contextTypes = {
+        reject: PropTypes.func.isRequired
+    };
+
+    return componentsMap;
 }

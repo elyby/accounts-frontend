@@ -8,14 +8,14 @@ import AuthPage from 'pages/auth/AuthPage';
 import { authenticate } from 'components/user/actions';
 
 import OAuthInit from 'components/auth/OAuthInit';
-import Register from 'components/auth/Register';
-import Login from 'components/auth/Login';
-import Permissions from 'components/auth/Permissions';
-import Activation from 'components/auth/Activation';
-import Password from 'components/auth/Password';
+import Register from 'components/auth/register/Register';
+import Login from 'components/auth/login/Login';
+import Permissions from 'components/auth/permissions/Permissions';
+import Activation from 'components/auth/activation/Activation';
+import Password from 'components/auth/password/Password';
 import Logout from 'components/auth/Logout';
-import PasswordChange from 'components/auth/PasswordChange';
-import ForgotPassword from 'components/auth/ForgotPassword';
+import PasswordChange from 'components/auth/passwordChange/PasswordChange';
+import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import Finish from 'components/auth/Finish';
 
 import authFlow from 'services/authFlow';
@@ -35,7 +35,7 @@ export default function routesFactory(store) {
 
     return (
         <Route path="/" component={RootPage}>
-            <IndexRoute component={IndexPage} />
+            <IndexRoute component={IndexPage} {...onEnter} />
 
             <Route path="oauth" component={OAuthInit} {...onEnter} />
             <Route path="logout" component={Logout} {...onEnter} />

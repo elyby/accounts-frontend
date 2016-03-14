@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -7,20 +7,12 @@ import { Link } from 'react-router';
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
+import passwordMessages from 'components/auth/password/Password.messages';
 import messages from './Login.messages';
-import passwordMessages from './Password.messages';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            login: PropTypes.shape({
-                login: PropTypes.stirng
-            })
-        })
-    };
+    static displayName = 'LoginBody';
 
     render() {
         return (
@@ -30,6 +22,7 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('login')}
                     icon="envelope"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.emailOrUsername}
                 />

@@ -10,6 +10,7 @@ import {helpLinks as helpLinksStyles} from 'components/auth/helpLinks.scss';
 import panelStyles from 'components/ui/panel.scss';
 import icons from 'components/ui/icons.scss';
 import authFlow from 'services/authFlow';
+import { userShape } from 'components/user/User';
 
 import * as actions from './actions';
 
@@ -21,6 +22,7 @@ class PanelTransition extends Component {
     static displayName = 'PanelTransition';
 
     static propTypes = {
+        // context props
         auth: PropTypes.shape({
             error: PropTypes.string,
             login: PropTypes.shape({
@@ -28,14 +30,43 @@ class PanelTransition extends Component {
                 password: PropTypes.string
             })
         }).isRequired,
+        user: userShape.isRequired,
         setError: React.PropTypes.func.isRequired,
         clearErrors: React.PropTypes.func.isRequired,
+        resolve: React.PropTypes.func.isRequired,
+        reject: React.PropTypes.func.isRequired,
+
+        // local props
         path: PropTypes.string.isRequired,
         Title: PropTypes.element.isRequired,
         Body: PropTypes.element.isRequired,
         Footer: PropTypes.element.isRequired,
         Links: PropTypes.element.isRequired
     };
+
+    static childContextTypes = {
+        auth: PropTypes.shape({
+            error: PropTypes.string,
+            login: PropTypes.shape({
+                login: PropTypes.string,
+                password: PropTypes.string
+            })
+        }),
+        user: userShape,
+        clearErrors: React.PropTypes.func,
+        resolve: PropTypes.func,
+        reject: PropTypes.func
+    };
+
+    getChildContext() {
+        return {
+            auth: this.props.auth,
+            user: this.props.user,
+            clearErrors: this.props.clearErrors,
+            resolve: this.props.resolve,
+            reject: this.props.reject
+        };
+    }
 
     state = {
         height: {},
@@ -91,7 +122,7 @@ class PanelTransition extends Component {
 
                     const contentHeight = {
                         overflow: 'hidden',
-                        height: forceHeight ? common.switchContextHeightSpring : 'auto'
+                        height: forceHeight ? common.style.switchContextHeightSpring : 'auto'
                     };
 
                     const bodyHeight = {
@@ -141,6 +172,7 @@ class PanelTransition extends Component {
 
     /**
      * @param  {Object} config
+     * @param  {string} config.key
      * @param  {Object} [options]
      * @param  {Object} [options.isLeave=false] - true, if this is a leave transition
      *
@@ -235,7 +267,7 @@ class PanelTransition extends Component {
             <div key={`header${key}`} style={style}>
                 {hasBackButton ? backButton : null}
                 <div style={scrollStyle}>
-                    {React.cloneElement(Title, this.props)}
+                    {Title}
                 </div>
             </div>
         );
@@ -263,7 +295,6 @@ class PanelTransition extends Component {
         return (
             <ReactHeight key={`body${key}`} style={style} onHeightReady={this.onUpdateHeight}>
                 {React.cloneElement(Body, {
-                    ...this.props,
                     ref: (body) => {
                         this.body = body;
                     }
@@ -279,7 +310,7 @@ class PanelTransition extends Component {
 
         return (
             <div key={`footer${key}`} style={style}>
-                {React.cloneElement(Footer, this.props)}
+                {Footer}
             </div>
         );
     }
@@ -291,15 +322,15 @@ class PanelTransition extends Component {
 
         return (
             <div key={`links${key}`} style={style}>
-                {React.cloneElement(Links, this.props)}
+                {Links}
             </div>
         );
     }
 
     /**
      * @param  {string} key
-     * @param  {Object} props
-     * @param  {number} props.opacitySpring
+     * @param  {Object} style
+     * @param  {number} style.opacitySpring
      *
      * @return {Object}
      */

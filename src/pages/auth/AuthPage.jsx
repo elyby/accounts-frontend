@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 import { connect } from 'react-redux';
 
-import AppInfo from 'components/auth/AppInfo';
+import AppInfo from 'components/auth/appInfo/AppInfo';
 import PanelTransition from 'components/auth/PanelTransition';
 
 import Finish from 'components/auth/Finish';
