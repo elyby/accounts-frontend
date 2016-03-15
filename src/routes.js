@@ -46,9 +46,9 @@ export default function routesFactory(store) {
                 <Route path="/register" components={new Register()} {...onEnter} />
                 <Route path="/activation" components={new Activation()} {...onEnter} />
                 <Route path="/oauth/permissions" components={new Permissions()} {...onEnter} />
+                <Route path="/oauth/finish" component={Finish} />
                 <Route path="/password-change" components={new PasswordChange()} {...onEnter} />
                 <Route path="/forgot-password" components={new ForgotPassword()} {...onEnter} />
-                <Route path="/oauth/finish" components={new Finish()} />
             </Route>
         </Route>
     );

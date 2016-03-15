@@ -33,7 +33,7 @@ class AuthPage extends Component {
                     <AppInfo {...client} onGoToAuth={this.onGoToAuth} />
                 </div>
                 <div className={styles.content}>
-                    <Finish {...this.props} />
+                    <PanelTransition {...this.props} />
                 </div>
             </div>
         );

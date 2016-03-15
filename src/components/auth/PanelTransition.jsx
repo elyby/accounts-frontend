@@ -38,10 +38,11 @@ class PanelTransition extends Component {
 
         // local props
         path: PropTypes.string.isRequired,
-        Title: PropTypes.element.isRequired,
-        Body: PropTypes.element.isRequired,
-        Footer: PropTypes.element.isRequired,
-        Links: PropTypes.element.isRequired
+        Title: PropTypes.element,
+        Body: PropTypes.element,
+        Footer: PropTypes.element,
+        Links: PropTypes.element,
+        children: PropTypes.element
     };
 
     static childContextTypes = {
@@ -100,6 +101,12 @@ class PanelTransition extends Component {
         const {height, canAnimateHeight, contextHeight, forceHeight} = this.state;
 
         const {path, Title, Body, Footer, Links} = this.props;
+
+        if (this.props.children) {
+            return this.props.children;
+        } else if (!Title || !Body || !Footer || !Links) {
+            throw new Error('Title, Body, Footer and Links are required');
+        }
 
         return (
             <TransitionMotion

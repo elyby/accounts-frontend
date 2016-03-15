@@ -1,58 +1,55 @@
 import React, { Component, PropTypes } from 'react';
 
+import { connect } from 'react-redux';
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
 import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
-import { Input } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
 import messages from './Finish.messages';
-
 import styles from './finish.scss';
 
-export default class Finish extends Component {
-    static propTypes = {
+class Finish extends Component {
+    static displayName = 'Finish';
 
+    static propTypes = {
+        appName: PropTypes.string.isRequired,
+        code: PropTypes.string.isRequired,
+        displayCode: PropTypes.bool,
+        success: PropTypes.bool
     };
 
     state = {
-        isSidebarHidden: false
+        isCopySupported: document.queryCommandSupported && document.queryCommandSupported('copy')
     };
 
-    handleCopyClick(selector) {
+    handleCopyClick = (event) => {
+        event.preventDefault();
         // http://stackoverflow.com/a/987376/5184751
-         var text = document.querySelector(selector);
-         var range, selection;
-        if (document.body.createTextRange) {
-            range = document.body.createTextRange();
-            range.moveToElementText(text);
-            range.select();
-        } else if (window.getSelection) {
-            selection = window.getSelection();
-            range = document.createRange();
-            range.selectNodeContents(text);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
 
         try {
-            var successful = document.execCommand('copy');
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(this.code);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const successful = document.execCommand('copy');
+            selection.removeAllRanges();
+
             // TODO: было бы ещё неплохо сделать какую-то анимацию, вроде "Скопировано",
             // ибо сейчас после клика как-то неубедительно, скопировалось оно или нет
             console.log('Copying text command was ' + (successful ? 'successful' : 'unsuccessful'));
-        } catch (err) {
-            console.error('Oops, unable to copy');
-        }
-    }
+        } catch (err) {}
+    };
+
+    setCode = (el) => {
+        this.code = el;
+    };
 
     render() {
-        const withCode = true;
-        const success = true;
-        const appName = 'TLauncher';
-        const code = 'HW9vkZA6Y4vRN3ciSm1IIDk98PHLkPPlv3jvo1MX';
-        const copySupported = document.queryCommandSupported('copy');
+        const {appName, code, displayCode, success} = this.props;
+        const {isCopySupported} = this.state;
 
         return (
             <div className={styles.finishPage}>
@@ -64,19 +61,21 @@ export default class Finish extends Component {
                                 appName: (<span className={styles.appName}>{appName}</span>)
                             }} />
                         </div>
-                        {withCode ? (
+                        {displayCode ? (
                             <div>
                                 <div className={styles.description}>
                                     <Message {...messages.passCodeToApp} values={{appName}} />
                                 </div>
-                                <div className={styles.code}>{code}</div>
-                                {copySupported ? (
-                                    <div
+                                <div className={styles.codeContainer}>
+                                    <div className={styles.code} ref={this.setCode}>{code}</div>
+                                </div>
+                                {isCopySupported ? (
+                                    <button
                                         className={classNames(buttons.smallButton, buttons.green)}
-                                        onClick={this.handleCopyClick.bind(this, '.' + styles.code)}
+                                        onClick={this.handleCopyClick}
                                     >
                                         <Message {...messages.copy} />
-                                    </div>
+                                    </button>
                                 ) : (
                                     ''
                                 )}
@@ -104,3 +103,10 @@ export default class Finish extends Component {
         );
     }
 }
+
+export default connect((state) => ({
+    appName: state.auth.client ? state.auth.client.name : 'Undefined',
+    code: 'HW9vkZA6Y4vRN3ciSm1IIDk98PHLkPPlv3jvo1MX',
+    displayCode: true,
+    success: true
+}))(Finish);

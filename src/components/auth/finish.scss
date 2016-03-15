@@ -4,7 +4,10 @@
 .finishPage {
     font-family: $font-family-title;
     position: relative;
+    max-width: 515px;
     padding-top: 40px;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .iconBackground {
@@ -56,12 +59,18 @@
     margin-bottom: 10px;
 }
 
+.codeContainer {
+    margin-bottom: 5px;
+    margin-top: 35px;
+}
+
 .code {
     $border: 5px solid darker($green);
 
+    display: inline-block;
     border-right: $border;
     border-left: $border;
-    padding: 5px 0;
-    margin-bottom: 5px;
+    padding: 5px 10px;
     word-break: break-all;
+    text-align: center;
 }
