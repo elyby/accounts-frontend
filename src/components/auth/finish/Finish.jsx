@@ -104,9 +104,9 @@ class Finish extends Component {
     }
 }
 
-export default connect((state) => ({
-    appName: state.auth.client ? state.auth.client.name : 'Undefined',
-    code: 'HW9vkZA6Y4vRN3ciSm1IIDk98PHLkPPlv3jvo1MX',
-    displayCode: true,
-    success: true
+export default connect(({auth}) => ({
+    appName: auth.client.name,
+    code: auth.oauth.code,
+    displayCode: auth.oauth.displayCode,
+    success: auth.oauth.success
 }))(Finish);

@@ -93,6 +93,7 @@ export default class AuthFlow {
             case '/activation':
             case '/password-change':
             case '/oauth/permissions':
+            case '/oauth/finish':
                 this.setState(new LoginState());
                 break;
 

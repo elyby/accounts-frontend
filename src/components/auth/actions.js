@@ -151,6 +151,7 @@ export function oAuthComplete(params = {}) {
             if (resp.statusCode === 401 && resp.error === 'access_denied') {
                 // user declined permissions
                 return {
+                    success: false,
                     redirectUri: resp.redirectUri
                 };
             }
@@ -168,6 +169,18 @@ export function oAuthComplete(params = {}) {
                 error.acceptRequired = true;
                 throw error;
             }
+        })
+        .then((resp) => {
+            if (resp.redirectUri === 'static_page' || resp.redirectUri === 'static_page_with_code') {
+                resp.displayCode = resp.redirectUri === 'static_page_with_code';
+                dispatch(setOAuthCode({
+                    success: resp.success,
+                    code: resp.code,
+                    displayCode: resp.displayCode
+                }));
+            }
+
+            return resp;
         });
     };
 }
@@ -220,6 +233,18 @@ export function setOAuthRequest(oauth) {
             responseType: oauth.response_type,
             scope: oauth.scope,
             state: oauth.state
+        }
+    };
+}
+
+export const SET_OAUTH_RESULT = 'set_oauth_result';
+export function setOAuthCode(oauth) {
+    return {
+        type: SET_OAUTH_RESULT,
+        payload: {
+            success: oauth.success,
+            code: oauth.code,
+            displayCode: oauth.displayCode
         }
     };
 }

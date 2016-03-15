@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { ERROR, SET_CLIENT, SET_OAUTH, SET_SCOPES } from './actions';
+import { ERROR, SET_CLIENT, SET_OAUTH, SET_OAUTH_RESULT, SET_SCOPES } from './actions';
 
 export default combineReducers({
     error,
@@ -54,6 +54,14 @@ function oauth(
                 responseType: payload.responseType,
                 scope: payload.scope,
                 state: payload.state
+            };
+
+        case SET_OAUTH_RESULT:
+            return {
+                ...state,
+                success: payload.success,
+                code: payload.code,
+                displayCode: payload.displayCode
             };
 
         default:

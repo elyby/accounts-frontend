@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import AppInfo from 'components/auth/appInfo/AppInfo';
 import PanelTransition from 'components/auth/PanelTransition';
 
-import Finish from 'components/auth/Finish';
-
 import styles from './auth.scss';
 
 class AuthPage extends Component {
