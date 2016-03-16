@@ -5,15 +5,14 @@ import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
-
 import BaseAuthBody from 'components/auth/BaseAuthBody';
-import passwordChangedMessages from './PasswordChange.messages';
-
 import icons from 'components/ui/icons.scss';
-import styles from './passwordChange.scss';
+
+import messages from './ChangePassword.messages';
+import styles from './changePassword.scss';
 
 class Body extends BaseAuthBody {
-    static displayName = 'PasswordChangeBody';
+    static displayName = 'ChangePasswordBody';
 
     render() {
         return (
@@ -25,40 +24,47 @@ class Body extends BaseAuthBody {
                 </div>
 
                 <p className={styles.descriptionText}>
-                    <Message {...passwordChangedMessages.changePasswordMessage} />
+                    <Message {...messages.changePasswordMessage} />
                 </p>
 
-                <Input {...this.bindField('newPassword')}
+                <Input {...this.bindField('password')}
                     icon="key"
                     color="darkBlue"
                     autoFocus
                     onFocus={this.fixAutoFocus}
                     required
-                    placeholder={passwordChangedMessages.newPassword}
+                    placeholder={messages.currentPassword}
+                />
+
+                <Input {...this.bindField('newPassword')}
+                    icon="key"
+                    color="darkBlue"
+                    required
+                    placeholder={messages.newPassword}
                 />
 
                 <Input {...this.bindField('newRePassword')}
                     icon="key"
                     color="darkBlue"
                     required
-                    placeholder={passwordChangedMessages.newRePassword}
+                    placeholder={messages.newRePassword}
                 />
             </div>
         );
     }
 }
 
-export default function PasswordChange() {
+export default function ChangePassword() {
     const componentsMap = {
         Title: () => ( // TODO: separate component for PageTitle
-            <Message {...passwordChangedMessages.changePasswordTitle}>
+            <Message {...messages.changePasswordTitle}>
                 {(msg) => <span>{msg}<Helmet title={msg} /></span>}
             </Message>
         ),
         Body,
         Footer: () => (
             <button className={buttons.darkBlue} type="submit">
-                <Message {...passwordChangedMessages.change} />
+                <Message {...messages.change} />
             </button>
         ),
         Links: (props, context) => (
@@ -67,7 +73,7 @@ export default function PasswordChange() {
 
                 context.reject();
             }}>
-                <Message {...passwordChangedMessages.skipThisStep} />
+                <Message {...messages.skipThisStep} />
             </a>
         )
     };

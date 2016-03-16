@@ -17,6 +17,10 @@ export default defineMessages({
         id: 'change',
         defaultMessage: 'Change'
     },
+    currentPassword: {
+        id: 'currentPassword',
+        defaultMessage: 'Enter current password'
+    },
     newPassword: {
         id: 'newPassword',
         defaultMessage: 'Enter new password'

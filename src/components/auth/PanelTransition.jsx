@@ -194,7 +194,7 @@ class PanelTransition extends Component {
             '/password': 1,
             '/activation': 1,
             '/oauth/permissions': -1,
-            '/password-change': 1,
+            '/change-password': 1,
             '/forgot-password': 1
         };
         const sign = map[key];
@@ -216,7 +216,7 @@ class PanelTransition extends Component {
             '/register': not('/activation') ? 'Y' : 'X',
             '/activation': not('/register') ? 'Y' : 'X',
             '/oauth/permissions': 'Y',
-            '/password-change': 'Y',
+            '/change-password': 'Y',
             '/forgot-password': not('/password') && not('/login') ? 'Y' : 'X'
         };
 
