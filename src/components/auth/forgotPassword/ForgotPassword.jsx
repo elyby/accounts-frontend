@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -6,22 +6,13 @@ import Helmet from 'react-helmet';
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import messages from './ForgotPassword.messages';
 
 import styles from './forgotPassword.scss';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        //login: PropTypes.func.isRequired,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            login: PropTypes.shape({
-                email: PropTypes.stirng
-            })
-        })
-    };
+    static displayName = 'ForgotPasswordBody';
 
     // Если юзер вводил своё мыло во время попытки авторизации, то почему бы его сюда автоматически не подставить?
     render() {
@@ -37,6 +28,7 @@ class Body extends BaseAuthBody {
                     icon="envelope"
                     color="lightViolet"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.accountEmail}
                 />
@@ -49,7 +41,6 @@ class Body extends BaseAuthBody {
 
     onFormSubmit() {
         // TODO: обработчик отправки письма с инструкцией по смене аккаунта
-        //this.props.login(this.serialize());
     }
 }
 

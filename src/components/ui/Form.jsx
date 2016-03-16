@@ -14,7 +14,7 @@ export class Input extends Component {
             id: PropTypes.string
         }),
         icon: PropTypes.string,
-        color: PropTypes.oneOf(['green', 'blue', 'red'])
+        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
     };
 
     static contextTypes = {

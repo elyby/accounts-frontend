@@ -22,19 +22,6 @@ import routesFactory from 'routes';
 
 import 'index.scss';
 
-// TODO: временная мера против Intl, который беспощадно спамит консоль
-if (process.env.NODE_ENV !== 'production') {
-    const originalConsoleError = console.error;
-    if (console.error === originalConsoleError) {
-        console.error = (...args) => {
-            if (args[0].indexOf('[React Intl] Missing message:') === 0) {
-                return;
-            }
-            originalConsoleError.call(console, ...args);
-        };
-    }
-}
-
 const reducer = combineReducers({
     ...reducers,
     routing: routeReducer

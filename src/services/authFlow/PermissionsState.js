@@ -1,4 +1,5 @@
 import AbstractState from './AbstractState';
+import CompleteState from './CompleteState';
 
 export default class PermissionsState extends AbstractState {
     enter(context) {
@@ -14,8 +15,8 @@ export default class PermissionsState extends AbstractState {
     }
 
     process(context, accept) {
-        context.run('oAuthComplete', {
+        context.setState(new CompleteState({
             accept
-        }).then((resp) => location.href = resp.redirectUri);
+        }));
     }
 }

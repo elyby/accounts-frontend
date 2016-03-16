@@ -3,7 +3,12 @@ import CompleteState from './CompleteState';
 
 export default class ChangePasswordState extends AbstractState {
     enter(context) {
-        context.navigate('/password-change');
+        context.navigate('/change-password');
+    }
+
+    resolve(context, payload) {
+        context.run('changePassword', payload)
+            .then(() => context.setState(new CompleteState()));
     }
 
     reject(context) {

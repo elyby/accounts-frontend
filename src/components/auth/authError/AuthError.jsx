@@ -71,6 +71,10 @@ export default class AuthError extends Component {
         'error.you_must_accept_rules': () => this.errorsMap['error.rulesAgreement_required'](),
         'error.key_required': () => <Message {...messages.keyRequired} />,
         'error.key_is_required': () => this.errorsMap['error.key_required'](),
-        'error.key_not_exists': () => <Message {...messages.keyNotExists} />
+        'error.key_not_exists': () => <Message {...messages.keyNotExists} />,
+
+        'error.newPassword_required': () => <Message {...messages.newPasswordRequired} />,
+        'error.newRePassword_required': () => <Message {...messages.newRePasswordRequired} />,
+        'error.newRePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />
     };
 }

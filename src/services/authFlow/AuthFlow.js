@@ -23,7 +23,6 @@ export default class AuthFlow {
             const {routing} = this.getState();
 
             if (routing.location.pathname !== route) {
-                this.ignoreRequest = true; // TODO: remove me
                 if (this.replace) {
                     this.replace(route);
                 }
@@ -62,10 +61,10 @@ export default class AuthFlow {
             throw new Error('State is required');
         }
 
-        if (this.state instanceof state.constructor) {
-            // already in this state
-            return;
-        }
+        // if (this.state instanceof state.constructor) {
+        //     // already in this state
+        //     return;
+        // }
 
         this.state && this.state.leave(this);
         this.state = state;
@@ -74,9 +73,10 @@ export default class AuthFlow {
 
     handleRequest(path, replace) {
         this.replace = replace;
-        if (this.ignoreRequest) {
-            this.ignoreRequest = false;
-            return;
+
+        if (path === '/') {
+            // reset oauth data if user tried to navigate to index route
+            this.run('setOAuthRequest', {});
         }
 
         switch (path) {
@@ -92,11 +92,13 @@ export default class AuthFlow {
                 this.setState(new ForgotPasswordState());
                 break;
 
+            case '/':
             case '/login':
             case '/password':
             case '/activation':
-            case '/password-change':
+            case '/change-password':
             case '/oauth/permissions':
+            case '/oauth/finish':
                 this.setState(new LoginState());
                 break;
 

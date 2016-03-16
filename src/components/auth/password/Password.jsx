@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
@@ -8,24 +8,15 @@ import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
 import { Input, Checkbox } from 'components/ui/Form';
 
-import BaseAuthBody from './BaseAuthBody';
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './password.scss';
 import messages from './Password.messages';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes,
-        auth: PropTypes.shape({
-            error: PropTypes.string,
-            login: PropTypes.shape({
-                login: PropTypes.stirng,
-                password: PropTypes.stirng
-            })
-        })
-    };
+    static displayName = 'PasswordBody';
 
     render() {
-        const {user} = this.props;
+        const {user} = this.context;
 
         return (
             <div>
@@ -46,6 +37,7 @@ class Body extends BaseAuthBody {
                     icon="key"
                     type="password"
                     autoFocus
+                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.accountPassword}
                 />

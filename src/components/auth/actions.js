@@ -1,6 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, authenticate } from 'components/user/actions';
+import { updateUser, logout as logoutUser, changePassword as changeUserPassword, authenticate } from 'components/user/actions';
 import request from 'services/request';
 
 export function login({login = '', password = '', rememberMe = false}) {
@@ -32,7 +32,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                     username: login,
                     email: login
                 }));
-            } else {
+            } else if (resp.errors) {
                 if (resp.errors.login === LOGIN_REQUIRED && password) {
                     dispatch(logout());
                 }
@@ -44,6 +44,25 @@ export function login({login = '', password = '', rememberMe = false}) {
             // TODO: log unexpected errors
         })
         ;
+}
+
+export function changePassword({
+    password = '',
+    newPassword = '',
+    newRePassword = ''
+}) {
+    return (dispatch) =>
+        dispatch(changeUserPassword({password, newPassword, newRePassword}))
+            .catch((resp) => {
+                if (resp.errors) {
+                    const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+                    dispatch(setError(errorMessage));
+                    throw new Error(errorMessage);
+                }
+
+                // TODO: log unexpected errors
+            })
+            ;
 }
 
 export function register({
@@ -67,9 +86,11 @@ export function register({
             dispatch(routeActions.push('/activation'));
         })
         .catch((resp) => {
-            const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
-            dispatch(setError(errorMessage));
-            throw new Error(errorMessage);
+            if (resp.errors) {
+                const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+                dispatch(setError(errorMessage));
+                throw new Error(errorMessage);
+            }
 
             // TODO: log unexpected errors
         })
@@ -151,6 +172,7 @@ export function oAuthComplete(params = {}) {
             if (resp.statusCode === 401 && resp.error === 'access_denied') {
                 // user declined permissions
                 return {
+                    success: false,
                     redirectUri: resp.redirectUri
                 };
             }
@@ -168,6 +190,18 @@ export function oAuthComplete(params = {}) {
                 error.acceptRequired = true;
                 throw error;
             }
+        })
+        .then((resp) => {
+            if (resp.redirectUri === 'static_page' || resp.redirectUri === 'static_page_with_code') {
+                resp.displayCode = resp.redirectUri === 'static_page_with_code';
+                dispatch(setOAuthCode({
+                    success: resp.success,
+                    code: resp.code,
+                    displayCode: resp.displayCode
+                }));
+            }
+
+            return resp;
         });
     };
 }
@@ -220,6 +254,18 @@ export function setOAuthRequest(oauth) {
             responseType: oauth.response_type,
             scope: oauth.scope,
             state: oauth.state
+        }
+    };
+}
+
+export const SET_OAUTH_RESULT = 'set_oauth_result';
+export function setOAuthCode(oauth) {
+    return {
+        type: SET_OAUTH_RESULT,
+        payload: {
+            success: oauth.success,
+            code: oauth.code,
+            displayCode: oauth.displayCode
         }
     };
 }

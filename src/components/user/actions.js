@@ -24,7 +24,6 @@ export function logout() {
     return setUser({isGuest: true});
 }
 
-
 export function fetchUserData() {
     return (dispatch) =>
         request.get('/api/accounts/current')
@@ -43,6 +42,26 @@ export function fetchUserData() {
              */
             console.log(resp);
         });
+}
+
+export function changePassword({
+    password = '',
+    newPassword = '',
+    newRePassword = ''
+}) {
+    return (dispatch) =>
+        request.post(
+            '/api/accounts/change-password',
+            {password, newPassword, newRePassword}
+        )
+        .then((resp) => {
+            dispatch(updateUser({
+                shouldChangePassword: false
+            }));
+
+            return resp;
+        })
+        ;
 }
 
 

@@ -2,21 +2,17 @@ import React, { PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
 
 import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/Form';
-
-import BaseAuthBody from './BaseAuthBody';
-import passwordChangedMessages from './PasswordChange.messages';
-
+import BaseAuthBody from 'components/auth/BaseAuthBody';
 import icons from 'components/ui/icons.scss';
-import styles from './passwordChange.scss';
+
+import messages from './ChangePassword.messages';
+import styles from './changePassword.scss';
 
 class Body extends BaseAuthBody {
-    static propTypes = {
-        ...BaseAuthBody.propTypes
-    };
+    static displayName = 'ChangePasswordBody';
 
     render() {
         return (
@@ -28,49 +24,66 @@ class Body extends BaseAuthBody {
                 </div>
 
                 <p className={styles.descriptionText}>
-                    <Message {...passwordChangedMessages.changePasswordMessage} />
+                    <Message {...messages.changePasswordMessage} />
                 </p>
+
+                <Input {...this.bindField('password')}
+                    icon="key"
+                    color="darkBlue"
+                    type="password"
+                    autoFocus
+                    onFocus={this.fixAutoFocus}
+                    required
+                    placeholder={messages.currentPassword}
+                />
 
                 <Input {...this.bindField('newPassword')}
                     icon="key"
                     color="darkBlue"
-                    autoFocus
+                    type="password"
                     required
-                    placeholder={passwordChangedMessages.newPassword}
+                    placeholder={messages.newPassword}
                 />
 
                 <Input {...this.bindField('newRePassword')}
                     icon="key"
                     color="darkBlue"
+                    type="password"
                     required
-                    placeholder={passwordChangedMessages.newRePassword}
+                    placeholder={messages.newRePassword}
                 />
             </div>
         );
     }
 }
 
-export default function PasswordChange() {
-    return {
+export default function ChangePassword() {
+    const componentsMap = {
         Title: () => ( // TODO: separate component for PageTitle
-            <Message {...passwordChangedMessages.changePasswordTitle}>
+            <Message {...messages.changePasswordTitle}>
                 {(msg) => <span>{msg}<Helmet title={msg} /></span>}
             </Message>
         ),
         Body,
         Footer: () => (
             <button className={buttons.darkBlue} type="submit">
-                <Message {...passwordChangedMessages.change} />
+                <Message {...messages.change} />
             </button>
         ),
-        Links: (props) => (
+        Links: (props, context) => (
             <a href="#" onClick={(event) => {
                 event.preventDefault();
 
-                props.reject();
+                context.reject();
             }}>
-                <Message {...passwordChangedMessages.skipThisStep} />
+                <Message {...messages.skipThisStep} />
             </a>
         )
     };
+
+    componentsMap.Links.contextTypes = {
+        reject: PropTypes.func.isRequired
+    };
+
+    return componentsMap;
 }
