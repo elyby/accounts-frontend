@@ -74,6 +74,11 @@ export default class AuthFlow {
     handleRequest(path, replace) {
         this.replace = replace;
 
+        if (path === '/') {
+            // reset oauth data if user tried to navigate to index route
+            this.run('setOAuthRequest', {});
+        }
+
         switch (path) {
             case '/oauth':
                 this.setState(new OAuthState());

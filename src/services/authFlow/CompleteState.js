@@ -24,7 +24,7 @@ export default class CompleteState extends AbstractState {
             context.setState(new ActivationState());
         } else if (user.shouldChangePassword) {
             context.setState(new ChangePasswordState());
-        } else if (auth.oauth) {
+        } else if (auth.oauth && auth.oauth.clientId) {
             if (auth.oauth.code) {
                 context.setState(new FinishState());
             } else {
