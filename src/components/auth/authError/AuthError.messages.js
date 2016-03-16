@@ -31,6 +31,16 @@ export default defineMessages({
         defaultMessage: 'Please enter password'
     },
 
+    newPasswordRequired: {
+        id: 'newPasswordRequired',
+        defaultMessage: 'Please enter new password'
+    },
+
+    newRePasswordRequired: {
+        id: 'newRePasswordRequired',
+        defaultMessage: 'Please repeat new password'
+    },
+
     usernameRequired: {
         id: 'usernameRequired',
         defaultMessage: 'Username is required'

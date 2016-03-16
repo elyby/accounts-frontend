@@ -1,6 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, authenticate } from 'components/user/actions';
+import { updateUser, logout as logoutUser, changePassword as changeUserPassword, authenticate } from 'components/user/actions';
 import request from 'services/request';
 
 export function login({login = '', password = '', rememberMe = false}) {
@@ -32,7 +32,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                     username: login,
                     email: login
                 }));
-            } else {
+            } else if (resp.errors) {
                 if (resp.errors.login === LOGIN_REQUIRED && password) {
                     dispatch(logout());
                 }
@@ -44,6 +44,25 @@ export function login({login = '', password = '', rememberMe = false}) {
             // TODO: log unexpected errors
         })
         ;
+}
+
+export function changePassword({
+    password = '',
+    newPassword = '',
+    newRePassword = ''
+}) {
+    return (dispatch) =>
+        dispatch(changeUserPassword({password, newPassword, newRePassword}))
+            .catch((resp) => {
+                if (resp.errors) {
+                    const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+                    dispatch(setError(errorMessage));
+                    throw new Error(errorMessage);
+                }
+
+                // TODO: log unexpected errors
+            })
+            ;
 }
 
 export function register({
@@ -67,9 +86,11 @@ export function register({
             dispatch(routeActions.push('/activation'));
         })
         .catch((resp) => {
-            const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
-            dispatch(setError(errorMessage));
-            throw new Error(errorMessage);
+            if (resp.errors) {
+                const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+                dispatch(setError(errorMessage));
+                throw new Error(errorMessage);
+            }
 
             // TODO: log unexpected errors
         })

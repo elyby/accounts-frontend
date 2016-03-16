@@ -30,6 +30,7 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('password')}
                     icon="key"
                     color="darkBlue"
+                    type="password"
                     autoFocus
                     onFocus={this.fixAutoFocus}
                     required
@@ -39,6 +40,7 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('newPassword')}
                     icon="key"
                     color="darkBlue"
+                    type="password"
                     required
                     placeholder={messages.newPassword}
                 />
@@ -46,6 +48,7 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('newRePassword')}
                     icon="key"
                     color="darkBlue"
+                    type="password"
                     required
                     placeholder={messages.newRePassword}
                 />
