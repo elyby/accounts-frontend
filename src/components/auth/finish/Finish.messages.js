@@ -3,22 +3,27 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
     authForAppSuccessful: {
         id: 'authForAppSuccessful',
-        defaultMessage: 'Авторизация для {appName} успешно выполнена'
+        defaultMessage: 'Authorization for {appName} was successfully completed'
+        // defaultMessage: 'Авторизация для {appName} успешно выполнена'
     },
     authForAppFailed: {
         id: 'authForAppFailed',
-        defaultMessage: 'Авторизация для {appName} не удалась'
+        defaultMessage: 'Authorization for {appName} was failed'
+        // defaultMessage: 'Авторизация для {appName} не удалась'
     },
     waitAppReaction: {
         id: 'waitAppReaction',
-        defaultMessage: 'Пожалуйста, дождитесь реакции вашего приложения'
+        defaultMessage: 'Please, wait till your application response'
+        // defaultMessage: 'Пожалуйста, дождитесь реакции вашего приложения'
     },
     passCodeToApp: {
         id: 'passCodeToApp',
-        defaultMessage: 'Чтобы завершить процесс авторизации, пожалуйста, передай {appName} этот код'
+        defaultMessage: 'To complete authorization process, please, provide the following code to {appName}'
+        // defaultMessage: 'Чтобы завершить процесс авторизации, пожалуйста, передай {appName} этот код'
     },
     copy: {
         id: 'copy',
-        defaultMessage: 'Скопировать'
+        defaultMessage: 'Copy'
+        // defaultMessage: 'Скопировать'
     }
 });
