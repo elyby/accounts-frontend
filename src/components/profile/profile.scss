@@ -1,6 +1,11 @@
 @import '~components/ui/fonts.scss';
 @import '~components/ui/colors.scss';
 
+.container {
+    margin-top: 55px;
+}
+
+
 .title {
     font-family: $font-family-title;
     font-size: 30px;
