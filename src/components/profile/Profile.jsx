@@ -56,7 +56,7 @@ export class Profile extends Component {
 
                         <ProfileField
                             label={'Пароль'}
-                            value={<span>Изменён <Relative value={user.passwordChangedAt} /></span>}
+                            value={<span>Изменён <Relative value={user.passwordChangedAt * 1000} /></span>}
                             warningMessage={user.shouldChangePassword ? (
                                 <span>
                                     Для пароля применяется старый алгоритм хэширования<br />
