@@ -192,7 +192,9 @@ export function oAuthComplete(params = {}) {
             }
         })
         .then((resp) => {
-            if (resp.redirectUri === 'static_page' || resp.redirectUri === 'static_page_with_code') {
+            if (resp.redirectUri.startsWith('static_page')) {
+                resp.code = resp.redirectUri.match(/code=(.+)&/)[1];
+                resp.redirectUri = resp.redirectUri.match(/^(.+)\?/)[1];
                 resp.displayCode = resp.redirectUri === 'static_page_with_code';
                 dispatch(setOAuthCode({
                     success: resp.success,

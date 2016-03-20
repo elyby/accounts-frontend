@@ -33,14 +33,10 @@ export default class CompleteState extends AbstractState {
                     data.accept = this.isPermissionsAccepted;
                 }
                 context.run('oAuthComplete', data).then((resp) => {
-                    switch (resp.redirectUri) {
-                        case 'static_page':
-                        case 'static_page_with_code':
-                            context.setState(new FinishState());
-                            break;
-                        default:
-                            location.href = resp.redirectUri;
-                            break;
+                    if (resp.redirectUri.startsWith('static_page')) {
+                        context.setState(new FinishState());
+                    } else {
+                        location.href = resp.redirectUri;
                     }
                 }, (resp) => {
                     // TODO
