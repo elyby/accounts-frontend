@@ -5,7 +5,7 @@ import styles from './profile.scss';
 export default class ProfileField extends Component {
     static displayName = 'ProfileField';
     static propTypes = {
-        label: PropTypes.string.isRequired,
+        label: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
         value: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
         warningMessage: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
         readonly: PropTypes.bool
