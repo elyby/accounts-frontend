@@ -9,14 +9,11 @@ export default class CompleteState extends AbstractState {
     constructor(options = {}) {
         super(options);
 
-        if ('accept' in options) {
-            this.isPermissionsAccepted = options.accept;
-            this.isUserReviewedPermissions = true;
-        }
+        this.isPermissionsAccepted = options.accept;
     }
 
     enter(context) {
-        const {auth, user} = context.getState();
+        const {auth = {}, user} = context.getState();
 
         if (user.isGuest) {
             context.setState(new LoginState());
@@ -28,18 +25,19 @@ export default class CompleteState extends AbstractState {
             if (auth.oauth.code) {
                 context.setState(new FinishState());
             } else {
-                let data = {};
-                if (this.isUserReviewedPermissions) {
+                const data = {};
+                if (typeof this.isPermissionsAccepted !== 'undefined') {
                     data.accept = this.isPermissionsAccepted;
                 }
                 context.run('oAuthComplete', data).then((resp) => {
-                    if (resp.redirectUri.startsWith('static_page')) {
+                    // TODO: пусть в стейт попадает флаг или тип авторизации
+                    // вместо волшебства над редирект урлой
+                    if (resp.redirectUri.indexOf('static_page') === 0) {
                         context.setState(new FinishState());
                     } else {
-                        location.href = resp.redirectUri;
+                        context.run('redirect', resp.redirectUri);
                     }
                 }, (resp) => {
-                    // TODO
                     if (resp.unauthorized) {
                         context.setState(new LoginState());
                     } else if (resp.acceptRequired) {

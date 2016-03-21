@@ -10,14 +10,13 @@ import ForgotPasswordState from './ForgotPasswordState';
 
 const availableActions = {
     ...actions,
-    updateUser
+    updateUser,
+    redirect(url) {
+        location.href = url;
+    }
 };
 
 export default class AuthFlow {
-    constructor(states) {
-        this.states = states;
-    }
-
     setStore(store) {
         this.navigate = (route) => {
             const {routing} = this.getState();
