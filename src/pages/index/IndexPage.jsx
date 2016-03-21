@@ -2,20 +2,13 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
+import { Profile } from 'components/profile/Profile';
+
 class IndexPage extends Component {
     displayName = 'IndexPage';
 
     render() {
-        const {user, children} = this.props;
-
-        return (
-            <div>
-                <h1>
-                    Hello {user.username}!
-                </h1>
-                {children}
-            </div>
-        );
+        return (<Profile {...this.props} />);
     }
 }
 

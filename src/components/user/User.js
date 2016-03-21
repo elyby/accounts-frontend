@@ -17,6 +17,7 @@ export default class User {
 
         const defaults = {
             id: null,
+            uuid: null,
             token: '',
             username: '',
             email: '',
@@ -24,7 +25,8 @@ export default class User {
             goal: null, // the goal with wich user entered site
             isGuest: true,
             isActive: true,
-            shouldChangePassword: false
+            shouldChangePassword: false, // TODO: нужно ещё пробросить причину необходимости смены
+            passwordChangedAt: null
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {
@@ -51,10 +53,12 @@ export default class User {
 
 export const userShape = PropTypes.shape({
     id: PropTypes.number,
+    uuid: PropTypes.string,
     token: PropTypes.string,
     username: PropTypes.string,
     email: PropTypes.string,
     avatar: PropTypes.string,
     isGuest: PropTypes.bool.isRequired,
-    isActive: PropTypes.bool.isRequired
+    isActive: PropTypes.bool.isRequired,
+    passwordChangedAt: PropTypes.number
 });

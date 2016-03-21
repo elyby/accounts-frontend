@@ -27,7 +27,7 @@ export default class LoggedInPanel extends Component {
 
         return (
             <div className={buttonGroups.horizontalGroup}>
-                <Link to="/profile" className={classNames(buttons.green, buttonGroups.item)}>
+                <Link to="/" className={classNames(buttons.green, buttonGroups.item)}>
                     <span className={styles.userIcon} />
                     <span className={styles.userName}>{user.username}</span>
                 </Link>
