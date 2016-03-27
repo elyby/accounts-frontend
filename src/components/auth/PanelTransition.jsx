@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 
 import { connect } from 'react-redux';
 import { TransitionMotion, spring } from 'react-motion';
-import ReactHeight from 'react-height';
 
 import { Panel, PanelBody, PanelFooter, PanelHeader } from 'components/ui/Panel';
 import { Form } from 'components/ui/Form';
@@ -13,6 +12,7 @@ import authFlow from 'services/authFlow';
 import { userShape } from 'components/user/User';
 
 import * as actions from './actions';
+import MeasureHeight from './MeasureHeight';
 
 const opacitySpringConfig = {stiffness: 300, damping: 20};
 const transformSpringConfig = {stiffness: 500, damping: 50};
@@ -70,7 +70,6 @@ class PanelTransition extends Component {
     }
 
     state = {
-        height: {},
         contextHeight: 0
     };
 
@@ -98,9 +97,11 @@ class PanelTransition extends Component {
     }
 
     render() {
-        const {height, canAnimateHeight, contextHeight, forceHeight} = this.state;
+        const {canAnimateHeight, contextHeight, forceHeight} = this.state;
 
         const {path, Title, Body, Footer, Links} = this.props;
+
+        const formHeight = this.state[`formHeight${path}`] || 0;
 
         if (this.props.children) {
             return this.props.children;
@@ -116,7 +117,7 @@ class PanelTransition extends Component {
                         opacitySpring: spring(1, opacitySpringConfig)
                     }},
                     {key: 'common', style: {
-                        heightSpring: spring(forceHeight || height[path] || 0, transformSpringConfig),
+                        heightSpring: spring(forceHeight || formHeight, transformSpringConfig),
                         switchContextHeightSpring: spring(forceHeight || contextHeight, changeContextSpringConfig)
                     }}
                 ]}
@@ -134,7 +135,7 @@ class PanelTransition extends Component {
 
                     const bodyHeight = {
                         position: 'relative',
-                        height: `${canAnimateHeight ? common.style.heightSpring : height[path]}px`
+                        height: `${canAnimateHeight ? common.style.heightSpring : formHeight}px`
                     };
 
                     return (
@@ -144,7 +145,10 @@ class PanelTransition extends Component {
                                     {panels.map((config) => this.getHeader(config))}
                                 </PanelHeader>
                                 <div style={contentHeight}>
-                                    <ReactHeight onHeightReady={this.onUpdateContextHeight}>
+                                    <MeasureHeight
+                                        state={this.props.auth.error}
+                                        onMeasure={this.onUpdateContextHeight}
+                                    >
                                         <PanelBody>
                                             <div style={bodyHeight}>
                                                 {panels.map((config) => this.getBody(config))}
@@ -153,7 +157,7 @@ class PanelTransition extends Component {
                                         <PanelFooter>
                                             {panels.map((config) => this.getFooter(config))}
                                         </PanelFooter>
-                                    </ReactHeight>
+                                    </MeasureHeight>
                                 </div>
                             </Panel>
                             <div className={helpLinksStyles}>
@@ -223,15 +227,16 @@ class PanelTransition extends Component {
         return map[next];
     }
 
-    onUpdateHeight = (height) => {
-        const canAnimateHeight = Object.keys(this.state.height).length > 1 || this.state.height[[this.props.path]];
+    onUpdateHeight = (height, key) => {
+        const heightKey = `formHeight${key}`;
+
+        // we need to skip first render, because there is no panel to make transition from
+        // const canAnimateHeight = Object.keys(this.state.height).length > 1 || this.state[heightKey];
+        const canAnimateHeight = true;
 
         this.setState({
             canAnimateHeight,
-            height: {
-                ...this.state.height,
-                [this.props.path]: height
-            }
+            [heightKey]: height
         });
     };
 
@@ -300,13 +305,18 @@ class PanelTransition extends Component {
         };
 
         return (
-            <ReactHeight key={`body${key}`} style={style} onHeightReady={this.onUpdateHeight}>
+            <MeasureHeight
+                key={`body${key}`}
+                style={style}
+                state={this.props.auth.error}
+                onMeasure={(height) => this.onUpdateHeight(height, key)}
+            >
                 {React.cloneElement(Body, {
                     ref: (body) => {
                         this.body = body;
                     }
                 })}
-            </ReactHeight>
+            </MeasureHeight>
         );
     }
 

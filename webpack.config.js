@@ -53,7 +53,6 @@ var webpackConfig = {
             'intl-messageformat',
             'react',
             'react-dom',
-            'react-height',
             'react-helmet',
             'react-intl',
             'react-motion',

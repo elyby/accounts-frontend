@@ -20,7 +20,6 @@
     "intl-messageformat": "^1.1.0",
     "react": "^15.0.0-rc.2",
     "react-dom": "^15.0.0-rc.2",
-    "react-height": "^2.0.3",
     "react-helmet": "^2.3.1",
     "react-intl": "=v2.0.0-rc-1",
     "react-motion": "^0.4.0",
