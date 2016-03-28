@@ -13,6 +13,7 @@ import messages from './Login.messages';
 
 class Body extends BaseAuthBody {
     static displayName = 'LoginBody';
+    static panelId = 'login';
 
     render() {
         return (

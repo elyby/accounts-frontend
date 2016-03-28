@@ -12,6 +12,7 @@ import messages from './Activation.messages';
 
 class Body extends BaseAuthBody {
     static displayName = 'ActivationBody';
+    static panelId = 'activation';
 
     render() {
         return (

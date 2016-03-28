@@ -37,7 +37,6 @@ class PanelTransition extends Component {
         reject: React.PropTypes.func.isRequired,
 
         // local props
-        path: PropTypes.string.isRequired,
         Title: PropTypes.element,
         Body: PropTypes.element,
         Footer: PropTypes.element,
@@ -59,6 +58,10 @@ class PanelTransition extends Component {
         reject: PropTypes.func
     };
 
+    state = {
+        contextHeight: 0
+    };
+
     getChildContext() {
         return {
             auth: this.props.auth,
@@ -69,23 +72,18 @@ class PanelTransition extends Component {
         };
     }
 
-    state = {
-        contextHeight: 0
-    };
-
     componentWillReceiveProps(nextProps) {
-        var nextPath = nextProps.path;
-        var previousPath = this.props.path;
+        const nextPanel = nextProps.Body && nextProps.Body.type.panelId;
+        const previousPanel = this.props.Body && this.props.Body.type.panelId;
 
-        if (nextPath !== previousPath) {
-            var direction = this.getDirection(nextPath, previousPath);
-            var forceHeight = direction === 'Y' && nextPath !== previousPath ? 1 : 0;
+        if (nextPanel !== previousPanel) {
+            const direction = this.getDirection(nextPanel, previousPanel);
+            const forceHeight = direction === 'Y' && nextPanel !== previousPanel ? 1 : 0;
 
             this.props.clearErrors();
             this.setState({
                 direction,
-                forceHeight,
-                previousPath
+                forceHeight
             });
 
             if (forceHeight) {
@@ -99,9 +97,7 @@ class PanelTransition extends Component {
     render() {
         const {canAnimateHeight, contextHeight, forceHeight} = this.state;
 
-        const {path, Title, Body, Footer, Links} = this.props;
-
-        const formHeight = this.state[`formHeight${path}`] || 0;
+        const {Title, Body, Footer, Links} = this.props;
 
         if (this.props.children) {
             return this.props.children;
@@ -109,10 +105,15 @@ class PanelTransition extends Component {
             throw new Error('Title, Body, Footer and Links are required');
         }
 
+        const panelId = Body.type.panelId;
+        const hasGoBack = Body.type.hasGoBack;
+
+        const formHeight = this.state[`formHeight${panelId}`] || 0;
+
         return (
             <TransitionMotion
                 styles={[
-                    {key: path, data: {Title, Body, Footer, Links, hasBackButton: Title.type.goBack}, style: {
+                    {key: panelId, data: {Title, Body, Footer, Links, hasBackButton: hasGoBack}, style: {
                         transformSpring: spring(0, transformSpringConfig),
                         opacitySpring: spring(1, opacitySpringConfig)
                     }},
@@ -139,7 +140,7 @@ class PanelTransition extends Component {
                     };
 
                     return (
-                        <Form id={path} onSubmit={this.onFormSubmit} onInvalid={this.onFormInvalid}>
+                        <Form id={panelId} onSubmit={this.onFormSubmit} onInvalid={this.onFormInvalid}>
                             <Panel>
                                 <PanelHeader>
                                     {panels.map((config) => this.getHeader(config))}
@@ -193,13 +194,13 @@ class PanelTransition extends Component {
         const {isLeave = false} = options;
 
         const map = {
-            '/login': -1,
-            '/register': -1,
-            '/password': 1,
-            '/activation': 1,
-            '/oauth/permissions': -1,
-            '/change-password': 1,
-            '/forgot-password': 1
+            login: -1,
+            register: -1,
+            password: 1,
+            activation: 1,
+            permissions: -1,
+            changePassword: 1,
+            forgotPassword: 1
         };
         const sign = map[key];
 
@@ -212,16 +213,16 @@ class PanelTransition extends Component {
     }
 
     getDirection(next, prev) {
-        var not = (path) => prev !== path && next !== path;
+        const not = (panelId) => prev !== panelId && next !== panelId;
 
-        var map = {
-            '/login': not('/password') && not('/forgot-password') ? 'Y' : 'X',
-            '/password': not('/login') && not('/forgot-password') ? 'Y' : 'X',
-            '/register': not('/activation') ? 'Y' : 'X',
-            '/activation': not('/register') ? 'Y' : 'X',
-            '/oauth/permissions': 'Y',
-            '/change-password': 'Y',
-            '/forgot-password': not('/password') && not('/login') ? 'Y' : 'X'
+        const map = {
+            login: not('password') && not('forgotPassword') ? 'Y' : 'X',
+            password: not('login') && not('forgotPassword') ? 'Y' : 'X',
+            register: not('activation') ? 'Y' : 'X',
+            activation: not('register') ? 'Y' : 'X',
+            permissions: 'Y',
+            changePassword: 'Y',
+            forgotPassword: not('password') && not('login') ? 'Y' : 'X'
         };
 
         return map[next];
@@ -232,7 +233,7 @@ class PanelTransition extends Component {
 
         // we need to skip first render, because there is no panel to make transition from
         // const canAnimateHeight = Object.keys(this.state.height).length > 1 || this.state[heightKey];
-        const canAnimateHeight = true;
+        const canAnimateHeight = true; // NOTE: lets try to always animate
 
         this.setState({
             canAnimateHeight,
@@ -276,7 +277,7 @@ class PanelTransition extends Component {
         );
 
         return (
-            <div key={`header${key}`} style={style}>
+            <div key={`header/${key}`} style={style}>
                 {hasBackButton ? backButton : null}
                 <div style={scrollStyle}>
                     {Title}
@@ -306,7 +307,7 @@ class PanelTransition extends Component {
 
         return (
             <MeasureHeight
-                key={`body${key}`}
+                key={`body/${key}`}
                 style={style}
                 state={this.props.auth.error}
                 onMeasure={(height) => this.onUpdateHeight(height, key)}
@@ -326,7 +327,7 @@ class PanelTransition extends Component {
         style = this.getDefaultTransitionStyles(key, style);
 
         return (
-            <div key={`footer${key}`} style={style}>
+            <div key={`footer/${key}`} style={style}>
                 {Footer}
             </div>
         );
@@ -338,7 +339,7 @@ class PanelTransition extends Component {
         style = this.getDefaultTransitionStyles(key, style);
 
         return (
-            <div key={`links${key}`} style={style}>
+            <div key={`links/${key}`} style={style}>
                 {Links}
             </div>
         );
@@ -358,7 +359,7 @@ class PanelTransition extends Component {
             left: 0,
             width: '100%',
             opacity: opacitySpring,
-            pointerEvents: key === this.props.path ? 'auto' : 'none'
+            pointerEvents: key === this.props.Body.type.panelId ? 'auto' : 'none'
         };
     }
 
@@ -380,7 +381,6 @@ class PanelTransition extends Component {
 export default connect((state) => ({
     user: state.user,
     auth: state.auth,
-    path: state.routing.location.pathname,
     resolve: authFlow.resolve.bind(authFlow),
     reject: authFlow.reject.bind(authFlow)
 }), {

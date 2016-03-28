@@ -13,6 +13,7 @@ import messages from './Permissions.messages';
 
 class Body extends BaseAuthBody {
     static displayName = 'PermissionsBody';
+    static panelId = 'permissions';
 
     render() {
         const {user} = this.context;

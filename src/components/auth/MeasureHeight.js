@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 export default class MeasureHeight extends Component {
+    static displayName = 'MeasureHeight';
     static propTypes = {
         shouldMeasure: PropTypes.func,
         onMeasure: PropTypes.func

@@ -14,6 +14,8 @@ import messages from './Password.messages';
 
 class Body extends BaseAuthBody {
     static displayName = 'PasswordBody';
+    static panelId = 'password';
+    static hasGoBack = true;
 
     render() {
         const {user} = this.context;
@@ -49,15 +51,12 @@ class Body extends BaseAuthBody {
 }
 
 export default function Password() {
-    var Title = () => ( // TODO: separate component for PageTitle
-        <Message {...messages.passwordTitle}>
-            {(msg) => <span>{msg}<Helmet title={msg} /></span>}
-        </Message>
-    );
-    Title.goBack = true;
-
     return {
-        Title,
+        Title: () => ( // TODO: separate component for PageTitle
+            <Message {...messages.passwordTitle}>
+                {(msg) => <span>{msg}<Helmet title={msg} /></span>}
+            </Message>
+        ),
         Body,
         Footer: () => (
             <button className={buttons.green} type="submit">

@@ -13,6 +13,7 @@ import styles from './changePassword.scss';
 
 class Body extends BaseAuthBody {
     static displayName = 'ChangePasswordBody';
+    static panelId = 'changePassword';
 
     render() {
         return (

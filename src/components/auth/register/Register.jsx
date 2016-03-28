@@ -14,6 +14,7 @@ import messages from './Register.messages';
 
 class Body extends BaseAuthBody {
     static displayName = 'RegisterBody';
+    static panelId = 'register';
 
     render() {
         return (

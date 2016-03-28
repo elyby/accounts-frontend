@@ -13,6 +13,8 @@ import styles from './forgotPassword.scss';
 
 class Body extends BaseAuthBody {
     static displayName = 'ForgotPasswordBody';
+    static panelId = 'forgotPassword';
+    static hasGoBack = true;
 
     // Если юзер вводил своё мыло во время попытки авторизации, то почему бы его сюда автоматически не подставить?
     render() {
@@ -45,15 +47,12 @@ class Body extends BaseAuthBody {
 }
 
 export default function ForgotPassword() {
-    var Title = () => ( // TODO: separate component for PageTitle
-        <Message {...messages.forgotPasswordTitle}>
-            {(msg) => <span>{msg}<Helmet title={msg} /></span>}
-        </Message>
-    );
-    Title.goBack = true;
-
     return {
-        Title,
+        Title: () => ( // TODO: separate component for PageTitle
+            <Message {...messages.forgotPasswordTitle}>
+                {(msg) => <span>{msg}<Helmet title={msg} /></span>}
+            </Message>
+        ),
         Body,
         Footer: () => (
             <button className={buttons.lightViolet} type="submit">
