@@ -16,6 +16,8 @@ class Body extends BaseAuthBody {
     static displayName = 'RegisterBody';
     static panelId = 'register';
 
+    autoFocusField = 'username';
+
     render() {
         return (
             <div>
@@ -25,8 +27,6 @@ class Body extends BaseAuthBody {
                     icon="user"
                     color="blue"
                     type="text"
-                    autoFocus
-                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.yourNickname}
                 />

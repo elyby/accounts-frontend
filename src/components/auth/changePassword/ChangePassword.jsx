@@ -15,6 +15,8 @@ class Body extends BaseAuthBody {
     static displayName = 'ChangePasswordBody';
     static panelId = 'changePassword';
 
+    autoFocusField = 'password';
+
     render() {
         return (
             <div>
@@ -32,8 +34,6 @@ class Body extends BaseAuthBody {
                     icon="key"
                     color="darkBlue"
                     type="password"
-                    autoFocus
-                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.currentPassword}
                 />

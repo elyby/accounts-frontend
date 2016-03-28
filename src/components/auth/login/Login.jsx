@@ -15,6 +15,8 @@ class Body extends BaseAuthBody {
     static displayName = 'LoginBody';
     static panelId = 'login';
 
+    autoFocusField = 'login';
+
     render() {
         return (
             <div>
@@ -22,8 +24,6 @@ class Body extends BaseAuthBody {
 
                 <Input {...this.bindField('login')}
                     icon="envelope"
-                    autoFocus
-                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.emailOrUsername}
                 />

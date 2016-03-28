@@ -134,6 +134,8 @@ class PanelTransition extends Component {
                         height: forceHeight ? common.style.switchContextHeightSpring : 'auto'
                     };
 
+                    this.tryToAutoFocus(panels.length);
+
                     const bodyHeight = {
                         position: 'relative',
                         height: `${canAnimateHeight ? common.style.heightSpring : formHeight}px`
@@ -252,6 +254,26 @@ class PanelTransition extends Component {
 
         authFlow.goBack();
     };
+
+    /**
+     * Tries to auto focus form fields after transition end
+     *
+     * @param  {number} length number of panels transitioned
+     */
+    tryToAutoFocus(length) {
+        if (!this.body) {
+            return;
+        }
+
+        if (length === 1) {
+            if (!this.wasAutoFocused) {
+                this.body.autoFocus();
+            }
+            this.wasAutoFocused = true;
+        } else if (this.wasAutoFocused) {
+            this.wasAutoFocused = false;
+        }
+    }
 
     getHeader({key, style, data}) {
         const {Title, hasBackButton} = data;

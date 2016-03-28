@@ -56,6 +56,11 @@ export class Input extends Component {
     getValue() {
         return this.el.value;
     }
+
+    focus() {
+        this.el.focus();
+        setTimeout(this.el.focus.bind(this.el), 10);
+    }
 }
 
 export class Checkbox extends Component {
@@ -85,6 +90,10 @@ export class Checkbox extends Component {
 
     getValue() {
         return this.el.checked ? 1 : 0;
+    }
+
+    focus() {
+        this.el.focus();
     }
 }
 

@@ -16,6 +16,8 @@ class Body extends BaseAuthBody {
     static panelId = 'forgotPassword';
     static hasGoBack = true;
 
+    autoFocusField = 'email';
+
     // Если юзер вводил своё мыло во время попытки авторизации, то почему бы его сюда автоматически не подставить?
     render() {
         return (
@@ -29,8 +31,6 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('email')}
                     icon="envelope"
                     color="lightViolet"
-                    autoFocus
-                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.accountEmail}
                 />

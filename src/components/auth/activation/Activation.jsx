@@ -14,6 +14,8 @@ class Body extends BaseAuthBody {
     static displayName = 'ActivationBody';
     static panelId = 'activation';
 
+    autoFocusField = 'key';
+
     render() {
         return (
             <div>
@@ -32,8 +34,6 @@ class Body extends BaseAuthBody {
                     <Input {...this.bindField('key')}
                         color="blue"
                         className={styles.activationCodeInput}
-                        autoFocus
-                        onFocus={this.fixAutoFocus}
                         required
                         placeholder={messages.enterTheCode}
                     />

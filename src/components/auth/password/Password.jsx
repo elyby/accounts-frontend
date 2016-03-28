@@ -17,6 +17,8 @@ class Body extends BaseAuthBody {
     static panelId = 'password';
     static hasGoBack = true;
 
+    autoFocusField = 'password';
+
     render() {
         const {user} = this.context;
 
@@ -38,8 +40,6 @@ class Body extends BaseAuthBody {
                 <Input {...this.bindField('password')}
                     icon="key"
                     type="password"
-                    autoFocus
-                    onFocus={this.fixAutoFocus}
                     required
                     placeholder={messages.accountPassword}
                 />
