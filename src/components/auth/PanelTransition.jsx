@@ -15,8 +15,8 @@ import * as actions from './actions';
 import MeasureHeight from './MeasureHeight';
 
 const opacitySpringConfig = {stiffness: 300, damping: 20};
-const transformSpringConfig = {stiffness: 500, damping: 50};
-const changeContextSpringConfig = {stiffness: 500, damping: 20};
+const transformSpringConfig = {stiffness: 500, damping: 50, precision: 0.5};
+const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
 
 class PanelTransition extends Component {
     static displayName = 'PanelTransition';
