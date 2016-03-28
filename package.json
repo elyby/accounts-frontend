@@ -5,6 +5,8 @@
   "main": "index.js",
   "author": "ErickSkrauch <erickskrauch@ely.by>",
   "public": false,
+  "license": "UNLICENSED",
+  "repository": "git@bitbucket.org:ErickSkrauch/ely.by-account.git",
   "scripts": {
     "start": "webpack-dev-server --progress --colors",
     "up": "npm install",
