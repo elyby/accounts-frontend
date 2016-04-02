@@ -25,6 +25,7 @@ class PanelTransition extends Component {
         // context props
         auth: PropTypes.shape({
             error: PropTypes.string,
+            isLoading: PropTypes.bool,
             login: PropTypes.shape({
                 login: PropTypes.string,
                 password: PropTypes.string
@@ -142,7 +143,12 @@ class PanelTransition extends Component {
                     };
 
                     return (
-                        <Form id={panelId} onSubmit={this.onFormSubmit} onInvalid={this.onFormInvalid}>
+                        <Form
+                            id={panelId}
+                            onSubmit={this.onFormSubmit}
+                            onInvalid={this.onFormInvalid}
+                            isLoading={this.props.auth.isLoading}
+                        >
                             <Panel>
                                 <PanelHeader>
                                     {panels.map((config) => this.getHeader(config))}

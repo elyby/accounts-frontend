@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 
-import { ERROR, SET_CLIENT, SET_OAUTH, SET_OAUTH_RESULT, SET_SCOPES } from './actions';
+import { ERROR, SET_CLIENT, SET_OAUTH, SET_OAUTH_RESULT, SET_SCOPES, SET_LOADING_STATE } from './actions';
 
 export default combineReducers({
     error,
+    isLoading,
     client,
     oauth,
     scopes
@@ -19,6 +20,20 @@ function error(
                 throw new Error('Expected payload with error');
             }
             return payload;
+
+        default:
+            return state;
+    }
+}
+
+
+function isLoading(
+    state = false,
+    {type, payload = null}
+) {
+    switch (type) {
+        case SET_LOADING_STATE:
+            return !!payload;
 
         default:
             return state;

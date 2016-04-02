@@ -8,7 +8,7 @@ export function login({login = '', password = '', rememberMe = false}) {
     const LOGIN_REQUIRED = 'error.login_required';
     const ACTIVATION_REQUIRED = 'error.account_not_activated';
 
-    return (dispatch) =>
+    return wrapInLoader((dispatch) =>
         request.post(
             '/api/authentication/login',
             {login, password, rememberMe}
@@ -43,7 +43,7 @@ export function login({login = '', password = '', rememberMe = false}) {
 
             // TODO: log unexpected errors
         })
-        ;
+    );
 }
 
 export function changePassword({
@@ -51,7 +51,7 @@ export function changePassword({
     newPassword = '',
     newRePassword = ''
 }) {
-    return (dispatch) =>
+    return wrapInLoader((dispatch) =>
         dispatch(changeUserPassword({password, newPassword, newRePassword}))
             .catch((resp) => {
                 if (resp.errors) {
@@ -62,7 +62,7 @@ export function changePassword({
 
                 // TODO: log unexpected errors
             })
-            ;
+    );
 }
 
 export function register({
@@ -72,7 +72,7 @@ export function register({
     rePassword = '',
     rulesAgreement = false
 }) {
-    return (dispatch) =>
+    return wrapInLoader((dispatch) =>
         request.post(
             '/api/signup',
             {email, username, password, rePassword, rulesAgreement}
@@ -94,11 +94,11 @@ export function register({
 
             // TODO: log unexpected errors
         })
-        ;
+    );
 }
 
 export function activate({key = ''}) {
-    return (dispatch) =>
+    return wrapInLoader((dispatch) =>
         request.post(
             '/api/signup/confirm',
             {key}
@@ -118,7 +118,7 @@ export function activate({key = ''}) {
 
             // TODO: log unexpected errors
         })
-        ;
+    );
 }
 
 export const ERROR = 'error';
@@ -141,7 +141,7 @@ export function logout() {
 // TODO: move to oAuth actions?
 // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session
 export function oAuthValidate(oauth) {
-    return (dispatch) =>
+    return wrapInLoader((dispatch) =>
         request.get(
             '/api/oauth/validate',
             getOAuthRequest(oauth)
@@ -156,11 +156,12 @@ export function oAuthValidate(oauth) {
             if (resp.statusCode === 401 && resp.error === 'accept_required') {
                 alert('Accept required.');
             }
-        });
+        })
+    );
 }
 
 export function oAuthComplete(params = {}) {
-    return (dispatch, getState) => {
+    return wrapInLoader((dispatch, getState) => {
         const oauth = getState().auth.oauth;
         const query = request.buildQuery(getOAuthRequest(oauth));
 
@@ -205,7 +206,7 @@ export function oAuthComplete(params = {}) {
 
             return resp;
         });
-    };
+    });
 }
 
 function getOAuthRequest(oauth) {
@@ -281,5 +282,31 @@ export function setScopes(scopes) {
     return {
         type: SET_SCOPES,
         payload: scopes
+    };
+}
+
+
+export const SET_LOADING_STATE = 'set_loading_state';
+export function setLoadingState(isLoading) {
+    return {
+        type: SET_LOADING_STATE,
+        payload: isLoading
+    };
+}
+
+function wrapInLoader(fn) {
+    return (dispatch, getState) => {
+        dispatch(setLoadingState(true));
+        const endLoading = () => dispatch(setLoadingState(false));
+
+        return Reflect.apply(fn, null, [dispatch, getState]).then((resp) => {
+            endLoading();
+
+            return resp;
+        }, (resp) => {
+            endLoading();
+
+            return Promise.reject(resp);
+        });
     };
 }

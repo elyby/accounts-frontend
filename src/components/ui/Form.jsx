@@ -102,6 +102,7 @@ export class Form extends Component {
 
     static propTypes = {
         id: PropTypes.string, // and id, that uniquely identifies form contents
+        isLoading: PropTypes.bool,
         onSubmit: PropTypes.func,
         onInvalid: PropTypes.func,
         children: PropTypes.oneOfType([
@@ -112,6 +113,7 @@ export class Form extends Component {
 
     static defaultProps = {
         id: 'default',
+        isLoading: false,
         onSubmit() {},
         onInvalid() {}
     };
@@ -129,11 +131,14 @@ export class Form extends Component {
     }
 
     render() {
+        const {isLoading} = this.props;
+
         return (
             <form
                 className={classNames(
                     styles.form,
                     {
+                        [styles.isFormLoading]: isLoading,
                         [styles.formTouched]: this.state.isTouched
                     }
                 )}

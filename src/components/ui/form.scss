@@ -234,3 +234,17 @@
         border-color: $red;
     }
 }
+
+.isFormLoading {
+    // TODO: надо бы разнести from и input на отдельные модули,
+    // так как в текущем контексте isLoading немного не логичен,
+    // пришлось юзать isFormLoading
+    * {
+        pointer-events: none;
+    }
+
+    button {
+        background-image: url('images/loader_button.gif');
+        background-position: center center;
+    }
+}
