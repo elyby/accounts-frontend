@@ -6,6 +6,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var cssnano = require('cssnano');
+var cssUrl = require("postcss-url");
 var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 
 /**
@@ -41,6 +42,8 @@ try {
     throw err;
 }
 
+var rootPath = path.resolve('./src');
+
 var webpackConfig = {
     entry: {
         app: path.join(__dirname, 'src'),
@@ -71,7 +74,7 @@ var webpackConfig = {
     },
 
     resolve: {
-        root: path.resolve('./src'),
+        root: rootPath,
         extensions: ['', '.js', '.jsx']
     },
 
@@ -135,6 +138,10 @@ var webpackConfig = {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 loader: 'babel'
+            },
+            {
+                test: /\.(png|gif|jpg)$/,
+                loader: 'url?limit=1000'
             }
         ]
     },
@@ -147,6 +154,24 @@ var webpackConfig = {
     },
 
     postcss: [
+        cssUrl({
+            url: function(url, decl, from, dirname, to, options, result) {
+                // scss не правильно резолвит относительные урлы.
+                // добавляем к урлам остаток пути, что бы они были относительно root
+                //
+                // Например:
+                // file: components/ui/foo.scss
+                // images/foo.png -> components/ui/images/foo.png
+
+                if (url[0] !== '/') {
+                    var relativeToRoot = dirname.split(rootPath + '/')[1];
+
+                    return path.join(relativeToRoot, url);
+                }
+
+                return url;
+            }
+        }),
         cssnano({
             // sourcemap: !isProduction,
             autoprefixer: {
