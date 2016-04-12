@@ -243,8 +243,10 @@
         pointer-events: none;
     }
 
-    button {
-        background-image: url('images/loader_button.gif');
-        background-position: center center;
+    [type="submit"] {
+        background: url('images/loader_button.gif') #d8d5d0 center center;
+
+        color: #9F9E99;
+        cursor: default;
     }
 }
