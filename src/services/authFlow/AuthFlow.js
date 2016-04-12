@@ -1,22 +1,25 @@
 import { routeActions } from 'react-router-redux';
 
-import * as actions from 'components/auth/actions';
-import {updateUser} from 'components/user/actions';
-
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
 import OAuthState from './OAuthState';
 import ForgotPasswordState from './ForgotPasswordState';
 
-const availableActions = {
-    ...actions,
-    updateUser,
-    redirect(url) {
-        location.href = url;
-    }
-};
+// TODO: a way to unload service (when we are on account page)
 
 export default class AuthFlow {
+    constructor(actions) {
+        if (typeof actions !== 'object') {
+            throw new Error('AuthFlow requires an actions object');
+        }
+
+        this.actions = actions;
+
+        if (Object.freeze) {
+            Object.freeze(this.actions);
+        }
+    }
+
     setStore(store) {
         this.navigate = (route) => {
             const {routing} = this.getState();
@@ -48,11 +51,11 @@ export default class AuthFlow {
     }
 
     run(actionId, payload) {
-        if (!availableActions[actionId]) {
+        if (!this.actions[actionId]) {
             throw new Error(`Action ${actionId} does not exists`);
         }
 
-        return this.dispatch(availableActions[actionId](payload));
+        return this.dispatch(this.actions[actionId](payload));
     }
 
     setState(state) {
@@ -109,9 +112,5 @@ export default class AuthFlow {
             default:
                 throw new Error(`Unsupported request: ${path}`);
         }
-    }
-
-    login() {
-        this.setState(new LoginState());
     }
 }

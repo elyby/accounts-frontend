@@ -1,5 +1,14 @@
 import AuthFlow from './authFlow/AuthFlow';
 
-// TODO: a way to unload service (when we are on account page)
+import * as actions from 'components/auth/actions';
+import {updateUser} from 'components/user/actions';
 
-export default new AuthFlow();
+const availableActions = {
+    ...actions,
+    updateUser,
+    redirect(url) {
+        location.href = url;
+    }
+};
+
+export default new AuthFlow(availableActions);
