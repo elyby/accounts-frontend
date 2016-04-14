@@ -244,9 +244,11 @@
     }
 
     [type="submit"] {
-        background: url('images/loader_button.gif') #d8d5d0 center center;
+        background: url('images/loader_button.gif') #95a5a6 center center;
 
-        color: #9F9E99;
         cursor: default;
+        color: #fff;
+        transition: 0.25s;
+        outline: none;
     }
 }
