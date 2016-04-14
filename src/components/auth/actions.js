@@ -38,6 +38,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                 }
                 const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
                 dispatch(setError(errorMessage));
+            } else {
                 throw new Error(errorMessage);
             }
 
