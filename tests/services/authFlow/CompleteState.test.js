@@ -112,6 +112,25 @@ describe('CompleteState', () => {
 
             state.enter(context);
         });
+
+        it('should transition to permissions state if acceptRequired', () => {
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                auth: {
+                    oauth: {
+                        clientId: 'ely.by',
+                        acceptRequired: true
+                    }
+                }
+            });
+
+            expectState(mock, PermissionsState);
+
+            state.enter(context);
+        });
     });
 
     describe('oAuthComplete', () => {
@@ -236,7 +255,7 @@ describe('CompleteState', () => {
         it('should transition to permissions state if rejected with acceptRequired', () => {
             return testOAuth('reject', {acceptRequired: true}, PermissionsState);
         });
-    })
+    });
 
     describe('permissions accept', () => {
         it('should set flags, when user accepted permissions', () => {
@@ -289,6 +308,62 @@ describe('CompleteState', () => {
                 auth: {
                     oauth: {
                         clientId: 'ely.by'
+                    }
+                }
+            });
+
+            expectRun(
+                mock,
+                'oAuthComplete',
+                sinon.match(expected)
+            ).returns({then() {}});
+
+            state.enter(context);
+        });
+
+        it('should run oAuthComplete passing accept: true, while acceptRequired: true', () => {
+            // acceptRequired may block user accept/decline actions, so we need
+            // to check that they are accessible
+            const expected = {accept: true};
+
+            state = new CompleteState(expected);
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                auth: {
+                    oauth: {
+                        clientId: 'ely.by',
+                        acceptRequired: true
+                    }
+                }
+            });
+
+            expectRun(
+                mock,
+                'oAuthComplete',
+                sinon.match(expected)
+            ).returns({then() {}});
+
+            state.enter(context);
+        });
+
+        it('should run oAuthComplete passing accept: false, while acceptRequired: true', () => {
+            // acceptRequired may block user accept/decline actions, so we need
+            // to check that they are accessible
+            const expected = {accept: false};
+
+            state = new CompleteState(expected);
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                auth: {
+                    oauth: {
+                        clientId: 'ely.by',
+                        acceptRequired: true
                     }
                 }
             });

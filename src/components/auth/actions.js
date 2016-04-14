@@ -153,9 +153,6 @@ export function oAuthValidate(oauth) {
         })
         .catch((resp = {}) => { // TODO
             handleOauthParamsValidation(resp);
-            if (resp.statusCode === 401 && resp.error === 'accept_required') {
-                alert('Accept required.');
-            }
         })
     );
 }
@@ -189,6 +186,7 @@ export function oAuthComplete(params = {}) {
             if (resp.statusCode === 401 && resp.error === 'accept_required') {
                 const error = new Error('Permissions accept required');
                 error.acceptRequired = true;
+                dispatch(requirePermissionsAccept());
                 throw error;
             }
         })
@@ -270,6 +268,13 @@ export function setOAuthCode(oauth) {
             code: oauth.code,
             displayCode: oauth.displayCode
         }
+    };
+}
+
+export const REQUIRE_PERMISSIONS_ACCEPT = 'require_permissions_accept';
+export function requirePermissionsAccept() {
+    return {
+        type: REQUIRE_PERMISSIONS_ACCEPT
     };
 }
 

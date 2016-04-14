@@ -28,6 +28,9 @@ export default class CompleteState extends AbstractState {
                 const data = {};
                 if (typeof this.isPermissionsAccepted !== 'undefined') {
                     data.accept = this.isPermissionsAccepted;
+                } else if (auth.oauth.acceptRequired) {
+                    context.setState(new PermissionsState());
+                    return;
                 }
                 context.run('oAuthComplete', data).then((resp) => {
                     // TODO: пусть в стейт попадает флаг или тип авторизации
