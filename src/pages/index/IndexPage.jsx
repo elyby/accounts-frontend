@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
-import { Profile } from 'components/profile/Profile';
+import ProfilePage from 'pages/profile/ProfilePage';
+import Profile from 'components/profile/Profile';
 
 class IndexPage extends Component {
     displayName = 'IndexPage';
 
     render() {
-        return (<Profile {...this.props} />);
+        return (
+            <ProfilePage>
+                <Profile {...this.props} />
+            </ProfilePage>
+        );
     }
 }
 

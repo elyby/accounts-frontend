@@ -1,62 +1,32 @@
 @import '~components/ui/fonts.scss';
 @import '~components/ui/colors.scss';
 
-.container {
-    margin-top: 55px;
-}
-
-
-.title {
-    font-family: $font-family-title;
-    font-size: 30px;
-    margin-bottom: 12px;
-}
-
-.content {
+.indexContent {
     display: flex;
 }
 
-.description {
-    font-size: 14px;
-    line-height: 1.4;
-    color: #9a9a9a;
-    width: 340px;
-    padding: 12px 20px 0 0;
-    box-sizing: border-box;
-}
-
-.options {
-    background: #fff;
+.formColumn {
     flex-grow: 1;
     max-width: 416px;
     border-bottom: 10px solid #ddd8ce;
 }
 
-.optionsTitle {
-    position: relative;
-    font-size: 24px;
-    font-family: $font-family-title;
-    padding-bottom: 9px;
-
-    &:after {
-        content: '';
-        display: block;
-
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 3px;
-        width: 86px;
-
-        background: $green;
-    }
+.descriptionColumn {
+    width: 340px;
+    padding: 12px 20px 0 0;
+    box-sizing: border-box;
 }
 
-.optionsDescription {
-    font-size: 13px;
+.indexTitle {
+    font-family: $font-family-title;
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.indexDescription {
+    font-size: 14px;
+    line-height: 1.4;
     color: #9a9a9a;
-    line-height: 1.25;
-    margin-top: 25px;
 }
 
 .item {

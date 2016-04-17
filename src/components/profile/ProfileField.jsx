@@ -1,18 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 
+import { Link } from 'react-router';
+
 import styles from './profile.scss';
 
 export default class ProfileField extends Component {
     static displayName = 'ProfileField';
     static propTypes = {
         label: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+        link: PropTypes.string,
         value: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
         warningMessage: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
         readonly: PropTypes.bool
     };
 
     render() {
-        const {label, value, warningMessage, readonly} = this.props;
+        const {label, value, warningMessage, readonly, link = '#'} = this.props;
 
         return (
             <div className={styles.paramItem}>
@@ -22,9 +25,9 @@ export default class ProfileField extends Component {
 
                     {readonly ? '' : (
                         <div className={styles.paramAction}>
-                            <a href="#">
+                            <Link to={link}>
                                 <span className={styles.paramEditIcon} />
-                            </a>
+                            </Link>
                         </div>
                     )}
                 </div>

@@ -7,9 +7,10 @@ import { userShape } from 'components/user/User';
 
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
+import profileForm from './profileForm.scss';
 import messages from './Profile.messages';
 
-export class Profile extends Component {
+export default class Profile extends Component {
     static displayName = 'Profile';
     static propTypes = {
         user: userShape
@@ -19,62 +20,67 @@ export class Profile extends Component {
         const { user } = this.props;
 
         return (
-            <div className={styles.container}>
+            <div>
                 <Message {...messages.accountPreferencesTitle}>
                     {(pageTitle) => (
-                        <h2 className={styles.title}>
+                        <h2 className={styles.indexTitle}>
                             <Helmet title={pageTitle} />
                             {pageTitle}
                         </h2>
                     )}
                 </Message>
 
-                <div className={styles.content}>
-                    <div className={styles.description}>
-                        <Message {...messages.accountDescription} />
+                <div className={styles.indexContent}>
+                    <div className={styles.descriptionColumn}>
+                        <div className={styles.indexDescription}>
+                            <Message {...messages.accountDescription} />
+                        </div>
                     </div>
 
-                    <div className={styles.options}>
-                        <div className={styles.item}>
-                            <h3 className={styles.optionsTitle}>
-                                <Message {...messages.personalData} />
-                            </h3>
-                            <p className={styles.optionsDescription}>
-                                <Message {...messages.preferencesDescription} />
-                            </p>
+                    <div className={styles.formColumn}>
+                        <div className={profileForm.form}>
+                            <div className={styles.item}>
+                                <h3 className={profileForm.title}>
+                                    <Message {...messages.personalData} />
+                                </h3>
+                                <p className={profileForm.description}>
+                                    <Message {...messages.preferencesDescription} />
+                                </p>
+                            </div>
+
+                            <ProfileField
+                                label={<Message {...messages.nickname} />}
+                                value={user.username}
+                                warningMessage={<Message {...messages.mojangPriorityWarning} />}
+                            />
+
+                            <ProfileField
+                                label={'E-mail'}
+                                value={user.email}
+                            />
+
+                            <ProfileField
+                                label={<Message {...messages.password} />}
+                                link="/profile/change-password"
+                                value={<Message {...messages.changedAt} values={{
+                                    at: (<Relative value={user.passwordChangedAt * 1000} />)
+                                }} />}
+                                warningMessage={user.shouldChangePassword ? (
+                                    <HTMLMessage {...messages.oldHashingAlgoWarning} />
+                                ) : ''}
+                            />
+
+                            <ProfileField
+                                label={<Message {...messages.twoFactorAuth} />}
+                                value={<Message {...messages.disabled} />}
+                            />
+
+                            <ProfileField
+                                label={'UUID'}
+                                value={user.uuid}
+                                readonly
+                            />
                         </div>
-
-                        <ProfileField
-                            label={<Message {...messages.nickname} />}
-                            value={user.username}
-                            warningMessage={<Message {...messages.mojangPriorityWarning} />}
-                        />
-
-                        <ProfileField
-                            label={'E-mail'}
-                            value={user.email}
-                        />
-
-                        <ProfileField
-                            label={<Message {...messages.password} />}
-                            value={<Message {...messages.changedAt} values={{
-                                at: (<Relative value={user.passwordChangedAt * 1000} />)
-                            }} />}
-                            warningMessage={user.shouldChangePassword ? (
-                                <HTMLMessage {...messages.oldHashingAlgoWarning} />
-                            ) : ''}
-                        />
-
-                        <ProfileField
-                            label={<Message {...messages.twoFactorAuth} />}
-                            value={<Message {...messages.disabled} />}
-                        />
-
-                        <ProfileField
-                            label={'UUID'}
-                            value={user.uuid}
-                            readonly
-                        />
                     </div>
                 </div>
             </div>
