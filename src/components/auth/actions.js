@@ -35,7 +35,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                 }
                 const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
                 dispatch(setError(errorMessage));
-                throw new Error(errorMessage);
+                return Promise.reject(errorMessage);
             }
 
             // TODO: log unexpected errors
@@ -54,7 +54,7 @@ export function changePassword({
                 if (resp.errors) {
                     const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
                     dispatch(setError(errorMessage));
-                    throw new Error(errorMessage);
+                    return Promise.reject(errorMessage);
                 }
 
                 // TODO: log unexpected errors
@@ -86,7 +86,7 @@ export function register({
             if (resp.errors) {
                 const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
                 dispatch(setError(errorMessage));
-                throw new Error(errorMessage);
+                return Promise.reject(errorMessage);
             }
 
             // TODO: log unexpected errors
@@ -114,7 +114,7 @@ export function activate({key = ''}) {
         .catch((resp) => {
             const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
             dispatch(setError(errorMessage));
-            throw new Error(errorMessage);
+            return Promise.reject(errorMessage);
 
             // TODO: log unexpected errors
         })
