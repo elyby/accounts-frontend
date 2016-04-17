@@ -70,6 +70,62 @@ export class Input extends Component {
     }
 }
 
+export class LabeledInput extends Component {
+    static displayName = 'LabeledInput';
+
+    static propTypes = {
+        label: PropTypes.oneOfType([
+            PropTypes.shape({
+                id: PropTypes.string
+            }),
+            PropTypes.string
+        ]).isRequired,
+        id: PropTypes.string,
+        icon: PropTypes.string,
+        skin: PropTypes.oneOf(['dark', 'light']),
+        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
+    };
+
+    static contextTypes = {
+        intl: intlShape.isRequired
+    };
+
+    render() {
+        let { label } = this.props;
+
+        let props = Object.assign({}, this.props);
+
+        if (!props.id) {
+            props.id = uniqueId('input');
+        }
+
+        if (label && label.id) {
+            label = this.context.intl.formatMessage(label);
+        }
+
+        return (
+            <div className={styles.formLabeledRow}>
+                <label className={styles.textFieldLabel} htmlFor={props.id}>
+                    {label}
+                </label>
+                <Input ref={this.setEl} {...props} />
+            </div>
+        );
+    }
+
+    setEl = (el) => {
+        this.el = el;
+    };
+
+    getValue() {
+        return this.el.getValue();
+    }
+
+    focus() {
+        this.el.focus();
+    }
+}
+
 export class Checkbox extends Component {
     static displayName = 'Checkbox';
 
@@ -184,4 +240,10 @@ export class Form extends Component {
             this.props.onInvalid(errorMessage);
         }
     };
+}
+
+
+let lastId = 0;
+function uniqueId(prefix = 'id') {
+    return `${prefix}${++lastId}`;
 }

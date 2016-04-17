@@ -111,6 +111,12 @@
     @include form-transition();
 }
 
+.textFieldLabel {
+    font-family: $font-family-title;
+    color: #666;
+    font-size: 18px;
+}
+
 @include input-theme('green', $green);
 @include input-theme('blue', $blue);
 @include input-theme('red', $red);
