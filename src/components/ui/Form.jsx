@@ -10,10 +10,14 @@ export class Input extends Component {
     static displayName = 'Input';
 
     static propTypes = {
-        placeholder: PropTypes.shape({
-            id: PropTypes.string
-        }),
+        placeholder: PropTypes.oneOfType([
+            PropTypes.shape({
+                id: PropTypes.string
+            }),
+            PropTypes.string
+        ]),
         icon: PropTypes.string,
+        skin: PropTypes.oneOf(['dark', 'light']),
         color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
     };
 
@@ -22,7 +26,7 @@ export class Input extends Component {
     };
 
     render() {
-        let { icon, color = 'green' } = this.props;
+        let { icon, color = 'green', skin = 'dark' } = this.props;
 
         const props = {
             type: 'text',
@@ -37,13 +41,16 @@ export class Input extends Component {
         if (icon) {
             baseClass = styles.formIconRow;
             icon = (
-                <div className={classNames(styles.formFieldIcon, icons[icon])} />
+                <div className={classNames(styles.textFieldIcon, icons[icon])} />
             );
         }
 
         return (
             <div className={baseClass}>
-                <input ref={this.setEl} className={styles[`${color}TextField`]} {...props} />
+                <input ref={this.setEl} className={classNames(
+                    styles[`${skin}TextField`],
+                    styles[`${color}TextField`]
+                )} {...props} />
                 {icon}
             </div>
         );

@@ -17,9 +17,13 @@
         &:focus {
             border-color: $color;
 
-            ~ .formFieldIcon {
+            ~ .textFieldIcon {
                 background: $color;
                 border-color: $color;
+            }
+
+            &.lightTextField {
+                color: $color;
             }
         }
     }
@@ -50,8 +54,7 @@
     height: 50px;
     width: 100%;
 
-    border: 2px solid lighter($black);
-    background: $black;
+    border: 2px solid;
 
     font-size: 18px;
     color: #aaa;
@@ -67,7 +70,7 @@
 
     &:hover {
         &,
-        ~ .formFieldIcon {
+        ~ .textFieldIcon {
             border-color: #aaa;
         }
     }
@@ -76,14 +79,23 @@
         color: #fff;
         outline: none;
 
-        ~ .formFieldIcon {
+        ~ .textFieldIcon {
             color: #fff;
         }
     }
 }
 
+.darkTextField {
+    background: $black;
+    border-color: lighter($black);
+}
 
-.formFieldIcon {
+.lightTextField {
+    background: #fff;
+    border-color: #dcd8cd;
+}
+
+.textFieldIcon {
     box-sizing: border-box;
     position: absolute;
     left: 0;
@@ -203,17 +215,17 @@
     box-shadow: none;
 
     &,
-    ~ .formFieldIcon {
+    ~ .textFieldIcon {
         border-color: #3e2727;
     }
 
-    ~ .formFieldIcon {
+    ~ .textFieldIcon {
         color: #3e2727;
     }
 
     &:hover {
         &,
-        ~ .formFieldIcon {
+        ~ .textFieldIcon {
             border-color: $red;
         }
     }
@@ -221,7 +233,7 @@
     &:focus {
         border-color: $red;
 
-        ~ .formFieldIcon {
+        ~ .textFieldIcon {
             background: $red;
             border-color: $red;
             color: #fff;
