@@ -26,7 +26,8 @@ export default class User {
             isGuest: true,
             isActive: true,
             shouldChangePassword: false, // TODO: нужно ещё пробросить причину необходимости смены
-            passwordChangedAt: null
+            passwordChangedAt: null,
+            hasMojangUsernameCollision: false,
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {
@@ -60,5 +61,6 @@ export const userShape = PropTypes.shape({
     avatar: PropTypes.string,
     isGuest: PropTypes.bool.isRequired,
     isActive: PropTypes.bool.isRequired,
-    passwordChangedAt: PropTypes.number
+    passwordChangedAt: PropTypes.number,
+    hasMojangUsernameCollision: PropTypes.bool,
 });

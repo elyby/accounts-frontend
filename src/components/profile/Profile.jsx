@@ -51,7 +51,9 @@ export default class Profile extends Component {
                             <ProfileField
                                 label={<Message {...messages.nickname} />}
                                 value={user.username}
-                                warningMessage={<Message {...messages.mojangPriorityWarning} />}
+                                warningMessage={user.hasMojangUsernameCollision ? (
+                                    <Message {...messages.mojangPriorityWarning} />
+                                ) : ''}
                             />
 
                             <ProfileField
