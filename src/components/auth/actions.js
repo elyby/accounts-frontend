@@ -49,7 +49,7 @@ export function changePassword({
     newRePassword = ''
 }) {
     return wrapInLoader((dispatch) =>
-        dispatch(changeUserPassword({password, newPassword, newRePassword}))
+        dispatch(changeUserPassword({password, newPassword, newRePassword, logoutAll : false}))
             .catch((resp) => {
                 if (resp.errors) {
                     const errorMessage = resp.errors[Object.keys(resp.errors)[0]];

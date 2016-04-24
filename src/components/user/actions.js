@@ -47,12 +47,13 @@ export function fetchUserData() {
 export function changePassword({
     password = '',
     newPassword = '',
-    newRePassword = ''
+    newRePassword = '',
+    logoutAll = true,
 }) {
     return (dispatch) =>
         request.post(
             '/api/accounts/change-password',
-            {password, newPassword, newRePassword}
+            {password, newPassword, newRePassword, logoutAll}
         )
         .then((resp) => {
             dispatch(updateUser({
