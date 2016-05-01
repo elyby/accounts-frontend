@@ -1,0 +1,42 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 200;
+
+    background: rgba(255, 255, 255, 0.8);
+
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:before {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+        width: 0;
+    }
+}
+
+.popup {
+    display: inline-block;
+    white-space: normal;
+
+    width: 400px;
+    max-width: 90%;
+
+    background: #fff;
+    padding: 30px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+
+    :invalid {
+        button {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    }
+}

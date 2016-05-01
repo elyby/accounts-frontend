@@ -4,7 +4,9 @@ import { Route, IndexRoute } from 'react-router';
 import RootPage from 'pages/root/RootPage';
 import IndexPage from 'pages/index/IndexPage';
 import AuthPage from 'pages/auth/AuthPage';
+
 import ProfilePage from 'pages/profile/ProfilePage';
+import ProfileChangePasswordPage from 'pages/profile/ChangePasswordPage';
 
 import { authenticate } from 'components/user/actions';
 
@@ -18,7 +20,6 @@ import ChangePassword from 'components/auth/changePassword/ChangePassword';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import Finish from 'components/auth/finish/Finish';
 
-import ProfileChangePassword from 'components/profile/changePassword/ChangePassword';
 
 import authFlow from 'services/authFlow';
 
@@ -53,7 +54,7 @@ export default function routesFactory(store) {
             </Route>
 
             <Route path="profile" component={ProfilePage}>
-                <Route path="change-password" component={ProfileChangePassword} />
+                <Route path="change-password" component={ProfileChangePasswordPage} />
             </Route>
         </Route>
     );

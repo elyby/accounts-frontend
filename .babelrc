@@ -4,6 +4,10 @@
     "env": {
         "development": {
             "presets": ["react-hmre"]
+        },
+        "test": {
+            // airbnb some how disables stage-0, so forcing it after airbnb
+            "presets": ["airbnb", "stage-0"]
         }
     }
 }

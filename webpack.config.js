@@ -31,6 +31,9 @@ var isTest = process.argv.some(function(arg) {
 });
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
+if (isTest) {
+    process.env.NODE_ENV = 'test';
+}
 
 const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
 var config;
@@ -77,6 +80,14 @@ var webpackConfig = {
         root: rootPath,
         extensions: ['', '.js', '.jsx']
     },
+
+    externals: isTest ? {
+        // http://airbnb.io/enzyme/docs/guides/webpack.html
+        'cheerio': 'window',
+        'react/lib/ExecutionEnvironment': true,
+        'react/lib/ReactContext': true,
+        'react/addons': true
+    } : {},
 
     devServer: {
         host: 'localhost',
@@ -142,6 +153,10 @@ var webpackConfig = {
             {
                 test: /\.(png|gif|jpg)$/,
                 loader: 'url?limit=1000'
+            },
+            {
+                test: /\.json$/,
+                loader: 'json'
             }
         ]
     },

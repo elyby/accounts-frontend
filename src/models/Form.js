@@ -15,6 +15,7 @@ export default class Form {
         return {
             name,
             ref: (el) => {
+                // TODO: validate React component
                 this.fields[name] = el;
             }
         };
@@ -26,6 +27,14 @@ export default class Form {
         }
 
         this.fields[fieldId].focus();
+    }
+
+    value(fieldId) {
+        if (!this.fields[fieldId]) {
+            throw new Error(`The field with an id ${fieldId} does not exists`);
+        }
+
+        return this.fields[fieldId].getValue();
     }
 
     serialize() {

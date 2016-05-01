@@ -85,16 +85,6 @@
     }
 }
 
-.darkTextField {
-    background: $black;
-    border-color: lighter($black);
-}
-
-.lightTextField {
-    background: #fff;
-    border-color: #dcd8cd;
-}
-
 .textFieldIcon {
     box-sizing: border-box;
     position: absolute;
@@ -104,11 +94,29 @@
     width: 50px;
     line-height: 46px;
     text-align: center;
-    border: 2px solid lighter($black);
+    border: 2px solid;
     color: #444;
     cursor: default;
 
     @include form-transition();
+}
+
+.darkTextField {
+    background: $black;
+
+    &,
+    ~ .textFieldIcon {
+        border-color: lighter($black);
+    }
+}
+
+.lightTextField {
+    background: #fff;
+
+    &,
+    ~ .textFieldIcon {
+        border-color: #dcd8cd;
+    }
 }
 
 .textFieldLabel {
