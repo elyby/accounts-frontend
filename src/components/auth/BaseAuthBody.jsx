@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 
 import AuthError from 'components/auth/authError/AuthError';
 import { userShape } from 'components/user/User';
+import Form from 'models/Form';
 
 export default class BaseAuthBody extends Component {
     static contextTypes = {
@@ -31,28 +32,14 @@ export default class BaseAuthBody extends Component {
 
     onClearErrors = this.context.clearErrors;
 
-    form = {};
+    form = new Form();
 
-    bindField(name) {
-        return {
-            name,
-            ref: (el) => {
-                this.form[name] = el;
-            }
-        };
-    }
+    bindField = this.form.bindField.bind(this.form);
+    serialize = this.form.serialize.bind(this.form);
 
     autoFocus() {
         const fieldId = this.autoFocusField;
 
-        fieldId && this.form[fieldId] && this.form[fieldId].focus();
-    }
-
-    serialize() {
-        return Object.keys(this.form).reduce((acc, key) => {
-            acc[key] = this.form[key].getValue();
-
-            return acc;
-        }, {});
+        fieldId && this.form.focus(fieldId);
     }
 }
