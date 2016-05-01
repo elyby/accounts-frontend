@@ -1,4 +1,5 @@
 import request from 'services/request';
+import accounts from 'services/api/accounts';
 
 export const UPDATE = 'USER_UPDATE';
 /**
@@ -26,7 +27,7 @@ export function logout() {
 
 export function fetchUserData() {
     return (dispatch) =>
-        request.get('/api/accounts/current')
+        accounts.current()
         .then((resp) => {
             dispatch(updateUser(resp));
         })
@@ -51,8 +52,7 @@ export function changePassword({
     logoutAll = true,
 }) {
     return (dispatch) =>
-        request.post(
-            '/api/accounts/change-password',
+        accounts.changePassword(
             {password, newPassword, newRePassword, logoutAll}
         )
         .then((resp) => {
