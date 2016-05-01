@@ -3,10 +3,8 @@ import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
-import classNames from 'classnames';
 
-import { LabeledInput } from 'components/ui/Form';
-import buttons from 'components/ui/buttons.scss';
+import { LabeledInput, Button } from 'components/ui/Form';
 
 import styles from 'components/profile/profileForm.scss';
 import messages from './ChangePassword.messages';
@@ -55,9 +53,7 @@ export default class ChangePassword extends Component {
                         </div>
                     </div>
 
-                    <button className={classNames(buttons.green, buttons.block)}>
-                        <Message {...messages.changePasswordButton} />
-                    </button>
+                    <Button color="green" block label={messages.changePasswordButton} />
                 </div>
             </div>
         );

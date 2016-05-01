@@ -5,6 +5,7 @@ import { intlShape } from 'react-intl';
 
 import icons from './icons.scss';
 import styles from './form.scss';
+import buttons from './buttons.scss';
 
 export class Input extends Component {
     static displayName = 'Input';
@@ -157,6 +158,46 @@ export class Checkbox extends Component {
 
     focus() {
         this.el.focus();
+    }
+}
+
+
+export class Button extends Component {
+    static displayName = 'Button';
+
+    static propTypes = {
+        label: PropTypes.oneOfType([
+            PropTypes.shape({
+                id: PropTypes.string
+            }),
+            PropTypes.string
+        ]).isRequired,
+        block: PropTypes.bool,
+        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
+    };
+
+    static contextTypes = {
+        intl: intlShape.isRequired
+    };
+
+    render() {
+        const { color = 'green', block } = this.props;
+
+        const props = {
+            ...this.props
+        };
+
+        if (props.label.id) {
+            props.label = this.context.intl.formatMessage(props.label);
+        }
+
+        return (
+            <button className={classNames(buttons[color], {
+                [buttons.block]: block
+            })} {...props}>
+                {props.label}
+            </button>
+        );
     }
 }
 
