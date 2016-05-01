@@ -51,13 +51,13 @@ $bodyTopBottomPadding: 15px;
 
     a {
         color: #fff;
-        border-bottom: 1px dotted #ede9e2;
+        border-bottom: 1px dotted rgba(#fff, 0.75);
         text-decoration: none;
         transition: .25s;
 
         &:hover {
-            border-bottom-color: #ccc;
-            color: #ccc;
+            text-shadow: 0 0 1px #fff;
+            border-bottom-color: transparent;
         }
     }
 }
