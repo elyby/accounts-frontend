@@ -56,6 +56,11 @@ export default defineMessages({
         defaultMessage: 'Email is invalid'
     },
 
+    emailIsTempmail: {
+        id: 'emailIsTempmail',
+        defaultMessage: 'Tempmail E-mail addresses is not allowed'
+    },
+
     emailNotAvailable: {
         id: 'emailNotAvailable',
         defaultMessage: 'This email is already registered.'

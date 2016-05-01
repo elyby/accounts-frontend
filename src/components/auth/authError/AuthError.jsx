@@ -49,6 +49,7 @@ export default class AuthError extends Component {
         'error.username_required': () => <Message {...messages.usernameRequired} />,
         'error.email_required': () => <Message {...messages.emailRequired} />,
         'error.email_invalid': () => <Message {...messages.emailInvalid} />,
+        'error.email_is_tempmail': () => <Message {...messages.emailIsTempmail} />,
 
         'error.email_not_available': () => (
             <span>
