@@ -104,11 +104,6 @@ export default class AuthFlow {
                 this.setState(new LoginState());
                 break;
 
-            case '/logout':
-                this.run('logout');
-                this.setState(new LoginState());
-                break;
-
             default:
                 throw new Error(`Unsupported request: ${path}`);
         }

@@ -14,7 +14,6 @@ import Login from 'components/auth/login/Login';
 import Permissions from 'components/auth/permissions/Permissions';
 import Activation from 'components/auth/activation/Activation';
 import Password from 'components/auth/password/Password';
-import Logout from 'components/auth/Logout';
 import ChangePassword from 'components/auth/changePassword/ChangePassword';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import Finish from 'components/auth/finish/Finish';
@@ -41,7 +40,6 @@ export default function routesFactory(store) {
             <IndexRoute component={IndexPage} {...onEnter} />
 
             <Route path="oauth" component={OAuthInit} {...onEnter} />
-            <Route path="logout" component={Logout} {...onEnter} />
 
             <Route path="auth" component={AuthPage}>
                 <Route path="/login" components={new Login()} {...onEnter} />

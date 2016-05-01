@@ -1,3 +1,5 @@
+import { routeActions } from 'react-router-redux';
+
 import request from 'services/request';
 import accounts from 'services/api/accounts';
 
@@ -22,7 +24,10 @@ export function setUser(payload) {
 }
 
 export function logout() {
-    return setUser({isGuest: true});
+    return (dispatch) => {
+        dispatch(setUser({isGuest: true}));
+        dispatch(routeActions.push('/login'));
+    };
 }
 
 export function fetchUserData() {

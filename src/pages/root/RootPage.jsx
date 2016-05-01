@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import Userbar from 'components/userbar/Userbar';
@@ -16,7 +15,7 @@ function RootPage(props) {
                         Ely.by
                     </Link>
                     <div className={styles.userbar}>
-                        <Userbar {...props} />
+                        <Userbar {...props} onLogout={props.logout} />
                     </div>
                 </div>
             </div>
@@ -32,6 +31,11 @@ RootPage.propTypes = {
     children: PropTypes.element
 };
 
+import { connect } from 'react-redux';
+import { logout } from 'components/user/actions';
+
 export default connect((state) => ({
     user: state.user
-}))(RootPage);
+}), {
+    logout
+})(RootPage);
