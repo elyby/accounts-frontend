@@ -213,46 +213,6 @@
 @include checkbox-theme('blue', $blue);
 @include checkbox-theme('red', $red);
 
-/**
- * Form validation
- */
-
-.formTouched .textField:invalid {
-    box-shadow: none;
-
-    &,
-    ~ .textFieldIcon {
-        border-color: #3e2727;
-    }
-
-    ~ .textFieldIcon {
-        color: #3e2727;
-    }
-
-    &:hover {
-        &,
-        ~ .textFieldIcon {
-            border-color: $red;
-        }
-    }
-
-    &:focus {
-        border-color: $red;
-
-        ~ .textFieldIcon {
-            background: $red;
-            border-color: $red;
-            color: #fff;
-        }
-    }
-}
-
-.formTouched .checkboxInput:invalid {
-    ~ .checkbox {
-        border-color: $red;
-    }
-}
-
 .isFormLoading {
     // TODO: надо бы разнести from и input на отдельные модули,
     // так как в текущем контексте isLoading немного не логичен,
@@ -270,3 +230,43 @@
         outline: none;
     }
 }
+
+/**
+ * Form validation
+ */
+// Disable any visual error indication
+// .formTouched .textField:invalid {
+//     box-shadow: none;
+
+//     &,
+//     ~ .textFieldIcon {
+//         border-color: #3e2727;
+//     }
+
+//     ~ .textFieldIcon {
+//         color: #3e2727;
+//     }
+
+//     &:hover {
+//         &,
+//         ~ .textFieldIcon {
+//             border-color: $red;
+//         }
+//     }
+
+//     &:focus {
+//         border-color: $red;
+
+//         ~ .textFieldIcon {
+//             background: $red;
+//             border-color: $red;
+//             color: #fff;
+//         }
+//     }
+// }
+
+// .formTouched .checkboxInput:invalid {
+//     ~ .checkbox {
+//         border-color: $red;
+//     }
+// }
