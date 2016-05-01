@@ -25,6 +25,7 @@ class ChangePasswordPage extends Component {
 import { connect } from 'react-redux';
 import { routeActions } from 'react-router-redux';
 import { register as registerPopup, create as createPopup } from 'components/ui/popup/actions';
+import { updateUser } from 'components/user/actions';
 
 function goToProfile() {
     return routeActions.push('/');
@@ -37,10 +38,16 @@ export default connect(null, {
             dispatch(createPopup('requestPassword', (props) => {
                 return {
                     onSubmit: (password) => {
-                        // TODO: hide this logic in action and do not forget to update password change time
+                        // TODO: hide this logic in action
                         accounts.changePassword({
                             ...data,
                             password
+                        })
+                        .then(() => {
+                            dispatch(updateUser({
+                                passwordChangedAt: Date.now() / 1000,
+                                shouldChangePassword: false
+                            }));
                         })
                         .then(props.onClose)
                         .then(() => dispatch(goToProfile()));
