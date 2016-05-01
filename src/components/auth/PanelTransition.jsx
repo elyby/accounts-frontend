@@ -180,6 +180,7 @@ class PanelTransition extends Component {
     }
 
     onFormSubmit = () => {
+        this.props.clearErrors();
         this.body.onFormSubmit();
     };
 
