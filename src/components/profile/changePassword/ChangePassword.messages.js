@@ -35,5 +35,9 @@ export default defineMessages({
         id: 'repeatNewPasswordLabel',
         defaultMessage: 'Repeat the password:'
         // defaultMessage: 'Повторите указанный пароль:'
+    },
+    logoutOnAllDevices: {
+        id: 'logoutOnAllDevices',
+        defaultMessage: 'Logout on all devices'
     }
 });

@@ -171,7 +171,6 @@
     font-family: $font-family-title;
     font-size: 16px;
     line-height: 24px;
-    color: #fff;
 
     cursor: pointer;
 }
@@ -208,12 +207,26 @@
 
     font-size: 10px;
     line-height: 18px;
+    text-align: center;
+    color: #fff;
 
     @include form-transition();
 
     &:before {
         opacity: 0;
         transition: opacity 0.3s;
+    }
+}
+
+.lightCheckboxRow {
+    .checkboxContainer {
+        color: #666;
+    }
+}
+
+.darkCheckboxRow {
+    .checkboxContainer {
+        color: #fff;
     }
 }
 

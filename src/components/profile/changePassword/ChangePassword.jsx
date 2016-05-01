@@ -4,7 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
-import { LabeledInput, Button } from 'components/ui/Form';
+import { LabeledInput, Button, Checkbox } from 'components/ui/Form';
 import FormModel from 'models/Form';
 import { Form } from 'components/ui/Form';
 
@@ -70,6 +70,14 @@ export default class ChangePassword extends Component {
                                     required
                                     skin="light"
                                     label={messages.repeatNewPasswordLabel}
+                                />
+                            </div>
+
+                            <div className={styles.formRow}>
+                                <Checkbox {...form.bindField('logoutAll')}
+                                    defaultChecked
+                                    skin="light"
+                                    label={messages.logoutOnAllDevices}
                                 />
                             </div>
                         </div>
