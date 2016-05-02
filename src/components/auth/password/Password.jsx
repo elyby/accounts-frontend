@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 
 import buttons from 'components/ui/buttons.scss';
 import icons from 'components/ui/icons.scss';
-import { Input, Checkbox } from 'components/ui/Form';
+import { Input, Checkbox } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './password.scss';

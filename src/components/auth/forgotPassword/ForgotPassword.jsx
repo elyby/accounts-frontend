@@ -4,7 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
-import { Input } from 'components/ui/Form';
+import { Input } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import messages from './ForgotPassword.messages';

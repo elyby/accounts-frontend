@@ -213,7 +213,7 @@
 
 .checkbox {
     composes: checkboxPosition;
-    composes: checkmark from './icons.scss';
+    composes: checkmark from 'components/ui/icons.scss';
 
     border: 2px #dcd8cd solid;
 

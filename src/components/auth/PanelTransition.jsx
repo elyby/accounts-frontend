@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { TransitionMotion, spring } from 'react-motion';
 
 import { Panel, PanelBody, PanelFooter, PanelHeader } from 'components/ui/Panel';
-import { Form } from 'components/ui/Form';
+import { Form } from 'components/ui/form';
 import {helpLinks as helpLinksStyles} from 'components/auth/helpLinks.scss';
 import panelStyles from 'components/ui/panel.scss';
 import icons from 'components/ui/icons.scss';

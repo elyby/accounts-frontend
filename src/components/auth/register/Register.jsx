@@ -4,7 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
 import buttons from 'components/ui/buttons.scss';
-import { Input, Checkbox } from 'components/ui/Form';
+import { Input, Checkbox } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import activationMessages from 'components/auth/activation/Activation.messages';

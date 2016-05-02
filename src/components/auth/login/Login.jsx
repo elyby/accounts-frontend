@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 
 import buttons from 'components/ui/buttons.scss';
-import { Input } from 'components/ui/Form';
+import { Input } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import passwordMessages from 'components/auth/password/Password.messages';

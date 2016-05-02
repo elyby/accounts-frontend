@@ -4,9 +4,8 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
-import { Input, Button, Checkbox } from 'components/ui/Form';
+import { Input, Button, Checkbox, Form } from 'components/ui/form';
 import FormModel from 'models/Form';
-import { Form } from 'components/ui/Form';
 
 import styles from 'components/profile/profileForm.scss';
 import messages from './ChangePassword.messages';
