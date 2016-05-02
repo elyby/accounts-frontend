@@ -49,6 +49,7 @@ export default class Profile extends Component {
                             </div>
 
                             <ProfileField
+                                link="/profile/change-username"
                                 label={<Message {...messages.nickname} />}
                                 value={user.username}
                                 warningMessage={user.hasMojangUsernameCollision ? (
@@ -62,8 +63,8 @@ export default class Profile extends Component {
                             />
 
                             <ProfileField
-                                label={<Message {...messages.password} />}
                                 link="/profile/change-password"
+                                label={<Message {...messages.password} />}
                                 value={<Message {...messages.changedAt} values={{
                                     at: (<Relative value={user.passwordChangedAt * 1000} />)
                                 }} />}

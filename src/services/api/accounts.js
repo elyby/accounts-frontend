@@ -15,5 +15,15 @@ export default {
             '/api/accounts/change-password',
             {password, newPassword, newRePassword, logoutAll}
         );
+    },
+
+    changeUsername({
+        username = '',
+        password = ''
+    }) {
+        return request.post(
+            '/api/accounts/change-username',
+            {username, password}
+        );
     }
 };

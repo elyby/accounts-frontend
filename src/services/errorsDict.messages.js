@@ -46,6 +46,11 @@ export default defineMessages({
         defaultMessage: 'Username is required'
     },
 
+    usernameUnavailable: {
+        id: 'usernameUnavailable',
+        defaultMessage: 'This username is already taken'
+    },
+
     emailRequired: {
         id: 'emailRequired',
         defaultMessage: 'Email is required'

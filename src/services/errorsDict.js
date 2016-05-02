@@ -31,6 +31,7 @@ const errorsMap = {
     ),
 
     'error.username_required': () => <Message {...messages.usernameRequired} />,
+    'error.username_not_available': () => <Message {...messages.usernameUnavailable} />,
     'error.email_required': () => <Message {...messages.emailRequired} />,
     'error.email_invalid': () => <Message {...messages.emailInvalid} />,
     'error.email_is_tempmail': () => <Message {...messages.emailIsTempmail} />,
