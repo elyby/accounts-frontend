@@ -37,11 +37,26 @@ function goToProfile() {
 export default connect(null, {
     changePassword: (form) => {
         return (dispatch) => {
-            // TODO: судя по всему registerPopup было явно лишним. Надо еще раз
-            // обдумать API и переписать
-            dispatch(registerPopup('requestPassword', PasswordRequestForm));
-            dispatch(createPopup('requestPassword', (props) => {
-                return {
+            accounts.changePassword(form.serialize())
+            .catch((resp) => {
+                // prevalidate user input, because requestPassword popup will block the
+                // entire form from input, so it must be valid
+                if (resp.errors) {
+                    Reflect.deleteProperty(resp.errors, 'password');
+
+                    if (Object.keys(resp.errors).length) {
+                        form.setErrors(resp.errors);
+                        return Promise.reject(resp);
+                    }
+                }
+
+                return Promise.resolve();
+            })
+            .then(() => {
+                // TODO: судя по всему registerPopup было явно лишним. Надо еще раз
+                // обдумать API и переписать
+                dispatch(registerPopup('requestPassword', PasswordRequestForm));
+                dispatch(createPopup('requestPassword', (props) => ({
                     form,
                     onSubmit: () => {
                         // TODO: hide this logic in action
@@ -62,8 +77,8 @@ export default connect(null, {
                         .then(props.onClose)
                         .then(() => dispatch(goToProfile()));
                     }
-                };
-            }));
+                })));
+            });
         };
     }
 })(ChangePasswordPage);
