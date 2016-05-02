@@ -30,9 +30,6 @@
 }
 
 .formRow {
-    position: relative;
-    height: 50px;
-    max-width: 100%;
     margin: 10px 0;
 }
 
@@ -42,6 +39,12 @@
     .textField {
         padding-left: 60px;
     }
+}
+
+.textFieldContainer {
+    position: relative;
+    height: 50px;
+    max-width: 100%;
 }
 
 .textField {
@@ -120,9 +123,18 @@
 }
 
 .textFieldLabel {
+    margin: 10px 0;
+    display: block;
+
     font-family: $font-family-title;
     color: #666;
     font-size: 18px;
+}
+
+.fieldError {
+    color: $red;
+    font-size: 12px;
+    margin: 3px 0;
 }
 
 @include input-theme('green', $green);

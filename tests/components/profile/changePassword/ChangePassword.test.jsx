@@ -5,10 +5,10 @@ import { shallow } from 'enzyme';
 import ChangePassword from 'components/profile/changePassword/ChangePassword';
 
 describe('<ChangePassword />', () => {
-    it('renders two <LabeledInput /> components', () => {
+    it('renders two <Input /> components', () => {
         const component = shallow(<ChangePassword onSubmit={() => {}} />);
 
-        expect(component.find('LabeledInput')).to.have.length(2);
+        expect(component.find('Input')).to.have.length(2);
     });
 
 

@@ -3,6 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { intlShape } from 'react-intl';
 
+import { uniqueId } from 'functions';
+
 import icons from './icons.scss';
 import styles from './form.scss';
 import buttons from './buttons.scss';
@@ -17,6 +19,13 @@ export class Input extends Component {
             }),
             PropTypes.string
         ]),
+        label: PropTypes.oneOfType([
+            PropTypes.shape({
+                id: PropTypes.string
+            }),
+            PropTypes.string
+        ]).isRequired,
+        error: PropTypes.string,
         icon: PropTypes.string,
         skin: PropTypes.oneOf(['dark', 'light']),
         color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
@@ -27,12 +36,28 @@ export class Input extends Component {
     };
 
     render() {
-        let { icon, color = 'green', skin = 'dark' } = this.props;
+        let { icon, color = 'green', skin = 'dark', error, label } = this.props;
 
         const props = {
             type: 'text',
             ...this.props
         };
+
+        if (label) {
+            if (!props.id) {
+                props.id = uniqueId('input');
+            }
+
+            if (label.id) {
+                label = this.context.intl.formatMessage(label);
+            }
+
+            label = (
+                <label className={styles.textFieldLabel} htmlFor={props.id}>
+                    {label}
+                </label>
+            );
+        }
 
         if (props.placeholder && props.placeholder.id) {
             props.placeholder = this.context.intl.formatMessage(props.placeholder);
@@ -46,13 +71,25 @@ export class Input extends Component {
             );
         }
 
+        if (error) {
+            error = (
+                <div className={styles.fieldError}>
+                    error
+                </div>
+            );
+        }
+
         return (
             <div className={baseClass}>
-                <input ref={this.setEl} className={classNames(
-                    styles[`${skin}TextField`],
-                    styles[`${color}TextField`]
-                )} {...props} />
-                {icon}
+                {label}
+                <div className={styles.textFieldContainer}>
+                    <input ref={this.setEl} className={classNames(
+                        styles[`${skin}TextField`],
+                        styles[`${color}TextField`]
+                    )} {...props} />
+                    {icon}
+                </div>
+                {error}
             </div>
         );
     }
@@ -68,62 +105,6 @@ export class Input extends Component {
     focus() {
         this.el.focus();
         setTimeout(this.el.focus.bind(this.el), 10);
-    }
-}
-
-export class LabeledInput extends Component {
-    static displayName = 'LabeledInput';
-
-    static propTypes = {
-        label: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]).isRequired,
-        id: PropTypes.string,
-        icon: PropTypes.string,
-        skin: PropTypes.oneOf(['dark', 'light']),
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
-    };
-
-    static contextTypes = {
-        intl: intlShape.isRequired
-    };
-
-    render() {
-        let { label } = this.props;
-
-        let props = Object.assign({}, this.props);
-
-        if (!props.id) {
-            props.id = uniqueId('input');
-        }
-
-        if (label && label.id) {
-            label = this.context.intl.formatMessage(label);
-        }
-
-        return (
-            <div className={styles.formLabeledRow}>
-                <label className={styles.textFieldLabel} htmlFor={props.id}>
-                    {label}
-                </label>
-                <Input ref={this.setEl} {...props} />
-            </div>
-        );
-    }
-
-    setEl = (el) => {
-        this.el = el;
-    };
-
-    getValue() {
-        return this.el.getValue();
-    }
-
-    focus() {
-        this.el.focus();
     }
 }
 
@@ -296,10 +277,4 @@ export class Form extends Component {
             this.props.onInvalid(errorMessage);
         }
     };
-}
-
-
-let lastId = 0;
-function uniqueId(prefix = 'id') {
-    return `${prefix}${++lastId}`;
 }

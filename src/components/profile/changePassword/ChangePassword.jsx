@@ -4,7 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
-import { LabeledInput, Button, Checkbox } from 'components/ui/Form';
+import { Input, Button, Checkbox } from 'components/ui/Form';
 import FormModel from 'models/Form';
 import { Form } from 'components/ui/Form';
 
@@ -50,7 +50,7 @@ export default class ChangePassword extends Component {
                             </div>
 
                             <div className={styles.formRow}>
-                                <LabeledInput {...form.bindField('newPassword')}
+                                <Input {...form.bindField('newPassword')}
                                     type="password"
                                     required
                                     skin="light"
@@ -65,7 +65,7 @@ export default class ChangePassword extends Component {
                             </div>
 
                             <div className={styles.formRow}>
-                                <LabeledInput {...form.bindField('newRePassword')}
+                                <Input {...form.bindField('newRePassword')}
                                     type="password"
                                     required
                                     skin="light"
