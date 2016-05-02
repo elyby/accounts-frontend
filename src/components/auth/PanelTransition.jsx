@@ -5,6 +5,7 @@ import { TransitionMotion, spring } from 'react-motion';
 
 import { Panel, PanelBody, PanelFooter, PanelHeader } from 'components/ui/Panel';
 import { Form } from 'components/ui/form';
+import MeasureHeight from 'components/MeasureHeight';
 import {helpLinks as helpLinksStyles} from 'components/auth/helpLinks.scss';
 import panelStyles from 'components/ui/panel.scss';
 import icons from 'components/ui/icons.scss';
@@ -12,7 +13,6 @@ import authFlow from 'services/authFlow';
 import { userShape } from 'components/user/User';
 
 import * as actions from './actions';
-import MeasureHeight from './MeasureHeight';
 
 const opacitySpringConfig = {stiffness: 300, damping: 20};
 const transformSpringConfig = {stiffness: 500, damping: 50, precision: 0.5};
