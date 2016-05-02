@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 import classNames from 'classnames';
 
-import FormModel from 'models/Form';
+import FormModel from './FormModel';
 
 import styles from './form.scss';
 

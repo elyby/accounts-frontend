@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 
 import AuthError from 'components/auth/authError/AuthError';
 import { userShape } from 'components/user/User';
-import Form from 'models/Form';
+import { FormModel } from 'components/ui/form';
 
 export default class BaseAuthBody extends Component {
     static contextTypes = {
@@ -32,7 +32,7 @@ export default class BaseAuthBody extends Component {
 
     onClearErrors = this.context.clearErrors;
 
-    form = new Form();
+    form = new FormModel();
 
     bindField = this.form.bindField.bind(this.form);
     serialize = this.form.serialize.bind(this.form);

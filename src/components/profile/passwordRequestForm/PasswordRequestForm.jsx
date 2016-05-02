@@ -2,8 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
-import FormModel from 'models/Form';
-import { Form, Button, Input } from 'components/ui/form';
+import { Form, Button, Input, FormModel } from 'components/ui/form';
 
 import messages from './PasswordRequestForm.messages';
 

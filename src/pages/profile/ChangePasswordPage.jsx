@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import accounts from 'services/api/accounts';
-import FormModel from 'models/Form';
+import { FormModel } from 'components/ui/form';
 import ChangePassword from 'components/profile/changePassword/ChangePassword';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 

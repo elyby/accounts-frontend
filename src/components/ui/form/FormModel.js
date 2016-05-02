@@ -1,6 +1,6 @@
-import FormInputComponent from 'components/ui/form/FormInputComponent';
+import FormInputComponent from './FormInputComponent';
 
-export default class Form {
+export default class FormModel {
     fields = {};
     errors = {};
 
@@ -18,8 +18,8 @@ export default class Form {
         const props = {
             name,
             ref: (el) => {
-                if (!(el instanceof FormInputComponent)) {
-                    throw new Error('Expected a component from components/ui/form module');
+                if (el && !(el instanceof FormInputComponent)) {
+                    throw new Error('Expected FormInputComponent component');
                 }
 
                 this.fields[name] = el;

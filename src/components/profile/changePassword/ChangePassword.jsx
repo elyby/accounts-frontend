@@ -4,8 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
-import { Input, Button, Checkbox, Form } from 'components/ui/form';
-import FormModel from 'models/Form';
+import { Input, Button, Checkbox, Form, FormModel } from 'components/ui/form';
 
 import styles from 'components/profile/profileForm.scss';
 import messages from './ChangePassword.messages';
@@ -14,7 +13,7 @@ export default class ChangePassword extends Component {
     static displayName = 'ChangePassword';
 
     static propTypes = {
-        form: PropTypes.instanceOf(FormModel).isRequired,
+        form: PropTypes.instanceOf(FormModel),
         onSubmit: PropTypes.func.isRequired
     };
 
