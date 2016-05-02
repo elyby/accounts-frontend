@@ -96,7 +96,7 @@ class PanelTransition extends Component {
     }
 
     render() {
-        const {canAnimateHeight, contextHeight, forceHeight} = this.state;
+        const {contextHeight, forceHeight} = this.state;
 
         const {Title, Body, Footer, Links} = this.props;
 
@@ -111,6 +111,10 @@ class PanelTransition extends Component {
 
         const formHeight = this.state[`formHeight${panelId}`] || 0;
 
+        // a hack to disable height animation on first render
+        const isHeightMeasured = this.isHeightMeasured;
+        this.isHeightMeasured = formHeight > 0;
+
         return (
             <TransitionMotion
                 styles={[
@@ -119,7 +123,7 @@ class PanelTransition extends Component {
                         opacitySpring: spring(1, opacitySpringConfig)
                     }},
                     {key: 'common', style: {
-                        heightSpring: spring(forceHeight || formHeight, transformSpringConfig),
+                        heightSpring: isHeightMeasured ? spring(forceHeight || formHeight, transformSpringConfig) : formHeight,
                         switchContextHeightSpring: spring(forceHeight || contextHeight, changeContextSpringConfig)
                     }}
                 ]}
@@ -139,7 +143,7 @@ class PanelTransition extends Component {
 
                     const bodyHeight = {
                         position: 'relative',
-                        height: `${canAnimateHeight ? common.style.heightSpring : formHeight}px`
+                        height: `${common.style.heightSpring}px`
                     };
 
                     return (
@@ -240,12 +244,7 @@ class PanelTransition extends Component {
     onUpdateHeight = (height, key) => {
         const heightKey = `formHeight${key}`;
 
-        // we need to skip first render, because there is no panel to make transition from
-        // const canAnimateHeight = Object.keys(this.state.height).length > 1 || this.state[heightKey];
-        const canAnimateHeight = true; // NOTE: lets try to always animate
-
         this.setState({
-            canAnimateHeight,
             [heightKey]: height
         });
     };
