@@ -162,6 +162,7 @@ export default class ChangeEmail extends Component {
                                         <Input {...form.bindField('initializationCode')}
                                             required
                                             skin="light"
+                                            color="violet"
                                             placeholder={messages.codePlaceholder}
                                         />
                                     </div>
@@ -176,6 +177,7 @@ export default class ChangeEmail extends Component {
                                         <Input {...form.bindField('newEmail')}
                                             required
                                             skin="light"
+                                            color="violet"
                                             placeholder={messages.newEmailPlaceholder}
                                         />
                                     </div>
@@ -196,6 +198,7 @@ export default class ChangeEmail extends Component {
                                         <Input {...form.bindField('finalizationCode')}
                                             required
                                             skin="light"
+                                            color="violet"
                                             placeholder={messages.codePlaceholder}
                                         />
                                     </div>

@@ -27,7 +27,7 @@ export default class Input extends FormInputComponent {
         error: PropTypes.string,
         icon: PropTypes.string,
         skin: PropTypes.oneOf(['dark', 'light']),
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
+        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet'])
     };
 
     render() {
