@@ -15,6 +15,8 @@ export default class FormModel {
      * @return {Object} ref and name props for component
      */
     bindField(name) {
+        this.fields[name] = {};
+
         const props = {
             name,
             ref: (el) => {
@@ -42,11 +44,17 @@ export default class FormModel {
     }
 
     value(fieldId) {
-        if (!this.fields[fieldId]) {
+        const field = this.fields[fieldId];
+
+        if (!field) {
             throw new Error(`The field with an id ${fieldId} does not exists`);
         }
 
-        return this.fields[fieldId].getValue();
+        if (!field.getValue) {
+            return ''; // the field was not initialized through ref yet
+        }
+
+        return field.getValue();
     }
 
     setErrors(errors) {

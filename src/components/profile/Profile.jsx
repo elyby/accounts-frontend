@@ -58,6 +58,7 @@ export default class Profile extends Component {
                             />
 
                             <ProfileField
+                                link="/profile/change-email"
                                 label={'E-mail'}
                                 value={user.email}
                             />

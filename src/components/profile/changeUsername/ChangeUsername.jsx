@@ -5,8 +5,8 @@ import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import { Input, Button, Form, FormModel } from 'components/ui/form';
-
 import styles from 'components/profile/profileForm.scss';
+
 import messages from './ChangeUsername.messages';
 
 export default class ChangeUsername extends Component {

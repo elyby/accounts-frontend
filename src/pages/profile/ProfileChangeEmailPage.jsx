@@ -2,36 +2,26 @@ import React, { Component, PropTypes } from 'react';
 
 import accounts from 'services/api/accounts';
 import { FormModel } from 'components/ui/form';
-import ChangeUsername from 'components/profile/changeUsername/ChangeUsername';
+import ChangeEmail from 'components/profile/changeEmail/ChangeEmail';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
-class ChangeUsernamePage extends Component {
-    static displayName = 'ChangeUsernamePage';
+class ProfileChangeEmailPage extends Component {
+    static displayName = 'ProfileChangeEmailPage';
 
     static propTypes = {
-        username: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
         updateUsername: PropTypes.func.isRequired, // updates username in state
         changeUsername: PropTypes.func.isRequired // saves username to backend
     };
 
     form = new FormModel();
 
-    componentWillMount() {
-        this.setState({
-            actualUsername: this.props.username
-        });
-    }
-
-    componentWillUnmount() {
-        this.props.updateUsername(this.state.actualUsername);
-    }
-
     render() {
         return (
-            <ChangeUsername form={this.form}
+            <ChangeEmail form={this.form}
                 onSubmit={this.onSubmit}
                 onChange={this.onUsernameChange}
-                username={this.props.username}
+                email={this.props.email}
             />
         );
     }
@@ -59,7 +49,7 @@ function goToProfile() {
 }
 
 export default connect((state) => ({
-    username: state.user.username
+    email: state.user.email
 }), {
     updateUsername: (username) => {
         return updateUser({username});
@@ -111,4 +101,4 @@ export default connect((state) => ({
             })
         ;
     }
-})(ChangeUsernamePage);
+})(ProfileChangeEmailPage);

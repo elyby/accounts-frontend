@@ -66,11 +66,6 @@
 
     transition: border-color .25s;
 
-    &::placeholder {
-        opacity: 1;
-        color: #444;
-    }
-
     &:hover {
         &,
         ~ .textFieldIcon {
@@ -107,6 +102,11 @@
 .darkTextField {
     background: $black;
 
+    &::placeholder {
+        opacity: 1;
+        color: #444;
+    }
+
     &,
     ~ .textFieldIcon {
         border-color: lighter($black);
@@ -115,6 +115,11 @@
 
 .lightTextField {
     background: #fff;
+
+    &::placeholder {
+        opacity: 1;
+        color: #aaa;
+    }
 
     &,
     ~ .textFieldIcon {

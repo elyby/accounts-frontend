@@ -61,6 +61,14 @@
     }
 }
 
+.violetTitle {
+    composes: title;
+
+    &:after {
+        background: $violet;
+    }
+}
+
 .description {
     font-size: 12px;
     color: #666666;

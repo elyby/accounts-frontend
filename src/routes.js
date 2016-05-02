@@ -8,6 +8,7 @@ import AuthPage from 'pages/auth/AuthPage';
 import ProfilePage from 'pages/profile/ProfilePage';
 import ProfileChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ProfileChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
+import ProfileChangeEmailPage from 'pages/profile/ProfileChangeEmailPage';
 
 import { authenticate } from 'components/user/actions';
 
@@ -57,6 +58,7 @@ export default function routesFactory(store) {
             <Route path="profile" component={ProfilePage}>
                 <Route path="change-password" component={ProfileChangePasswordPage} />
                 <Route path="change-username" component={ProfileChangeUsernamePage} />
+                <Route path="change-email" component={ProfileChangeEmailPage} />
             </Route>
         </Route>
     );

@@ -71,6 +71,7 @@
 @include button-theme('orange', $orange);
 @include button-theme('darkBlue', $dark_blue);
 @include button-theme('lightViolet', $light_violet);
+@include button-theme('violet', $violet);
 
 .block {
     display: block;
