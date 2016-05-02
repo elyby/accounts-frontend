@@ -113,7 +113,7 @@ class PanelTransition extends Component {
 
         // a hack to disable height animation on first render
         const isHeightMeasured = this.isHeightMeasured;
-        this.isHeightMeasured = formHeight > 0;
+        this.isHeightMeasured = isHeightMeasured || formHeight > 0;
 
         return (
             <TransitionMotion
