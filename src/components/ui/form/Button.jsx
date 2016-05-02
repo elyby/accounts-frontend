@@ -1,11 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
 import classNames from 'classnames';
-import { intlShape } from 'react-intl';
 
 import buttons from 'components/ui/buttons.scss';
 
-export default class Button extends Component {
+import FormComponent from './FormComponent';
+
+export default class Button extends FormComponent {
     static displayName = 'Button';
 
     static propTypes = {
@@ -19,10 +20,6 @@ export default class Button extends Component {
         color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
     };
 
-    static contextTypes = {
-        intl: intlShape.isRequired
-    };
-
     render() {
         const { color = 'green', block } = this.props;
 
@@ -30,9 +27,7 @@ export default class Button extends Component {
             ...this.props
         };
 
-        if (props.label.id) {
-            props.label = this.context.intl.formatMessage(props.label);
-        }
+        props.label = this.formatMessage(props.label);
 
         return (
             <button className={classNames(buttons[color], {

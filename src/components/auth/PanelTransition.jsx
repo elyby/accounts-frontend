@@ -184,8 +184,8 @@ class PanelTransition extends Component {
         this.body.onFormSubmit();
     };
 
-    onFormInvalid = (errorMessage) => {
-        this.props.setError(errorMessage);
+    onFormInvalid = (errors) => {
+        this.props.setError(Object.values(errors).shift());
     };
 
     willEnter = (config) => this.getTransitionStyles(config);

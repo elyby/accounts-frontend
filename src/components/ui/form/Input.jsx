@@ -1,14 +1,14 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
 import classNames from 'classnames';
-import { intlShape } from 'react-intl';
 
 import { uniqueId } from 'functions';
 import icons from 'components/ui/icons.scss';
 
 import styles from './form.scss';
+import FormInputComponent from './FormInputComponent';
 
-export default class Input extends Component {
+export default class Input extends FormInputComponent {
     static displayName = 'Input';
 
     static propTypes = {
@@ -23,19 +23,15 @@ export default class Input extends Component {
                 id: PropTypes.string
             }),
             PropTypes.string
-        ]).isRequired,
+        ]),
         error: PropTypes.string,
         icon: PropTypes.string,
         skin: PropTypes.oneOf(['dark', 'light']),
         color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue'])
     };
 
-    static contextTypes = {
-        intl: intlShape.isRequired
-    };
-
     render() {
-        let { icon, color = 'green', skin = 'dark', error, label } = this.props;
+        let { icon, color = 'green', skin = 'dark', label } = this.props;
 
         const props = {
             type: 'text',
@@ -47,9 +43,7 @@ export default class Input extends Component {
                 props.id = uniqueId('input');
             }
 
-            if (label.id) {
-                label = this.context.intl.formatMessage(label);
-            }
+            label = this.formatMessage(label);
 
             label = (
                 <label className={styles.textFieldLabel} htmlFor={props.id}>
@@ -58,9 +52,7 @@ export default class Input extends Component {
             );
         }
 
-        if (props.placeholder && props.placeholder.id) {
-            props.placeholder = this.context.intl.formatMessage(props.placeholder);
-        }
+        props.placeholder = this.formatMessage(props.placeholder);
 
         let baseClass = styles.formRow;
         if (icon) {
@@ -70,32 +62,23 @@ export default class Input extends Component {
             );
         }
 
-        if (error) {
-            error = (
-                <div className={styles.fieldError}>
-                    error
-                </div>
-            );
-        }
-
         return (
             <div className={baseClass}>
                 {label}
                 <div className={styles.textFieldContainer}>
-                    <input ref={this.setEl} className={classNames(
-                        styles[`${skin}TextField`],
-                        styles[`${color}TextField`]
-                    )} {...props} />
+                    <input ref={this.setEl}
+                        className={classNames(
+                            styles[`${skin}TextField`],
+                            styles[`${color}TextField`]
+                        )}
+                        {...props}
+                    />
                     {icon}
                 </div>
-                {error}
+                {this.renderError()}
             </div>
         );
     }
-
-    setEl = (el) => {
-        this.el = el;
-    };
 
     getValue() {
         return this.el.value;

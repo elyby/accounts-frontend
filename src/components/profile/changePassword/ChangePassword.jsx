@@ -14,16 +14,23 @@ export default class ChangePassword extends Component {
     static displayName = 'ChangePassword';
 
     static propTypes = {
+        form: PropTypes.instanceOf(FormModel).isRequired,
         onSubmit: PropTypes.func.isRequired
     };
 
-    form = new FormModel();
+    static get defaultProps() {
+        return {
+            form: new FormModel()
+        };
+    }
 
     render() {
-        const {form} = this;
+        const {form} = this.props;
 
         return (
-            <Form onSubmit={this.onFormSubmit}>
+            <Form onSubmit={this.onFormSubmit}
+                form={form}
+            >
                 <div className={styles.contentWithBackButton}>
                     <Link className={styles.backButton} to="/" />
 
@@ -89,6 +96,6 @@ export default class ChangePassword extends Component {
     }
 
     onFormSubmit = () => {
-        this.props.onSubmit(this.form.serialize());
+        this.props.onSubmit(this.props.form);
     };
 }

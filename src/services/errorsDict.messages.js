@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
     invalidPassword: {
         id: 'invalidPassword',
-        defaultMessage: 'You entered wrong account password.'
+        defaultMessage: 'You have entered wrong account password.'
     },
 
     suggestResetPassword: {

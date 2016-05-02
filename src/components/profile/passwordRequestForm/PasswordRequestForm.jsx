@@ -11,19 +11,22 @@ export default class PasswordRequestForm extends Component {
     static displayName = 'PasswordRequestForm';
 
     static propTypes = {
+        form: PropTypes.instanceOf(FormModel).isRequired,
         onSubmit: PropTypes.func.isRequired
     };
 
-    form = new FormModel();
-
     render() {
+        const {form} = this.props;
+
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form onSubmit={this.onSubmit}
+                form={form}
+            >
                 <h2>
                     <Message {...messages.title} />
                 </h2>
 
-                <Input {...this.form.bindField('password')}
+                <Input {...form.bindField('password')}
                     type="password"
                     required
                     autoFocus
@@ -38,6 +41,6 @@ export default class PasswordRequestForm extends Component {
     }
 
     onSubmit = () => {
-        this.props.onSubmit(this.form.value('password'));
+        this.props.onSubmit(this.props.form);
     };
 }

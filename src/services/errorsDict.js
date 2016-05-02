@@ -8,13 +8,14 @@ export default {
     resolve(error) {
         return errorsMap[error] ? errorsMap[error]() : error;
     }
-}
+};
 
 const errorsMap = {
     'error.login_required': () => <Message {...messages.loginRequired} />,
     'error.login_not_exist': () => <Message {...messages.loginNotExist} />,
     'error.password_required': () => <Message {...messages.passwordRequired} />,
 
+    'error.password_invalid': () => <Message {...messages.invalidPassword} />,
     'error.password_incorrect': () => (
         <span>
             <Message {...messages.invalidPassword} />

@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 
 import classNames from 'classnames';
 
+import FormModel from 'models/Form';
+
 import styles from './form.scss';
 
 export default class Form extends Component {
@@ -10,6 +12,7 @@ export default class Form extends Component {
     static propTypes = {
         id: PropTypes.string, // and id, that uniquely identifies form contents
         isLoading: PropTypes.bool,
+        form: PropTypes.instanceOf(FormModel),
         onSubmit: PropTypes.func,
         onInvalid: PropTypes.func,
         children: PropTypes.oneOfType([
@@ -71,17 +74,30 @@ export default class Form extends Component {
         if (form.checkValidity()) {
             this.props.onSubmit();
         } else {
-            const firstError = form.querySelectorAll(':invalid')[0];
-            firstError.focus();
+            const invalidEls = form.querySelectorAll(':invalid');
+            const errors = {};
+            invalidEls[0].focus(); // focus on first error
 
-            let errorMessage = firstError.validationMessage;
-            if (firstError.validity.valueMissing) {
-                errorMessage = `error.${firstError.name}_required`;
-            } else if (firstError.validity.typeMismatch) {
-                errorMessage = `error.${firstError.name}_invalid`;
-            }
+            Array.from(invalidEls).reduce((errors, el) => {
+                if (!el.name) {
+                    console.warn('Found an element without name', el);
+                    return errors;
+                }
 
-            this.props.onInvalid(errorMessage);
+                let errorMessage = el.validationMessage;
+                if (el.validity.valueMissing) {
+                    errorMessage = `error.${el.name}_required`;
+                } else if (el.validity.typeMismatch) {
+                    errorMessage = `error.${el.name}_invalid`;
+                }
+
+                errors[el.name] = errorMessage;
+
+                return errors;
+            }, errors);
+
+            this.props.form && this.props.form.setErrors(errors);
+            this.props.onInvalid(errors);
         }
     };
 }

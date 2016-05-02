@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import accounts from 'services/api/accounts';
+import FormModel from 'models/Form';
 import ChangePassword from 'components/profile/changePassword/ChangePassword';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
@@ -11,14 +12,16 @@ class ChangePasswordPage extends Component {
         changePassword: PropTypes.func.isRequired
     };
 
+    form = new FormModel();
+
     render() {
         return (
-            <ChangePassword onSubmit={this.onSubmit} />
+            <ChangePassword onSubmit={this.onSubmit} form={this.form} />
         );
     }
 
-    onSubmit = (data) => {
-        this.props.changePassword(data);
+    onSubmit = () => {
+        this.props.changePassword(this.form);
     };
 }
 
@@ -32,16 +35,23 @@ function goToProfile() {
 }
 
 export default connect(null, {
-    changePassword: (data) => {
+    changePassword: (form) => {
         return (dispatch) => {
+            // TODO: судя по всему registerPopup было явно лишним. Надо еще раз
+            // обдумать API и переписать
             dispatch(registerPopup('requestPassword', PasswordRequestForm));
             dispatch(createPopup('requestPassword', (props) => {
                 return {
-                    onSubmit: (password) => {
+                    form,
+                    onSubmit: () => {
                         // TODO: hide this logic in action
-                        accounts.changePassword({
-                            ...data,
-                            password
+                        accounts.changePassword(form.serialize())
+                        .catch((resp) => {
+                            if (resp.errors) {
+                                form.setErrors(resp.errors);
+                            }
+
+                            return Promise.reject(resp);
                         })
                         .then(() => {
                             dispatch(updateUser({
