@@ -10,7 +10,7 @@ import { Input, Checkbox } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import styles from './password.scss';
-import messages from './Password.messages';
+import messages from './Password.intl.json';
 
 class Body extends BaseAuthBody {
     static displayName = 'PasswordBody';

@@ -7,7 +7,7 @@ import Helmet from 'react-helmet';
 import { Input, Button, Checkbox, Form, FormModel } from 'components/ui/form';
 
 import styles from 'components/profile/profileForm.scss';
-import messages from './ChangePassword.messages';
+import messages from './ChangePassword.intl.json';
 
 export default class ChangePassword extends Component {
     static displayName = 'ChangePassword';

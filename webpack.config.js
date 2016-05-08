@@ -156,13 +156,24 @@ var webpackConfig = {
             },
             {
                 test: /\.json$/,
+                exclude: /intl\.json/,
                 loader: 'json'
             },
             {
                 test: /\.html$/,
                 loader: 'html'
+            },
+            {
+                test: /\.intl\.json$/,
+                loader: 'babel!intl-loader!json'
             }
         ]
+    },
+
+    resolveLoader: {
+        alias: {
+            'intl-loader': path.resolve('./webpack/intl-loader')
+        }
     },
 
     sassLoader: {

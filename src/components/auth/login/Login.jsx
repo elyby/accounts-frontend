@@ -8,7 +8,7 @@ import buttons from 'components/ui/buttons.scss';
 import { Input } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
-import passwordMessages from 'components/auth/password/Password.messages';
+import passwordMessages from 'components/auth/password/Password.intl.json';
 import messages from './Login.messages';
 
 class Body extends BaseAuthBody {

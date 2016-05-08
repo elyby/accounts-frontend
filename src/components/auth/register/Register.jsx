@@ -7,6 +7,7 @@ import buttons from 'components/ui/buttons.scss';
 import { Input, Checkbox } from 'components/ui/form';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
+import passwordMessages from 'components/auth/password/Password.intl.json';
 import activationMessages from 'components/auth/activation/Activation.messages';
 import messages from './Register.messages';
 
@@ -44,7 +45,7 @@ class Body extends BaseAuthBody {
                     color="blue"
                     type="password"
                     required
-                    placeholder={messages.accountPassword}
+                    placeholder={passwordMessages.accountPassword}
                 />
 
                 <Input {...this.bindField('rePassword')}

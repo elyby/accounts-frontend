@@ -15,7 +15,9 @@ import thunk from 'redux-thunk';
 import { Router, browserHistory } from 'react-router';
 import { syncHistory, routeReducer } from 'react-router-redux';
 
-import { IntlProvider } from 'react-intl';
+import { IntlProvider, addLocaleData } from 'react-intl';
+import enLocaleData from 'react-intl/locale-data/en';
+import ruLocaleData from 'react-intl/locale-data/ru';
 
 import reducers from 'reducers';
 import routesFactory from 'routes';
@@ -32,23 +34,47 @@ const store = applyMiddleware(
     thunk
 )(createStore)(reducer);
 
-if (process.env.NODE_ENV !== 'production') {
-    // some shortcuts for testing on localhost
+addLocaleData(enLocaleData);
+addLocaleData(ruLocaleData);
 
-    window.testOAuth = () => location.href = '/oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session';
+// TODO: bind with user state
+const SUPPORTED_LANGUAGES = ['ru', 'en'];
+const DEFAULT_LANGUAGE = 'en';
+const state = store.getState();
+function getUserLanguages() {
+    return [].concat(state.user.lang || [])
+        .concat(navigator.languages || [])
+        .concat(navigator.language || []);
 }
 
-ReactDOM.render(
-    <IntlProvider locale="en" messages={{}}>
-        <ReduxProvider store={store}>
-            <Router history={browserHistory}>
-                {routesFactory(store)}
-            </Router>
-        </ReduxProvider>
-    </IntlProvider>,
-    document.getElementById('app')
-);
+function detectLanguage(userLanguages, availableLanguages, defaultLanguage) {
+    return (userLanguages || [])
+        .concat(defaultLanguage)
+        .map((lang) => lang.split('-').shift().toLowerCase())
+        .find((lang) => availableLanguages.indexOf(lang) !== -1);
+}
 
-setTimeout(() => {
-    document.getElementById('loader').classList.remove('is-active');
-}, 50);
+const locale = detectLanguage(getUserLanguages(), SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE);
+
+new Promise(require(`bundle!i18n/${locale}.json`))
+    .then((messages) => {
+        ReactDOM.render(
+            <IntlProvider locale={locale} messages={messages}>
+                <ReduxProvider store={store}>
+                    <Router history={browserHistory}>
+                        {routesFactory(store)}
+                    </Router>
+                </ReduxProvider>
+            </IntlProvider>,
+            document.getElementById('app')
+        );
+
+        document.getElementById('loader').classList.remove('is-active');
+    });
+
+
+
+if (process.env.NODE_ENV !== 'production') {
+    // some shortcuts for testing on localhost
+    window.testOAuth = () => location.href = '/oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session';
+}

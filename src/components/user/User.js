@@ -22,6 +22,7 @@ export default class User {
             username: '',
             email: '',
             avatar: '',
+            lang: '',
             goal: null, // the goal with wich user entered site
             isGuest: true,
             isActive: true,
