@@ -20,8 +20,6 @@ import { IntlProvider } from 'react-intl';
 import reducers from 'reducers';
 import routesFactory from 'routes';
 
-import 'index.scss';
-
 const reducer = combineReducers({
     ...reducers,
     routing: routeReducer
@@ -50,3 +48,7 @@ ReactDOM.render(
     </IntlProvider>,
     document.getElementById('app')
 );
+
+setTimeout(() => {
+    document.getElementById('loader').classList.remove('is-active');
+}, 50);

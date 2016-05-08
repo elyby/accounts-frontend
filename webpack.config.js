@@ -118,11 +118,11 @@ var webpackConfig = {
             __PROD__: isProduction
         }),
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
+            template: 'src/index.ejs',
             favicon: 'src/favicon.ico',
             hash: isProduction,
             filename: 'index.html',
-            inject: 'body',
+            inject: false,
             minify: {
                 collapseWhitespace: isProduction
             }
@@ -157,6 +157,10 @@ var webpackConfig = {
             {
                 test: /\.json$/,
                 loader: 'json'
+            },
+            {
+                test: /\.html$/,
+                loader: 'html'
             }
         ]
     },
