@@ -30,6 +30,8 @@ var isTest = process.argv.some(function(arg) {
     return arg.indexOf('karma') !== -1;
 });
 
+var isDockerized = !!process.env.DOCKERIZED;
+
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
 if (isTest) {
     process.env.NODE_ENV = 'test';
@@ -220,6 +222,12 @@ var webpackConfig = {
     ]
 };
 
+if (isDockerized) {
+    webpackConfig.watchOptions = {
+        poll: 2000
+    };
+    webpackConfig.devServer.host = '0.0.0.0';
+}
 
 if (isProduction) {
     webpackConfig.module.loaders.forEach((loader) => {
