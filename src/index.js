@@ -15,10 +15,10 @@ import thunk from 'redux-thunk';
 import { Router, browserHistory } from 'react-router';
 import { syncHistory, routeReducer } from 'react-router-redux';
 
-import { IntlProvider, addLocaleData } from 'react-intl';
-import enLocaleData from 'react-intl/locale-data/en';
-import ruLocaleData from 'react-intl/locale-data/ru';
+import { IntlProvider } from 'react-intl';
 
+import { factory as userFactory } from 'components/user/factory';
+import i18n from 'services/i18n';
 import reducers from 'reducers';
 import routesFactory from 'routes';
 
@@ -34,44 +34,26 @@ const store = applyMiddleware(
     thunk
 )(createStore)(reducer);
 
-addLocaleData(enLocaleData);
-addLocaleData(ruLocaleData);
+userFactory(store)
+.then(({lang}) =>
+    i18n.require(
+        i18n.detectLanguage(lang)
+    )
+)
+.then(({locale, messages}) => {
+    ReactDOM.render(
+        <IntlProvider locale={locale} messages={messages}>
+            <ReduxProvider store={store}>
+                <Router history={browserHistory}>
+                    {routesFactory(store)}
+                </Router>
+            </ReduxProvider>
+        </IntlProvider>,
+        document.getElementById('app')
+    );
 
-// TODO: bind with user state
-const SUPPORTED_LANGUAGES = ['ru', 'en'];
-const DEFAULT_LANGUAGE = 'en';
-const state = store.getState();
-function getUserLanguages() {
-    return [].concat(state.user.lang || [])
-        .concat(navigator.languages || [])
-        .concat(navigator.language || []);
-}
-
-function detectLanguage(userLanguages, availableLanguages, defaultLanguage) {
-    return (userLanguages || [])
-        .concat(defaultLanguage)
-        .map((lang) => lang.split('-').shift().toLowerCase())
-        .find((lang) => availableLanguages.indexOf(lang) !== -1);
-}
-
-const locale = detectLanguage(getUserLanguages(), SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE);
-
-new Promise(require(`bundle!i18n/${locale}.json`))
-    .then((messages) => {
-        ReactDOM.render(
-            <IntlProvider locale={locale} messages={messages}>
-                <ReduxProvider store={store}>
-                    <Router history={browserHistory}>
-                        {routesFactory(store)}
-                    </Router>
-                </ReduxProvider>
-            </IntlProvider>,
-            document.getElementById('app')
-        );
-
-        document.getElementById('loader').classList.remove('is-active');
-    });
-
+    document.getElementById('loader').classList.remove('is-active');
+});
 
 
 if (process.env.NODE_ENV !== 'production') {

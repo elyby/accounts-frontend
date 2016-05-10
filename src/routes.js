@@ -10,8 +10,6 @@ import ProfileChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ProfileChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
 import ProfileChangeEmailPage from 'pages/profile/ProfileChangeEmailPage';
 
-import { authenticate } from 'components/user/actions';
-
 import OAuthInit from 'components/auth/OAuthInit';
 import Register from 'components/auth/register/Register';
 import Login from 'components/auth/login/Login';
@@ -26,12 +24,6 @@ import Finish from 'components/auth/finish/Finish';
 import authFlow from 'services/authFlow';
 
 export default function routesFactory(store) {
-    const state = store.getState();
-    if (state.user.token) {
-        // authorizing user if it is possible
-        store.dispatch(authenticate(state.user.token));
-    }
-
     authFlow.setStore(store);
 
     const onEnter = {
