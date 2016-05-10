@@ -46,6 +46,21 @@ export default defineMessages({
         defaultMessage: 'Username is required'
     },
 
+    usernameInvalid: {
+        id: 'usernameInvalid',
+        defaultMessage: 'Username is invalid'
+    },
+
+    usernameTooShort: {
+        id: 'usernameTooShort',
+        defaultMessage: 'Username is too short'
+    },
+
+    usernameTooLong: {
+        id: 'usernameTooLong',
+        defaultMessage: 'Username is too long'
+    },
+
     usernameUnavailable: {
         id: 'usernameUnavailable',
         defaultMessage: 'This username is already taken'
@@ -59,6 +74,11 @@ export default defineMessages({
     emailInvalid: {
         id: 'emailInvalid',
         defaultMessage: 'Email is invalid'
+    },
+
+    emailToLong: {
+        id: 'emailToLong',
+        defaultMessage: 'Email is too long'
     },
 
     emailIsTempmail: {

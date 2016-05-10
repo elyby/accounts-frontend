@@ -19,6 +19,7 @@
 }
 
 .activationCodeInput {
+    composes: darkTextField from 'components/ui/form/form.scss';
     composes: blueTextField from 'components/ui/form/form.scss';
 
     text-align: center;

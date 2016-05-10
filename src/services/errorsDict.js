@@ -31,11 +31,15 @@ const errorsMap = {
     ),
 
     'error.username_required': () => <Message {...messages.usernameRequired} />,
+    'error.username_invalid': () => <Message {...messages.usernameInvalid} />,
+    'error.username_too_short': () => <Message {...messages.usernameTooShort} />,
+    'error.username_too_long': () => <Message {...messages.usernameTooLong} />,
     'error.username_not_available': () => <Message {...messages.usernameUnavailable} />,
+
     'error.email_required': () => <Message {...messages.emailRequired} />,
+    'error.email_too_long': () => <Message {...messages.emailToLong} />,
     'error.email_invalid': () => <Message {...messages.emailInvalid} />,
     'error.email_is_tempmail': () => <Message {...messages.emailIsTempmail} />,
-
     'error.email_not_available': () => (
         <span>
             <Message {...messages.emailNotAvailable} />
