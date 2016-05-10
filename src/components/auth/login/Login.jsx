@@ -46,9 +46,7 @@ export default function Login() {
             </button>
         ),
         Links: () => (
-            <Link to="/forgot-password">
-                <Message {...passwordMessages.forgotPassword} />
-            </Link>
+            <span/>
         )
     };
 }

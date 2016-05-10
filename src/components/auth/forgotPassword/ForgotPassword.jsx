@@ -20,6 +20,8 @@ class Body extends BaseAuthBody {
 
     // Если юзер вводил своё мыло во время попытки авторизации, то почему бы его сюда автоматически не подставить?
     render() {
+        const {user} = this.context;
+
         return (
             <div>
                 {this.renderErrors()}
@@ -33,16 +35,14 @@ class Body extends BaseAuthBody {
                     color="lightViolet"
                     required
                     placeholder={messages.accountEmail}
+                    defaultValue={user.email || user.username || ''}
                 />
-
-                <p>TODO: тут ещё должна быть капча</p>
-                <p>TODO: эту страницу пока что не имплементим</p>
             </div>
         );
     }
 
     onFormSubmit() {
-        // TODO: обработчик отправки письма с инструкцией по смене аккаунта
+        // TODO: обработчик отправки письма с инструкцией по смене пароля
     }
 }
 

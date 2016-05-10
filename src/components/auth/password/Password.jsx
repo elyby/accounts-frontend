@@ -44,7 +44,10 @@ class Body extends BaseAuthBody {
                     placeholder={messages.accountPassword}
                 />
 
-                <Checkbox {...this.bindField('rememberMe')} label={<Message {...messages.rememberMe} />} />
+                <Checkbox {...this.bindField('rememberMe')}
+                    defaultChecked={true}
+                    label={<Message {...messages.rememberMe} />}
+                />
             </div>
         );
     }

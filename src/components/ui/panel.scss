@@ -54,11 +54,6 @@ $bodyTopBottomPadding: 15px;
         border-bottom: 1px dotted rgba(#fff, 0.75);
         text-decoration: none;
         transition: .25s;
-
-        &:hover {
-            text-shadow: 0 0 1px #fff;
-            border-bottom-color: transparent;
-        }
     }
 }
 
@@ -102,8 +97,8 @@ $bodyTopBottomPadding: 15px;
 
     a {
         &:hover {
-            color: #fff;
-            opacity: 0.7;
+            text-shadow: 0 0 1px #fff;
+            border-bottom-color: transparent;
         }
     }
 }
