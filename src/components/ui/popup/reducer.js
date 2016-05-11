@@ -1,26 +1,10 @@
 import { combineReducers } from 'redux';
 
-import { POPUP_REGISTER, POPUP_CREATE, POPUP_DESTROY } from './actions';
+import { POPUP_CREATE, POPUP_DESTROY } from './actions';
 
 export default combineReducers({
-    pool,
     popups
 });
-
-function pool(pool = {}, {type, payload}) {
-    if (type === POPUP_REGISTER) {
-        if (!payload.type || !payload.component) {
-            throw new Error('Type and component are required');
-        }
-
-        return {
-            ...pool,
-            [payload.type]: payload.component
-        };
-    }
-
-    return pool;
-}
 
 function popups(popups = [], {type, payload}) {
     switch (type) {

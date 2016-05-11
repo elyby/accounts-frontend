@@ -27,7 +27,7 @@ class ChangePasswordPage extends Component {
 
 import { connect } from 'react-redux';
 import { routeActions } from 'react-router-redux';
-import { register as registerPopup, create as createPopup } from 'components/ui/popup/actions';
+import { create as createPopup } from 'components/ui/popup/actions';
 import { updateUser } from 'components/user/actions';
 
 function goToProfile() {
@@ -53,10 +53,7 @@ export default connect(null, {
                 return Promise.resolve();
             })
             .then(() => {
-                // TODO: судя по всему registerPopup было явно лишним. Надо еще раз
-                // обдумать API и переписать
-                dispatch(registerPopup('requestPassword', PasswordRequestForm));
-                dispatch(createPopup('requestPassword', (props) => ({
+                dispatch(createPopup(PasswordRequestForm, (props) => ({
                     form,
                     onSubmit: () => {
                         // TODO: hide this logic in action

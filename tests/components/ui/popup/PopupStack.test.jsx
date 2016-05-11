@@ -9,16 +9,13 @@ function DummyPopup() {}
 describe('<PopupStack />', () => {
     it('renders all popup components', () => {
         const props = {
-            pool: {
-                dummy: DummyPopup
-            },
             destroy: () => {},
             popups: [
                 {
-                    type: 'dummy'
+                    type: DummyPopup
                 },
                 {
-                    type: 'dummy'
+                    type: DummyPopup
                 }
             ]
         };
@@ -33,13 +30,10 @@ describe('<PopupStack />', () => {
         };
 
         const props = {
-            pool: {
-                dummy: DummyPopup
-            },
             destroy: () => {},
             popups: [
                 {
-                    type: 'dummy',
+                    type: DummyPopup,
                     props: expectedProps
                 }
             ]
@@ -55,13 +49,10 @@ describe('<PopupStack />', () => {
         };
 
         const props = {
-            pool: {
-                dummy: DummyPopup
-            },
             destroy: () => {},
             popups: [
                 {
-                    type: 'dummy',
+                    type: DummyPopup,
                     props: (props) => {
                         expect(props).to.have.property('onClose');
 
@@ -77,15 +68,12 @@ describe('<PopupStack />', () => {
 
     it('should hide popup, when onClose called', () => {
         const props = {
-            pool: {
-                dummy: DummyPopup
-            },
             popups: [
                 {
-                    type: 'dummy'
+                    type: DummyPopup
                 },
                 {
-                    type: 'dummy'
+                    type: DummyPopup
                 }
             ],
             destroy: sinon.stub()
@@ -96,23 +84,5 @@ describe('<PopupStack />', () => {
 
         sinon.assert.calledOnce(props.destroy);
         sinon.assert.calledWith(props.destroy, sinon.match.same(props.popups[1]));
-    });
-
-    it('throws when there is no popup component in pool', () => {
-        const props = {
-            pool: {
-                dummy: DummyPopup
-            },
-            destroy: () => {},
-            popups: [
-                {
-                    type: 'notExists'
-                }
-            ]
-        };
-
-        expect(() => {
-            shallow(<PopupStack {...props} />);
-        }).to.throw('Unknown popup type: notExists');
     });
 });

@@ -1,14 +1,7 @@
 import reducer from 'components/ui/popup/reducer';
-import {create, destroy, register} from 'components/ui/popup/actions';
+import {create, destroy} from 'components/ui/popup/actions';
 
 describe('popup/reducer', () => {
-    it('should have empty pool by default', () => {
-        const actual = reducer(undefined, {});
-
-        expect(actual.pool).to.be.an('object');
-        expect(actual.pool).to.be.empty;
-    });
-
     it('should have no popups by default', () => {
         const actual = reducer(undefined, {});
 
@@ -16,45 +9,32 @@ describe('popup/reducer', () => {
         expect(actual.popups).to.be.empty;
     });
 
-    describe('#register', () => {
-        it('should add popup components into pool', () => {
-            const actual = reducer(undefined, register('foo', function() {}));
-
-            expect(actual.pool.foo).to.be.a('function');
-        });
-
-        it('throws when no type or component provided', () => {
-            expect(() => reducer(undefined, register()), 'type').to.throw('Type and component are required');
-            expect(() => reducer(undefined, register('foo')), 'component').to.throw('Type and component are required');
-        });
-    });
-
     describe('#create', () => {
         it('should create popup', () => {
-            const actual = reducer(undefined, create('foo'));
+            const actual = reducer(undefined, create(FakeComponent));
 
             expect(actual.popups[0]).to.be.deep.equal({
-                type: 'foo',
+                type: FakeComponent,
                 props: {}
             });
         });
 
         it('should store props', () => {
             const expectedProps = {foo: 'bar'};
-            const actual = reducer(undefined, create('foo', expectedProps));
+            const actual = reducer(undefined, create(FakeComponent, expectedProps));
 
             expect(actual.popups[0]).to.be.deep.equal({
-                type: 'foo',
+                type: FakeComponent,
                 props: expectedProps
             });
         });
 
         it('should not remove existed popups', () => {
-            let actual = reducer(undefined, create('foo'));
-            actual = reducer(actual, create('foo2'));
+            let actual = reducer(undefined, create(FakeComponent));
+            actual = reducer(actual, create(FakeComponent));
 
             expect(actual.popups[1]).to.be.deep.equal({
-                type: 'foo2',
+                type: FakeComponent,
                 props: {}
             });
         });
@@ -69,8 +49,7 @@ describe('popup/reducer', () => {
         let popup;
 
         beforeEach(() => {
-            state = reducer(undefined, register('foo', () => {}));
-            state = reducer(state, create('foo'));
+            state = reducer(state, create(FakeComponent));
             popup = state.popups[0];
         });
 
@@ -96,3 +75,5 @@ describe('popup/reducer', () => {
         });
     });
 });
+
+function FakeComponent() {}

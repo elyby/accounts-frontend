@@ -1,14 +1,3 @@
-export const POPUP_REGISTER = 'POPUP_REGISTER';
-export function register(type, component) {
-    return {
-        type: POPUP_REGISTER,
-        payload: {
-            type,
-            component
-        }
-    };
-}
-
 export const POPUP_CREATE = 'POPUP_CREATE';
 export function create(type, props = {}) {
     return {

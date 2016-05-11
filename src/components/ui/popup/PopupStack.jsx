@@ -7,24 +7,19 @@ export class PopupStack extends Component {
 
     static propTypes = {
         popups: PropTypes.arrayOf(PropTypes.shape({
-            type: PropTypes.string.isRequired,
+            type: PropTypes.func,
             props: PropTypes.oneOfType([PropTypes.object, PropTypes.func])
         })),
-        pool: PropTypes.object.isRequired,
         destroy: PropTypes.func.isRequired
     };
 
     render() {
-        const {popups, pool} = this.props;
+        const {popups} = this.props;
 
         return (
             <div>
                 {popups.map((popup, index) => {
-                    const Popup = pool[popup.type];
-
-                    if (!Popup) {
-                        throw new Error(`Unknown popup type: ${popup.type}`);
-                    }
+                    const Popup = popup.type;
 
                     const defaultProps = {
                         onClose: this.onClose(popup)
