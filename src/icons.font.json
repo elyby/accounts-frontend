@@ -1,6 +1,6 @@
 {
     "files": ["icons/webfont/*"],
-    "fileName": "[fontname][ext]",
+    "fileName": "[hash]-[fontname][ext]",
     "fontName": "ely-account-icons",
     "cssTemplate": "icons.css.hbs",
     "classPrefix": "",
