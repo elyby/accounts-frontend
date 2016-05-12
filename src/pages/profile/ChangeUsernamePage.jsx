@@ -3,15 +3,17 @@ import React, { Component, PropTypes } from 'react';
 import accounts from 'services/api/accounts';
 import { FormModel } from 'components/ui/form';
 import ChangeUsername from 'components/profile/changeUsername/ChangeUsername';
-import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
 class ChangeUsernamePage extends Component {
     static displayName = 'ChangeUsernamePage';
 
     static propTypes = {
         username: PropTypes.string.isRequired,
-        updateUsername: PropTypes.func.isRequired, // updates username in state
-        changeUsername: PropTypes.func.isRequired // saves username to backend
+        updateUsername: PropTypes.func.isRequired
+    };
+
+    static contextTypes = {
+        onSubmit: PropTypes.func.isRequired
     };
 
     form = new FormModel();
@@ -41,7 +43,13 @@ class ChangeUsernamePage extends Component {
     };
 
     onSubmit = () => {
-        this.props.changeUsername(this.form).then(() => {
+        const {form} = this;
+        this.context.onSubmit({
+            form,
+            sendData: () => accounts.changeUsername(form.serialize())
+        }).then(() => {
+            this.props.updateUsername(form.value('username'));
+
             this.setState({
                 actualUsername: this.props.username
             });
@@ -50,62 +58,12 @@ class ChangeUsernamePage extends Component {
 }
 
 import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
-import { create as createPopup } from 'components/ui/popup/actions';
 import { updateUser } from 'components/user/actions';
-
-function goToProfile() {
-    return routeActions.push('/');
-}
 
 export default connect((state) => ({
     username: state.user.username
 }), {
     updateUsername: (username) => {
         return updateUser({username});
-    },
-    changeUsername: (form) => {
-        return (dispatch) => accounts.changeUsername(form.serialize())
-            .catch((resp) => {
-                // prevalidate user input, because requestPassword popup will block the
-                // entire form from input, so it must be valid
-                if (resp.errors) {
-                    Reflect.deleteProperty(resp.errors, 'password');
-
-                    if (Object.keys(resp.errors).length) {
-                        form.setErrors(resp.errors);
-                        return Promise.reject(resp);
-                    }
-                }
-
-                return Promise.resolve();
-            })
-            .then(() => {
-                return new Promise((resolve) => {
-                    dispatch(createPopup(PasswordRequestForm, (props) => ({
-                        form,
-                        onSubmit: () => {
-                            // TODO: hide this logic in action
-                            accounts.changeUsername(form.serialize())
-                            .catch((resp) => {
-                                if (resp.errors) {
-                                    form.setErrors(resp.errors);
-                                }
-
-                                return Promise.reject(resp);
-                            })
-                            .then(() => {
-                                dispatch(updateUser({
-                                    username: form.value('username')
-                                }));
-                            })
-                            .then(resolve)
-                            .then(props.onClose)
-                            .then(() => dispatch(goToProfile()));
-                        }
-                    })));
-                });
-            })
-        ;
     }
 })(ChangeUsernamePage);

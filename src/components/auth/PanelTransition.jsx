@@ -32,10 +32,10 @@ class PanelTransition extends Component {
             })
         }).isRequired,
         user: userShape.isRequired,
-        setError: React.PropTypes.func.isRequired,
-        clearErrors: React.PropTypes.func.isRequired,
-        resolve: React.PropTypes.func.isRequired,
-        reject: React.PropTypes.func.isRequired,
+        setError: PropTypes.func.isRequired,
+        clearErrors: PropTypes.func.isRequired,
+        resolve: PropTypes.func.isRequired,
+        reject: PropTypes.func.isRequired,
 
         // local props
         Title: PropTypes.element,
@@ -54,7 +54,7 @@ class PanelTransition extends Component {
             })
         }),
         user: userShape,
-        clearErrors: React.PropTypes.func,
+        clearErrors: PropTypes.func,
         resolve: PropTypes.func,
         reject: PropTypes.func
     };

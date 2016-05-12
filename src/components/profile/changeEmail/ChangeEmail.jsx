@@ -24,7 +24,6 @@ export default class ChangeEmail extends Component {
     static propTypes = {
         email: PropTypes.string.isRequired,
         form: PropTypes.instanceOf(FormModel),
-        onChange: PropTypes.func.isRequired,
         onSubmit: PropTypes.func.isRequired
     };
 
@@ -37,7 +36,6 @@ export default class ChangeEmail extends Component {
     state = {
         activeStep: 0
     };
-
 
     render() {
         const {form} = this.props;
@@ -233,10 +231,6 @@ export default class ChangeEmail extends Component {
     isLastStep() {
         return this.state.activeStep + 1 === STEPS_TOTAL;
     }
-
-    onUsernameChange = (event) => {
-        this.props.onChange(event.target.value);
-    };
 
     onFormSubmit = () => {
         this.props.onSubmit(this.props.form);
