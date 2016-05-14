@@ -7,10 +7,10 @@ export default class PasswordState extends AbstractState {
     enter(context) {
         const {user} = context.getState();
 
-        if (!user.isGuest) {
-            context.setState(new CompleteState());
-        } else {
+        if (user.isGuest) {
             context.navigate('/password');
+        } else {
+            context.setState(new CompleteState());
         }
     }
 

@@ -18,6 +18,7 @@ import Activation from 'components/auth/activation/Activation';
 import Password from 'components/auth/password/Password';
 import ChangePassword from 'components/auth/changePassword/ChangePassword';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
+import RecoverPassword from 'components/auth/recoverPassword/RecoverPassword';
 import Finish from 'components/auth/finish/Finish';
 
 import authFlow from 'services/authFlow';
@@ -54,6 +55,7 @@ export default function routesFactory(store) {
                 <Route path="/oauth/finish" component={Finish} {...startAuthFlow} />
                 <Route path="/change-password" components={new ChangePassword()} {...startAuthFlow} />
                 <Route path="/forgot-password" components={new ForgotPassword()} {...startAuthFlow} />
+                <Route path="/recover-password(/:key)" components={new RecoverPassword()} {...startAuthFlow} />
             </Route>
 
             <Route path="profile" component={ProfilePage} {...userOnly}>

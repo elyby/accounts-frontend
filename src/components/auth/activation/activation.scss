@@ -17,10 +17,3 @@
     line-height: 1.4;
     font-size: 16px;
 }
-
-.activationCodeInput {
-    composes: darkTextField from 'components/ui/form/form.scss';
-    composes: blueTextField from 'components/ui/form/form.scss';
-
-    text-align: center;
-}

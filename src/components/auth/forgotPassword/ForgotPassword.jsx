@@ -9,9 +9,9 @@ import Body from './ForgotPasswordBody';
 
 export default function ForgotPassword() {
     return {
-        Title: () => <AuthTitle title={messages.forgotPasswordTitle} />,
+        Title: () => <AuthTitle title={messages.title} />,
         Body,
-        Footer: () => <Button color="lightViolet" label={messages.sendMail} />,
-        Links: () => <RejectionLink label={messages.contactSupport} />
+        Footer: () => <Button color="lightViolet" autoFocus label={messages.sendMail} />,
+        Links: () => <RejectionLink label={messages.alreadyHaveCode} />
     };
 }

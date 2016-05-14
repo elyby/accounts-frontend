@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
-
 import icons from 'components/ui/icons.scss';
 import { Input, Checkbox } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';

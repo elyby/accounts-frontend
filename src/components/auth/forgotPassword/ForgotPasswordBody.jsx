@@ -13,27 +13,29 @@ export default class ForgotPasswordBody extends BaseAuthBody {
     static panelId = 'forgotPassword';
     static hasGoBack = true;
 
-    autoFocusField = 'email';
-
-    // Если юзер вводил своё мыло во время попытки авторизации, то почему бы его сюда автоматически не подставить?
     render() {
         const {user} = this.context;
+        const hasIdentity = user.email || user.username;
+        const message = hasIdentity ? messages.pleasePressButton : messages.specifyEmail;
 
         return (
             <div>
                 {this.renderErrors()}
 
                 <p className={styles.descriptionText}>
-                    <Message {...messages.forgotPasswordMessage} />
+                    <Message {...message} />
                 </p>
 
-                <Input {...this.bindField('email')}
-                    icon="envelope"
-                    color="lightViolet"
-                    required
-                    placeholder={messages.accountEmail}
-                    defaultValue={user.email || user.username || ''}
-                />
+                {hasIdentity ? null : (
+                    <Input {...this.bindField('email')}
+                        icon="envelope"
+                        color="lightViolet"
+                        required
+                        placeholder={messages.accountEmail}
+                        defaultValue={user.email || user.username}
+                    />
+                )}
+
             </div>
         );
     }

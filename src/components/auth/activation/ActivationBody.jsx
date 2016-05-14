@@ -31,7 +31,7 @@ export default class ActivationBody extends BaseAuthBody {
                 <div className={styles.formRow}>
                     <Input {...this.bindField('key')}
                         color="blue"
-                        className={styles.activationCodeInput}
+                        style={{textAlign: 'center'}}
                         required
                         placeholder={messages.enterTheCode}
                     />

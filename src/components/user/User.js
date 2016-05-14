@@ -21,6 +21,9 @@ export default class User {
             token: '',
             username: '',
             email: '',
+            // will contain user's email or masked email
+            // (e.g. ex**ple@em*il.c**) depending on what information user have already provided
+            maskedEmail: '',
             avatar: '',
             lang: '',
             goal: null, // the goal with wich user entered site

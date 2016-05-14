@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
-import messages from './errorsDict.messages';
+import messages from './errorsDict.intl.json';
 
 export default {
     resolve(error) {
@@ -65,5 +65,9 @@ const errorsMap = {
 
     'error.newPassword_required': () => <Message {...messages.newPasswordRequired} />,
     'error.newRePassword_required': () => <Message {...messages.newRePasswordRequired} />,
-    'error.newRePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />
+    'error.newRePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />,
+
+    'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
+
+    'error.email_frequency': () => <Message {...messages.emailFrequency} />
 };

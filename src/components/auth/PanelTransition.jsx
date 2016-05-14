@@ -219,7 +219,8 @@ class PanelTransition extends Component {
             activation: fromRight,
             permissions: fromLeft,
             changePassword: fromRight,
-            forgotPassword: fromRight
+            forgotPassword: [panelId, prevPanelId].includes('recoverPassword') ? fromLeft : fromRight,
+            recoverPassword: fromRight
         };
         const sign = map[key];
         const transform = sign * 100;
@@ -240,7 +241,8 @@ class PanelTransition extends Component {
             activation: not('register') ? 'Y' : 'X',
             permissions: 'Y',
             changePassword: 'Y',
-            forgotPassword: not('password') && not('login') ? 'Y' : 'X'
+            forgotPassword: not('password') && not('login') ? 'Y' : 'X',
+            recoverPassword: not('password') && not('login') && not('forgotPassword') ? 'Y' : 'X'
         };
 
         return map[next];

@@ -45,7 +45,7 @@ describe('PasswordState', () => {
     });
 
     describe('#resolve', () => {
-        (() => {
+        (function() {
             const expectedLogin = 'login';
             const expectedPassword = 'password';
 
@@ -78,7 +78,7 @@ describe('PasswordState', () => {
                 email: expectedLogin,
                 username: expectedLogin
             });
-        });
+        }());
 
         it('should transition to complete state on successfull login', () => {
             const promise = Promise.resolve();

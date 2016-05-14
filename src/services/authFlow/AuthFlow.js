@@ -4,6 +4,7 @@ import RegisterState from './RegisterState';
 import LoginState from './LoginState';
 import OAuthState from './OAuthState';
 import ForgotPasswordState from './ForgotPasswordState';
+import RecoverPasswordState from './RecoverPasswordState';
 
 // TODO: a way to unload service (when we are on account page)
 
@@ -81,13 +82,17 @@ export default class AuthFlow {
             this.run('setOAuthRequest', {});
         }
 
-        switch (path) {
+        switch (path.replace(/(.)\/.+/, '$1')) { // use only first part of an url
             case '/oauth':
                 this.setState(new OAuthState());
                 break;
 
             case '/register':
                 this.setState(new RegisterState());
+                break;
+
+            case '/recover-password':
+                this.setState(new RecoverPasswordState());
                 break;
 
             case '/forgot-password':

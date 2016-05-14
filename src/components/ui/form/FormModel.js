@@ -37,7 +37,7 @@ export default class FormModel {
 
     focus(fieldId) {
         if (!this.fields[fieldId]) {
-            throw new Error(`The field with an id ${fieldId} does not exists`);
+            throw new Error(`Can not focus. The field with an id ${fieldId} does not exists`);
         }
 
         this.fields[fieldId].focus();
@@ -47,7 +47,7 @@ export default class FormModel {
         const field = this.fields[fieldId];
 
         if (!field) {
-            throw new Error(`The field with an id ${fieldId} does not exists`);
+            throw new Error(`Can not get value. The field with an id ${fieldId} does not exists`);
         }
 
         if (!field.getValue) {
