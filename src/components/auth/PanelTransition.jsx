@@ -232,20 +232,22 @@ class PanelTransition extends Component {
     }
 
     getDirection(next, prev) {
-        const not = (panelId) => ![prev, next].includes(panelId);
+        // transition between context will be Y (through heigh animation)
+        // transition inside context will be X (horizontal sliding animation)
+        const contexts = [
+            ['login', 'password', 'forgotPassword', 'recoverPassword'],
+            ['register', 'activation'],
+            ['changePassword'],
+            ['permissions']
+        ];
 
-        const map = {
-            login: not('password') && not('forgotPassword') ? 'Y' : 'X',
-            password: not('login') && not('forgotPassword') ? 'Y' : 'X',
-            register: not('activation') ? 'Y' : 'X',
-            activation: not('register') ? 'Y' : 'X',
-            permissions: 'Y',
-            changePassword: 'Y',
-            forgotPassword: not('password') && not('login') ? 'Y' : 'X',
-            recoverPassword: not('password') && not('login') && not('forgotPassword') ? 'Y' : 'X'
-        };
+        const prevPanelContext = contexts.filter((context) => context.includes(prev));
 
-        return map[next];
+        if (prevPanelContext.length > 1) {
+            throw new Error(`${prev} panel exists more than in one context`);
+        }
+
+        return prevPanelContext.pop().includes(next) ? 'X' : 'Y';
     }
 
     onUpdateHeight = (height, key) => {
