@@ -60,7 +60,8 @@ class PanelTransition extends Component {
     };
 
     state = {
-        contextHeight: 0
+        contextHeight: 0,
+        panelId: this.props.Body && this.props.Body.type.panelId
     };
 
     getChildContext() {
@@ -75,15 +76,17 @@ class PanelTransition extends Component {
 
     componentWillReceiveProps(nextProps) {
         const nextPanel = nextProps.Body && nextProps.Body.type.panelId;
-        const previousPanel = this.props.Body && this.props.Body.type.panelId;
+        const prevPanel = this.props.Body && this.props.Body.type.panelId;
 
-        if (nextPanel !== previousPanel) {
-            const direction = this.getDirection(nextPanel, previousPanel);
-            const forceHeight = direction === 'Y' && nextPanel !== previousPanel ? 1 : 0;
+        if (nextPanel !== prevPanel) {
+            const direction = this.getDirection(nextPanel, prevPanel);
+            const forceHeight = direction === 'Y' && nextPanel !== prevPanel ? 1 : 0;
 
             this.props.clearErrors();
             this.setState({
                 direction,
+                panelId: nextPanel,
+                prevPanelId: prevPanel,
                 forceHeight
             });
 
@@ -106,8 +109,7 @@ class PanelTransition extends Component {
             throw new Error('Title, Body, Footer and Links are required');
         }
 
-        const panelId = Body.type.panelId;
-        const hasGoBack = Body.type.hasGoBack;
+        const {panelId, hasGoBack} = Body.type;
 
         const formHeight = this.state[`formHeight${panelId}`] || 0;
 
@@ -205,18 +207,21 @@ class PanelTransition extends Component {
      */
     getTransitionStyles({key}, options = {}) {
         const {isLeave = false} = options;
+        const {panelId, prevPanelId} = this.state;
+
+        const fromLeft = -1;
+        const fromRight = 1;
 
         const map = {
-            login: -1,
-            register: -1,
-            password: 1,
-            activation: 1,
-            permissions: -1,
-            changePassword: 1,
-            forgotPassword: 1
+            login: fromLeft,
+            register: fromLeft,
+            password: [panelId, prevPanelId].includes('forgotPassword') ? fromLeft : fromRight,
+            activation: fromRight,
+            permissions: fromLeft,
+            changePassword: fromRight,
+            forgotPassword: fromRight
         };
         const sign = map[key];
-
         const transform = sign * 100;
 
         return {
@@ -226,7 +231,7 @@ class PanelTransition extends Component {
     }
 
     getDirection(next, prev) {
-        const not = (panelId) => prev !== panelId && next !== panelId;
+        const not = (panelId) => ![prev, next].includes(panelId);
 
         const map = {
             login: not('password') && not('forgotPassword') ? 'Y' : 'X',
@@ -387,7 +392,7 @@ class PanelTransition extends Component {
             left: 0,
             width: '100%',
             opacity: opacitySpring,
-            pointerEvents: key === this.props.Body.type.panelId ? 'auto' : 'none'
+            pointerEvents: key === this.state.panelId ? 'auto' : 'none'
         };
     }
 
