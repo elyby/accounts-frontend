@@ -69,10 +69,10 @@ export function register({
     rePassword = '',
     rulesAgreement = false
 }) {
-    return wrapInLoader((dispatch) =>
+    return wrapInLoader((dispatch, getState) =>
         request.post(
             '/api/signup',
-            {email, username, password, rePassword, rulesAgreement}
+            {email, username, password, rePassword, rulesAgreement, lang: getState().user.lang}
         )
         .then(() => {
             dispatch(updateUser({
