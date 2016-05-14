@@ -86,12 +86,4 @@ describe('LoginState', () => {
             return promise.catch(mock.verify.bind(mock));
         });
     });
-
-    describe('#reject', () => {
-        it('should transition to forgot password state', () => {
-            expectState(mock, ForgotPasswordState);
-
-            state.reject(context);
-        });
-    });
 });

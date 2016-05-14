@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
-import { Link } from 'react-router';
-
 import { Button } from 'components/ui/form';
+import RejectionLink from 'components/auth/RejectionLink';
 import AuthTitle from 'components/auth/AuthTitle';
 
 import Body from './PasswordBody';
@@ -14,10 +12,6 @@ export default function Password() {
         Title: () => <AuthTitle title={messages.passwordTitle} />,
         Body,
         Footer: () => <Button color="green" label={messages.signInButton} />,
-        Links: () => (
-            <Link to="/forgot-password">
-                <Message {...messages.forgotPassword} />
-            </Link>
-        )
+        Links: () => <RejectionLink label={messages.forgotPassword} />
     };
 }

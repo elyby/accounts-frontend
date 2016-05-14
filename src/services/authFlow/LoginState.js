@@ -1,6 +1,5 @@
 import AbstractState from './AbstractState';
 import PasswordState from './PasswordState';
-import ForgotPasswordState from './ForgotPasswordState';
 
 export default class LoginState extends AbstractState {
     enter(context) {
@@ -16,9 +15,5 @@ export default class LoginState extends AbstractState {
     resolve(context, payload) {
         context.run('login', payload)
             .then(() => context.setState(new PasswordState()));
-    }
-
-    reject(context) {
-        context.setState(new ForgotPasswordState());
     }
 }

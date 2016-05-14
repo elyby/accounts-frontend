@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
-
 import { Button } from 'components/ui/form';
+import RejectionLink from 'components/auth/RejectionLink';
 import AuthTitle from 'components/auth/AuthTitle';
 
 import messages from './Activation.intl.json';
@@ -13,10 +12,6 @@ export default function Activation() {
         Title: () => <AuthTitle title={messages.accountActivationTitle} />,
         Body,
         Footer: () => <Button color="blue" label={messages.confirmEmail} />,
-        Links: () => (
-            <a href="#">
-                <Message {...messages.didNotReceivedEmail} />
-            </a>
-        )
+        Links: () => <RejectionLink label={messages.didNotReceivedEmail} />
     };
 }

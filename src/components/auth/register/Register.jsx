@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
-
 import { Button } from 'components/ui/form';
+import RejectionLink from 'components/auth/RejectionLink';
 import AuthTitle from 'components/auth/AuthTitle';
 import activationMessages from 'components/auth/activation/Activation.intl.json';
 
@@ -14,10 +13,6 @@ export default function Register() {
         Title: () => <AuthTitle title={messages.registerTitle} />,
         Body,
         Footer: () => <Button color="blue" label={messages.signUpButton} />,
-        Links: () => (
-            <a href="#">
-                <Message {...activationMessages.didNotReceivedEmail} />
-            </a>
-        )
+        Links: () => <RejectionLink label={activationMessages.didNotReceivedEmail} />
     };
 }

@@ -20,7 +20,6 @@ import ChangePassword from 'components/auth/changePassword/ChangePassword';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import Finish from 'components/auth/finish/Finish';
 
-
 import authFlow from 'services/authFlow';
 
 export default function routesFactory(store) {
@@ -46,15 +45,15 @@ export default function routesFactory(store) {
 
             <Route path="oauth" component={OAuthInit} {...startAuthFlow} />
 
-            <Route path="auth" component={AuthPage} {...startAuthFlow}>
-                <Route path="/login" components={new Login()} />
-                <Route path="/password" components={new Password()} />
-                <Route path="/register" components={new Register()} />
-                <Route path="/activation" components={new Activation()} />
-                <Route path="/oauth/permissions" components={new Permissions()} />
-                <Route path="/oauth/finish" component={Finish} />
-                <Route path="/change-password" components={new ChangePassword()} />
-                <Route path="/forgot-password" components={new ForgotPassword()} />
+            <Route path="auth" component={AuthPage}>
+                <Route path="/login" components={new Login()} {...startAuthFlow} />
+                <Route path="/password" components={new Password()} {...startAuthFlow} />
+                <Route path="/register" components={new Register()} {...startAuthFlow} />
+                <Route path="/activation" components={new Activation()} {...startAuthFlow} />
+                <Route path="/oauth/permissions" components={new Permissions()} {...startAuthFlow} />
+                <Route path="/oauth/finish" component={Finish} {...startAuthFlow} />
+                <Route path="/change-password" components={new ChangePassword()} {...startAuthFlow} />
+                <Route path="/forgot-password" components={new ForgotPassword()} {...startAuthFlow} />
             </Route>
 
             <Route path="profile" component={ProfilePage} {...userOnly}>
