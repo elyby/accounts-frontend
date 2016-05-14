@@ -6,7 +6,7 @@ import { TransitionMotion, spring } from 'react-motion';
 import { Panel, PanelBody, PanelFooter, PanelHeader } from 'components/ui/Panel';
 import { Form } from 'components/ui/form';
 import MeasureHeight from 'components/MeasureHeight';
-import {helpLinks as helpLinksStyles} from 'components/auth/helpLinks.scss';
+import { helpLinks as helpLinksStyles } from 'components/auth/helpLinks.scss';
 import panelStyles from 'components/ui/panel.scss';
 import icons from 'components/ui/icons.scss';
 import authFlow from 'services/authFlow';
@@ -17,6 +17,41 @@ import * as actions from './actions';
 const opacitySpringConfig = {stiffness: 300, damping: 20};
 const transformSpringConfig = {stiffness: 500, damping: 50, precision: 0.5};
 const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
+
+/**
+ * Definition of relation between contexts and panels
+ *
+ * Each sub-array is context. Each sub-array item is panel
+ *
+ * This definition declares animations between panels:
+ * - The animation between panels from different contexts will be along Y axe (height toggling)
+ * - The animation between panels from the same context will be along X axe (sliding)
+ * - Panel index defines the direction of X transition of both panels
+ * (e.g. the panel with lower index will slide from left side, and with greater from right side)
+ */
+const contexts = [
+    ['login', 'password', 'forgotPassword', 'recoverPassword'],
+    ['register', 'activation'],
+    ['changePassword'],
+    ['permissions']
+];
+
+if (process.env.NODE_ENV !== 'production') {
+    // test panel uniquenes between contexts
+    // TODO: it may be moved to tests in future
+
+    contexts.reduce((acc, context) => {
+        context.forEach((panel) => {
+            if (acc[panel]) {
+                throw new Error(`Panel ${panel} is already exists in context ${JSON.stringify(acc[panel])}`);
+            }
+
+            acc[panel] = context;
+        });
+
+        return acc;
+    }, {});
+}
 
 class PanelTransition extends Component {
     static displayName = 'PanelTransition';
@@ -212,17 +247,14 @@ class PanelTransition extends Component {
         const fromLeft = -1;
         const fromRight = 1;
 
-        const map = {
-            login: fromLeft,
-            register: fromLeft,
-            password: [panelId, prevPanelId].includes('forgotPassword') ? fromLeft : fromRight,
-            activation: fromRight,
-            permissions: fromLeft,
-            changePassword: fromRight,
-            forgotPassword: [panelId, prevPanelId].includes('recoverPassword') ? fromLeft : fromRight,
-            recoverPassword: fromRight
-        };
-        const sign = map[key];
+        const currentContext = contexts.find((context) => context.includes(key));
+        let sign = currentContext.indexOf(panelId) > currentContext.indexOf(prevPanelId)
+                ? fromRight
+                : fromLeft;
+        if (prevPanelId === key) {
+            sign *= -1;
+        }
+
         const transform = sign * 100;
 
         return {
@@ -232,22 +264,7 @@ class PanelTransition extends Component {
     }
 
     getDirection(next, prev) {
-        // transition between context will be Y (through heigh animation)
-        // transition inside context will be X (horizontal sliding animation)
-        const contexts = [
-            ['login', 'password', 'forgotPassword', 'recoverPassword'],
-            ['register', 'activation'],
-            ['changePassword'],
-            ['permissions']
-        ];
-
-        const prevPanelContext = contexts.filter((context) => context.includes(prev));
-
-        if (prevPanelContext.length > 1) {
-            throw new Error(`${prev} panel exists more than in one context`);
-        }
-
-        return prevPanelContext.pop().includes(next) ? 'X' : 'Y';
+        return contexts.find((context) => context.includes(prev)).includes(next) ? 'X' : 'Y';
     }
 
     onUpdateHeight = (height, key) => {
