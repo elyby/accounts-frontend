@@ -1,0 +1,10 @@
+{
+    "registerTitle": "Sign Up",
+    "yourNickname": "Your nickname",
+    "yourEmail": "Your E-mail",
+    "accountPassword": "Account password",
+    "repeatPassword": "Repeat password",
+    "signUpButton": "Register",
+    "acceptRules": "I agree with {link}",
+    "termsOfService": "Terms of service"
+}

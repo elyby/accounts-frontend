@@ -2,12 +2,11 @@ import React, { Component, PropTypes } from 'react';
 
 import { connect } from 'react-redux';
 import { FormattedMessage as Message } from 'react-intl';
-import classNames from 'classnames';
 import Helmet from 'react-helmet';
 
-import buttons from 'components/ui/buttons.scss';
+import { Button } from 'components/ui/form';
 
-import messages from './Finish.messages';
+import messages from './Finish.intl.json';
 import styles from './finish.scss';
 
 class Finish extends Component {
@@ -55,12 +54,12 @@ class Finish extends Component {
                                     <div className={styles.code} ref={this.setCode}>{code}</div>
                                 </div>
                                 {isCopySupported ? (
-                                    <button
-                                        className={classNames(buttons.smallButton, buttons.green)}
+                                    <Button
+                                        color="green"
+                                        small
+                                        label={messages.copy}
                                         onClick={this.handleCopyClick}
-                                    >
-                                        <Message {...messages.copy} />
-                                    </button>
+                                    />
                                 ) : (
                                     ''
                                 )}

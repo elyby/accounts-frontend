@@ -21,7 +21,7 @@ export default class Button extends FormComponent {
     };
 
     render() {
-        const { color = 'green', block } = this.props;
+        const { color = 'green', block, small } = this.props;
 
         const props = {
             ...this.props
@@ -31,7 +31,8 @@ export default class Button extends FormComponent {
 
         return (
             <button className={classNames(buttons[color], {
-                [buttons.block]: block
+                [buttons.block]: block,
+                [buttons.smallButton]: small
             })} {...props}>
                 {props.label}
             </button>

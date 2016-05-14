@@ -1,52 +1,17 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
-import { Link } from 'react-router';
+import { Button } from 'components/ui/form';
+import AuthTitle from 'components/auth/AuthTitle';
 
-import buttons from 'components/ui/buttons.scss';
-import { Input } from 'components/ui/form';
-
-import BaseAuthBody from 'components/auth/BaseAuthBody';
-import passwordMessages from 'components/auth/password/Password.intl.json';
-import messages from './Login.messages';
-
-class Body extends BaseAuthBody {
-    static displayName = 'LoginBody';
-    static panelId = 'login';
-
-    autoFocusField = 'login';
-
-    render() {
-        return (
-            <div>
-                {this.renderErrors()}
-
-                <Input {...this.bindField('login')}
-                    icon="envelope"
-                    required
-                    placeholder={messages.emailOrUsername}
-                />
-            </div>
-        );
-    }
-}
+import Body from './LoginBody';
+import messages from './Login.intl.json';
 
 export default function Login() {
     return {
-        Title: () => ( // TODO: separate component for PageTitle
-            <Message {...messages.loginTitle}>
-                {(msg) => <span>{msg}<Helmet title={msg} /></span>}
-            </Message>
-        ),
+        Title: () => <AuthTitle title={messages.loginTitle} />,
         Body,
-        Footer: () => (
-            <button className={buttons.green} type="submit">
-                <Message {...messages.next} />
-            </button>
-        ),
-        Links: () => (
-            <span/>
-        )
+        Footer: () => <Button color="green" label={messages.next} />,
+        Links: () => null
     };
 }
+

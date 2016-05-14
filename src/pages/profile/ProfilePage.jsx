@@ -6,7 +6,8 @@ class ProfilePage extends Component {
     displayName = 'ProfilePage';
 
     static propTypes = {
-        onSubmit: PropTypes.func.isRequired
+        onSubmit: PropTypes.func.isRequired,
+        goToProfile: PropTypes.func.isRequired
     };
 
     static childContextTypes = {

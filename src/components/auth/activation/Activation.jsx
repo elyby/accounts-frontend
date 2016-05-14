@@ -1,61 +1,18 @@
 import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
 
-import buttons from 'components/ui/buttons.scss';
-import { Input } from 'components/ui/form';
+import { Button } from 'components/ui/form';
+import AuthTitle from 'components/auth/AuthTitle';
 
-import BaseAuthBody from 'components/auth/BaseAuthBody';
-import styles from './activation.scss';
-import messages from './Activation.messages';
-
-class Body extends BaseAuthBody {
-    static displayName = 'ActivationBody';
-    static panelId = 'activation';
-
-    autoFocusField = 'key';
-
-    render() {
-        return (
-            <div>
-                {this.renderErrors()}
-
-                <div className={styles.description}>
-                    <div className={styles.descriptionImage} />
-
-                    <div className={styles.descriptionText}>
-                        <Message {...messages.activationMailWasSent} values={{
-                            email: (<b>{this.context.user.email}</b>)
-                        }} />
-                    </div>
-                </div>
-                <div className={styles.formRow}>
-                    <Input {...this.bindField('key')}
-                        color="blue"
-                        className={styles.activationCodeInput}
-                        required
-                        placeholder={messages.enterTheCode}
-                    />
-                </div>
-            </div>
-        );
-    }
-}
+import messages from './Activation.intl.json';
+import Body from './ActivationBody';
 
 export default function Activation() {
     return {
-        Title: () => ( // TODO: separate component for PageTitle
-            <Message {...messages.accountActivationTitle}>
-                {(msg) => <span>{msg}<Helmet title={msg} /></span>}
-            </Message>
-        ),
+        Title: () => <AuthTitle title={messages.accountActivationTitle} />,
         Body,
-        Footer: () => (
-            <button className={buttons.blue}>
-                <Message {...messages.confirmEmail} />
-            </button>
-        ),
+        Footer: () => <Button color="blue" label={messages.confirmEmail} />,
         Links: () => (
             <a href="#">
                 <Message {...messages.didNotReceivedEmail} />

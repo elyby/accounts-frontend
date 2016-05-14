@@ -1,11 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
-
-import buttons from 'components/ui/buttons.scss';
+import { Button } from 'components/ui/form';
 
 import styles from './appInfo.scss';
-import messages from './AppInfo.messages';
+import messages from './AppInfo.intl.json';
 
 export default class AppInfo extends Component {
     static displayName = 'AppInfo';
@@ -17,7 +15,7 @@ export default class AppInfo extends Component {
     };
 
     render() {
-        var { name, description, onGoToAuth } = this.props;
+        const { name, description, onGoToAuth } = this.props;
 
         return (
             <div className={styles.appInfo}>
@@ -30,9 +28,7 @@ export default class AppInfo extends Component {
                     </p>
                 </div>
                 <div className={styles.goToAuth}>
-                    <button className={buttons.green} onClick={onGoToAuth}>
-                        <Message {...messages.goToAuth} />
-                    </button>
+                    <Button onClick={onGoToAuth} label={messages.goToAuth} />
                 </div>
             </div>
         );
