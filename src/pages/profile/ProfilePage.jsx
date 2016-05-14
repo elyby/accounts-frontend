@@ -10,12 +10,14 @@ class ProfilePage extends Component {
     };
 
     static childContextTypes = {
-        onSubmit: PropTypes.func
+        onSubmit: PropTypes.func,
+        goToProfile: PropTypes.func
     };
 
     getChildContext() {
         return {
-            onSubmit: this.props.onSubmit
+            onSubmit: this.props.onSubmit,
+            goToProfile: this.props.goToProfile
         };
     }
 
@@ -38,6 +40,7 @@ function goToProfile() {
 }
 
 export default connect(null, {
+    goToProfile,
     onSubmit: ({form, sendData}) => (dispatch) =>
         sendData()
             .catch((resp) => {

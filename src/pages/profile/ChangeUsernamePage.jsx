@@ -13,7 +13,8 @@ class ChangeUsernamePage extends Component {
     };
 
     static contextTypes = {
-        onSubmit: PropTypes.func.isRequired
+        onSubmit: PropTypes.func.isRequired,
+        goToProfile: PropTypes.func.isRequired
     };
 
     form = new FormModel();
@@ -44,6 +45,11 @@ class ChangeUsernamePage extends Component {
 
     onSubmit = () => {
         const {form} = this;
+        if (this.state.actualUsername === this.props.username) {
+            this.context.goToProfile();
+            return;
+        }
+
         this.context.onSubmit({
             form,
             sendData: () => accounts.changeUsername(form.serialize())
