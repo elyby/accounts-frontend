@@ -26,28 +26,38 @@ import authFlow from 'services/authFlow';
 export default function routesFactory(store) {
     authFlow.setStore(store);
 
-    const onEnter = {
+    const startAuthFlow = {
         onEnter: ({location}, replace) => authFlow.handleRequest(location.pathname, replace)
+    };
+
+    const userOnly = {
+        onEnter: ({location}, replace) => {
+            const {user} = store.getState();
+
+            if (user.isGuest) {
+                replace('/');
+            }
+        }
     };
 
     return (
         <Route path="/" component={RootPage}>
-            <IndexRoute component={IndexPage} {...onEnter} />
+            <IndexRoute component={IndexPage} {...startAuthFlow} />
 
-            <Route path="oauth" component={OAuthInit} {...onEnter} />
+            <Route path="oauth" component={OAuthInit} {...startAuthFlow} />
 
-            <Route path="auth" component={AuthPage}>
-                <Route path="/login" components={new Login()} {...onEnter} />
-                <Route path="/password" components={new Password()} {...onEnter} />
-                <Route path="/register" components={new Register()} {...onEnter} />
-                <Route path="/activation" components={new Activation()} {...onEnter} />
-                <Route path="/oauth/permissions" components={new Permissions()} {...onEnter} />
-                <Route path="/oauth/finish" component={Finish} {...onEnter} />
-                <Route path="/change-password" components={new ChangePassword()} {...onEnter} />
-                <Route path="/forgot-password" components={new ForgotPassword()} {...onEnter} />
+            <Route path="auth" component={AuthPage} {...startAuthFlow}>
+                <Route path="/login" components={new Login()} />
+                <Route path="/password" components={new Password()} />
+                <Route path="/register" components={new Register()} />
+                <Route path="/activation" components={new Activation()} />
+                <Route path="/oauth/permissions" components={new Permissions()} />
+                <Route path="/oauth/finish" component={Finish} />
+                <Route path="/change-password" components={new ChangePassword()} />
+                <Route path="/forgot-password" components={new ForgotPassword()} />
             </Route>
 
-            <Route path="profile" component={ProfilePage}>
+            <Route path="profile" component={ProfilePage} {...userOnly}>
                 <Route path="change-password" component={ProfileChangePasswordPage} />
                 <Route path="change-username" component={ProfileChangeUsernamePage} />
                 <Route path="change-email" component={ProfileChangeEmailPage} />
