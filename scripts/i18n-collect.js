@@ -57,8 +57,8 @@ try {
     keysToUpdate = Object.entries(prevMessages).reduce((acc, [key, message]) =>
         acc.concat(defaultMessages[key] && defaultMessages[key] !== message ? key : [])
     , []);
-} catch(e) {
-    console.log(chalk.yellow(`Can not read ${defaultMessagesPath}. The new file will be created.`), e);
+} catch(err) {
+    console.log(chalk.yellow(`Can not read ${defaultMessagesPath}. The new file will be created.`), err);
 }
 
 if (!keysToAdd.length && !keysToRemove.length && !keysToUpdate.length) {
@@ -114,9 +114,9 @@ function buildLocales() {
 
         let newMessages = {};
         try {
-            newMessages = JSON.parse(fs.readFileSync(defaultMessagesPath, 'utf8'));
-        } catch (e) {
-            console.log(chalk.yellow(`Can not read ${defaultMessagesPath}. The new file will be created.`), e);
+            newMessages = JSON.parse(fs.readFileSync(destPath, 'utf8'));
+        } catch (err) {
+            console.log(chalk.yellow(`Can not read ${destPath}. The new file will be created.`), err);
         }
 
         keysToRemove.forEach((key) => {

@@ -8,7 +8,7 @@ import { userShape } from 'components/user/User';
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
 import profileForm from './profileForm.scss';
-import messages from './Profile.messages';
+import messages from './Profile.intl.json';
 
 export default class Profile extends Component {
     static displayName = 'Profile';
