@@ -23,6 +23,6 @@
     "rulesAgreementRequired": "You must accept rules in order to create an account",
     "keyRequired": "Please, enter an activation key",
     "keyNotExists": "The key is incorrect",
-    "emailFrequency": "Please cool down, you are requesting emails too often",
+    "emailFrequency": "Please cool down, you are requesting emails too often. New key can be retrieved after 30 minutes from the previous request.",
     "accountNotActivated": "The account is not activated"
 }
