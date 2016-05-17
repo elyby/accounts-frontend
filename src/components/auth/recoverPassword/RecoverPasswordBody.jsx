@@ -25,7 +25,6 @@ export default class RecoverPasswordBody extends BaseAuthBody {
 
     autoFocusField = this.props.params && this.props.params.key ? 'newPassword' : 'key';
 
-    // Если юзер вводил своё мыло во время попытки авторизации, то почему бы его сюда автоматически не подставить?
     render() {
         const {user} = this.context;
         const {key} = this.props.params;
@@ -39,14 +38,16 @@ export default class RecoverPasswordBody extends BaseAuthBody {
                         <Message {...messages.messageWasSentTo} values={{
                             email: <b>{user.maskedEmail}</b>
                         }} />
-                    ) : null}
+                    ) : (
+                        <Message {...messages.messageWasSent} />
+                    )}
                     {' '}
                     <Message {...messages.enterCodeBelow} />
                 </p>
 
                 <Input {...this.bindField('key')}
                     color="lightViolet"
-                    style={{textAlign: 'center'}}
+                    style={{textAlign: 'center'}} // ну это уже низко
                     required
                     value={key}
                     readOnly={!!key}

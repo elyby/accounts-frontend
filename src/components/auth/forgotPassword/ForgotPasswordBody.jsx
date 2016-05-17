@@ -14,9 +14,22 @@ export default class ForgotPasswordBody extends BaseAuthBody {
     static panelId = 'forgotPassword';
     static hasGoBack = true;
 
+    state = {
+        isLoginEdit: !(this.context.user.email || this.context.user.username)
+    };
+
+    autoFocusField = this.state.isLoginEdit ? 'email' : null;
+
+    onClickEdit = () => {
+        this.setState({
+            isLoginEdit: true
+        });
+    };
+
     render() {
         const { user } = this.context;
-        const login = user.email || user.username;
+        const login = user.email || user.username || '';
+        const isLoginEditShown = this.state.isLoginEdit;
 
         // TODO: нужно парсить инфу о том, какой кд у отправки кода и во сколько точно можно будет повторить
 
@@ -28,16 +41,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                     <span className={icons.lock} />
                 </div>
 
-                {login ? (
-                    <div>
-                        <div className={styles.login}>
-                            {login}
-                        </div>
-                        <p className={styles.descriptionText}>
-                            <Message {...messages.pleasePressButton} />
-                        </p>
-                    </div>
-                ) : (
+                {isLoginEditShown ? (
                     <div>
                         <p className={styles.descriptionText}>
                             <Message {...messages.specifyEmail} />
@@ -49,6 +53,16 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                             placeholder={messages.accountEmail}
                             defaultValue={login}
                         />
+                    </div>
+                ) : (
+                    <div>
+                        <div className={styles.login}>
+                            {login}
+                            <span className={styles.editLogin} onClick={this.onClickEdit} />
+                        </div>
+                        <p className={styles.descriptionText}>
+                            <Message {...messages.pleasePressButton} />
+                        </p>
                     </div>
                 )}
             </div>
