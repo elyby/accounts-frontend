@@ -66,6 +66,7 @@
     "components.auth.register.termsOfService": "правилами сервиса",
     "components.auth.register.yourEmail": "Ваш E-mail",
     "components.auth.register.yourNickname": "Желаемый ник",
+    "components.langMenu.siteLanguage": "Язык сайта",
     "components.profile.accountDescription": "Благодаря аккаунту Ely.by вы можете получить доступ ко многим ресурсам, связанным с Minecraft. Берегите свой аккаунт, используйте надёжный пароль и регулярно его меняйте.",
     "components.profile.accountPreferencesTitle": "Настройки аккаунта Ely.by",
     "components.profile.changePassword.achievementLossWarning": "Вы ведь дорожите своими игровыми достижениями?",

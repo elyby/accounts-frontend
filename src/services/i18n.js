@@ -2,6 +2,10 @@ import { addLocaleData } from 'react-intl';
 import enLocaleData from 'react-intl/locale-data/en';
 import ruLocaleData from 'react-intl/locale-data/ru';
 
+// till we have not so many locales, we can require their data at once
+addLocaleData(enLocaleData);
+addLocaleData(ruLocaleData);
+
 const SUPPORTED_LANGUAGES = ['ru', 'en'];
 const DEFAULT_LANGUAGE = 'en';
 function getUserLanguages(userSelectedLang = []) {
@@ -23,10 +27,6 @@ export default {
     },
 
     require(locale) {
-        // till we have not so many locales, we can require their data at once
-        addLocaleData(enLocaleData);
-        addLocaleData(ruLocaleData);
-
         return new Promise(require(`bundle!i18n/${locale}.json`))
             .then((messages) => ({locale, messages}));
     }

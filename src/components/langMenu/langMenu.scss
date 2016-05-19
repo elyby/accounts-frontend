@@ -1,0 +1,119 @@
+.container {
+    position: relative;
+}
+
+.menuContainer {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+
+    width: 150px;
+    margin: 0 auto 10px;
+}
+
+.menu {
+    background: #fff;
+    border: 5px solid #ddd8ce;
+    border-left: 0;
+    border-right: 0;
+    text-align: left;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.2s ease;
+    transform: scale(0.1);
+    transform-origin: center bottom;
+}
+
+.menuActive {
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1);
+}
+
+.withCurrentLang {
+    .triggerContainer {
+        text-align: left;
+    }
+
+    .menuContainer {
+        width: 100%;
+    }
+}
+
+.menuItem {
+    padding: 10px;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.activeMenuItem {
+    background: #efffef;
+}
+
+.langIco {
+    display: inline-block;
+    margin-right: 5px;
+    width: 20px;
+    height: 10px;
+
+    background: no-repeat;
+    background-size: cover;
+}
+
+.langEn {
+    composes: langIco;
+
+    background-image: url('icons/flag_en.svg');
+}
+
+.langRu {
+    composes: langIco;
+
+    background-image: url('icons/flag_ru.svg');
+}
+
+.trigger {
+    color: #666;
+    border-bottom: 1px dotted #666;
+    text-decoration: none;
+    transition: .25s;
+
+    &:hover {
+        border-bottom-color: #777;
+        color: #777;
+    }
+}
+
+.triggerContainer {
+    text-align: center;
+}
+
+.trigger {
+    font-size: 12px;
+}
+
+.triggerArrow {
+    font-size: 8px;
+    transition: 0.2s;
+}
+
+.triggerArrowTop {
+    composes: triggerArrow;
+    composes: arrowTop from 'components/ui/icons.scss';
+}
+
+.triggerArrowBottom {
+    composes: triggerArrow;
+    composes: arrowBottom from 'components/ui/icons.scss';
+}

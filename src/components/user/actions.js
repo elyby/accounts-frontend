@@ -2,6 +2,7 @@ import { routeActions } from 'react-router-redux';
 
 import request from 'services/request';
 import accounts from 'services/api/accounts';
+import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';
 /**
@@ -15,6 +16,25 @@ export function updateUser(payload) {
     };
 }
 
+export const CHANGE_LANG = 'USER_CHANGE_LANG';
+export function changeLang(lang) {
+    return (dispatch, getState) => dispatch(setLocale(lang))
+        .then((lang) => {
+            const {user: {isGuest, lang: oldLang}} = getState();
+
+            if (!isGuest && oldLang !== lang) {
+                accounts.changeLang(lang);
+            }
+
+            dispatch({
+                type: CHANGE_LANG,
+                payload: {
+                    lang
+                }
+            });
+        });
+}
+
 export const SET = 'USER_SET';
 export function setUser(payload) {
     return {
@@ -26,6 +46,7 @@ export function setUser(payload) {
 export function logout() {
     return (dispatch) => {
         dispatch(setUser({isGuest: true}));
+        dispatch(changeLang());
         dispatch(routeActions.push('/login'));
     };
 }
@@ -35,6 +56,8 @@ export function fetchUserData() {
         accounts.current()
         .then((resp) => {
             dispatch(updateUser(resp));
+
+            return dispatch(changeLang(resp.lang));
         })
         .catch((resp) => {
             /*

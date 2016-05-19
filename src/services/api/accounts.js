@@ -25,5 +25,12 @@ export default {
             '/api/accounts/change-username',
             {username, password}
         );
+    },
+
+    changeLang(lang) {
+        return request.post(
+            '/api/accounts/change-lang',
+            {lang}
+        );
     }
 };

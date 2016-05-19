@@ -1,4 +1,4 @@
-import { authenticate } from 'components/user/actions';
+import { authenticate, changeLang } from 'components/user/actions';
 
 /**
  * Initializes User state with the fresh data
@@ -8,15 +8,15 @@ import { authenticate } from 'components/user/actions';
  * @return {Promise} a promise, that resolves in User state
  */
 export function factory(store) {
-    const state = store.getState();
-
     return new Promise((resolve, reject) => {
-        if (state.user.token) {
+        const {user} = store.getState();
+
+        if (user.token) {
             // authorizing user if it is possible
-            store.dispatch(authenticate(state.user.token))
-                .then(() => resolve(store.getState().user), reject);
-        } else {
-            resolve(state.user);
+            return store.dispatch(authenticate(user.token)).then(resolve, reject);
         }
+
+        // auto-detect guests language
+        store.dispatch(changeLang()).then(resolve, reject);
     });
 }

@@ -9,13 +9,23 @@ export default class ProfileField extends Component {
     static propTypes = {
         label: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
         link: PropTypes.string,
+        onChange: PropTypes.func,
         value: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
-        warningMessage: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-        readonly: PropTypes.bool
+        warningMessage: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element])
     };
 
     render() {
-        const {label, value, warningMessage, readonly, link = '#'} = this.props;
+        const {label, value, warningMessage, link, onChange} = this.props;
+
+        let Action = null;
+
+        if (link) {
+            Action = (props) => <Link to={link} {...props} />;
+        }
+
+        if (onChange) {
+            Action = (props) => <a onClick={onChange} {...props} href="#" />;
+        }
 
         return (
             <div className={styles.paramItem}>
@@ -23,13 +33,11 @@ export default class ProfileField extends Component {
                     <div className={styles.paramName}>{label}:</div>
                     <div className={styles.paramValue}>{value}</div>
 
-                    {readonly ? '' : (
-                        <div className={styles.paramAction}>
-                            <Link to={link}>
-                                <span className={styles.paramEditIcon} />
-                            </Link>
-                        </div>
-                    )}
+                    {Action ? (
+                        <Action to={link} className={styles.paramAction}>
+                            <span className={styles.paramEditIcon} />
+                        </Action>
+                    ) : null}
                 </div>
 
                 {warningMessage ? (

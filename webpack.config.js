@@ -153,7 +153,7 @@ var webpackConfig = {
                 loader: 'babel'
             },
             {
-                test: /\.(png|gif|jpg)$/,
+                test: /\.(png|gif|jpg|svg)$/,
                 loader: 'url?limit=1000'
             },
             { // TODO: увы, эта штука пока не работает. Хеш добавляется через ./webpack/node-sass-iconfont-importer
@@ -197,9 +197,9 @@ var webpackConfig = {
                 //
                 // Например:
                 // file: components/ui/foo.scss
-                // images/foo.png -> components/ui/images/foo.png
+                // ./images/foo.png -> components/ui/images/foo.png
 
-                if (url[0] !== '/') {
+                if (url.indexOf('./') === 0) {
                     var relativeToRoot = dirname.split(rootPath + '/')[1];
 
                     return path.join(relativeToRoot, url);

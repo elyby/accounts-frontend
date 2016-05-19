@@ -15,10 +15,8 @@ import thunk from 'redux-thunk';
 import { Router, browserHistory } from 'react-router';
 import { syncHistory, routeReducer } from 'react-router-redux';
 
-import { IntlProvider } from 'react-intl';
-
 import { factory as userFactory } from 'components/user/factory';
-import i18n from 'services/i18n';
+import { IntlProvider } from 'components/i18n';
 import reducers from 'reducers';
 import routesFactory from 'routes';
 
@@ -35,20 +33,15 @@ const store = applyMiddleware(
 )(createStore)(reducer);
 
 userFactory(store)
-.then(({lang}) =>
-    i18n.require(
-        i18n.detectLanguage(lang)
-    )
-)
-.then(({locale, messages}) => {
+.then(() => {
     ReactDOM.render(
-        <IntlProvider locale={locale} messages={messages}>
-            <ReduxProvider store={store}>
+        <ReduxProvider store={store}>
+            <IntlProvider>
                 <Router history={browserHistory}>
                     {routesFactory(store)}
                 </Router>
-            </ReduxProvider>
-        </IntlProvider>,
+            </IntlProvider>
+        </ReduxProvider>,
         document.getElementById('app')
     );
 

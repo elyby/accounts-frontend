@@ -66,6 +66,7 @@
     "components.auth.register.termsOfService": "terms of service",
     "components.auth.register.yourEmail": "Your E-mail",
     "components.auth.register.yourNickname": "Your nickname",
+    "components.langMenu.siteLanguage": "Site language",
     "components.profile.accountDescription": "Ely.by account allows you to get access to many Minecraft resources. Please, take care of your account safety. Use secure password and change it regularly.",
     "components.profile.accountPreferencesTitle": "Ely.by account preferences",
     "components.profile.changePassword.achievementLossWarning": "Are you cherish your game achievements, right?",

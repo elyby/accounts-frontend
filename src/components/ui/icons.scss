@@ -8,3 +8,13 @@
 
     font-size: 24px;
 }
+
+.arrowTop {
+    composes: arrow;
+
+    transform: rotate(180deg);
+}
+
+.arrowBottom {
+    composes: arrow;
+}

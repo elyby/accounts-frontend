@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { Button } from 'components/ui/form';
+import { LangMenu } from 'components/langMenu';
 
 import styles from './appInfo.scss';
 import messages from './AppInfo.intl.json';
@@ -35,6 +36,10 @@ export default class AppInfo extends Component {
                 </div>
                 <div className={styles.goToAuth}>
                     <Button onClick={onGoToAuth} label={messages.goToAuth} />
+                </div>
+
+                <div className={styles.langMenu}>
+                    <LangMenu />
                 </div>
             </div>
         );

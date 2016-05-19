@@ -4,6 +4,8 @@ import { FormattedMessage as Message, FormattedRelative as Relative, FormattedHT
 import Helmet from 'react-helmet';
 
 import { userShape } from 'components/user/User';
+import { LangMenu } from 'components/langMenu';
+import langMenuMessages from 'components/langMenu/langMenu.intl.json';
 
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
@@ -75,6 +77,12 @@ export default class Profile extends Component {
                             />
 
                             <ProfileField
+                                label={<Message {...langMenuMessages.siteLanguage} />}
+                                value={<LangMenu toggleRef={(toggle) => this.langMenuToggle = toggle} showCurrentLang />}
+                                onChange={() => this.langMenuToggle()}
+                            />
+
+                            <ProfileField
                                 label={<Message {...messages.twoFactorAuth} />}
                                 value={<Message {...messages.disabled} />}
                             />
@@ -82,7 +90,6 @@ export default class Profile extends Component {
                             <ProfileField
                                 label={'UUID'}
                                 value={user.uuid}
-                                readonly
                             />
                         </div>
                     </div>
