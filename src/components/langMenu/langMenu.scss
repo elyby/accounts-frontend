@@ -1,3 +1,5 @@
+@import "~components/ui/colors.scss";
+
 .container {
     position: relative;
 }
@@ -10,6 +12,8 @@
 
     width: 150px;
     margin: 0 auto 10px;
+
+    perspective: 600px;
 }
 
 .menu {
@@ -21,15 +25,14 @@
 
     visibility: hidden;
     opacity: 0;
-    transition: 0.2s ease;
-    transform: scale(0.1);
-    transform-origin: center bottom;
+    transition: .3s cubic-bezier(0.075, 0.82, 0.165, 1); // easeOutCirc
+    transform: translateY(10px) rotateX(-22deg);
 }
 
 .menuActive {
     visibility: visible;
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) rotateX(0deg);
 }
 
 .withCurrentLang {
@@ -47,9 +50,11 @@
     font-size: 13px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
+    transition: .2s;
 
     &:hover {
-        background: rgba(0, 0, 0, 0.1);
+        background: #f5f5f5;
+        color: #262626;
     }
 
     &:last-child {
@@ -58,7 +63,9 @@
 }
 
 .activeMenuItem {
-    background: #efffef;
+    background: lighter($green)!important;
+    color: #fff!important;
+    font-weight: $font-wight-bold;
 }
 
 .langIco {
@@ -103,6 +110,14 @@
     font-size: 12px;
 }
 
+.triggerIcon {
+    composes: globe from 'components/ui/icons.scss';
+
+    position: relative;
+    bottom: 1px;
+    font-size: 11px;
+}
+
 .triggerArrow {
     font-size: 8px;
     transition: 0.2s;
@@ -116,4 +131,7 @@
 .triggerArrowBottom {
     composes: triggerArrow;
     composes: arrowBottom from 'components/ui/icons.scss';
+
+    // Докручиваем лишний раз, чтобы иконка крутилась по часовой стрелке
+    transform: rotate(360deg);
 }

@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
 
-import icons from 'components/ui/icons.scss';
-
 import styles from './langMenu.scss';
 import messages from './langMenu.intl.json';
 
@@ -68,7 +66,7 @@ export default class LangMenu extends Component {
                         {showCurrentLang
                             ? this.renderLangLabel(userLang) : (
                             <span>
-                                <span className={icons.globe} />
+                                <span className={styles.triggerIcon} />
                                 {' '}
                                 <Message {...messages.siteLanguage} />
                                 {' '}
