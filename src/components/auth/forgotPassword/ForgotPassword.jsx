@@ -11,7 +11,7 @@ export default function ForgotPassword() {
     return {
         Title: () => <AuthTitle title={messages.title} />,
         Body,
-        Footer: () => <Button color="lightViolet" autoFocus label={messages.sendMail} />,
+        Footer: () => <Button color="lightViolet" autoFocus label={messages.sendMail} type="submit" />,
         Links: () => <RejectionLink label={messages.alreadyHaveCode} />
     };
 }

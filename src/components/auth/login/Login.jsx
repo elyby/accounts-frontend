@@ -10,7 +10,7 @@ export default function Login() {
     return {
         Title: () => <AuthTitle title={messages.loginTitle} />,
         Body,
-        Footer: () => <Button color="green" label={messages.next} />,
+        Footer: () => <Button color="green" label={messages.next} type="submit" />,
         Links: () => null
     };
 }

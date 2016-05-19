@@ -11,7 +11,7 @@ export default function Password() {
     return {
         Title: () => <AuthTitle title={messages.passwordTitle} />,
         Body,
-        Footer: () => <Button color="green" label={messages.signInButton} />,
+        Footer: () => <Button color="green" label={messages.signInButton} type="submit" />,
         Links: () => <RejectionLink label={messages.forgotPassword} />
     };
 }

@@ -11,7 +11,7 @@ export default function Permissions() {
     return {
         Title: () => <AuthTitle title={messages.permissionsTitle} />,
         Body,
-        Footer: () => <Button color="orange" autoFocus label={messages.approve} />,
+        Footer: () => <Button color="orange" autoFocus label={messages.approve} type="submit" />,
         Links: () => <RejectionLink label={messages.decline} />
     };
 }

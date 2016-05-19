@@ -11,7 +11,7 @@ export default function ChangePassword() {
     return {
         Title: () => <AuthTitle title={messages.changePasswordTitle} />,
         Body,
-        Footer: () => <Button color="darkBlue" label={messages.change} />,
+        Footer: () => <Button color="darkBlue" label={messages.change} type="submit" />,
         Links: () => <RejectionLink label={messages.skipThisStep} />
     };
 }

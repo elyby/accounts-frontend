@@ -12,7 +12,7 @@ export default function Register() {
     return {
         Title: () => <AuthTitle title={messages.registerTitle} />,
         Body,
-        Footer: () => <Button color="blue" label={messages.signUpButton} />,
+        Footer: () => <Button color="blue" label={messages.signUpButton} type="submit" />,
         Links: () => <RejectionLink label={activationMessages.didNotReceivedEmail} />
     };
 }

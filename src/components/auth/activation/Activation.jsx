@@ -11,7 +11,7 @@ export default function Activation() {
     return {
         Title: () => <AuthTitle title={messages.accountActivationTitle} />,
         Body,
-        Footer: () => <Button color="blue" label={messages.confirmEmail} />,
+        Footer: () => <Button color="blue" label={messages.confirmEmail} type="submit" />,
         Links: () => <RejectionLink label={messages.didNotReceivedEmail} />
     };
 }

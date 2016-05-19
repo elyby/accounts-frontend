@@ -12,7 +12,7 @@ export default function RecoverPassword() {
     return {
         Title: () => <AuthTitle title={messages.title} />,
         Body,
-        Footer: () => <Button color="lightViolet" label={changePassword.change} />,
+        Footer: () => <Button color="lightViolet" label={changePassword.change} type="submit" />,
         Links: () => <RejectionLink label={messages.contactSupport} />
     };
 }
