@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 
+import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
@@ -7,6 +8,8 @@ import Userbar from 'components/userbar/Userbar';
 import PopupStack from 'components/ui/popup/PopupStack';
 
 import styles from './root.scss';
+
+import messages from './RootPage.intl.json';
 
 function RootPage(props) {
     return (
@@ -17,7 +20,7 @@ function RootPage(props) {
                 <div className={styles.header}>
                     <div className={styles.headerContent}>
                         <Link to="/" className={styles.logo}>
-                            Ely.by
+                            <Message {...messages.siteName} />
                         </Link>
                         <div className={styles.userbar}>
                             <Userbar {...props} onLogout={props.logout} />

@@ -92,6 +92,7 @@
     "enterNewEmail": "Then provide your new E-mail address, that you want to use with this account. You will be mailed with confirmation code.",
     "logout": "Logout",
     "newEmailPlaceholder": "Enter new E-mail",
+    "pages.root.siteName": "Ely.by",
     "pleaseEnterPassword": "Please, enter your current password",
     "pressButtonToStart": "Press the button below to send a message with the code for E-mail change initialization.",
     "register": "Join",

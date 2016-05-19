@@ -92,6 +92,7 @@
     "enterNewEmail": "Then provide your new E-mail address, that you want to use with this account. You will be mailed with confirmation code.",
     "logout": "Выход",
     "newEmailPlaceholder": "Новый E-mail",
+    "pages.root.siteName": "Ely.by",
     "pleaseEnterPassword": "Пожалуйста, введите пароль от аккаунта",
     "pressButtonToStart": "Нажмите на кнопку ниже, чтобы отправить письмо с кодом для инициализации процесса смены E-mail адреса.",
     "register": "Регистрация",
