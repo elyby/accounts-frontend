@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import { FormattedMessage as Message } from 'react-intl';
+
 import { Button } from 'components/ui/form';
 
 import styles from './appInfo.scss';
@@ -20,7 +22,11 @@ export default class AppInfo extends Component {
         return (
             <div className={styles.appInfo}>
                 <div className={styles.logoContainer}>
-                    <h2 className={styles.logo}>{name || 'Ely Accounts'}</h2>
+                    <h2 className={styles.logo}>
+                        {name ? name : (
+                            <Message {...messages.appName} />
+                        )}
+                    </h2>
                 </div>
                 <div className={styles.descriptionContainer}>
                     <p className={styles.description}>

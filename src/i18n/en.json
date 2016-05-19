@@ -13,6 +13,7 @@
     "components.auth.activation.confirmEmail": "Confirm E-mail",
     "components.auth.activation.didNotReceivedEmail": "Did not received E-mail?",
     "components.auth.activation.enterTheCode": "Enter the code from E-mail here",
+    "components.auth.appInfo.appName": "Ely Accounts",
     "components.auth.appInfo.goToAuth": "Go to auth",
     "components.auth.changePassword.change": "Change password",
     "components.auth.changePassword.changePasswordMessage": "To enhance the security of your account, please change your password.",

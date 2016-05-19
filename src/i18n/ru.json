@@ -13,6 +13,7 @@
     "components.auth.activation.confirmEmail": "Подтверждение E-mail",
     "components.auth.activation.didNotReceivedEmail": "Не получили E-mail?",
     "components.auth.activation.enterTheCode": "Укажите код, полученный на E-mail здесь",
+    "components.auth.appInfo.appName": "Аккаунты Ely",
     "components.auth.appInfo.goToAuth": "К авторизации",
     "components.auth.changePassword.change": "Сменить пароль",
     "components.auth.changePassword.changePasswordMessage": "Для обеспечения безопасности вашего аккаунта, пожалуйста, смените пароль.",

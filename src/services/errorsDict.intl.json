@@ -18,7 +18,7 @@
     "emailIsTempmail": "Tempmail E-mail addresses is not allowed",
     "emailNotAvailable": "This email is already registered.",
     "rePasswordRequired": "Please retype your password",
-    "passwordTooShort": "Your password is too short",
+    "passwordTooShort": "Your password should be at least 8 characters length",
     "passwordsDoesNotMatch": "The passwords does not match",
     "rulesAgreementRequired": "You must accept rules in order to create an account",
     "keyRequired": "Please, enter an activation key",
