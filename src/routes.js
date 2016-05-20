@@ -61,7 +61,7 @@ export default function routesFactory(store) {
             <Route path="profile" component={ProfilePage} {...userOnly}>
                 <Route path="change-password" component={ProfileChangePasswordPage} />
                 <Route path="change-username" component={ProfileChangeUsernamePage} />
-                <Route path="change-email" component={ProfileChangeEmailPage} />
+                <Route path="change-email(/:step)(/:code)" component={ProfileChangeEmailPage} />
             </Route>
         </Route>
     );

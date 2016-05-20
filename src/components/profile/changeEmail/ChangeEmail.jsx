@@ -22,20 +22,33 @@ export default class ChangeEmail extends Component {
     static displayName = 'ChangeEmail';
 
     static propTypes = {
+        onChangeStep: PropTypes.func,
         email: PropTypes.string.isRequired,
         form: PropTypes.instanceOf(FormModel),
-        onSubmit: PropTypes.func.isRequired
+        onSubmit: PropTypes.func.isRequired,
+        step: PropTypes.oneOf([0, 1, 2]),
+        code: PropTypes.string
     };
 
     static get defaultProps() {
         return {
-            form: new FormModel()
+            form: new FormModel(),
+            onChangeStep() {},
+            step: 0
         };
     }
 
     state = {
-        activeStep: 0
+        activeStep: this.props.step,
+        code: this.props.code || ''
     };
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            activeStep: nextProps.step || this.state.activeStep,
+            code: nextProps.code || ''
+        });
+    }
 
     render() {
         const {form} = this.props;
@@ -100,7 +113,8 @@ export default class ChangeEmail extends Component {
 
     renderStepForms() {
         const {form, email} = this.props;
-        const {activeStep} = this.state;
+        const {activeStep, code} = this.state;
+        const isCodeEntered = !!this.props.code;
 
         const activeStepHeight = this.state[`step${activeStep}Height`] || 0;
 
@@ -159,6 +173,9 @@ export default class ChangeEmail extends Component {
                                     <div className={styles.formRow}>
                                         <Input {...form.bindField('initializationCode')}
                                             required
+                                            disabled={isCodeEntered}
+                                            value={code}
+                                            onChange={this.onCodeInput}
                                             skin="light"
                                             color="violet"
                                             placeholder={messages.codePlaceholder}
@@ -195,6 +212,9 @@ export default class ChangeEmail extends Component {
                                     <div className={styles.formRow}>
                                         <Input {...form.bindField('finalizationCode')}
                                             required
+                                            disabled={isCodeEntered}
+                                            value={code}
+                                            onChange={this.onCodeInput}
                                             skin="light"
                                             color="violet"
                                             placeholder={messages.codePlaceholder}
@@ -225,7 +245,17 @@ export default class ChangeEmail extends Component {
             this.setState({
                 activeStep: nextStep
             });
+
+            this.props.onChangeStep(nextStep);
         }
+    };
+
+    onCodeInput = (event) => {
+        const {value} = event.target;
+
+        this.setState({
+            code: this.props.code || value
+        });
     };
 
     isLastStep() {
