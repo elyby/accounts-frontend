@@ -8,6 +8,9 @@ addLocaleData(ruLocaleData);
 
 const SUPPORTED_LANGUAGES = ['ru', 'en'];
 const DEFAULT_LANGUAGE = 'en';
+
+const needPolyfill = !window.Intl;
+
 function getUserLanguages(userSelectedLang = []) {
     return [].concat(userSelectedLang || [])
         .concat(navigator.languages || [])
@@ -27,7 +30,20 @@ export default {
     },
 
     require(locale) {
-        return new Promise(require(`bundle!i18n/${locale}.json`))
-            .then((messages) => ({locale, messages}));
+        const promises = [
+            new Promise(require(`bundle!i18n/${locale}.json`))
+        ];
+
+        if (needPolyfill) {
+            promises.push(new Promise((resolve) => {
+                require.ensure([], () => {
+                    require('intl');
+                    require(`bundle!intl/locale-data/jsonp/${locale}.js`)(resolve);
+                });
+            }));
+        }
+
+        return Promise.all(promises)
+            .then(([messages]) => ({locale, messages}));
     }
 };
