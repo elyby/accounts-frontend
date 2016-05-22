@@ -162,7 +162,7 @@ var webpackConfig = {
             },
             {
                 test: /\.json$/,
-                exclude: /intl\.json/,
+                exclude: /(intl|font)\.json/,
                 loader: 'json'
             },
             {
@@ -171,21 +171,24 @@ var webpackConfig = {
             },
             {
                 test: /\.intl\.json$/,
-                loader: 'babel!intl-loader!json'
+                loader: 'babel!intl!json'
+            },
+            {
+                test: /\.font\.(js|json)$/,
+                loader: 'raw!fontgen'
             }
         ]
     },
 
     resolveLoader: {
         alias: {
-            'intl-loader': path.resolve('./webpack/intl-loader')
+            'intl': path.resolve('./webpack/intl-loader')
         }
     },
 
     sassLoader: {
         importer: iconfontImporter({
-            test: /\.font.(js|json)$/,
-            types: ['woff', 'eot', 'ttf']
+            test: /\.font.(js|json)$/
         })
     },
 

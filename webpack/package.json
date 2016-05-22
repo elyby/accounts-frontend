@@ -5,9 +5,6 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "glob": "^6.0.3",
-    "loader-utils": "^0.2.12",
-    "webfonts-generator": "^0.3.1",
-    "webpack-sources": "^0.1.0"
+    "loader-utils": "^0.2.12"
   }
 }
