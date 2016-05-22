@@ -11,6 +11,7 @@ export default class BaseAuthBody extends Component {
     static contextTypes = {
         clearErrors: PropTypes.func.isRequired,
         resolve: PropTypes.func.isRequired,
+        requestRedraw: PropTypes.func.isRequired,
         auth: PropTypes.shape({
             error: PropTypes.string,
             scopes: PropTypes.array

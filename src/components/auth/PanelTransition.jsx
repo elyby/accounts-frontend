@@ -89,6 +89,7 @@ class PanelTransition extends Component {
             })
         }),
         user: userShape,
+        requestRedraw: PropTypes.func,
         clearErrors: PropTypes.func,
         resolve: PropTypes.func,
         reject: PropTypes.func
@@ -103,6 +104,7 @@ class PanelTransition extends Component {
         return {
             auth: this.props.auth,
             user: this.props.user,
+            requestRedraw: () => this.setState({isHeightDirty: true}, () => this.setState({isHeightDirty: false})),
             clearErrors: this.props.clearErrors,
             resolve: this.props.resolve,
             reject: this.props.reject
@@ -196,7 +198,7 @@ class PanelTransition extends Component {
                                 </PanelHeader>
                                 <div style={contentHeight}>
                                     <MeasureHeight
-                                        state={this.props.auth.error}
+                                        state={this.shouldMeasureHeight()}
                                         onMeasure={this.onUpdateContextHeight}
                                     >
                                         <PanelBody>
@@ -307,6 +309,10 @@ class PanelTransition extends Component {
         }
     }
 
+    shouldMeasureHeight() {
+        return '' + this.props.auth.error + this.state.isHeightDirty;
+    }
+
     getHeader({key, style, data}) {
         const {Title, hasBackButton} = data;
         const {transformSpring} = style;
@@ -363,7 +369,7 @@ class PanelTransition extends Component {
             <MeasureHeight
                 key={`body/${key}`}
                 style={style}
-                state={this.props.auth.error}
+                state={this.shouldMeasureHeight()}
                 onMeasure={(height) => this.onUpdateHeight(height, key)}
             >
                 {React.cloneElement(Body, {

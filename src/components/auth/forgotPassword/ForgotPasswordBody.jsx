@@ -20,12 +20,6 @@ export default class ForgotPasswordBody extends BaseAuthBody {
 
     autoFocusField = this.state.isLoginEdit ? 'email' : null;
 
-    onClickEdit = () => {
-        this.setState({
-            isLoginEdit: true
-        });
-    };
-
     render() {
         const { user } = this.context;
         const login = user.email || user.username || '';
@@ -68,4 +62,11 @@ export default class ForgotPasswordBody extends BaseAuthBody {
             </div>
         );
     }
+
+    onClickEdit = () => {
+        this.setState({
+            isLoginEdit: true
+        });
+        this.context.requestRedraw();
+    };
 }
