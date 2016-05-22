@@ -51,6 +51,7 @@ export default class RecoverPasswordBody extends BaseAuthBody {
                     required
                     value={key}
                     readOnly={!!key}
+                    autoComplete="off"
                     placeholder={messages.enterTheCode}
                 />
 

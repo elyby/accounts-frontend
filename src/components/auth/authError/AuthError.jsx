@@ -13,7 +13,7 @@ function resetTimer() {
 export default function AuthError({error, onClose = function() {}}) {
     resetTimer();
 
-    if (error.type === 'error.email_frequency') {
+    if (error.payload && error.payload.canRepeatIn) {
         if (error.payload && error.payload.canRepeatIn) {
             error.payload.msLeft = error.payload.canRepeatIn * 1000;
             setTimeout(onClose, error.payload.msLeft - Date.now() + 1500); // 1500 to let the user see, that time is elapsed

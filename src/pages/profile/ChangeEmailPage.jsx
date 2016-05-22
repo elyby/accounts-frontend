@@ -59,11 +59,11 @@ class ChangeEmailPage extends Component {
 
                 switch (step) {
                     case 0:
-                        return accounts.requestEmailChange();
+                        return accounts.requestEmailChange().catch(handleErrors());
                     case 1:
-                        return accounts.setNewEmail(data);
+                        return accounts.setNewEmail(data).catch(handleErrors('/profile/change-email'));
                     case 2:
-                        return accounts.confirmNewEmail(data);
+                        return accounts.confirmNewEmail(data).catch(handleErrors('/profile/change-email'));
                     default:
                         throw new Error(`Unsupported step ${step}`);
                 }
@@ -71,6 +71,27 @@ class ChangeEmailPage extends Component {
         }).then(() => {
             step > 1 && this.context.goToProfile();
         });
+    };
+}
+
+function handleErrors(repeatUrl) {
+    return (resp) => {
+        if (resp.errors) {
+            if (resp.errors.key) {
+                resp.errors.key = {
+                    type: resp.errors.key,
+                    payload: {}
+                };
+
+                if (['error.key_not_exists', 'error.key_expire'].includes(resp.errors.key.type) && repeatUrl) {
+                    Object.assign(resp.errors.key.payload, {
+                        repeatUrl
+                    });
+                }
+            }
+        }
+
+        return Promise.reject(resp);
     };
 }
 

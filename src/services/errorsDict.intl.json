@@ -22,7 +22,8 @@
     "passwordsDoesNotMatch": "The passwords does not match",
     "rulesAgreementRequired": "You must accept rules in order to create an account",
     "keyRequired": "Please, enter an activation key",
-    "keyNotExists": "The key is incorrect",
+    "keyNotExists": "The key is incorrect or has expired.",
+    "doYouWantRequestKey": "Do you want to request a new key?",
     "emailFrequency": "Please cool down, you are requesting emails too often. New key can be retrieved {time}.",
     "accountNotActivated": "The account is not activated",
     "oldHashStrategy": "Sorry, but your account's password is too old. Please change your password in order to perform this action."

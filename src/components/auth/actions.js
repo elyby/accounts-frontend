@@ -84,7 +84,7 @@ export function recoverPassword({
 
             return dispatch(authenticate(resp.jwt));
         })
-        .catch(validationErrorsHandler(dispatch))
+        .catch(validationErrorsHandler(dispatch, '/forgot-password'))
     );
 }
 
@@ -126,7 +126,7 @@ export function activate({key = ''}) {
 
             return dispatch(authenticate(resp.jwt));
         })
-        .catch(validationErrorsHandler(dispatch))
+        .catch(validationErrorsHandler(dispatch, '/reactivate'))
     );
 }
 
@@ -332,19 +332,27 @@ function needActivation() {
     });
 }
 
-function validationErrorsHandler(dispatch) {
+function validationErrorsHandler(dispatch, repeatUrl) {
     return (resp) => {
         if (resp.errors) {
-            let errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+            const error = {
+                type: resp.errors[Object.keys(resp.errors)[0]],
+                payload: {
+                    isGuest: true
+                }
+            };
+
             if (resp.data) {
-                errorMessage = {
-                    type: errorMessage,
-                    payload: resp.data
-                };
+                Object.assign(error.payload, resp.data);
             }
 
-            dispatch(setError(errorMessage));
-            return Promise.reject(errorMessage);
+            if (['error.key_not_exists', 'error.key_expire'].includes(error.type) && repeatUrl) {
+                Object.assign(error.payload, {
+                    repeatUrl
+                });
+            }
+
+            dispatch(setError(error));
         }
 
         return Promise.reject(resp);

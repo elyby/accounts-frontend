@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
+import { Link } from 'react-router';
 
 import messages from './errorsDict.intl.json';
 
@@ -9,7 +10,7 @@ export default {
         let payload = {};
 
         if (error.type) {
-            payload = error.payload;
+            payload = error.payload || {};
             error = error.type;
         }
         return errorsMap[error] ? errorsMap[error](payload) : error;
@@ -23,17 +24,10 @@ const errorsMap = {
 
     'error.password_invalid': () => <Message {...messages.invalidPassword} />,
     'error.old_hash_strategy': () => <Message {...messages.oldHashStrategy} />,
-    'error.password_incorrect': () => (
+    'error.password_incorrect': (props) => (
         <span>
             <Message {...messages.invalidPassword} />
-            <br/>
-            <Message {...messages.suggestResetPassword} values={{
-                link: (
-                    <a href="#">
-                        <Message {...messages.forgotYourPassword} />
-                    </a>
-                )
-            }} />
+            {props.isGuest ? errorsMap.suggestResetPassword() : null}
         </span>
     ),
 
@@ -47,17 +41,10 @@ const errorsMap = {
     'error.email_too_long': () => <Message {...messages.emailToLong} />,
     'error.email_invalid': () => <Message {...messages.emailInvalid} />,
     'error.email_is_tempmail': () => <Message {...messages.emailIsTempmail} />,
-    'error.email_not_available': () => (
+    'error.email_not_available': (props) => (
         <span>
             <Message {...messages.emailNotAvailable} />
-            <br/>
-            <Message {...messages.suggestResetPassword} values={{
-                link: (
-                    <a href="#">
-                        <Message {...messages.forgotYourPassword} />
-                    </a>
-                )
-            }} />
+            {props.isGuest ? errorsMap.suggestResetPassword() : null}
         </span>
     ),
 
@@ -65,10 +52,16 @@ const errorsMap = {
     'error.password_too_short': () => <Message {...messages.passwordTooShort} />,
     'error.rePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />,
     'error.rulesAgreement_required': () => <Message {...messages.rulesAgreementRequired} />,
-    'error.you_must_accept_rules': () => this.errorsMap['error.rulesAgreement_required'](),
+    'error.you_must_accept_rules': () => errorsMap['error.rulesAgreement_required'](),
     'error.key_required': () => <Message {...messages.keyRequired} />,
-    'error.key_is_required': () => this.errorsMap['error.key_required'](),
-    'error.key_not_exists': () => <Message {...messages.keyNotExists} />,
+    'error.key_is_required': () => errorsMap['error.key_required'](),
+    'error.key_not_exists': (props) => (
+        <span>
+            <Message {...messages.keyNotExists} />
+            {props.repeatUrl ? errorsMap.resendKey(props.repeatUrl) : null}
+        </span>
+    ),
+    'error.key_expire': (props) => errorsMap['error.key_not_exists'](props),
 
     'error.newPassword_required': () => <Message {...messages.newPasswordRequired} />,
     'error.newRePassword_required': () => <Message {...messages.newRePasswordRequired} />,
@@ -78,5 +71,27 @@ const errorsMap = {
 
     'error.email_frequency': (props) => <Message {...messages.emailFrequency} values={{
         time: <Relative value={props.msLeft} updateInterval={1000} />
-    }} />
+    }} />,
+
+    suggestResetPassword: () => (
+        <span>
+            <br/>
+            <Message {...messages.suggestResetPassword} values={{
+                link: (
+                    <Link to="/forgot-password">
+                        <Message {...messages.forgotYourPassword} />
+                    </Link>
+                )
+            }} />
+        </span>
+    ),
+
+    resendKey: (url) => (
+        <span>
+            {' '}
+            <Link to={url}>
+                <Message {...messages.doYouWantRequestKey} />
+            </Link>
+        </span>
+    )
 };
