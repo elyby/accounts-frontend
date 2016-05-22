@@ -7,7 +7,7 @@ import { intlShape } from 'react-intl';
 import buttons from 'components/ui/buttons.scss';
 import buttonGroups from 'components/ui/button-groups.scss';
 
-import messages from './LoggedInPanel.messages.js';
+import messages from './LoggedInPanel.intl.json';
 import styles from './loggedInPanel.scss';
 
 import { userShape } from 'components/user/User';

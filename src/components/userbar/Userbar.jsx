@@ -5,7 +5,7 @@ import { FormattedMessage as Message } from 'react-intl';
 
 import buttons from 'components/ui/buttons.scss';
 
-import messages from './Userbar.messages.js';
+import messages from './Userbar.intl.json';
 import styles from './userbar.scss';
 
 import { userShape } from 'components/user/User';
