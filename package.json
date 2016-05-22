@@ -9,7 +9,7 @@
   "repository": "git@bitbucket.org:ErickSkrauch/ely.by-account.git",
   "scripts": {
     "start": "rm -rf dist/ && webpack-dev-server --progress --colors",
-    "up": "npm install",
+    "up": "npm i && cd ./webpack && npm i && cd ../scripts && npm i",
     "test": "karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "i18n": "cd ./scripts && ./node_modules/.bin/babel-node i18n-collect.js",
