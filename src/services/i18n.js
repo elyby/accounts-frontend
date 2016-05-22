@@ -31,14 +31,18 @@ export default {
 
     require(locale) {
         const promises = [
-            new Promise(require(`bundle!i18n/${locale}.json`))
+            new Promise(require(`bundle?name=[name]!i18n/${locale}.json`))
         ];
 
         if (needPolyfill) {
             promises.push(new Promise((resolve) => {
                 require.ensure([], () => {
                     require('intl');
-                    require(`bundle!intl/locale-data/jsonp/${locale}.js`)(resolve);
+                    require.context(
+                        'bundle?name=[name]-polyfill-data!intl/locale-data/jsonp',
+                        false,
+                        /\.\/(en|ru)\.js$/
+                    )(`./${locale}.js`)(resolve);
                 });
             }));
         }
