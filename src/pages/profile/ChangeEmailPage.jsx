@@ -59,7 +59,7 @@ class ChangeEmailPage extends Component {
 
                 switch (step) {
                     case 0:
-                        return accounts.requestEmailChange().catch(handleErrors());
+                        return accounts.requestEmailChange(data).catch(handleErrors());
                     case 1:
                         return accounts.setNewEmail(data).catch(handleErrors('/profile/change-email'));
                     case 2:

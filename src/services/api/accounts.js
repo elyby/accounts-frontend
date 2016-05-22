@@ -34,9 +34,10 @@ export default {
         );
     },
 
-    requestEmailChange() {
+    requestEmailChange({password = ''}) {
         return request.post(
-            '/api/accounts/change-email/initialize'
+            '/api/accounts/change-email/initialize',
+            {password}
         );
     },
 
