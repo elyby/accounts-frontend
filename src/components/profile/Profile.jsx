@@ -78,8 +78,7 @@ export default class Profile extends Component {
 
                             <ProfileField
                                 label={<Message {...langMenuMessages.siteLanguage} />}
-                                value={<LangMenu toggleRef={(toggle) => this.langMenuToggle = toggle} showCurrentLang />}
-                                onChange={() => this.langMenuToggle()}
+                                value={<LangMenu showCurrentLang />}
                             />
 
                             <ProfileField
@@ -89,7 +88,7 @@ export default class Profile extends Component {
 
                             <ProfileField
                                 label={'UUID'}
-                                value={user.uuid}
+                                value={<span className={styles.uuid}>{user.uuid}</span>}
                             />
                         </div>
                     </div>
