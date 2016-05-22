@@ -4,8 +4,8 @@ import ChangeEmail from 'components/profile/changeEmail/ChangeEmail';
 
 import accounts from 'services/api/accounts';
 
-class ProfileChangeEmailPage extends Component {
-    static displayName = 'ProfileChangeEmailPage';
+class ChangeEmailPage extends Component {
+    static displayName = 'ChangeEmailPage';
 
     static propTypes = {
         email: PropTypes.string.isRequired,
@@ -79,4 +79,4 @@ import { connect } from 'react-redux';
 export default connect((state) => ({
     email: state.user.email
 }), {
-})(ProfileChangeEmailPage);
+})(ChangeEmailPage);

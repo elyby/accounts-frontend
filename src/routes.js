@@ -8,7 +8,7 @@ import AuthPage from 'pages/auth/AuthPage';
 import ProfilePage from 'pages/profile/ProfilePage';
 import ProfileChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ProfileChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
-import ProfileChangeEmailPage from 'pages/profile/ProfileChangeEmailPage';
+import ProfileChangeEmailPage from 'pages/profile/ChangeEmailPage';
 
 import OAuthInit from 'components/auth/OAuthInit';
 import Register from 'components/auth/register/Register';
