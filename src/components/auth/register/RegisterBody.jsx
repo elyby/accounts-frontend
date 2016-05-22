@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
+import { Link } from 'react-router';
 
 import { Input, Checkbox } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
@@ -59,9 +60,9 @@ export default class RegisterBody extends BaseAuthBody {
                     label={
                         <Message {...messages.acceptRules} values={{
                             link: (
-                                <a href="#">
+                                <Link to="/rules">
                                     <Message {...messages.termsOfService} />
-                                </a>
+                                </Link>
                             )
                         }} />
                     }
