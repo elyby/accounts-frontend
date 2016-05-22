@@ -16,7 +16,8 @@ $headerHeight: 60px;
 
     font-family: $font-family-title;
     text-align: center;
-    line-height: $headerHeight + 2px; // Шрифт Roboto Condensed имеет странную высоту линии, так что компенсируем это
+    // Шрифт Roboto Condensed имеет странную высоту линии, так что компенсируем это
+    line-height: $headerHeight + 2px;
     font-size: 20px;
     color: #fff;
 }
@@ -70,9 +71,8 @@ $bodyTopBottomPadding: 15px;
 .bodyHeader {
     position: relative;
     overflow: hidden;
-    padding: 10px;
-    margin: (-$bodyTopBottomPadding) (-$bodyLeftRightPadding);
-    margin-bottom: 15px;
+    padding: 10px 20px;
+    margin: (-$bodyTopBottomPadding) (-$bodyLeftRightPadding) 15px;
     max-height: 200px;
 
     transition: 0.4s ease;

@@ -31,9 +31,26 @@ export default class AppInfo extends Component {
                     </h2>
                 </div>
                 <div className={styles.descriptionContainer}>
-                    <p className={styles.description}>
-                        {description}
-                    </p>
+                    {description ? (
+                        <p className={styles.description}>
+                            {description}
+                        </p>
+                    ) : (
+                        <div>
+                            <p className={styles.description}>
+                                <Message {...messages.appDescription} />
+                            </p>
+                            <p className={styles.description}>
+                                <Message {...messages.useItYourself} values={{
+                                    link: (
+                                        <a href="http://docs.ely.by/oauth.html">
+                                            <Message {...messages.documentation} />
+                                        </a>
+                                    )
+                                }} />
+                            </p>
+                        </div>
+                    )}
                 </div>
                 <div className={styles.goToAuth}>
                     <Button onClick={onGoToAuth} label={messages.goToAuth} />

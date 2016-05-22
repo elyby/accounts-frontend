@@ -36,10 +36,24 @@
 }
 
 .description {
+    $font-color: #ccc;
     font-family: $font-family-base;
-    color: #cccccc;
+    color: $font-color;
     font-size: 13px;
     line-height: 1.7;
+    margin-top: 7px;
+
+    a {
+        color: lighten($font-color, 10%);
+        border-bottom: 1px dotted #666;
+        text-decoration: none;
+        transition: .25s;
+
+        &:hover {
+            border-bottom-color: #777;
+            color: $font-color;
+        }
+    }
 }
 
 .goToAuth {
