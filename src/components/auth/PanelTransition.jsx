@@ -59,7 +59,10 @@ class PanelTransition extends Component {
     static propTypes = {
         // context props
         auth: PropTypes.shape({
-            error: PropTypes.string,
+            error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({
+                type: PropTypes.string,
+                payload: PropTypes.object
+            })]),
             isLoading: PropTypes.bool,
             login: PropTypes.shape({
                 login: PropTypes.string,
@@ -82,7 +85,10 @@ class PanelTransition extends Component {
 
     static childContextTypes = {
         auth: PropTypes.shape({
-            error: PropTypes.string,
+            error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({
+                type: PropTypes.string,
+                payload: PropTypes.object
+            })]),
             login: PropTypes.shape({
                 login: PropTypes.string,
                 password: PropTypes.string

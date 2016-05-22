@@ -1,12 +1,18 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
 
 import messages from './errorsDict.intl.json';
 
 export default {
     resolve(error) {
-        return errorsMap[error] ? errorsMap[error]() : error;
+        let payload = {};
+
+        if (error.type) {
+            payload = error.payload;
+            error = error.type;
+        }
+        return errorsMap[error] ? errorsMap[error](payload) : error;
     }
 };
 
@@ -70,5 +76,7 @@ const errorsMap = {
 
     'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
 
-    'error.email_frequency': () => <Message {...messages.emailFrequency} />
+    'error.email_frequency': (props) => <Message {...messages.emailFrequency} values={{
+        time: <Relative value={props.msLeft} updateInterval={1000} />
+    }} />
 };

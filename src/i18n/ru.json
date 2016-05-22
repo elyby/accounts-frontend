@@ -100,7 +100,7 @@
     "components.userbar.register": "Регистрация",
     "pages.root.siteName": "Ely.by",
     "services.accountNotActivated": "Аккаунт не активирован",
-    "services.emailFrequency": "Пожалуйста, успокойтесь, вы запрашиваете E-mail слишком часто. Новый ключ можно будет заказать через 30 минут от предыдущего запроса.",
+    "services.emailFrequency": "Пожалуйста, успокойтесь, вы запрашиваете E-mail слишком часто. Новый ключ можно будет заказать {time}.",
     "services.emailInvalid": "Указан неправильный E-mail",
     "services.emailIsTempmail": "Использование сервисов временных E-mail адресов запрещено",
     "services.emailNotAvailable": "На указанный E-mail адрес уже зарегистрирован аккаунт.",

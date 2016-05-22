@@ -100,7 +100,7 @@
     "components.userbar.register": "Join",
     "pages.root.siteName": "Ely.by",
     "services.accountNotActivated": "The account is not activated",
-    "services.emailFrequency": "Please cool down, you are requesting emails too often. New key can be retrieved after 30 minutes from the previous request.",
+    "services.emailFrequency": "Please cool down, you are requesting emails too often. New key can be retrieved {time}.",
     "services.emailInvalid": "Email is invalid",
     "services.emailIsTempmail": "Tempmail E-mail addresses is not allowed",
     "services.emailNotAvailable": "This email is already registered.",

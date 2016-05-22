@@ -13,7 +13,10 @@ export default class BaseAuthBody extends Component {
         resolve: PropTypes.func.isRequired,
         requestRedraw: PropTypes.func.isRequired,
         auth: PropTypes.shape({
-            error: PropTypes.string,
+            error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({
+                type: PropTypes.string,
+                payload: PropTypes.object
+            })]),
             scopes: PropTypes.array
         }),
         user: userShape
@@ -22,7 +25,7 @@ export default class BaseAuthBody extends Component {
     renderErrors() {
         return this.context.auth.error
             ? <AuthError error={this.context.auth.error} onClose={this.onClearErrors} />
-            : ''
+            : null
             ;
     }
 

@@ -335,7 +335,14 @@ function needActivation() {
 function validationErrorsHandler(dispatch) {
     return (resp) => {
         if (resp.errors) {
-            const errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+            let errorMessage = resp.errors[Object.keys(resp.errors)[0]];
+            if (resp.data) {
+                errorMessage = {
+                    type: errorMessage,
+                    payload: resp.data
+                };
+            }
+
             dispatch(setError(errorMessage));
             return Promise.reject(errorMessage);
         }
