@@ -165,6 +165,7 @@ export default class ChangeEmail extends Component {
                                         {this[`renderStep${step}`]({
                                             email,
                                             code,
+                                            isCodeSpecified,
                                             form,
                                             isActiveStep: step === activeStep
                                         })}

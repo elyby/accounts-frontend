@@ -153,6 +153,17 @@
     }
 }
 
+.textAreaContainer {
+    height: auto;
+}
+
+.textArea {
+    height: 150px;
+    padding: 5px 10px;
+    resize: vertical;
+    position: relative;
+}
+
 @include input-theme('green', $green);
 @include input-theme('blue', $blue);
 @include input-theme('red', $red);

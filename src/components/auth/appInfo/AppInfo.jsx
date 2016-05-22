@@ -4,6 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 
 import { Button } from 'components/ui/form';
 import { LangMenu } from 'components/langMenu';
+import { FooterMenu } from 'components/footerMenu';
 
 import styles from './appInfo.scss';
 import messages from './AppInfo.intl.json';
@@ -39,6 +40,7 @@ export default class AppInfo extends Component {
                 </div>
 
                 <div className={styles.langMenu}>
+                    <FooterMenu skin="light" />
                     <LangMenu />
                 </div>
             </div>

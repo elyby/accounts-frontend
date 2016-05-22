@@ -1,0 +1,31 @@
+.contactForm {
+}
+
+.header {
+    position: relative;
+    margin: -30px;
+    margin-bottom: 0;
+
+    padding: 10px 10px 0;
+    border-bottom: 1px solid #D6D6D6;
+    background: #F5F5F5;
+}
+
+.title {
+    color: #444;
+    font-size: 30px;
+    line-height: 68px;
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.footer {
+    margin: -30px;
+    margin-top: 0;
+}

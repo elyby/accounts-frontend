@@ -10,8 +10,10 @@
     background: rgba(255, 255, 255, 0.8);
 
     text-align: center;
-    vertical-align: middle;
     white-space: nowrap;
+
+    overflow-x: hidden;
+    overflow-y: auto;
 
     &:before {
         content: '';
@@ -25,6 +27,8 @@
 .popup {
     display: inline-block;
     white-space: normal;
+    text-align: left;
+    vertical-align: middle;
 
     width: 400px;
     max-width: 90%;

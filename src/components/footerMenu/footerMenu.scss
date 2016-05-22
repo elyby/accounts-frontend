@@ -1,0 +1,16 @@
+.footerMenu {
+    font-size: 12px;
+    color: #666;
+
+    a {
+        color: #666;
+        border-bottom: 1px dotted #666;
+        text-decoration: none;
+        transition: .25s;
+
+        &:hover {
+            border-bottom-color: #777;
+            color: #777;
+        }
+    }
+}

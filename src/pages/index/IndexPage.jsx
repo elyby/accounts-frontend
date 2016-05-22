@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import { connect } from 'react-redux';
-
 import ProfilePage from 'pages/profile/ProfilePage';
 import Profile from 'components/profile/Profile';
 
@@ -16,6 +14,8 @@ class IndexPage extends Component {
         );
     }
 }
+
+import { connect } from 'react-redux';
 
 export default connect((state) => ({
     user: state.user

@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import { FooterMenu } from 'components/footerMenu';
+
 import styles from './profile.scss';
 
 class ProfilePage extends Component {
@@ -27,6 +29,10 @@ class ProfilePage extends Component {
         return (
             <div className={styles.container}>
                 {this.props.children}
+
+                <div className={styles.footer}>
+                    <FooterMenu />
+                </div>
             </div>
         );
     }
