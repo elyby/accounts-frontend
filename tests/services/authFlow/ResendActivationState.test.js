@@ -1,16 +1,16 @@
-import ActivationState from 'services/authFlow/ActivationState';
-import CompleteState from 'services/authFlow/CompleteState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
+import CompleteState from 'services/authFlow/CompleteState';
+import ActivationState from 'services/authFlow/ActivationState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
-describe('ActivationState', () => {
+describe('ResendActivationState', () => {
     let state;
     let context;
     let mock;
 
     beforeEach(() => {
-        state = new ActivationState();
+        state = new ResendActivationState();
 
         const data = bootstrap();
         context = data.context;
@@ -22,7 +22,7 @@ describe('ActivationState', () => {
     });
 
     describe('#enter', () => {
-        it('should navigate to /activation', () => {
+        it('should navigate to /resend-activation', () => {
             context.getState.returns({
                 user: {
                     isGuest: false,
@@ -30,7 +30,7 @@ describe('ActivationState', () => {
                 }
             });
 
-            expectNavigate(mock, '/activation');
+            expectNavigate(mock, '/resend-activation');
 
             state.enter(context);
         });
@@ -50,12 +50,12 @@ describe('ActivationState', () => {
     });
 
     describe('#resolve', () => {
-        it('should call activate with payload', () => {
-            const payload = {};
+        it('should call resendActivation with payload', () => {
+            const payload = {email: 'foo@bar.com'};
 
             expectRun(
                 mock,
-                'activate',
+                'resendActivation',
                 sinon.match.same(payload)
             ).returns({then() {}});
 
@@ -85,11 +85,11 @@ describe('ActivationState', () => {
         });
     });
 
-    describe('#reject', () => {
+    describe('#goBack', () => {
         it('should transition to resend-activation', () => {
-            expectState(mock, ResendActivationState);
+            expectState(mock, ActivationState);
 
-            state.reject(context);
+            state.goBack(context);
         });
     });
 });

@@ -17,6 +17,7 @@ import Register from 'components/auth/register/Register';
 import Login from 'components/auth/login/Login';
 import Permissions from 'components/auth/permissions/Permissions';
 import Activation from 'components/auth/activation/Activation';
+import ResendActivation from 'components/auth/resendActivation/ResendActivation';
 import Password from 'components/auth/password/Password';
 import ChangePassword from 'components/auth/changePassword/ChangePassword';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
@@ -55,6 +56,7 @@ export default function routesFactory(store) {
                 <Route path="/password" components={new Password()} {...startAuthFlow} />
                 <Route path="/register" components={new Register()} {...startAuthFlow} />
                 <Route path="/activation" components={new Activation()} {...startAuthFlow} />
+                <Route path="/resend-activation" components={new ResendActivation()} {...startAuthFlow} />
                 <Route path="/oauth/permissions" components={new Permissions()} {...startAuthFlow} />
                 <Route path="/oauth/finish" component={Finish} {...startAuthFlow} />
                 <Route path="/change-password" components={new ChangePassword()} {...startAuthFlow} />

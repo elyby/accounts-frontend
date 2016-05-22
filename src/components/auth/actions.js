@@ -126,7 +126,17 @@ export function activate({key = ''}) {
 
             return dispatch(authenticate(resp.jwt));
         })
-        .catch(validationErrorsHandler(dispatch, '/reactivate'))
+        .catch(validationErrorsHandler(dispatch, '/resend-activation'))
+    );
+}
+
+export function resendActivation({email = ''}) {
+    return wrapInLoader((dispatch) =>
+        request.post(
+            '/api/signup/repeat-message',
+            {email}
+        )
+        .catch(validationErrorsHandler(dispatch))
     );
 }
 

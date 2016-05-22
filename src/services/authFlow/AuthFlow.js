@@ -5,6 +5,7 @@ import LoginState from './LoginState';
 import OAuthState from './OAuthState';
 import ForgotPasswordState from './ForgotPasswordState';
 import RecoverPasswordState from './RecoverPasswordState';
+import ResendActivationState from './ResendActivationState';
 
 // TODO: a way to unload service (when we are on account page)
 
@@ -97,6 +98,10 @@ export default class AuthFlow {
 
             case '/forgot-password':
                 this.setState(new ForgotPasswordState());
+                break;
+
+            case '/resend-activation':
+                this.setState(new ResendActivationState());
                 break;
 
             case '/':

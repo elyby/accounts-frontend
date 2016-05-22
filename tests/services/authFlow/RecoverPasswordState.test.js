@@ -84,6 +84,17 @@ describe('RecoverPasswordState', () => {
 
             return promise;
         });
+
+        it('should NOT transition to complete state on fail', () => {
+            const promise = Promise.reject();
+
+            mock.expects('run').returns(promise);
+            mock.expects('setState').never();
+
+            state.resolve(context);
+
+            return promise.catch(mock.verify.bind(mock));
+        });
     });
 
     describe('#reject', () => {
