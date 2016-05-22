@@ -9,6 +9,7 @@ class ProfilePage extends Component {
 
     static propTypes = {
         onSubmit: PropTypes.func.isRequired,
+        fetchUserData: PropTypes.func.isRequired,
         goToProfile: PropTypes.func.isRequired,
         children: PropTypes.element
     };
@@ -21,7 +22,7 @@ class ProfilePage extends Component {
     getChildContext() {
         return {
             onSubmit: this.props.onSubmit,
-            goToProfile: this.props.goToProfile
+            goToProfile: () => this.props.fetchUserData().then(this.props.goToProfile)
         };
     }
 
@@ -40,6 +41,7 @@ class ProfilePage extends Component {
 
 import { connect } from 'react-redux';
 import { routeActions } from 'react-router-redux';
+import { fetchUserData } from 'components/user/actions';
 import { create as createPopup } from 'components/ui/popup/actions';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
@@ -47,6 +49,7 @@ export default connect(null, {
     goToProfile() {
         return routeActions.push('/');
     },
+    fetchUserData,
     onSubmit: ({form, sendData}) => (dispatch) =>
         sendData()
             .catch((resp) => {

@@ -20,13 +20,11 @@ class ChangeUsernamePage extends Component {
     form = new FormModel();
 
     componentWillMount() {
-        this.setState({
-            actualUsername: this.props.username
-        });
+        this.actualUsername = this.props.username;
     }
 
     componentWillUnmount() {
-        this.props.updateUsername(this.state.actualUsername);
+        this.props.updateUsername(this.actualUsername);
     }
 
     render() {
@@ -45,7 +43,7 @@ class ChangeUsernamePage extends Component {
 
     onSubmit = () => {
         const {form} = this;
-        if (this.state.actualUsername === this.props.username) {
+        if (this.actualUsername === this.props.username) {
             this.context.goToProfile();
             return;
         }
@@ -54,7 +52,7 @@ class ChangeUsernamePage extends Component {
             form,
             sendData: () => accounts.changeUsername(form.serialize())
         }).then(() => {
-            this.props.updateUsername(form.value('username'));
+            this.actualUsername = form.value('username');
             this.context.goToProfile();
         });
     };
