@@ -4,7 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 
 import { Form, Button, Input, FormModel } from 'components/ui/form';
 
-import messages from './PasswordRequestForm.messages';
+import messages from './PasswordRequestForm.intl.json';
 
 export default class PasswordRequestForm extends Component {
     static displayName = 'PasswordRequestForm';

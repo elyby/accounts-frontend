@@ -55,10 +55,7 @@ class ChangeUsernamePage extends Component {
             sendData: () => accounts.changeUsername(form.serialize())
         }).then(() => {
             this.props.updateUsername(form.value('username'));
-
-            this.setState({
-                actualUsername: this.props.username
-            });
+            this.context.goToProfile();
         });
     };
 }

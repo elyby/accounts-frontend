@@ -14,7 +14,7 @@ function convertQueryValue(value) {
     return value;
 }
 
-function buildQuery(data) {
+function buildQuery(data = {}) {
     return Object.keys(data)
         .map(
             (keyName) =>

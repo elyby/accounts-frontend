@@ -16,6 +16,7 @@ const errorsMap = {
     'error.password_required': () => <Message {...messages.passwordRequired} />,
 
     'error.password_invalid': () => <Message {...messages.invalidPassword} />,
+    'error.old_hash_strategy': () => <Message {...messages.oldHashStrategy} />,
     'error.password_incorrect': () => (
         <span>
             <Message {...messages.invalidPassword} />

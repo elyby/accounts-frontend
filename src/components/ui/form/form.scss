@@ -140,6 +140,17 @@
     color: $red;
     font-size: 12px;
     margin: 3px 0;
+
+    a {
+        border-bottom: 1px dotted rgba($red, 0.75);
+        text-decoration: none;
+        transition: .25s;
+        color: $red;
+
+        &:hover {
+            border-bottom-color: transparent;
+        }
+    }
 }
 
 @include input-theme('green', $green);

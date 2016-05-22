@@ -7,7 +7,8 @@ class ProfilePage extends Component {
 
     static propTypes = {
         onSubmit: PropTypes.func.isRequired,
-        goToProfile: PropTypes.func.isRequired
+        goToProfile: PropTypes.func.isRequired,
+        children: PropTypes.element
     };
 
     static childContextTypes = {
@@ -36,15 +37,15 @@ import { routeActions } from 'react-router-redux';
 import { create as createPopup } from 'components/ui/popup/actions';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
-function goToProfile() {
-    return routeActions.push('/');
-}
-
 export default connect(null, {
-    goToProfile,
+    goToProfile() {
+        return routeActions.push('/');
+    },
     onSubmit: ({form, sendData}) => (dispatch) =>
         sendData()
             .catch((resp) => {
+                const requirePassword = resp.errors && !!resp.errors.password;
+
                 // prevalidate user input, because requestPassword popup will block the
                 // entire form from input, so it must be valid
                 if (resp.errors) {
@@ -54,26 +55,29 @@ export default connect(null, {
                         form.setErrors(resp.errors);
                         return Promise.reject(resp);
                     }
+
+                    return Promise.resolve({requirePassword});
                 }
-
-                return Promise.resolve();
             })
-            .then(() => new Promise((resolve) => {
-                dispatch(createPopup(PasswordRequestForm, (props) => ({
-                    form,
-                    onSubmit: () => {
-                        sendData()
-                        .catch((resp) => {
-                            if (resp.errors) {
-                                form.setErrors(resp.errors);
-                            }
+            .then((resp) => new Promise((resolve) => {
+                if (resp.requirePassword) {
+                    dispatch(createPopup(PasswordRequestForm, (props) => ({
+                        form,
+                        onSubmit: () => {
+                            sendData()
+                            .catch((resp) => {
+                                if (resp.errors) {
+                                    form.setErrors(resp.errors);
+                                }
 
-                            return Promise.reject(resp);
-                        })
-                        .then(resolve)
-                        .then(props.onClose)
-                        .then(() => dispatch(goToProfile()));
-                    }
-                })));
+                                return Promise.reject(resp);
+                            })
+                            .then(resolve)
+                            .then(props.onClose);
+                        }
+                    })));
+                } else {
+                    resolve();
+                }
             }))
 })(ProfilePage);

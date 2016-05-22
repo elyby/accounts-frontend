@@ -12,11 +12,9 @@ import helpLinks from 'components/auth/helpLinks.scss';
 import MeasureHeight from 'components/MeasureHeight';
 
 import changeEmail from './changeEmail.scss';
-import messages from './ChangeEmail.messages';
+import messages from './ChangeEmail.intl.json';
 
 const STEPS_TOTAL = 3;
-
-// TODO: disable code field, if the code was passed through url
 
 export default class ChangeEmail extends Component {
     static displayName = 'ChangeEmail';
@@ -24,7 +22,18 @@ export default class ChangeEmail extends Component {
     static propTypes = {
         onChangeStep: PropTypes.func,
         email: PropTypes.string.isRequired,
-        form: PropTypes.instanceOf(FormModel),
+        stepForms: PropTypes.arrayOf((propValue, key, componentName, location, propFullName) => {
+            if (propValue.length !== 3) {
+                return new Error(`\`${propFullName}\` must be an array of 3 FormModel instances. Validation failed.`);
+            }
+
+            if (!(propValue[key] instanceof FormModel)) {
+                return new Error(
+                    `Invalid prop \`${propFullName}\` supplied to \
+                    \`${componentName}\`. Validation failed.`
+                );
+            }
+        }),
         onSubmit: PropTypes.func.isRequired,
         step: PropTypes.oneOf([0, 1, 2]),
         code: PropTypes.string
@@ -32,7 +41,11 @@ export default class ChangeEmail extends Component {
 
     static get defaultProps() {
         return {
-            form: new FormModel(),
+            stepForms: [
+                new FormModel(),
+                new FormModel(),
+                new FormModel()
+            ],
             onChangeStep() {},
             step: 0
         };
@@ -45,18 +58,19 @@ export default class ChangeEmail extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            activeStep: nextProps.step || this.state.activeStep,
+            activeStep: typeof nextProps.step === 'number' ? nextProps.step : this.state.activeStep,
             code: nextProps.code || ''
         });
     }
 
     render() {
-        const {form} = this.props;
         const {activeStep} = this.state;
+        const form = this.props.stepForms[activeStep];
 
         return (
-            <Form onSubmit={this.onFormSubmit}
-                form={form}
+            <Form form={form}
+                onSubmit={this.onFormSubmit}
+                onInvalid={() => this.forceUpdate()}
             >
                 <div className={styles.contentWithBackButton}>
                     <Link className={styles.backButton} to="/" />
@@ -95,7 +109,7 @@ export default class ChangeEmail extends Component {
                             color="violet"
                             block
                             label={this.isLastStep() ? messages.changeEmailButton : messages.sendEmailButton}
-                            onClick={this.onSwitchStep}
+                            onClick={this.onSubmit}
                         />
                     </div>
 
@@ -112,9 +126,9 @@ export default class ChangeEmail extends Component {
     }
 
     renderStepForms() {
-        const {form, email} = this.props;
+        const {email} = this.props;
         const {activeStep, code} = this.state;
-        const isCodeEntered = !!this.props.code;
+        const isCodeSpecified = !!this.props.code;
 
         const activeStepHeight = this.state[`step${activeStep}Height`] || 0;
 
@@ -138,94 +152,130 @@ export default class ChangeEmail extends Component {
                             WebkitTransform: `translateX(-${interpolatingStyle.transform}%)`,
                             transform: `translateX(-${interpolatingStyle.transform}%)`
                         }}>
-                            <MeasureHeight className={changeEmail.stepForm} onMeasure={this.onStepMeasure(0)}>
-                                <div className={styles.formBody}>
-                                    <div className={styles.formRow}>
-                                        <p className={styles.description}>
-                                            <Message {...messages.currentAccountEmail} />
-                                        </p>
-                                    </div>
+                            {(new Array(STEPS_TOTAL)).fill(0).map((_, step) => {
+                                const form = this.props.stepForms[step];
 
-                                    <div className={styles.formRow}>
-                                        <h2 className={changeEmail.currentAccountEmail}>
-                                            {email}
-                                        </h2>
-                                    </div>
-
-                                    <div className={styles.formRow}>
-                                        <p className={styles.description}>
-                                            <Message {...messages.pressButtonToStart} />
-                                        </p>
-                                    </div>
-                                </div>
-                            </MeasureHeight>
-
-                            <MeasureHeight className={changeEmail.stepForm} onMeasure={this.onStepMeasure(1)}>
-                                <div className={styles.formBody}>
-                                    <div className={styles.formRow}>
-                                        <p className={styles.description}>
-                                            <Message {...messages.enterInitializationCode} values={{
-                                                email: (<b>{email}</b>)
-                                            }} />
-                                        </p>
-                                    </div>
-
-                                    <div className={styles.formRow}>
-                                        <Input {...form.bindField('initializationCode')}
-                                            required
-                                            disabled={isCodeEntered}
-                                            value={code}
-                                            onChange={this.onCodeInput}
-                                            skin="light"
-                                            color="violet"
-                                            placeholder={messages.codePlaceholder}
-                                        />
-                                    </div>
-
-                                    <div className={styles.formRow}>
-                                        <p className={styles.description}>
-                                            <Message {...messages.enterNewEmail} />
-                                        </p>
-                                    </div>
-
-                                    <div className={styles.formRow}>
-                                        <Input {...form.bindField('newEmail')}
-                                            required
-                                            skin="light"
-                                            color="violet"
-                                            placeholder={messages.newEmailPlaceholder}
-                                        />
-                                    </div>
-                                </div>
-                            </MeasureHeight>
-
-                            <MeasureHeight className={changeEmail.stepForm} onMeasure={this.onStepMeasure(2)}>
-                                <div className={styles.formBody}>
-                                    <div className={styles.formRow}>
-                                        <p className={styles.description}>
-                                            <Message {...messages.enterFinalizationCode} values={{
-                                                email: (<b>{form.value('newEmail')}</b>)
-                                            }} />
-                                        </p>
-                                    </div>
-
-                                    <div className={styles.formRow}>
-                                        <Input {...form.bindField('finalizationCode')}
-                                            required
-                                            disabled={isCodeEntered}
-                                            value={code}
-                                            onChange={this.onCodeInput}
-                                            skin="light"
-                                            color="violet"
-                                            placeholder={messages.codePlaceholder}
-                                        />
-                                    </div>
-                                </div>
-                            </MeasureHeight>
+                                return (
+                                    <MeasureHeight
+                                        className={changeEmail.stepForm}
+                                        onMeasure={this.onStepMeasure(step)}
+                                        state={`${step}.${form.hasErrors()}`}
+                                        key={step}
+                                    >
+                                        {this[`renderStep${step}`]({
+                                            email,
+                                            code,
+                                            form,
+                                            isActiveStep: step === activeStep
+                                        })}
+                                    </MeasureHeight>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
             </Motion>
+        );
+    }
+
+    renderStep0({email}) {
+        return (
+            <div className={styles.formBody}>
+                <div className={styles.formRow}>
+                    <p className={styles.description}>
+                        <Message {...messages.currentAccountEmail} />
+                    </p>
+                </div>
+
+                <div className={styles.formRow}>
+                    <h2 className={changeEmail.currentAccountEmail}>
+                        {email}
+                    </h2>
+                </div>
+
+                <div className={styles.formRow}>
+                    <p className={styles.description}>
+                        <Message {...messages.pressButtonToStart} />
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    renderStep1({email, form, code, isCodeSpecified, isActiveStep}) {
+        return (
+            <div className={styles.formBody}>
+                <div className={styles.formRow}>
+                    <p className={styles.description}>
+                        <Message {...messages.enterInitializationCode} values={{
+                            email: (<b>{email}</b>)
+                        }} />
+                    </p>
+                </div>
+
+                <div className={styles.formRow}>
+                    <Input {...form.bindField('key')}
+                        required={isActiveStep}
+                        disabled={isCodeSpecified}
+                        value={code}
+                        onChange={this.onCodeInput}
+                        autoComplete="off"
+                        skin="light"
+                        color="violet"
+                        placeholder={messages.codePlaceholder}
+                    />
+                </div>
+
+                <div className={styles.formRow}>
+                    <p className={styles.description}>
+                        <Message {...messages.enterNewEmail} />
+                    </p>
+                </div>
+
+                <div className={styles.formRow}>
+                    <Input {...form.bindField('email')}
+                        required={isActiveStep}
+                        skin="light"
+                        color="violet"
+                        placeholder={messages.newEmailPlaceholder}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    renderStep2({form, code, isCodeSpecified, isActiveStep}) {
+        const newEmail = this.props.stepForms[1].value('email');
+
+        return (
+            <div className={styles.formBody}>
+                <div className={styles.formRow}>
+                    <p className={styles.description}>
+                        {newEmail ? (
+                            <span>
+                                <Message {...messages.finalizationCodeWasSentToEmail} values={{
+                                    email: (<b>{newEmail}</b>)
+                                }} />
+                                {' '}
+                            </span>
+                        ) : null}
+                        <Message {...messages.enterFinalizationCode} />
+                    </p>
+                </div>
+
+                <div className={styles.formRow}>
+                    <Input {...form.bindField('key')}
+                        required={isActiveStep}
+                        disabled={isCodeSpecified}
+                        value={code}
+                        onChange={this.onCodeInput}
+                        autoComplete="off"
+                        skin="light"
+                        color="violet"
+                        placeholder={messages.codePlaceholder}
+                    />
+                </div>
+            </div>
         );
     }
 
@@ -235,9 +285,7 @@ export default class ChangeEmail extends Component {
         });
     }
 
-    onSwitchStep = (event) => {
-        event.preventDefault();
-
+    nextStep() {
         const {activeStep} = this.state;
         const nextStep = activeStep + 1;
 
@@ -248,6 +296,16 @@ export default class ChangeEmail extends Component {
 
             this.props.onChangeStep(nextStep);
         }
+    }
+
+    isLastStep() {
+        return this.state.activeStep + 1 === STEPS_TOTAL;
+    }
+
+    onSwitchStep = (event) => {
+        event.preventDefault();
+
+        this.nextStep();
     };
 
     onCodeInput = (event) => {
@@ -258,11 +316,14 @@ export default class ChangeEmail extends Component {
         });
     };
 
-    isLastStep() {
-        return this.state.activeStep + 1 === STEPS_TOTAL;
-    }
-
     onFormSubmit = () => {
-        this.props.onSubmit(this.props.form);
+        const {activeStep} = this.state;
+        const promise = this.props.onSubmit(activeStep, this.props.stepForms[activeStep]);
+
+        if (!promise || !promise.then) {
+            throw new Error('Expecting promise from onSubmit');
+        }
+
+        promise.then(() => this.nextStep(), () => this.forceUpdate());
     };
 }

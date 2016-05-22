@@ -72,6 +72,10 @@ export default class FormModel {
         return this.errors[fieldId] || null;
     }
 
+    hasErrors() {
+        return Object.keys(this.errors).length > 0;
+    }
+
     serialize() {
         return Object.keys(this.fields).reduce((acc, fieldId) => {
             acc[fieldId] = this.fields[fieldId].getValue();

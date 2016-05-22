@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
-import { FormModel } from 'components/ui/form';
 import ChangeEmail from 'components/profile/changeEmail/ChangeEmail';
+
+import accounts from 'services/api/accounts';
 
 class ProfileChangeEmailPage extends Component {
     static displayName = 'ProfileChangeEmailPage';
@@ -17,10 +18,10 @@ class ProfileChangeEmailPage extends Component {
     static contextTypes = {
         router: PropTypes.shape({
             push: PropTypes.func
-        }).isRequired
+        }).isRequired,
+        onSubmit: PropTypes.func.isRequired,
+        goToProfile: PropTypes.func.isRequired
     };
-
-    form = new FormModel();
 
     componentWillMount() {
         const step = this.props.params.step;
@@ -33,13 +34,13 @@ class ProfileChangeEmailPage extends Component {
     }
 
     render() {
-        const {params: {step, code}} = this.props;
+        const {params: {step = 'step1', code}} = this.props;
 
         return (
-            <ChangeEmail form={this.form}
+            <ChangeEmail
                 onSubmit={this.onSubmit}
                 email={this.props.email}
-                step={step ? step.slice(-1) * 1 - 1 : step}
+                step={step.slice(-1) * 1 - 1}
                 onChangeStep={this.onChangeStep}
                 code={code}
             />
@@ -50,7 +51,26 @@ class ProfileChangeEmailPage extends Component {
         this.context.router.push(`/profile/change-email/step${++step}`);
     };
 
-    onSubmit = () => {
+    onSubmit = (step, form) => {
+        return this.context.onSubmit({
+            form,
+            sendData: () => {
+                const data = form.serialize();
+
+                switch (step) {
+                    case 0:
+                        return accounts.requestEmailChange();
+                    case 1:
+                        return accounts.setNewEmail(data);
+                    case 2:
+                        return accounts.confirmNewEmail(data);
+                    default:
+                        throw new Error(`Unsupported step ${step}`);
+                }
+            }
+        }).then(() => {
+            step > 1 && this.context.goToProfile();
+        });
     };
 }
 

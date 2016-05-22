@@ -24,5 +24,6 @@
     "keyRequired": "Please, enter an activation key",
     "keyNotExists": "The key is incorrect",
     "emailFrequency": "Please cool down, you are requesting emails too often. New key can be retrieved after 30 minutes from the previous request.",
-    "accountNotActivated": "The account is not activated"
+    "accountNotActivated": "The account is not activated",
+    "oldHashStrategy": "Sorry, but your account's password is too old. Please change your password in order to perform this action."
 }

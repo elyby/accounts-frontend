@@ -32,5 +32,28 @@ export default {
             '/api/accounts/change-lang',
             {lang}
         );
+    },
+
+    requestEmailChange() {
+        return request.post(
+            '/api/accounts/change-email/initialize'
+        );
+    },
+
+    setNewEmail({
+        email = '',
+        key = ''
+    }) {
+        return request.post(
+            '/api/accounts/change-email/submit-new-email',
+            {email, key}
+        );
+    },
+
+    confirmNewEmail({key}) {
+        return request.post(
+            '/api/accounts/change-email/confirm-new-email',
+            {key}
+        );
     }
 };

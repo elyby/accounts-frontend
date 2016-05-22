@@ -8,10 +8,12 @@ class ChangePasswordPage extends Component {
     static displayName = 'ChangePasswordPage';
 
     static propTypes = {
+        updateUser: PropTypes.func.isRequired
     };
 
     static contextTypes = {
-        onSubmit: PropTypes.func.isRequired
+        onSubmit: PropTypes.func.isRequired,
+        goToProfile: PropTypes.func.isRequired
     };
 
     form = new FormModel();
@@ -32,6 +34,7 @@ class ChangePasswordPage extends Component {
                 passwordChangedAt: Date.now() / 1000,
                 shouldChangePassword: false
             });
+            this.context.goToProfile();
         });
     };
 }
