@@ -5,6 +5,8 @@ import RootPage from 'pages/root/RootPage';
 import IndexPage from 'pages/index/IndexPage';
 import AuthPage from 'pages/auth/AuthPage';
 
+import RulesPage from 'pages/rules/RulesPage';
+
 import ProfilePage from 'pages/profile/ProfilePage';
 import ProfileChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ProfileChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
@@ -43,6 +45,8 @@ export default function routesFactory(store) {
     return (
         <Route path="/" component={RootPage}>
             <IndexRoute component={IndexPage} {...startAuthFlow} />
+
+            <Route path="rules" component={RulesPage} />
 
             <Route path="oauth" component={OAuthInit} {...startAuthFlow} />
 
