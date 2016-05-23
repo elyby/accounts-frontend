@@ -60,7 +60,7 @@ export default class RegisterBody extends BaseAuthBody {
                     label={
                         <Message {...messages.acceptRules} values={{
                             link: (
-                                <Link to="/rules">
+                                <Link to="/rules" target="_blank">
                                     <Message {...messages.termsOfService} />
                                 </Link>
                             )
