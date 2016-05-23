@@ -32,6 +32,7 @@ export default class ResendActivation extends BaseAuthBody {
                         type="email"
                         required
                         placeholder={registerMessages.yourEmail}
+                        defaultValue={this.context.user.email}
                     />
                 </div>
             </div>

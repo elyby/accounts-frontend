@@ -73,6 +73,9 @@ const errorsMap = {
         time: <Relative value={props.msLeft} updateInterval={1000} />
     }} />,
 
+    'error.email_not_found': () => <Message {...messages.emailNotFound} />,
+    'error.account_already_activated': () => <Message {...messages.accountAlreadyActivated} />,
+
     suggestResetPassword: () => (
         <span>
             <br/>

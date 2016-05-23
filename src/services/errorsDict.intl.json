@@ -26,5 +26,7 @@
     "doYouWantRequestKey": "Do you want to request a new key?",
     "emailFrequency": "Please cool down, you are requesting E‑mails too often. New key can be retrieved {time}.",
     "accountNotActivated": "The account is not activated",
-    "oldHashStrategy": "Sorry, but your account's password is too old. Please change your password in order to perform this action."
+    "oldHashStrategy": "Sorry, but your account's password is too old. Please change your password in order to perform this action.",
+    "emailNotFound": "Specified E‑mail is not found",
+    "accountAlreadyActivated": "This account is already activated"
 }
