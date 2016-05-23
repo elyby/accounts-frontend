@@ -1,6 +1,10 @@
+@import "~components/ui/colors.scss";
+@import "~components/ui/fonts.scss";
+
 .rules {
-    max-width: 620px;
-    margin: 55px auto 0;
+    max-width: 500px;
+    margin: 30px auto 0;
+    padding: 0 20px;
 }
 
 .rulesSection {
@@ -9,33 +13,50 @@
 
 .rulesSectionTitle {
     line-height: 50px;
-    height: 50px;
 
+    font-family: $font-family-title;
     font-size: 20px;
     color: #fff;
-    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.3);
     padding: 0;
     margin: 0;
     text-align: center;
 
-    background: #5b9aa9;
+    background: $blue;
 }
 
 .rulesBody {
-    padding: 25px 15px;
+    padding: 20px;
     background: #fff;
+    font-size: 14px;
+}
+
+%rulesTextFormat {
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.blockDescription {
+    @extend %rulesTextFormat;
+
+    p {
+        @extend %rulesTextFormat;
+    }
 }
 
 .rulesList {
     padding: 0;
     margin: 0;
-    padding-left: 40px;
+    padding-left: 20px;
 }
 
 .rulesItem {
+    @extend %rulesTextFormat;
+
     list-style: decimal;
-    line-height: 1.35;
-    margin: 10px 0;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
 
     a {
         color: #444;
@@ -47,4 +68,9 @@
     a:hover {
         border-bottom-color: #444
     }
+}
+
+.footer {
+    text-align: center;
+    margin-bottom: 20px;
 }

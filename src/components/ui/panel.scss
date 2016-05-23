@@ -55,6 +55,10 @@ $bodyTopBottomPadding: 15px;
         border-bottom: 1px dotted rgba(#fff, 0.75);
         text-decoration: none;
         transition: .25s;
+
+        &:hover {
+            border-bottom-color: rgba(#fff, 0.5);
+        }
     }
 }
 

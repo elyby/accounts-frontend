@@ -1,62 +1,76 @@
 import React from 'react';
 
+import { Link } from 'react-router';
+
+import { FooterMenu } from 'components/footerMenu';
+
 import styles from './rules.scss';
 
 const rules = [
     {
-        title: 'Main provisions',
-        items: [
-            'Ely.by - custom project, created by man under the pseudonym ErickSkrauch and unrelated to the company Mojang.',
-            'Developer carefully read the Mojang Account EULA and quite confidently declares that it does not violate, implementing alternative service for Minecraft. The EULA says that users may redistribute any modifications to the client, without charging a fee for it. This is what we are doing here.',
-            'Ely.by not steal your passwords and keep them safe in a hash with salt.',
-            'We have the right to withdraw from your order any nickname in the case of "clogging" nicks players.'
-        ]
-    },
-    {
-        title: 'Skin system',
+        title: 'Основные положения',
         items: [
             (<span>
-                Ready patches on the downloads page only change the query to load skins, and in any case should not be spy the player.
-                However, if you are in doubt, you can manually implement the patch, following our <a href="/">skins system documentation</a>.
+                Сервис <b>Аккаунты Ely</b> предназначен для организации безопасного доступа к пользовательским аккаунтам проекта Ely.by, его партнёров и любых сторонних разработок, желающих использовать один из наших сервисов.
             </span>),
-            'The system skins is absolutely free service, and it will remain such forever. You can freely use it in their projects without asking for any permission and nowhere specifically registering.',
-            'In our protocol download skins, we conduct statistics of all skin download requests. We get information about that for a nickname with which version and what time has been loaded skin. In fact, there are no critical data, but you have the right to know.'
+            'Мы (здесь и далее) - команда разработчиков проекта Ely.by, занимающихся созданием качественных сервисов для сообщества Minecraft.',
+            'Ely.by является сторонней разработкой, не имеющей никакого отношения к компаниям Mojang и Microsoft. Мы не оказываем поддержки по премиум аккаунтам Minecraft, а также никак не связаны с игровыми серверами, использующими или не использующими наши сервисы.',
+            (<span>
+                Регистрация пользовательского аккаунта на сервисе бесплатна. Создание аккаунта Ely.by возможно только на странице <Link to={'/register'}>https://account.ely.by/register</Link>.
+            </span>)
         ]
     },
     {
-        title: 'Skins catalog',
+        title: 'E-mail и никнейм',
         items: [
-            'Any skin, loaded to the site, enters the public skins catalog. This means that any user will be able to wear it or download skins from our catalog.',
-            'Any skin you uploaded to Ely.by becomes the property of the project. This means that we are entitled to take measures for its removal or retention in a public skins catalog. However, we will always try to walk you to the meeting in the absence of a compelling reason on our part to fulfill any request regarding your skin.'
+            'Запрещена регистрация аккаунтов с использованием сервисов временной почты. Речь идёт о сервисах, предоставляющих случайные почтовые ящики в любом количестве.',
+            'Мы пытаемся противодействовать этому, но если вам всё же удалось зарегистрировать аккаунт с использованием сервиса временной почты, по нему не будет оказываться техническая поддержка и в последствии, при обновлении наших фильтров, аккаунт будет заблокирован, вместе с вашим ником.',
+            'На пользовательский никнейм, используемый в игре, не накладываются какие-либо моральные ограничения.',
+            'Никнеймы, принадлежащие известным личностям, могут быть освобождены в их пользу по требованию и доказательству этой самой личности.',
+            'Владелец премиум аккаунта Minecraft вправе потребовать восстановления контроля над своим ником и вам, в течение 3-х дней, придётся сменить ник или это будет сделано автоматически.',
+            'Если в течение последних 3 месяцев на вашем аккаунте не было замечено какой-либо активности, то ваш ник может быть занят любым пользователем.',
+            'Мы не несём ответственности за потерянный прогресс на игровых серверах в результате смены ника, включая случаи смены ника по требованию с нашей стороны.'
         ]
     },
     {
-        title: 'General site rules',
+        title: 'Аккаунты Ely как сервис',
+        description: (<div>
+            <p>Сервис <b>Аккаунты Ely</b> предоставляется бесплатно любому заинтересованному в его использовании проекту, связанному с Minecraft.</p>
+            <p>Несмотря на все наши старания, направленные на обеспечение быстрой и стабильной работы сервиса, мы не застрахованы от DDOS-атак, перебоев в работе сети хостера, взбоев электропитания или иных ситуаций, предусмотреть и защититься от которых на 100% не представляется возможным. Во избежание возможных недопониманий, мы обязаны оговорить следующие соглашения, действующие в случае описанных выше ситуаций:</p>
+        </div>),
         items: [
-            'We indifferent to your style of communication as long as it starts to interfere with the administration. Keep this in mind.',
-            'Use of multi account not prohibited. Nevertheless, on the site you can change nickname - this is done in the settings.',
-            'Advertising of any affiliate and referral programs, store stolen keys (ie all except official), as well as online casinos, all drugs, alcoholic beverages, etc. strictly punished by blocking the account instantly.',
-            <b>If you register on the site, taking the nickname, which holds the license Minecraft, owner will be able to demand the restoration of control over nickname and you within 3 days should necessary change the nickname.</b>
+            'Мы не гарантируем какой-либо процент времени бесперебойной работы этого сервиса.',
+            'Мы не несём ответственности за простои и упущенную прибыль в результате неработоспособности наших сервисов.'
         ]
     }
 ];
 
 export default function RulesPage() {
     return (
-        <div className={styles.rules}>
-            {rules.map((block, key) => (
-                <div className={styles.rulesSection} key={key}>
-                    <h2 className={styles.rulesSectionTitle}>{block.title}</h2>
+        <div>
+            <div className={styles.rules}>
+                {rules.map((block, key) => (
+                    <div className={styles.rulesSection} key={key}>
+                        <h2 className={styles.rulesSectionTitle}>{block.title}</h2>
 
-                    <div className={styles.rulesBody}>
-                        <ol className={styles.rulesList}>
-                            {block.items.map((item, key) => (
-                                <li className={styles.rulesItem} key={key}>{item}</li>
-                            ))}
-                        </ol>
+                        <div className={styles.rulesBody}>
+                            {block.description ? (
+                                <div className={styles.blockDescription}>
+                                    {block.description}
+                                </div>
+                            ) : ''}
+                            <ol className={styles.rulesList}>
+                                {block.items.map((item, key) => (
+                                    <li className={styles.rulesItem} key={key}>{item}</li>
+                                ))}
+                            </ol>
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
+            <div className={styles.footer}>
+                <FooterMenu />
+            </div>
         </div>
     );
 }
