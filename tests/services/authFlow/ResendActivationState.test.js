@@ -1,6 +1,7 @@
 import ResendActivationState from 'services/authFlow/ResendActivationState';
 import CompleteState from 'services/authFlow/CompleteState';
 import ActivationState from 'services/authFlow/ActivationState';
+import RegisterState from 'services/authFlow/RegisterState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
@@ -27,6 +28,19 @@ describe('ResendActivationState', () => {
                 user: {
                     isGuest: false,
                     isActive: false
+                }
+            });
+
+            expectNavigate(mock, '/resend-activation');
+
+            state.enter(context);
+        });
+
+        it('should navigate to /resend-activation for guests', () => {
+            context.getState.returns({
+                user: {
+                    isGuest: true,
+                    isActive: true
                 }
             });
 
@@ -86,8 +100,26 @@ describe('ResendActivationState', () => {
     });
 
     describe('#goBack', () => {
-        it('should transition to resend-activation', () => {
+        it('should transition to activation', () => {
+            context.getState.returns({
+                user: {
+                    isGuest: false
+                }
+            });
+
             expectState(mock, ActivationState);
+
+            state.goBack(context);
+        });
+
+        it('should transition to register if guest', () => {
+            context.getState.returns({
+                user: {
+                    isGuest: true
+                }
+            });
+
+            expectState(mock, RegisterState);
 
             state.goBack(context);
         });

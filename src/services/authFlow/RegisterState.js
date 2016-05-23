@@ -1,5 +1,6 @@
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
+import ResendActivationState from './ResendActivationState';
 
 export default class RegisterState extends AbstractState {
     enter(context) {
@@ -18,5 +19,6 @@ export default class RegisterState extends AbstractState {
     }
 
     reject(context) {
+        context.setState(new ResendActivationState());
     }
 }

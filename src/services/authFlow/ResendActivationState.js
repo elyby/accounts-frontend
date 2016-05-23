@@ -1,15 +1,16 @@
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
 import ActivationState from './ActivationState';
+import RegisterState from './RegisterState';
 
 export default class ResendActivationState extends AbstractState {
     enter(context) {
         const {user} = context.getState();
 
-        if (user.isActive) {
+        if (user.isActive && !user.isGuest) {
             context.setState(new CompleteState());
         } else {
-            context.navigate('/repeat-message');
+            context.navigate('/resend-activation');
         }
     }
 
@@ -19,6 +20,12 @@ export default class ResendActivationState extends AbstractState {
     }
 
     goBack(context) {
-        context.setState(new ActivationState());
+        const {user} = context.getState();
+
+        if (user.isGuest) {
+            context.setState(new RegisterState());
+        } else {
+            context.setState(new ActivationState());
+        }
     }
 }
