@@ -1,3 +1,8 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+$popupPadding: 20px;
+
 .overlay {
     position: fixed;
     top: 0;
@@ -7,7 +12,7 @@
 
     z-index: 200;
 
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(#fff, 0.8);
 
     text-align: center;
     white-space: nowrap;
@@ -24,18 +29,27 @@
     }
 }
 
-.popup {
+.popupWrapper {
+    $padding: 20px;
+    $maxPopupWidth: 500px;
+
     display: inline-block;
+    width: 100%;
+    max-width: $maxPopupWidth + $padding * 2;
+    box-sizing: border-box;
+    margin: $padding auto;
+    padding: 0 $padding;
+    vertical-align: middle;
+}
+
+.popup {
     white-space: normal;
     text-align: left;
-    vertical-align: middle;
-
-    width: 400px;
-    max-width: 90%;
 
     background: #fff;
-    padding: 30px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(#000, 0.2);
+
+    color: #666;
 
     :invalid {
         button {
@@ -43,4 +57,20 @@
             pointer-events: none;
         }
     }
+}
+
+.header {
+    background: $light;
+    padding: 15px $popupPadding;
+    border-bottom: 1px solid #dedede;
+}
+
+.headerTitle {
+    font-size: 20px;
+    font-family: $font-family-title;
+    text-align: center;
+}
+
+.body {
+    padding: $popupPadding;
 }

@@ -4,6 +4,7 @@ import Checkbox from './Checkbox';
 import Button from './Button';
 import Form from './Form';
 import FormModel from './FormModel';
+import Dropdown from './Dropdown';
 
 export {
     Input,
@@ -11,5 +12,6 @@ export {
     Button,
     Checkbox,
     Form,
-    FormModel
+    FormModel,
+    Dropdown
 };

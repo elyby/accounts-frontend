@@ -1,31 +1,52 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+@import '~components/ui/popup/popup.scss';
+
 .contactForm {
 }
 
-.header {
-    position: relative;
-    margin: -30px;
-    margin-bottom: 0;
-
-    padding: 10px 10px 0;
-    border-bottom: 1px solid #D6D6D6;
-    background: #F5F5F5;
-}
-
-.title {
-    color: #444;
-    font-size: 30px;
-    line-height: 68px;
-    text-align: center;
-}
-
 .close {
+    display: none;
+
     position: absolute;
     right: 10px;
     top: 10px;
     cursor: pointer;
 }
 
+.philosophicalThought {
+    font-family: $font-family-title;
+    font-size: 19px;
+    color: $green;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.formDisclaimer {
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto 10px;
+}
+
+.pairInputRow {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.pairInput {
+    width: 50%;
+
+    &:first-of-type {
+        margin-right: $popupPadding;
+    }
+}
+
+.formMargin {
+    margin-bottom: 20px;
+}
+
 .footer {
-    margin: -30px;
     margin-top: 0;
 }

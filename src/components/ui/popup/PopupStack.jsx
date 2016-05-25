@@ -30,8 +30,10 @@ export class PopupStack extends Component {
 
                     return (
                         <div className={styles.overlay} key={popup.type + index}>
-                            <div className={styles.popup}>
-                                <Popup {...props} />
+                            <div className={styles.popupWrapper}>
+                                <div className={styles.popup}>
+                                    <Popup {...props} />
+                                </div>
                             </div>
                         </div>
                     );

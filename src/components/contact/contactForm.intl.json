@@ -1,7 +1,10 @@
 {
-    "title": "Contact Us",
+    "title": "Feedback form",
     "subject": "Subject",
     "email": "E-mail",
     "message": "Message",
-    "send": "Send"
+    "send": "Send",
+    "philosophicalThought": "Properly formulated question - half of the answer",
+    "disclaimer": "Please formulate your feedback providing as much useful information, as possible to help us understand your problem and solve it",
+    "whichQuestion" : "What are you interested in?"
 }

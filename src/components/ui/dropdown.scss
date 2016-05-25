@@ -1,0 +1,67 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+$dropdownPadding: 15px;
+
+@mixin dropdown-theme($themeName, $backgroundColor) {
+    .#{$themeName} {
+        composes: dropdown;
+
+        background-color: $backgroundColor;
+
+        &:hover {
+            background-color: lighter($backgroundColor);
+        }
+
+        &:active { // TODO: +.open, чтобы он был ужатый в раскрытом состоянии
+            background-color: darker($backgroundColor);
+        }
+    }
+}
+
+.dropdown {
+    display: inline-block;
+    box-sizing: border-box;
+    height: 50px;
+    // 28px - ширина иконки при заданном размере шрифта
+    padding: 0 ($dropdownPadding * 2 + 28px) 0 $dropdownPadding;
+    position: relative;
+
+    font-family: $font-family-title;
+    color: $defaultButtonTextColor;
+    font-size: 18px;
+    line-height: 50px;
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: background-color 0.25s;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.toggleIcon {
+    composes: selecter from './icons.scss';
+
+    position: absolute;
+    right: $dropdownPadding;
+    top: 16px;
+    font-size: 17px;
+    transition: right .3s cubic-bezier(0.23, 1, 0.32, 1); // easeOutQuint
+
+    .dropdown:hover & {
+        right: $dropdownPadding - 5px;
+    }
+
+    .dropdown:active & { // TODO: + .open, смотри коммент выше
+        right: $dropdownPadding + 5px;
+    }
+}
+
+.block {
+    display: block;
+    width: 100%;
+}
+
+@include dropdown-theme('green', $green);

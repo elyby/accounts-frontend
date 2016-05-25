@@ -3,11 +3,12 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
 
-import { Input, TextArea, Button, Form, FormModel } from 'components/ui/form';
+import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'components/ui/form';
 import site from 'services/api/site';
 import icons from 'components/ui/icons.scss';
 
 import styles from './contactForm.scss';
+import popupStyles from 'components/ui/popup/popup.scss';
 import messages from './contactForm.intl.json';
 
 export default class ContactForm extends Component {
@@ -25,35 +26,55 @@ export default class ContactForm extends Component {
 
         return (
             <div className={styles.contactForm}>
-                <div className={styles.header}>
-                    <h2 className={styles.title}>
+                <div className={popupStyles.header}>
+                    <h2 className={popupStyles.headerTitle}>
                         <Message {...messages.title} />
                     </h2>
                     <span className={classNames(icons.close, styles.close)} onClick={onClose} />
                 </div>
 
                 <Form form={form} onSubmit={this.onSubmit}>
-                    <Input
-                        {...form.bindField('subject')}
-                        required
-                        label={messages.subject}
-                        skin="light"
-                    />
+                    <div className={popupStyles.body}>
+                        <div className={styles.philosophicalThought}>
+                            <Message {...messages.philosophicalThought} />
+                        </div>
 
-                    <Input
-                        {...form.bindField('email')}
-                        required
-                        label={messages.email}
-                        type="email"
-                        skin="light"
-                    />
+                        <div className={styles.formDisclaimer}>
+                            <Message {...messages.disclaimer} /><br />
+                        </div>
 
-                    <TextArea
-                        {...form.bindField('message')}
-                        required
-                        label={messages.message}
-                        skin="light"
-                    />
+                        <div className={styles.pairInputRow}>
+                            <div className={styles.pairInput}>
+                                <Input
+                                    {...form.bindField('subject')}
+                                    required
+                                    label={messages.subject}
+                                    skin="light"
+                                />
+                            </div>
+
+                            <div className={styles.pairInput}>
+                                <Input
+                                    {...form.bindField('email')}
+                                    required
+                                    label={messages.email}
+                                    type="email"
+                                    skin="light"
+                                />
+                            </div>
+                        </div>
+
+                        <div className={styles.formMargin}>
+                            <Dropdown label={messages.whichQuestion} block />
+                        </div>
+
+                        <TextArea
+                            {...form.bindField('message')}
+                            required
+                            label={messages.message}
+                            skin="light"
+                        />
+                    </div>
 
                     <div className={styles.footer}>
                         <Button label={messages.send} block />
