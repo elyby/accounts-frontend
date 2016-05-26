@@ -9,3 +9,9 @@
     width: 100%;
     left: 0;
 }
+
+@media (max-width: 720px) {
+    .container {
+        margin: 20px 10px 10px;
+    }
+}
