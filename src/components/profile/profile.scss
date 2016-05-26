@@ -1,18 +1,19 @@
 @import '~components/ui/fonts.scss';
 @import '~components/ui/colors.scss';
 
+$formColumnWidth: 416px;
+
 .indexContent {
     display: flex;
 }
 
 .formColumn {
-    flex-grow: 1;
-    max-width: 416px;
+    width: $formColumnWidth;
+    min-width: $formColumnWidth; // Чтобы flex не ужимал блок, несмотря на фикс ширину выше
     border-bottom: 10px solid #ddd8ce;
 }
 
 .descriptionColumn {
-    width: 340px;
     padding: 12px 20px 0 0;
     box-sizing: border-box;
 }
@@ -113,9 +114,15 @@
 
     .descriptionColumn {
         width: 100%;
-        max-width: 416px;
+        max-width: $formColumnWidth;
         padding: 0;
         margin-bottom: 10px;
+    }
+
+    .formColumn {
+        min-width: 0;
+        width: auto;
+        max-width: $formColumnWidth;
     }
 
     .indexDescription {
