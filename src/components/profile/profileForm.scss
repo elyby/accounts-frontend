@@ -3,29 +3,36 @@
 
 .contentWithBackButton {
     position: relative;
-    width: 400px;
+    max-width: 400px;
     margin: 0 auto;
 }
 
 .backButton {
-    composes: arrow from 'components/ui/icons.scss';
-
     position: absolute;
     left: -60px;
     top: 15px;
     width: 25px;
     height: 25px;
     padding: 15px;
-
-    transform: rotate(90deg);
-    transition: .3s;
+    font-size: 25px;
 
     color: #ccc;
-    font-size: 25px;
+
+    transition: .3s;
 
     &:hover {
         color: #9a9a9a;
     }
+}
+
+.backIcon {
+    composes: arrowLeft from 'components/ui/icons.scss';
+
+    position: relative;
+}
+
+.backText {
+    display: none;
 }
 
 .form {
@@ -74,4 +81,30 @@
     color: #666666;
     line-height: 1.5;
     margin-top: 25px;
+}
+
+@media (max-width: 525px) {
+    .contentWithBackButton .title {
+        padding-top: 23px;
+    }
+
+    .backButton {
+        top: 29px;
+        left: 27px;
+        padding: 0;
+        margin: 0;
+        width: auto;
+        height: auto;
+        z-index: 1;
+
+        font-size: 14px;
+    }
+
+    .backIcon {
+        bottom: 1px;
+    }
+
+    .backText {
+        display: inline;
+    }
 }

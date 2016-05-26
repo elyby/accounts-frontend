@@ -7,6 +7,7 @@ import Helmet from 'react-helmet';
 import { Motion, spring } from 'react-motion';
 
 import { Input, Button, Form, FormModel } from 'components/ui/form';
+import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
 import helpLinks from 'components/auth/helpLinks.scss';
 import MeasureHeight from 'components/MeasureHeight';
@@ -73,7 +74,7 @@ export default class ChangeEmail extends Component {
                 onInvalid={() => this.forceUpdate()}
             >
                 <div className={styles.contentWithBackButton}>
-                    <Link className={styles.backButton} to="/" />
+                    <BackButton />
 
                     <div className={styles.form}>
                         <div className={styles.formBody}>

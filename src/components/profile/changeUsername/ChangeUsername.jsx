@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import { Input, Button, Form, FormModel } from 'components/ui/form';
+import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
 
 import messages from './ChangeUsername.intl.json';
@@ -25,7 +26,6 @@ export default class ChangeUsername extends Component {
         };
     }
 
-
     render() {
         const {form, username} = this.props;
 
@@ -34,7 +34,7 @@ export default class ChangeUsername extends Component {
                 form={form}
             >
                 <div className={styles.contentWithBackButton}>
-                    <Link className={styles.backButton} to="/" />
+                    <BackButton />
 
                     <div className={styles.form}>
                         <div className={styles.formBody}>

@@ -76,6 +76,7 @@
     "components.langMenu.siteLanguage": "Язык сайта",
     "components.profile.accountDescription": "Благодаря аккаунту Ely.by вы можете получить доступ ко многим ресурсам, связанным с Minecraft. Берегите свой аккаунт, используйте надёжный пароль и регулярно его меняйте.",
     "components.profile.accountPreferencesTitle": "Настройки аккаунта Ely.by",
+    "components.profile.back": "Назад",
     "components.profile.changeEmail.alreadyReceivedCode": "Я уже получил код",
     "components.profile.changeEmail.changeEmailButton": "Сменить E‑mail",
     "components.profile.changeEmail.changeEmailDescription": "Для смены E‑mail адреса аккаунта сперва необходимо подтвердить владение текущим адресом, а за тем привязать новый.",

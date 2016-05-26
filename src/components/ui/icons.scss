@@ -1,20 +1,24 @@
 @import '~icons.font.json';
 
-.arrowLeft {
-    composes: arrow;
-
-    display: inline-block;
-    transform: rotate(90deg);
-
-    font-size: 24px;
+// По умолчанию стрелка смотрит вниз, это просто алиас
+.arrowBottom {
+    @extend .arrow;
 }
 
 .arrowTop {
-    composes: arrow;
+    @extend .arrow;
 
     transform: rotate(180deg);
 }
 
-.arrowBottom {
-    composes: arrow;
+.arrowRight {
+    @extend .arrow;
+
+    transform: rotate(270deg);
+}
+
+.arrowLeft {
+    @extend .arrow;
+
+    transform: rotate(90deg);
 }
