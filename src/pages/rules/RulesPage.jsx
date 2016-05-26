@@ -1,46 +1,56 @@
 import React from 'react';
 
 import { Link } from 'react-router';
+import { FormattedMessage as Message } from 'react-intl';
 
 import { FooterMenu } from 'components/footerMenu';
 
 import styles from './rules.scss';
 
+import messages from './RulesPage.intl.json';
+import appInfo from 'components/auth/appInfo/AppInfo.intl.json';
+
+const projectName = <Message {...appInfo.appName} />;
+
 const rules = [
     {
-        title: 'Основные положения',
+        title: <Message {...messages.mainProvisions} />,
         items: [
-            (<span>
-                Сервис <b>Аккаунты Ely</b> предназначен для организации безопасного доступа к пользовательским аккаунтам проекта Ely.by, его партнёров и любых сторонних разработок, желающих использовать один из наших сервисов.
-            </span>),
-            'Мы (здесь и далее) - команда разработчиков проекта Ely.by, занимающихся созданием качественных сервисов для сообщества Minecraft.',
-            'Ely.by является сторонней разработкой, не имеющей никакого отношения к компаниям Mojang и Microsoft. Мы не оказываем поддержки по премиум аккаунтам Minecraft, а также никак не связаны с игровыми серверами, использующими или не использующими наши сервисы.',
-            (<span>
-                Регистрация пользовательского аккаунта на сервисе бесплатна. Создание аккаунта Ely.by возможно только на странице <Link to={'/register'}>https://account.ely.by/register</Link>.
-            </span>)
+            (<Message {...messages.mainProvision1} values={{
+                name: (<b>{projectName}</b>)
+            }} />),
+            (<Message {...messages.mainProvision2} />),
+            (<Message {...messages.mainProvision3} />),
+            (<Message {...messages.mainProvision4} values={{
+                link: (<Link to={'/register'}>https://account.ely.by/register</Link>)
+            }} />)
         ]
     },
     {
-        title: 'E-mail и никнейм',
+        title: <Message {...messages.emailAndNickname} />,
         items: [
-            'Запрещена регистрация аккаунтов с использованием сервисов временной почты. Речь идёт о сервисах, предоставляющих случайные почтовые ящики в любом количестве.',
-            'Мы пытаемся противодействовать этому, но если вам всё же удалось зарегистрировать аккаунт с использованием сервиса временной почты, по нему не будет оказываться техническая поддержка и в последствии, при обновлении наших фильтров, аккаунт будет заблокирован, вместе с вашим ником.',
-            'На пользовательский никнейм, используемый в игре, не накладываются какие-либо моральные ограничения.',
-            'Никнеймы, принадлежащие известным личностям, могут быть освобождены в их пользу по требованию и доказательству этой самой личности.',
-            'Владелец премиум аккаунта Minecraft вправе потребовать восстановления контроля над своим ником и вам, в течение 3-х дней, придётся сменить ник или это будет сделано автоматически.',
-            'Если в течение последних 3 месяцев на вашем аккаунте не было замечено какой-либо активности, то ваш ник может быть занят любым пользователем.',
-            'Мы не несём ответственности за потерянный прогресс на игровых серверах в результате смены ника, включая случаи смены ника по требованию с нашей стороны.'
+            (<Message {...messages.emailAndNickname1} />),
+            (<Message {...messages.emailAndNickname2} />),
+            (<Message {...messages.emailAndNickname3} />),
+            (<Message {...messages.emailAndNickname4} />),
+            (<Message {...messages.emailAndNickname5} />),
+            (<Message {...messages.emailAndNickname6} />),
+            (<Message {...messages.emailAndNickname7} />)
         ]
     },
     {
-        title: 'Аккаунты Ely как сервис',
+        title: <Message {...messages.elyAccountsAsService} values={{
+            name: projectName
+        }} />,
         description: (<div>
-            <p>Сервис <b>Аккаунты Ely</b> предоставляется бесплатно любому заинтересованному в его использовании проекту, связанному с Minecraft.</p>
-            <p>Несмотря на все наши старания, направленные на обеспечение быстрой и стабильной работы сервиса, мы не застрахованы от DDOS-атак, перебоев в работе сети хостера, взбоев электропитания или иных ситуаций, предусмотреть и защититься от которых на 100% не представляется возможным. Во избежание возможных недопониманий, мы обязаны оговорить следующие соглашения, действующие в случае описанных выше ситуаций:</p>
+            <p><Message {...messages.elyAccountsAsServiceDesc1} values={{
+                name: (<b>{projectName}</b>)
+            }} /></p>
+            <p><Message {...messages.elyAccountsAsServiceDesc2} /></p>
         </div>),
         items: [
-            'Мы не гарантируем какой-либо процент времени бесперебойной работы этого сервиса.',
-            'Мы не несём ответственности за простои и упущенную прибыль в результате неработоспособности наших сервисов.'
+            (<Message {...messages.elyAccountsAsService1} />),
+            (<Message {...messages.elyAccountsAsService2} />)
         ]
     }
 ];
