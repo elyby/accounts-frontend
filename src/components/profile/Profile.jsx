@@ -88,12 +88,34 @@ export default class Profile extends Component {
 
                             <ProfileField
                                 label={'UUID'}
-                                value={<span className={styles.uuid}>{user.uuid}</span>}
+                                value={
+                                    <span
+                                        className={styles.uuid}
+                                        ref={this.setUUID.bind(this)}
+                                        onMouseOver={this.handleUUIDMouseOver.bind(this)}
+                                    >
+                                        {user.uuid}
+                                    </span>
+                                }
                             />
                         </div>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    handleUUIDMouseOver() {
+        try {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(this.UUID);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } catch (err) {}
+    }
+
+    setUUID(el) {
+        this.UUID = el;
     }
 }
