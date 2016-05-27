@@ -3,7 +3,6 @@ import React, { Component, PropTypes } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { Button } from 'components/ui/form';
-import { LangMenu } from 'components/langMenu';
 import { FooterMenu } from 'components/footerMenu';
 
 import styles from './appInfo.scss';
@@ -56,9 +55,8 @@ export default class AppInfo extends Component {
                     <Button onClick={onGoToAuth} label={messages.goToAuth} />
                 </div>
 
-                <div className={styles.langMenu}>
-                    <FooterMenu skin="light" />
-                    <LangMenu />
+                <div className={styles.footer}>
+                    <FooterMenu />
                 </div>
             </div>
         );

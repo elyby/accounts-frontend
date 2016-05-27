@@ -3,6 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
 
+import { LangMenu } from 'components/langMenu';
+
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
 
@@ -10,7 +12,6 @@ export default class FooterMenu extends Component {
     static displayName = 'FooterMenu';
 
     static propTypes = {
-        skin: PropTypes.oneOf(['light', 'dark']),
         createPopup: PropTypes.func.isRequired
     };
 
@@ -24,6 +25,8 @@ export default class FooterMenu extends Component {
                 <a href="#" onClick={this.onContact}>
                     <Message {...messages.contactUs} />
                 </a>
+
+                <LangMenu />
             </div>
         );
     }

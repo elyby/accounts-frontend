@@ -15,9 +15,11 @@
     margin: 0 auto 10px;
 
     perspective: 600px;
+    pointer-events: none;
 }
 
 .menu {
+    pointer-events: auto;
     background: #fff;
     border: 5px solid #ddd8ce;
     border-left: 0;
