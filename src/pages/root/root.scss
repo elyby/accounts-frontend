@@ -49,6 +49,10 @@ $userBarHeight: 50px;
 
     // place for header
     min-height: 100%;
+    // hack to enable min-height/height 100% in parent elements
+    // http://stackoverflow.com/a/21836870/2039203
+    // http://stackoverflow.com/questions/2341821/height100-vs-min-height100
+    height: 0;
     box-sizing: border-box;
     padding-top: $userBarHeight;
 }

@@ -1,17 +1,22 @@
 .container {
-    margin: 55px 10px 10px;
+    min-height: 100%;
+    position: relative;
+    box-sizing: border-box;
+
+    padding: 55px 10px 45px; // 45px for footer
 }
 
 .footer {
-    text-align: center;
-    position: fixed;
-    bottom: 10px;
     width: 100%;
+    position: absolute;
+    bottom: 10px;
     left: 0;
+
+    text-align: center;
 }
 
 @media (max-width: 720px) {
     .container {
-        margin-top: 20px;
+        padding-top: 20px;
     }
 }
