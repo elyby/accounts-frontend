@@ -22,6 +22,7 @@
     "intl": "^1.2.2",
     "intl-format-cache": "^2.0.4",
     "intl-messageformat": "^1.1.0",
+    "promise.prototype.finally": "^1.0.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-helmet": "^2.3.1",

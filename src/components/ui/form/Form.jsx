@@ -29,8 +29,15 @@ export default class Form extends Component {
     };
 
     state = {
-        isTouched: false
+        isTouched: false,
+        isLoading: this.props.isLoading || false
     };
+
+    componentWillMount() {
+        if (this.props.form) {
+            this.props.form.addLoadingListener(this.onLoading);
+        }
+    }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.id !== this.props.id) {
@@ -38,10 +45,26 @@ export default class Form extends Component {
                 isTouched: false
             });
         }
+
+        if (typeof nextProps.isLoading !== 'undefined') {
+            this.setState({
+                isLoading: nextProps.isLoading
+            });
+        }
+
+        if (nextProps.form && nextProps.form !== this.props.form) {
+            throw new Error('The FormModel instance should not be changed during component lifetime');
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.form) {
+            this.props.form.removeLoadingListener(this.onLoading);
+        }
     }
 
     render() {
-        const {isLoading} = this.props;
+        const {isLoading} = this.state;
 
         return (
             <form
@@ -100,4 +123,6 @@ export default class Form extends Component {
             this.props.onInvalid(errors);
         }
     };
+
+    onLoading = (isLoading) => this.setState({isLoading});
 }

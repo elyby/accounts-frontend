@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'promise.prototype.finally';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

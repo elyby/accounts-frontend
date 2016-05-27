@@ -108,6 +108,7 @@ export default class ChangeEmail extends Component {
 
                         <Button
                             color="violet"
+                            type="submit"
                             block
                             label={this.isLastStep() ? messages.changeEmailButton : messages.sendEmailButton}
                             onClick={this.onSubmit}

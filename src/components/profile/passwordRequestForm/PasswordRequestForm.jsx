@@ -18,7 +18,7 @@ export default class PasswordRequestForm extends Component {
         const {form} = this.props;
 
         return (
-            <Form onSubmit={this.onSubmit}
+            <Form onSubmit={this.onFormSubmit}
                 form={form}
             >
                 <h2>
@@ -34,12 +34,12 @@ export default class PasswordRequestForm extends Component {
                     icon="key"
                     placeholder={messages.pleaseEnterPassword}
                 />
-                <Button color="green" label="OK" block />
+                <Button color="green" label="OK" block type="submit" />
             </Form>
         );
     }
 
-    onSubmit = () => {
+    onFormSubmit = () => {
         this.props.onSubmit(this.props.form);
     };
 }

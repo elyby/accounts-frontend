@@ -50,8 +50,9 @@ export default connect(null, {
         return routeActions.push('/');
     },
     fetchUserData,
-    onSubmit: ({form, sendData}) => (dispatch) =>
-        sendData()
+    onSubmit: ({form, sendData}) => (dispatch) => {
+        form.beginLoading();
+        return sendData()
             .catch((resp) => {
                 const requirePassword = resp.errors && !!resp.errors.password;
 
@@ -73,20 +74,24 @@ export default connect(null, {
                     dispatch(createPopup(PasswordRequestForm, (props) => ({
                         form,
                         onSubmit: () => {
+                            form.beginLoading();
                             sendData()
-                            .catch((resp) => {
-                                if (resp.errors) {
-                                    form.setErrors(resp.errors);
-                                }
+                                .catch((resp) => {
+                                    if (resp.errors) {
+                                        form.setErrors(resp.errors);
+                                    }
 
-                                return Promise.reject(resp);
-                            })
-                            .then(resolve)
-                            .then(props.onClose);
+                                    return Promise.reject(resp);
+                                })
+                                .then(resolve)
+                                .then(props.onClose)
+                                .finally(() => form.endLoading());
                         }
                     })));
                 } else {
                     resolve();
                 }
             }))
+            .finally(() => form.endLoading());
+    }
 })(ProfilePage);

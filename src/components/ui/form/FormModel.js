@@ -3,6 +3,7 @@ import FormInputComponent from './FormInputComponent';
 export default class FormModel {
     fields = {};
     errors = {};
+    handlers = [];
 
     /**
      * Connects form with React's component
@@ -82,5 +83,32 @@ export default class FormModel {
 
             return acc;
         }, {});
+    }
+
+    /**
+     * Bind handler to listen for form loading state change
+     *
+     * @param {Function} fn
+     */
+    addLoadingListener(fn) {
+        this.removeLoadingListener(fn);
+        this.handlers.push(fn);
+    }
+
+    /**
+     * Remove form loading state handler
+     *
+     * @param {Function} fn
+     */
+    removeLoadingListener(fn) {
+        this.handlers = this.handlers.filter((handler) => handler !== fn);
+    }
+
+    beginLoading() {
+        this.handlers.forEach((fn) => fn(true));
+    }
+
+    endLoading() {
+        this.handlers.forEach((fn) => fn(false));
     }
 }
