@@ -52,8 +52,9 @@ export default class Form extends Component {
             });
         }
 
-        if (nextProps.form && nextProps.form !== this.props.form) {
-            throw new Error('The FormModel instance should not be changed during component lifetime');
+        if (nextProps.form && this.props.form && nextProps.form !== this.props.form) {
+            this.props.form.removeLoadingListener(this.onLoading);
+            nextProps.form.addLoadingListener(this.onLoading);
         }
     }
 

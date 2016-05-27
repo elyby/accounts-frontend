@@ -9,6 +9,7 @@ class ChangeEmailPage extends Component {
 
     static propTypes = {
         email: PropTypes.string.isRequired,
+        lang: PropTypes.string.isRequired,
         params: PropTypes.shape({
             step: PropTypes.oneOf(['step1', 'step2', 'step3']),
             code: PropTypes.string
@@ -40,6 +41,7 @@ class ChangeEmailPage extends Component {
             <ChangeEmail
                 onSubmit={this.onSubmit}
                 email={this.props.email}
+                lang={this.props.lang}
                 step={step.slice(-1) * 1 - 1}
                 onChangeStep={this.onChangeStep}
                 code={code}
@@ -98,6 +100,7 @@ function handleErrors(repeatUrl) {
 import { connect } from 'react-redux';
 
 export default connect((state) => ({
-    email: state.user.email
+    email: state.user.email,
+    lang: state.user.lang
 }), {
 })(ChangeEmailPage);

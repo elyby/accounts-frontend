@@ -22,6 +22,7 @@ export default class ChangeEmail extends Component {
 
     static propTypes = {
         onChangeStep: PropTypes.func,
+        lang: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
         stepForms: PropTypes.arrayOf((propValue, key, componentName, location, propFullName) => {
             if (propValue.length !== 3) {
@@ -161,7 +162,7 @@ export default class ChangeEmail extends Component {
                                     <MeasureHeight
                                         className={changeEmail.stepForm}
                                         onMeasure={this.onStepMeasure(step)}
-                                        state={`${step}.${form.hasErrors()}`}
+                                        state={`${step}.${form.hasErrors()}.${this.props.lang}`}
                                         key={step}
                                     >
                                         {this[`renderStep${step}`]({

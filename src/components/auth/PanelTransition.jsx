@@ -316,7 +316,7 @@ class PanelTransition extends Component {
     }
 
     shouldMeasureHeight() {
-        return '' + this.props.auth.error + this.state.isHeightDirty;
+        return '' + this.props.auth.error + this.state.isHeightDirty + this.props.user.lang;
     }
 
     getHeader({key, style, data}) {

@@ -105,10 +105,16 @@ export default class FormModel {
     }
 
     beginLoading() {
-        this.handlers.forEach((fn) => fn(true));
+        this._isLoading = true;
+        this.notifyHandlers();
     }
 
     endLoading() {
-        this.handlers.forEach((fn) => fn(false));
+        this._isLoading = false;
+        this.notifyHandlers();
+    }
+
+    notifyHandlers() {
+        this.handlers.forEach((fn) => fn(this._isLoading));
     }
 }
