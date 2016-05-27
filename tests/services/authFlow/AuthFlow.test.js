@@ -1,6 +1,13 @@
 import AuthFlow from 'services/authFlow/AuthFlow';
 import AbstractState from 'services/authFlow/AbstractState';
 
+import OAuthState from 'services/authFlow/OAuthState';
+import RegisterState from 'services/authFlow/RegisterState';
+import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
+import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
+import ResendActivationState from 'services/authFlow/ResendActivationState';
+import LoginState from 'services/authFlow/LoginState';
+
 // TODO: navigate and state switching
 
 describe('AuthFlow', () => {
@@ -138,6 +145,47 @@ describe('AuthFlow', () => {
 
             sinon.assert.calledOnce(state.reject);
             sinon.assert.calledWithExactly(state.reject, flow, expectedPayload);
+        });
+    });
+
+    describe('#handleRequest()', () => {
+        beforeEach(() => {
+            sinon.stub(flow, 'setState');
+            sinon.stub(flow, 'run');
+        });
+
+        Object.entries({
+            '/': LoginState,
+            '/login': LoginState,
+            '/password': LoginState,
+            '/activation': LoginState,
+            '/change-password': LoginState,
+            '/oauth/permissions': LoginState,
+            '/oauth/finish': LoginState,
+            '/oauth': OAuthState,
+            '/register': RegisterState,
+            '/recover-password': RecoverPasswordState,
+            '/recover-password/key123': RecoverPasswordState,
+            '/forgot-password': ForgotPasswordState,
+            '/resend-activation': ResendActivationState
+        }).forEach(([path, type]) => {
+            it(`should transition to ${type.name} if ${path}`, () => {
+                flow.handleRequest(path);
+
+                sinon.assert.calledOnce(flow.setState);
+                sinon.assert.calledWithExactly(flow.setState, sinon.match.instanceOf(type));
+            });
+        });
+
+        it('should run setOAuthRequest if /', () => {
+            flow.handleRequest('/');
+
+            sinon.assert.calledOnce(flow.run);
+            sinon.assert.calledWithExactly(flow.run, 'setOAuthRequest', {});
+        });
+
+        it('throws if unsupported request', () => {
+            expect(() => flow.handleRequest('/foo/bar')).to.throw('Unsupported request: /foo/bar');
         });
     });
 });

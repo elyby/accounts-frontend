@@ -17,7 +17,7 @@ export default class Button extends FormComponent {
             PropTypes.string
         ]).isRequired,
         block: PropTypes.bool,
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet'])
+        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet', 'orange'])
     };
 
     render() {

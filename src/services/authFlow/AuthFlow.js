@@ -83,17 +83,13 @@ export default class AuthFlow {
             this.run('setOAuthRequest', {});
         }
 
-        switch (path.replace(/(.)\/.+/, '$1')) { // use only first part of an url
+        switch (path) { // use only first part of an url
             case '/oauth':
                 this.setState(new OAuthState());
                 break;
 
             case '/register':
                 this.setState(new RegisterState());
-                break;
-
-            case '/recover-password':
-                this.setState(new RecoverPasswordState());
                 break;
 
             case '/forgot-password':
@@ -115,7 +111,14 @@ export default class AuthFlow {
                 break;
 
             default:
-                throw new Error(`Unsupported request: ${path}`);
+                switch (path.replace(/(.)\/.+/, '$1')) { // use only first part of an url
+                    case '/recover-password':
+                        this.setState(new RecoverPasswordState());
+                        break;
+
+                    default:
+                        throw new Error(`Unsupported request: ${path}`);
+                }
         }
     }
 }

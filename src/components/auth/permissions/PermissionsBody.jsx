@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { FormattedMessage as Message } from 'react-intl';
+
 import icons from 'components/ui/icons.scss';
 import { PanelBodyHeader } from 'components/ui/Panel';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
