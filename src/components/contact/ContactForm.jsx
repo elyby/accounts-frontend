@@ -6,9 +6,9 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'components/ui/form';
 import site from 'services/api/site';
 import icons from 'components/ui/icons.scss';
+import popupStyles from 'components/ui/popup/popup.scss';
 
 import styles from './contactForm.scss';
-import popupStyles from 'components/ui/popup/popup.scss';
 import messages from './contactForm.intl.json';
 
 export default class ContactForm extends Component {

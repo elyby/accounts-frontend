@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { Form, Button, Input, FormModel } from 'components/ui/form';
+import popupStyles from 'components/ui/popup/popup.scss';
 
 import messages from './PasswordRequestForm.intl.json';
 
@@ -21,19 +22,23 @@ export default class PasswordRequestForm extends Component {
             <Form onSubmit={this.onFormSubmit}
                 form={form}
             >
-                <h2>
-                    <Message {...messages.title} />
-                </h2>
+                <div className={popupStyles.header}>
+                    <h2 className={popupStyles.headerTitle}>
+                        <Message {...messages.title} />
+                    </h2>
+                </div>
 
-                <Input {...form.bindField('password')}
-                    type="password"
-                    required
-                    autoFocus
-                    color="green"
-                    skin="light"
-                    icon="key"
-                    placeholder={messages.pleaseEnterPassword}
-                />
+                <div className={popupStyles.body}>
+                    <Input {...form.bindField('password')}
+                        type="password"
+                        required
+                        autoFocus
+                        color="green"
+                        skin="light"
+                        icon="key"
+                        placeholder={messages.pleaseEnterPassword}
+                    />
+                </div>
                 <Button color="green" label="OK" block type="submit" />
             </Form>
         );
