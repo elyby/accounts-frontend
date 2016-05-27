@@ -9,6 +9,7 @@ $dropdownPadding: 15px;
 
         background-color: $backgroundColor;
 
+        .menuItem:hover,
         &:hover {
             background-color: lighter($backgroundColor);
         }
@@ -42,7 +43,7 @@ $dropdownPadding: 15px;
 }
 
 .toggleIcon {
-    composes: selecter from './icons.scss';
+    composes: selecter from 'components/ui/icons.scss';
 
     position: absolute;
     right: $dropdownPadding;
@@ -62,6 +63,53 @@ $dropdownPadding: 15px;
 .block {
     display: block;
     width: 100%;
+
+    .menu {
+        width: 100%;
+    }
+}
+
+.menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    z-index: 10;
+
+    width: 120%;
+
+    background: #fff;
+    border: 1px solid #ddd;
+
+    transition: 0.5s ease;
+    transition-property: opacity, visibility;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.menuActive {
+    opacity: 1;
+    visibility: visible;
+}
+
+.menuItem {
+    height: 50px;
+    padding: 0 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    color: #444;
+    line-height: 50px;
+    font-size: 18px;
+    font-family: $font-family-title;
+
+    border-bottom: 1px solid #ebe8df;
+    cursor: pointer;
+
+    transition: .25s;
+
+    &:hover {
+        color: #fff;
+    }
 }
 
 @include dropdown-theme('green', $green);

@@ -11,6 +11,8 @@ import popupStyles from 'components/ui/popup/popup.scss';
 import styles from './contactForm.scss';
 import messages from './contactForm.intl.json';
 
+const CONTACT_CATEGORIES = ['Foo', 'Bar', 'Baz'];
+
 export default class ContactForm extends Component {
     static displayName = 'ContactForm';
 
@@ -65,7 +67,7 @@ export default class ContactForm extends Component {
                         </div>
 
                         <div className={styles.formMargin}>
-                            <Dropdown label={messages.whichQuestion} block />
+                            <Dropdown label={messages.whichQuestion} items={CONTACT_CATEGORIES} block />
                         </div>
 
                         <TextArea
