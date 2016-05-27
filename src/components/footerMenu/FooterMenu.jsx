@@ -8,7 +8,7 @@ import { LangMenu } from 'components/langMenu';
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
 
-export default class FooterMenu extends Component {
+class FooterMenu extends Component {
     static displayName = 'FooterMenu';
 
     static propTypes = {

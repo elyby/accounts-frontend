@@ -69,29 +69,29 @@ export default connect(null, {
                     return Promise.resolve({requirePassword});
                 }
             })
-            .then((resp) => new Promise((resolve) => {
-                if (resp.requirePassword) {
-                    dispatch(createPopup(PasswordRequestForm, (props) => ({
-                        form,
-                        onSubmit: () => {
-                            form.beginLoading();
-                            sendData()
-                                .catch((resp) => {
-                                    if (resp.errors) {
-                                        form.setErrors(resp.errors);
-                                    }
-
-                                    return Promise.reject(resp);
-                                })
-                                .then(resolve)
-                                .then(props.onClose)
-                                .finally(() => form.endLoading());
-                        }
-                    })));
-                } else {
-                    resolve();
-                }
-            }))
+            .then((resp) => !resp.requirePassword || requestPassword(form))
             .finally(() => form.endLoading());
+
+        function requestPassword(form) {
+            return new Promise((resolve) => {
+                dispatch(createPopup(PasswordRequestForm, (props) => ({
+                    form,
+                    onSubmit: () => {
+                        form.beginLoading();
+                        sendData()
+                            .catch((resp) => {
+                                if (resp.errors) {
+                                    form.setErrors(resp.errors);
+                                }
+
+                                return Promise.reject(resp);
+                            })
+                            .then(resolve)
+                            .then(props.onClose)
+                            .finally(() => form.endLoading());
+                    }
+                })));
+            });
+        }
     }
 })(ProfilePage);
