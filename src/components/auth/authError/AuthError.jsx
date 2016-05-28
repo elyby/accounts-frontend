@@ -14,12 +14,8 @@ export default function AuthError({error, onClose = function() {}}) {
     resetTimer();
 
     if (error.payload && error.payload.canRepeatIn) {
-        if (error.payload && error.payload.canRepeatIn) {
-            error.payload.msLeft = error.payload.canRepeatIn * 1000;
-            setTimeout(onClose, error.payload.msLeft - Date.now() + 1500); // 1500 to let the user see, that time is elapsed
-        } else {
-            // TODO: it would be greate to log this case, when we will setup frontend logging
-        }
+        error.payload.msLeft = error.payload.canRepeatIn * 1000;
+        setTimeout(onClose, error.payload.msLeft - Date.now() + 1500); // 1500 to let the user see, that time is elapsed
     }
 
     return (

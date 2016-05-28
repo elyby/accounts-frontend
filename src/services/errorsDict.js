@@ -70,8 +70,10 @@ const errorsMap = {
     'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
 
     'error.email_frequency': (props) => <Message {...messages.emailFrequency} values={{
+        // for msLeft @see AuthError.jsx
         time: <Relative value={props.msLeft} updateInterval={1000} />
     }} />,
+    'error.recently_sent_message': (props) => errorsMap['error.email_frequency'](props),
 
     'error.email_not_found': () => <Message {...messages.emailNotFound} />,
     'error.account_already_activated': () => <Message {...messages.accountAlreadyActivated} />,
