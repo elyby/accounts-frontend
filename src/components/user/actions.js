@@ -44,9 +44,11 @@ export function setUser(payload) {
 }
 
 export function logout() {
-    return (dispatch) => {
-        dispatch(setUser({isGuest: true}));
-        dispatch(changeLang());
+    return (dispatch, getState) => {
+        dispatch(setUser({
+            lang: getState().user.lang,
+            isGuest: true
+        }));
         dispatch(routeActions.push('/login'));
     };
 }

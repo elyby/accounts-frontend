@@ -17,6 +17,6 @@ export function factory(store) {
         }
 
         // auto-detect guests language
-        store.dispatch(changeLang()).then(resolve, reject);
+        store.dispatch(changeLang(user.lang)).then(resolve, reject);
     });
 }
