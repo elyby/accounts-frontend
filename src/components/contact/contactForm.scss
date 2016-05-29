@@ -6,10 +6,20 @@
 }
 
 .close {
-    position: absolute;
-    right: 10px;
-    top: 10px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 35px;
     cursor: pointer;
+    font-size: 20px;
+    color: rgba(#000, 0.4);
+    background: rgba(#000, 0);
+    transition: 0.25s;
+
+    &:hover {
+        color: rgba(#000, 0.6);
+        background: rgba(#fff, 0.75);
+    }
 }
 
 .philosophicalThought {
