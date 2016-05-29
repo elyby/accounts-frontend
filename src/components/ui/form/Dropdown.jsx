@@ -18,7 +18,7 @@ export default class Dropdown extends FormComponent {
         ]).isRequired,
         items: PropTypes.arrayOf(PropTypes.string).isRequired,
         block: PropTypes.bool,
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet'])
+        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet', 'orange'])
     };
 
     state = {
@@ -42,14 +42,13 @@ export default class Dropdown extends FormComponent {
 
         return (
             <div className={classNames(styles[color], {
-                [styles.block]: block
+                [styles.block]: block,
+                [styles.opened]: isActive
             })} {...this.props} onClick={this.onToggle}>
                 {label}
                 <span className={styles.toggleIcon} />
 
-                <div className={classNames(styles.menu, {
-                    [styles.menuActive]: isActive
-                })}>
+                <div className={styles.menu}>
                     {items.map((item, key) => (
                         <div className={styles.menuItem} key={key} onClick={this.onSelectItem(item)}>
                             {item}

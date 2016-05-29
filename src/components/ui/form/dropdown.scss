@@ -14,7 +14,8 @@ $dropdownPadding: 15px;
             background-color: lighter($backgroundColor);
         }
 
-        &:active { // TODO: +.open, чтобы он был ужатый в раскрытом состоянии
+        &:active,
+        &.opened {
             background-color: darker($backgroundColor);
         }
     }
@@ -42,6 +43,10 @@ $dropdownPadding: 15px;
     }
 }
 
+.opened {
+
+}
+
 .toggleIcon {
     composes: selecter from 'components/ui/icons.scss';
 
@@ -55,7 +60,8 @@ $dropdownPadding: 15px;
         right: $dropdownPadding - 5px;
     }
 
-    .dropdown:active & { // TODO: + .open, смотри коммент выше
+    .dropdown:active &,
+    .dropdown.opened & {
         right: $dropdownPadding + 5px;
     }
 }
@@ -84,11 +90,11 @@ $dropdownPadding: 15px;
     transition-property: opacity, visibility;
     opacity: 0;
     visibility: hidden;
-}
 
-.menuActive {
-    opacity: 1;
-    visibility: visible;
+    .dropdown.opened & {
+        opacity: 1;
+        visibility: visible;
+    }
 }
 
 .menuItem {
