@@ -53,6 +53,11 @@ export default class AuthFlow {
     }
 
     run(actionId, payload) {
+        if (actionId === 'redirect') {
+            location.href = payload;
+            return;
+        }
+
         if (!this.actions[actionId]) {
             throw new Error(`Action ${actionId} does not exists`);
         }

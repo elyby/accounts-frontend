@@ -5,10 +5,7 @@ import {updateUser} from 'components/user/actions';
 
 const availableActions = {
     ...actions,
-    updateUser,
-    redirect(url) {
-        location.href = url;
-    }
+    updateUser
 };
 
 export default new AuthFlow(availableActions);
