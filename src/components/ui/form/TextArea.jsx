@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import { uniqueId } from 'functions';
+import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
@@ -24,12 +25,18 @@ export default class TextArea extends FormInputComponent {
             PropTypes.string
         ]),
         error: PropTypes.string,
-        skin: PropTypes.oneOf(['dark', 'light']),
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet'])
+        skin: PropTypes.oneOf(skins),
+        color: PropTypes.oneOf(colors)
+    };
+
+    static defaultProps = {
+        color: COLOR_GREEN,
+        skin: SKIN_DARK
     };
 
     render() {
-        let { color = 'green', skin = 'dark', label } = this.props;
+        const { color, skin } = this.props;
+        let { label } = this.props;
 
         const props = {
             type: 'text',

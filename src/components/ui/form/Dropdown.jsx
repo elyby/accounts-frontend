@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 
 import classNames from 'classnames';
 
+import { colors, COLOR_GREEN } from 'components/ui';
+
 import styles from './dropdown.scss';
 import FormComponent from './FormComponent';
 
@@ -18,7 +20,11 @@ export default class Dropdown extends FormComponent {
         ]).isRequired,
         items: PropTypes.arrayOf(PropTypes.string).isRequired,
         block: PropTypes.bool,
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet', 'orange'])
+        color: PropTypes.oneOf(colors)
+    };
+
+    static defaultProps = {
+        color: COLOR_GREEN
     };
 
     state = {
@@ -35,7 +41,7 @@ export default class Dropdown extends FormComponent {
     }
 
     render() {
-        const { color = 'green', block, items } = this.props;
+        const { color, block, items } = this.props;
         const {isActive, activeItem} = this.state;
 
         const label = this.formatMessage(activeItem);

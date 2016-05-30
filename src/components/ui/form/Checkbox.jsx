@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 
 import classNames from 'classnames';
 
+import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
+
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
@@ -9,8 +11,8 @@ export default class Checkbox extends FormInputComponent {
     static displayName = 'Checkbox';
 
     static propTypes = {
-        color: PropTypes.oneOf(['green', 'blue', 'red']),
-        skin: PropTypes.oneOf(['dark', 'light']),
+        color: PropTypes.oneOf(colors),
+        skin: PropTypes.oneOf(skins),
         label: PropTypes.oneOfType([
             PropTypes.shape({
                 id: PropTypes.string
@@ -19,8 +21,14 @@ export default class Checkbox extends FormInputComponent {
         ]).isRequired
     };
 
+    static defaultProps = {
+        color: COLOR_GREEN,
+        skin: SKIN_DARK
+    };
+
     render() {
-        let { label, color = 'green', skin = 'dark' } = this.props;
+        const { color, skin } = this.props;
+        let { label } = this.props;
 
         label = this.formatMessage(label);
 

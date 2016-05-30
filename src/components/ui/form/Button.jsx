@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
+import { colors, COLOR_GREEN } from 'components/ui';
 
 import FormComponent from './FormComponent';
 
@@ -17,11 +18,15 @@ export default class Button extends FormComponent {
             PropTypes.string
         ]).isRequired,
         block: PropTypes.bool,
-        color: PropTypes.oneOf(['green', 'blue', 'red', 'lightViolet', 'darkBlue', 'violet', 'orange'])
+        color: PropTypes.oneOf(colors)
+    };
+
+    static defaultProps = {
+        color: COLOR_GREEN
     };
 
     render() {
-        const { color = 'green', block, small } = this.props;
+        const { color, block, small } = this.props;
 
         const props = {
             ...this.props
