@@ -59,8 +59,9 @@ export default function RulesPage() {
     return (
         <div>
             <div className={styles.rules}>
-                {rules.map((block, key) => (
-                    <div className={styles.rulesSection} key={key}>
+                {rules.map((block, sectionIndex) => (
+                    <div className={styles.rulesSection} key={sectionIndex}>
+                        <span id={`rule-${sectionIndex + 1}`} />
                         <h2 className={styles.rulesSectionTitle}>{block.title}</h2>
 
                         <div className={styles.rulesBody}>
@@ -70,8 +71,11 @@ export default function RulesPage() {
                                 </div>
                             ) : ''}
                             <ol className={styles.rulesList}>
-                                {block.items.map((item, key) => (
-                                    <li className={styles.rulesItem} key={key}>{item}</li>
+                                {block.items.map((item, ruleIndex) => (
+                                    <li className={styles.rulesItem} key={ruleIndex}>
+                                        <span id={`rule-${sectionIndex + 1}-${ruleIndex + 1}`} />
+                                        {item}
+                                    </li>
                                 ))}
                             </ol>
                         </div>

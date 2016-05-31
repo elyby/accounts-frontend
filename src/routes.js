@@ -26,11 +26,6 @@ import Finish from 'components/auth/finish/Finish';
 
 import authFlow from 'services/authFlow';
 
-browserHistory.listen(() => {
-    // scroll to top on route transition
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-});
-
 export default function routesFactory(store) {
     authFlow.setStore(store);
 

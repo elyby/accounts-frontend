@@ -38,7 +38,7 @@ userFactory(store)
     ReactDOM.render(
         <ReduxProvider store={store}>
             <IntlProvider>
-                <Router history={browserHistory}>
+                <Router history={browserHistory} onUpdate={restoreScroll}>
                     {routesFactory(store)}
                 </Router>
             </IntlProvider>
@@ -49,6 +49,23 @@ userFactory(store)
     document.getElementById('loader').classList.remove('is-active');
 });
 
+/**
+ * Scrolls to page's top or #anchor link, if any
+ */
+function restoreScroll() {
+    const {hash} = location;
+
+    // Push onto callback queue so it runs after the DOM is updated
+    setTimeout(() => {
+        const id = hash.replace('#', '');
+        const el = id ? document.getElementById(id) : null;
+        if (el) {
+            el.scrollIntoView();
+        } else {
+            window.scrollTo(0, 0);
+        }
+    }, 100);
+}
 
 if (process.env.NODE_ENV !== 'production') {
     // some shortcuts for testing on localhost
