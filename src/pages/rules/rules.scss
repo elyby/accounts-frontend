@@ -26,7 +26,8 @@
 
 .rulesBody {
     position: relative;
-    z-index: -2;
+    // z-index, чтобы положить :before ниже текста, но выше фона блока
+    z-index: 0;
 
     padding: 20px;
     background: #fff;
@@ -57,6 +58,7 @@
 
     list-style: decimal;
     position: relative;
+    cursor: pointer;
 
     &:last-of-type {
         margin-bottom: 0;
@@ -64,6 +66,7 @@
 
     &.target {
         &:before {
+            cursor: default;
             $border: 8px solid #ddd8ce;
             content: '';
             position: absolute;

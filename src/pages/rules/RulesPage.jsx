@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { FooterMenu } from 'components/footerMenu';
@@ -98,6 +98,7 @@ export default class RulesPage extends Component {
                                             })}
                                             key={ruleIndex}
                                             id={this.getRuleHash(sectionIndex, ruleIndex)}
+                                            onClick={this.onRuleClick}
                                         >
                                             {item}
                                         </li>
@@ -112,6 +113,12 @@ export default class RulesPage extends Component {
                 </div>
             </div>
         );
+    }
+
+    onRuleClick(event) {
+        const id = event.currentTarget.id;
+        const newLocation = browserHistory.createLocation({...location, hash: `#${id}`});
+        browserHistory.replace(newLocation);
     }
 
     getTitleHash(sectionIndex) {
