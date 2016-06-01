@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
+import Helmet from 'react-helmet';
 
 import { FooterMenu } from 'components/footerMenu';
 
@@ -64,6 +65,13 @@ export default class RulesPage extends Component {
         })
     };
 
+    static contextTypes = {
+        router: PropTypes.shape({
+            createLocation: PropTypes.func.required,
+            replace: PropTypes.func.required
+        }).isRequired
+    };
+
     render() {
         let {hash} = this.props.location;
         if (hash) {
@@ -72,14 +80,20 @@ export default class RulesPage extends Component {
 
         return (
             <div>
+                <Message {...messages.title}>
+                    {(pageTitle) => (
+                        <Helmet title={pageTitle} />
+                    )}
+                </Message>
+
                 <div className={styles.rules}>
                     {rules.map((block, sectionIndex) => (
                         <div className={styles.rulesSection} key={sectionIndex}>
                             <h2
                                 className={classNames(styles.rulesSectionTitle, {
-                                    [styles.target]: this.getTitleHash(sectionIndex) === hash
+                                    [styles.target]: RulesPage.getTitleHash(sectionIndex) === hash
                                 })}
-                                id={this.getTitleHash(sectionIndex)}
+                                id={RulesPage.getTitleHash(sectionIndex)}
                             >
                                 {block.title}
                             </h2>
@@ -94,11 +108,11 @@ export default class RulesPage extends Component {
                                     {block.items.map((item, ruleIndex) => (
                                         <li
                                             className={classNames(styles.rulesItem, {
-                                                [styles.target]: this.getRuleHash(sectionIndex, ruleIndex) === hash
+                                                [styles.target]: RulesPage.getRuleHash(sectionIndex, ruleIndex) === hash
                                             })}
                                             key={ruleIndex}
-                                            id={this.getRuleHash(sectionIndex, ruleIndex)}
-                                            onClick={this.onRuleClick}
+                                            id={RulesPage.getRuleHash(sectionIndex, ruleIndex)}
+                                            onClick={this.onRuleClick.bind(this)}
                                         >
                                             {item}
                                         </li>
@@ -116,17 +130,18 @@ export default class RulesPage extends Component {
     }
 
     onRuleClick(event) {
-        const id = event.currentTarget.id;
-        const newLocation = browserHistory.createLocation({...location, hash: `#${id}`});
-        browserHistory.replace(newLocation);
+        const {id} = event.currentTarget;
+        const {router} = this.context;
+        const newLocation = router.createLocation({...location, hash: `#${id}`});
+        router.replace(newLocation);
     }
 
-    getTitleHash(sectionIndex) {
+    static getTitleHash(sectionIndex) {
         return `rule-${sectionIndex + 1}`;
     }
 
-    getRuleHash(sectionIndex, ruleIndex) {
-        return `rule-${sectionIndex + 1}-${ruleIndex + 1}`;
+    static getRuleHash(sectionIndex, ruleIndex) {
+        return `${RulesPage.getTitleHash(sectionIndex)}-${ruleIndex + 1}`;
     }
 }
 
