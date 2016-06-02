@@ -60,6 +60,7 @@ $popupPadding: 20px;
 }
 
 .header {
+    position: relative;
     background: $light;
     padding: 15px $popupPadding;
     border-bottom: 1px solid #dedede;
@@ -73,4 +74,28 @@ $popupPadding: 20px;
 
 .body {
     padding: $popupPadding;
+}
+
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: rgba(#000, 0.4);
+    background: rgba(#000, 0);
+    transition: 0.25s;
+
+    &:hover {
+        color: rgba(#000, 0.6);
+        background: rgba(#fff, 0.75);
+    }
+}
+
+@media (min-width: 655px) {
+    .close {
+        position: fixed;
+        padding: 35px;
+    }
 }

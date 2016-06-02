@@ -32,7 +32,7 @@ export default class ContactForm extends Component {
                     <h2 className={popupStyles.headerTitle}>
                         <Message {...messages.title} />
                     </h2>
-                    <span className={classNames(icons.close, styles.close)} onClick={onClose} />
+                    <span className={classNames(icons.close, popupStyles.close)} onClick={onClose} />
                 </div>
 
                 <Form form={form} onSubmit={this.onSubmit}>
