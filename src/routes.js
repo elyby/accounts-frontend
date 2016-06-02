@@ -30,7 +30,7 @@ export default function routesFactory(store) {
     authFlow.setStore(store);
 
     const startAuthFlow = {
-        onEnter: ({location}, replace) => authFlow.handleRequest(location.pathname, replace)
+        onEnter: ({location}, replace, callback) => authFlow.handleRequest(location.pathname, replace, callback)
     };
 
     const userOnly = {

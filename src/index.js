@@ -37,7 +37,10 @@ userFactory(store)
     ReactDOM.render(
         <ReduxProvider store={store}>
             <IntlProvider>
-                <Router history={browserHistory} onUpdate={restoreScroll}>
+                <Router history={browserHistory} onUpdate={() => {
+                    restoreScroll();
+                    stopLoading();
+                }}>
                     {routesFactory(store)}
                 </Router>
             </IntlProvider>
@@ -45,7 +48,6 @@ userFactory(store)
         document.getElementById('app')
     );
 
-    document.getElementById('loader').classList.remove('is-active');
 });
 
 /**
@@ -66,7 +68,13 @@ function restoreScroll() {
     }, 100);
 }
 
+function stopLoading() {
+    document.getElementById('loader').classList.remove('is-active');
+}
+
 if (process.env.NODE_ENV !== 'production') {
     // some shortcuts for testing on localhost
     window.testOAuth = () => location.href = '/oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session';
+    window.testOAuthStatic = () => location.href = '/oauth?client_id=ely&redirect_uri=static_page_with_code&response_type=code&scope=minecraft_server_session';
+    window.testOAuthStaticCode = () => location.href = '/oauth?client_id=ely&redirect_uri=static_page&response_type=code&scope=minecraft_server_session';
 }

@@ -77,11 +77,20 @@ export default class AuthFlow {
 
         this.state && this.state.leave(this);
         this.state = state;
-        this.state.enter(this);
+        const resp = this.state.enter(this);
+
+        if (resp && resp.then) {
+            // this is a state with an async enter phase
+            // block route components from mounting, till promise will be resolved
+            const callback = this.onReady;
+            this.onReady = () => {};
+            return resp.then(callback);
+        }
     }
 
-    handleRequest(path, replace) {
+    handleRequest(path, replace, callback) {
         this.replace = replace;
+        this.onReady = callback;
 
         if (path === '/') {
             // reset oauth data if user tried to navigate to index route
@@ -125,5 +134,7 @@ export default class AuthFlow {
                         throw new Error(`Unsupported request: ${path}`);
                 }
         }
+
+        this.onReady();
     }
 }

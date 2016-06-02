@@ -32,13 +32,15 @@ export default class CompleteState extends AbstractState {
                     context.setState(new PermissionsState());
                     return;
                 }
-                context.run('oAuthComplete', data).then((resp) => {
+                // TODO: it seams that oAuthComplete may be a separate state
+                return context.run('oAuthComplete', data).then((resp) => {
                     // TODO: пусть в стейт попадает флаг или тип авторизации
                     // вместо волшебства над редирект урлой
                     if (resp.redirectUri.indexOf('static_page') === 0) {
                         context.setState(new FinishState());
                     } else {
                         context.run('redirect', resp.redirectUri);
+                        return Promise.reject(); // do not allow loader to be hidden and app to be rendered
                     }
                 }, (resp) => {
                     if (resp.unauthorized) {

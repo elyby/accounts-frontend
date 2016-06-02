@@ -5,7 +5,7 @@ export default class OAuthState extends AbstractState {
     enter(context) {
         const query = context.getState().routing.location.query;
 
-        context.run('oAuthValidate', {
+        return context.run('oAuthValidate', {
             clientId: query.client_id,
             redirectUrl: query.redirect_uri,
             responseType: query.response_type,
