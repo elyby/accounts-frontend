@@ -26,6 +26,12 @@ function buildQuery(data = {}) {
         ;
 }
 
+function doFetch(...args) {
+    // NOTE: we are wrapping fetch, because it is returning
+    // Promise instance that can not be pollyfilled with Promise.prototype.finally
+    return new Promise((resolve, reject) => fetch(...args).then(resolve, reject));
+}
+
 let authToken;
 
 const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
@@ -45,7 +51,7 @@ const getDefaultHeaders = () => {
 
 export default {
     post(url, data) {
-        return fetch(url, {
+        return doFetch(url, {
             method: 'POST',
             headers: {
                 ...getDefaultHeaders(),
@@ -65,7 +71,7 @@ export default {
             url += separator + buildQuery(data);
         }
 
-        return fetch(url, {
+        return doFetch(url, {
             headers: getDefaultHeaders()
         })
         .then(checkStatus)
