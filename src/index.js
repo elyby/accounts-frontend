@@ -34,6 +34,9 @@ const store = applyMiddleware(
 
 userFactory(store)
 .then(() => {
+    // allow :active styles in mobile Safary
+    document.addEventListener("touchstart", () => {}, true);
+
     ReactDOM.render(
         <ReduxProvider store={store}>
             <IntlProvider>
