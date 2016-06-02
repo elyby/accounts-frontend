@@ -76,6 +76,7 @@ export default connect(null, {
             return new Promise((resolve) => {
                 dispatch(createPopup(PasswordRequestForm, (props) => ({
                     form,
+                    disableOverlayClose: true,
                     onSubmit: () => {
                         form.beginLoading();
                         sendData()

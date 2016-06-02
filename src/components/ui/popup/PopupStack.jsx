@@ -29,7 +29,7 @@ export class PopupStack extends Component {
                         : {...defaultProps, ...popup.props};
 
                     return (
-                        <div className={styles.overlay} key={popup.type + index}>
+                        <div className={styles.overlay} key={index} onClick={this.onOverlayClick(popup, props)}>
                             <div className={styles.popupWrapper}>
                                 <div className={styles.popup}>
                                     <Popup {...props} />
@@ -44,6 +44,18 @@ export class PopupStack extends Component {
 
     onClose(popup) {
         return this.props.destroy.bind(null, popup);
+    }
+
+    onOverlayClick(popup, popupProps) {
+        return (event) => {
+            if (event.target !== event.currentTarget || popupProps.disableOverlayClose) {
+                return;
+            }
+
+            event.preventDefault();
+
+            this.props.destroy(popup);
+        };
     }
 }
 
