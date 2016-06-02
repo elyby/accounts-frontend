@@ -6,6 +6,7 @@ import IndexPage from 'pages/index/IndexPage';
 import AuthPage from 'pages/auth/AuthPage';
 
 import RulesPage from 'pages/rules/RulesPage';
+import PageNotFound from 'pages/404/PageNotFound';
 
 import ProfilePage from 'pages/profile/ProfilePage';
 import ProfileChangePasswordPage from 'pages/profile/ChangePasswordPage';
@@ -69,6 +70,8 @@ export default function routesFactory(store) {
                 <Route path="change-username" component={ProfileChangeUsernamePage} />
                 <Route path="change-email(/:step)(/:code)" component={ProfileChangeEmailPage} />
             </Route>
+
+            <Route path="*" component={PageNotFound} />
         </Route>
     );
 }
