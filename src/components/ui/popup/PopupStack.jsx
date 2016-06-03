@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import styles from './popup.scss';
 
 export class PopupStack extends Component {
@@ -17,7 +19,14 @@ export class PopupStack extends Component {
         const {popups} = this.props;
 
         return (
-            <div>
+            <ReactCSSTransitionGroup
+                transitionName={{
+                    enter: styles.trEnter,
+                    leave: styles.trLeave
+                }}
+                transitionEnterTimeout={500}
+                transitionLeaveTimeout={500}
+            >
                 {popups.map((popup, index) => {
                     const Popup = popup.type;
 
@@ -38,7 +47,7 @@ export class PopupStack extends Component {
                         </div>
                     );
                 })}
-            </div>
+            </ReactCSSTransitionGroup>
         );
     }
 

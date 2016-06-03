@@ -86,6 +86,7 @@ $popupPadding: 20px;
     color: rgba(#000, 0.4);
     background: rgba(#000, 0);
     transition: 0.25s;
+    transform: translateX(0);
 
     &:hover {
         color: rgba(#000, 0.6);
@@ -97,5 +98,59 @@ $popupPadding: 20px;
     .close {
         position: fixed;
         padding: 35px;
+    }
+}
+
+/**
+ * Transition states
+ */
+.trEnter {
+    opacity: 0;
+
+    .popup {
+        opacity: 0;
+        transform: translateY(-30%);
+    }
+
+    &-active {
+        opacity: 1;
+        transition: opacity 0.2s ease-in;
+
+        .popup {
+            opacity: 1;
+            transform: translateY(0);
+            transition: 0.2s ease;
+        }
+    }
+}
+
+.trLeave {
+    opacity: 1;
+
+    .popup {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    &-active {
+        opacity: 0;
+        transition: opacity 0.2s ease-in;
+
+        .popup {
+            opacity: 0;
+            transform: translateY(30%);
+            transition: 0.2s ease;
+        }
+    }
+}
+
+.trEnter,
+.trLeave {
+    .close {
+        // do not show close during transition, because transform forces position: fixed
+        // to layout relative container, instead of body
+        opacity: 0;
+        transform: translate(100%);
+        transition: 0s;
     }
 }
