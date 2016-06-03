@@ -95,6 +95,16 @@ $formColumnWidth: 416px;
     color: $red;
     font-size: 11px;
     line-height: 1.2;
+
+    a {
+        color: $red;
+        border-bottom: 1px dashed transparent;
+        transition: .25s;
+
+        &:hover {
+            border-bottom-color: lighter($red);
+        }
+    }
 }
 
 .uuid {

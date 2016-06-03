@@ -1,4 +1,6 @@
 {
+    "title" : "Site rules",
+
     "mainProvisions": "Main provisions",
     "mainProvision1": "{name} service was created for the organization of safety access to Ely.by's users accounts, his partners and any side project that wish to use one of the our's services",
     "mainProvision2": "We (here and in the next points) - Ely.by project developers team that make creating qualitative services for Minecraft community.",

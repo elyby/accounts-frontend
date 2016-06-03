@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message, FormattedRelative as Relative, FormattedHTMLMessage as HTMLMessage } from 'react-intl';
+import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import { userShape } from 'components/user/User';
@@ -11,6 +12,8 @@ import ProfileField from './ProfileField';
 import styles from './profile.scss';
 import profileForm from './profileForm.scss';
 import messages from './Profile.intl.json';
+
+import RulesPage from 'pages/rules/RulesPage';
 
 export default class Profile extends Component {
     static displayName = 'Profile';
@@ -55,7 +58,16 @@ export default class Profile extends Component {
                                 label={<Message {...messages.nickname} />}
                                 value={user.username}
                                 warningMessage={user.hasMojangUsernameCollision ? (
-                                    <Message {...messages.mojangPriorityWarning} />
+                                    <Message {...messages.mojangPriorityWarning} values={{
+                                        rules: (
+                                            <Link to={{
+                                                pathname: '/rules',
+                                                hash: `#${RulesPage.getRuleHash(1, 4)}`
+                                            }}>
+                                                <Message {...messages.projectRules} />
+                                            </Link>
+                                        )
+                                    }} />
                                 ) : ''}
                             />
 

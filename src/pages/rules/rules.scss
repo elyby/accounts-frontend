@@ -25,6 +25,10 @@
 }
 
 .rulesBody {
+    position: relative;
+    // z-index, чтобы положить :before ниже текста, но выше фона блока
+    z-index: 0;
+
     padding: 20px;
     background: #fff;
     font-size: 14px;
@@ -53,20 +57,40 @@
     @extend %rulesTextFormat;
 
     list-style: decimal;
+    position: relative;
+    cursor: pointer;
 
     &:last-of-type {
         margin-bottom: 0;
+    }
+
+    &.target {
+        &:before {
+            cursor: default;
+            $border: 8px solid #ddd8ce;
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -40px;
+            width: calc(100% + 60px);
+            height: calc(100% + 20px);
+            background: $light;
+            border-left: $border;
+            border-right: $border;
+            box-sizing: border-box;
+            z-index: -1;
+        }
     }
 
     a {
         color: #444;
         border-bottom: 1px dotted #aaa;
         text-decoration: none;
-        transition: .25s
-    }
+        transition: .25s;
 
-    a:hover {
-        border-bottom-color: #444
+        &:hover {
+            border-bottom-color: #444
+        }
     }
 }
 
