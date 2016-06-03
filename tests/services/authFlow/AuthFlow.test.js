@@ -38,7 +38,7 @@ describe('AuthFlow', () => {
             expect(flow.state).to.be.equal(state);
         });
 
-        it('should call `enter` on new state and pass reference to itself', () => {
+        it('should call #enter() on new state and pass reference to itself', () => {
             const state = new AbstractState();
             const spy = sinon.spy(state, 'enter');
 
@@ -60,6 +60,17 @@ describe('AuthFlow', () => {
             sinon.assert.calledWith(spy1, flow);
             sinon.assert.calledOnce(spy1);
             sinon.assert.notCalled(spy2);
+        });
+
+        it('should return promise, if #enter returns it', () => {
+            const state = new AbstractState();
+            const expected = Promise.resolve();
+
+            state.enter = () => expected;
+
+            const actual = flow.setState(state);
+
+            expect(actual).to.be.equal(expected);
         });
 
         it('should throw if no state', () => {
@@ -182,6 +193,32 @@ describe('AuthFlow', () => {
 
             sinon.assert.calledOnce(flow.run);
             sinon.assert.calledWithExactly(flow.run, 'setOAuthRequest', {});
+        });
+
+        it('should call callback', () => {
+            const callback = sinon.stub();
+
+            flow.handleRequest('/', function() {}, callback);
+
+            sinon.assert.calledOnce(callback);
+        });
+
+        it('should not call callback till returned from #enter() promise will be resolved', () => {
+            let resolve;
+            const promise = {then: (cb) => {resolve = cb}};
+            const callback = sinon.stub();
+            const state = new AbstractState();
+            state.enter = () => promise;
+
+            flow.setState = AuthFlow.prototype.setState.bind(flow, state);
+
+            flow.handleRequest('/', function() {}, callback);
+
+            expect(resolve).to.be.a('function');
+
+            sinon.assert.notCalled(callback);
+            resolve();
+            sinon.assert.calledOnce(callback);
         });
 
         it('throws if unsupported request', () => {

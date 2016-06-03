@@ -82,13 +82,25 @@ export default class AuthFlow {
         if (resp && resp.then) {
             // this is a state with an async enter phase
             // block route components from mounting, till promise will be resolved
-            const callback = this.onReady;
-            this.onReady = () => {};
-            return resp.then(callback);
+            if (this.onReady) {
+                const callback = this.onReady;
+                this.onReady = () => {};
+                return resp.then(callback);
+            } else {
+                return resp;
+            }
         }
     }
 
-    handleRequest(path, replace, callback) {
+    /**
+     * This should be called from onEnter prop of react-router Route component
+     *
+     * @param {string} path
+     * @param {function} replace
+     * @param {function} [callback = function() {}] - an optional callback function to be called, when state will be stabilized
+     *                                                (state's enter function's promise resolved)
+     */
+    handleRequest(path, replace, callback = function() {}) {
         this.replace = replace;
         this.onReady = callback;
 
