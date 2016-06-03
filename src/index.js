@@ -53,6 +53,7 @@ userFactory(store)
 
 });
 
+const SCROLL_ANCHOR_OFFSET = 80; // 50 + 30 (header height + some spacing)
 /**
  * Scrolls to page's top or #anchor link, if any
  */
@@ -63,11 +64,16 @@ function restoreScroll() {
     setTimeout(() => {
         const id = hash.replace('#', '');
         const el = id ? document.getElementById(id) : null;
+
+        let y = 0;
         if (el) {
-            el.scrollIntoView();
-        } else {
-            window.scrollTo(0, 0);
+            const {scrollTop} = document.body;
+            const {top} = el.getBoundingClientRect();
+
+            y = scrollTop + top - SCROLL_ANCHOR_OFFSET;
         }
+
+        window.scrollTo(0, y);
     }, 100);
 }
 
