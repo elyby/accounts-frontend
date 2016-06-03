@@ -53,6 +53,7 @@ userFactory(store)
 
 });
 
+import scrollTo from 'components/ui/scrollTo';
 const SCROLL_ANCHOR_OFFSET = 80; // 50 + 30 (header height + some spacing)
 /**
  * Scrolls to page's top or #anchor link, if any
@@ -73,7 +74,7 @@ function restoreScroll() {
             y = scrollTop + top - SCROLL_ANCHOR_OFFSET;
         }
 
-        window.scrollTo(0, y);
+        scrollTo(y);
     }, 100);
 }
 
