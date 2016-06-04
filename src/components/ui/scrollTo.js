@@ -1,28 +1,30 @@
 /**
  * Implements scroll to animation with momentum effect
+ *
+ * @see http://ariya.ofilabs.com/2013/11/javascript-kinetic-scrolling-part-2.html
  */
 
 const requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame
     || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-const DURATION = 500;
+const TIME_CONSTANT = 100;
 export default function scrollTo(y) {
     const start = Date.now();
     const {scrollTop} = document.body;
-    const delta = y - scrollTop;
+    const amplitude = y - scrollTop;
 
     requestAnimationFrame(function animateScroll() {
         const elapsed = Date.now() - start;
 
-        let interpolatedY = scrollTop + delta * (elapsed / DURATION);
+        let delta = -amplitude * Math.exp(-elapsed / TIME_CONSTANT);
 
-        if (interpolatedY < y) {
+        if (Math.abs(delta) > 0.5) {
             requestAnimationFrame(animateScroll);
         } else {
-            interpolatedY = y;
+            delta = 0;
         }
 
-        window.scrollTo(0, interpolatedY);
+        window.scrollTo(0, y + delta);
     });
 }
 
