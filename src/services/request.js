@@ -1,32 +1,34 @@
-function convertQueryValue(value) {
-    if (typeof value === 'undefined') {
-        return '';
-    }
-
-    if (value === true) {
-        return 1;
-    }
-
-    if (value === false) {
-        return 0;
-    }
-
-    return value;
-}
-
-function buildQuery(data = {}) {
-    return Object.keys(data)
-        .map(
-            (keyName) =>
-                [keyName, convertQueryValue(data[keyName])]
-                    .map(encodeURIComponent)
-                    .join('=')
-        )
-        .join('&')
-        ;
-}
-
 const middlewares = [];
+
+export default {
+    post(url, data) {
+        return doFetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: buildQuery(data)
+        });
+    },
+
+    get(url, data) {
+        if (typeof data === 'object') {
+            const separator = url.indexOf('?') === -1 ? '?' : '&';
+            url += separator + buildQuery(data);
+        }
+
+        return doFetch(url);
+    },
+
+    buildQuery,
+
+    addMiddleware(middleware) {
+        if (!middlewares.find((mdware) => mdware === middleware)) {
+            middlewares.push(middleware);
+        }
+    }
+};
+
 
 const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
 const toJSON = (resp) => resp.json();
@@ -66,31 +68,30 @@ function runMiddlewares(action, data, restart) {
         );
 }
 
-export default {
-    post(url, data) {
-        return doFetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: buildQuery(data)
-        });
-    },
-
-    get(url, data) {
-        if (typeof data === 'object') {
-            const separator = url.indexOf('?') === -1 ? '?' : '&';
-            url += separator + buildQuery(data);
-        }
-
-        return doFetch(url);
-    },
-
-    buildQuery,
-
-    addMiddleware(middleware) {
-        if (!middlewares.find((mdware) => mdware === middleware)) {
-            middlewares.push(middleware);
-        }
+function convertQueryValue(value) {
+    if (typeof value === 'undefined') {
+        return '';
     }
-};
+
+    if (value === true) {
+        return 1;
+    }
+
+    if (value === false) {
+        return 0;
+    }
+
+    return value;
+}
+
+function buildQuery(data = {}) {
+    return Object.keys(data)
+        .map(
+            (keyName) =>
+                [keyName, convertQueryValue(data[keyName])]
+                    .map(encodeURIComponent)
+                    .join('=')
+        )
+        .join('&')
+        ;
+}
