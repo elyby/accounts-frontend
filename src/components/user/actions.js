@@ -60,9 +60,9 @@ export function fetchUserData() {
             dispatch(updateUser(resp));
 
             return dispatch(changeLang(resp.lang));
-        })
+        });
+        /*
         .catch((resp) => {
-            /*
             {
                 "name": "Unauthorized",
                 "message": "You are requesting with an invalid credential.",
@@ -70,9 +70,8 @@ export function fetchUserData() {
                 "status": 401,
                 "type": "yii\\web\\UnauthorizedHttpException"
             }
-             */
-            console.log(resp);
         });
+        */
 }
 
 export function changePassword({

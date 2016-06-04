@@ -25,6 +25,7 @@
 
     "env": {
         "browser": true,
+        "commonjs": true,
         "es6": true
     },
 
@@ -59,7 +60,6 @@
         "no-labels": "error",
         "no-lone-blocks": "warn",
         "no-loop-func": "error",
-        "no-magic-numbers": "warn",
         "no-multi-spaces": "error",
         "no-multi-str": "error",
         "no-native-reassign": "error",
@@ -107,11 +107,12 @@
         "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
         "comma-spacing": "error",
         "comma-style": "error",
+        "comma-dangle": ["warn", "only-multiline"],
         "computed-property-spacing": "error",
         "consistent-this": ["error", "that"],
         "camelcase": "warn",
         "eol-last": "warn",
-        "id-length": ["error", {"min": "error", "exceptions": ["x", "y", "i", "$"]}],
+        "id-length": ["error", {"min": 2, "exceptions": ["x", "y", "i", "$"]}],
         "indent": ["error", 4, {"SwitchCase": 1}],
         "jsx-quotes": "error",
         "key-spacing": ["error", {"mode": "minimum"}],
@@ -136,7 +137,6 @@
         "quotes": ["warn", "single"],
         "semi": "error",
         "semi-spacing": "error",
-        "space-after-keywords": "error",
         "keyword-spacing": "warn",
         "space-before-blocks": "error",
         "space-before-function-paren": ["error", "never"],

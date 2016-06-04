@@ -87,6 +87,7 @@ function stopLoading() {
     document.getElementById('loader').classList.remove('is-active');
 }
 
+/* global process: false */
 if (process.env.NODE_ENV !== 'production') {
     // some shortcuts for testing on localhost
     window.testOAuth = () => location.href = '/oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session';

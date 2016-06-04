@@ -86,9 +86,9 @@ export default class AuthFlow {
                 const callback = this.onReady;
                 this.onReady = () => {};
                 return resp.then(callback);
-            } else {
-                return resp;
             }
+
+            return resp;
         }
     }
 

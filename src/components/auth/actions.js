@@ -46,7 +46,7 @@ export function changePassword({
     newRePassword = ''
 }) {
     return wrapInLoader((dispatch) =>
-        dispatch(changeUserPassword({password, newPassword, newRePassword, logoutAll : false}))
+        dispatch(changeUserPassword({password, newPassword, newRePassword, logoutAll: false}))
             .catch(validationErrorsHandler(dispatch))
     );
 }
@@ -237,23 +237,22 @@ function getOAuthRequest(oauth) {
 }
 
 function handleOauthParamsValidation(resp = {}) {
-    const error = new Error('Error completing request');
+    let userMessage;
     if (resp.statusCode === 400 && resp.error === 'invalid_request') {
-        alert(`Invalid request (${resp.parameter} required).`);
-        throw error;
+        userMessage = `Invalid request (${resp.parameter} required).`;
+    } else if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
+        userMessage = `Invalid response type '${resp.parameter}'.`;
+    } else if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
+        userMessage = `Invalid scope '${resp.parameter}'.`;
+    } else if (resp.statusCode === 401 && resp.error === 'invalid_client') {
+        userMessage = 'Can not find application you are trying to authorize.';
+    } else {
+        return;
     }
-    if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
-        alert(`Invalid response type '${resp.parameter}'.`);
-        throw error;
-    }
-    if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
-        alert(`Invalid scope '${resp.parameter}'.`);
-        throw error;
-    }
-    if (resp.statusCode === 401 && resp.error === 'invalid_client') {
-        alert('Can not find application you are trying to authorize.');
-        throw error;
-    }
+
+    /* eslint no-alert: "off" */
+    alert(userMessage);
+    throw new Error('Error completing request');
 }
 
 export const SET_CLIENT = 'set_client';
