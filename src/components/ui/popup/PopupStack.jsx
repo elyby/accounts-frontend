@@ -22,7 +22,9 @@ export class PopupStack extends Component {
             <ReactCSSTransitionGroup
                 transitionName={{
                     enter: styles.trEnter,
-                    leave: styles.trLeave
+                    enterActive: styles.trEnterActive,
+                    leave: styles.trLeave,
+                    leaveActive: styles.trLeaveActive
                 }}
                 transitionEnterTimeout={500}
                 transitionLeaveTimeout={500}

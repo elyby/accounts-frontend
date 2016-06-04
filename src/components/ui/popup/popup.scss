@@ -112,7 +112,7 @@ $popupPadding: 20px;
         transform: translateY(-30%);
     }
 
-    &-active {
+    &Active {
         opacity: 1;
         transition: opacity 0.2s ease-in;
 
@@ -132,7 +132,7 @@ $popupPadding: 20px;
         transform: translateY(0);
     }
 
-    &-active {
+    &Active {
         opacity: 0;
         transition: opacity 0.2s ease-in;
 
