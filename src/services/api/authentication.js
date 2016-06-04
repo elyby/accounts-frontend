@@ -10,5 +10,12 @@ export default {
             '/api/authentication/login',
             {login, password, rememberMe}
         );
+    },
+
+    refreshToken(refresh_token) {
+        return request.post(
+            '/api/authentication/refresh-token',
+            {refresh_token}
+        );
     }
 };

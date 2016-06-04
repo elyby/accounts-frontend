@@ -54,24 +54,39 @@ export function logout() {
 }
 
 export function fetchUserData() {
-    return (dispatch) =>
+    return (dispatch, getState) =>
         accounts.current()
-        .then((resp) => {
-            dispatch(updateUser(resp));
+            .then((resp) => {
+                dispatch(updateUser(resp));
 
-            return dispatch(changeLang(resp.lang));
-        });
-        /*
-        .catch((resp) => {
-            {
-                "name": "Unauthorized",
-                "message": "You are requesting with an invalid credential.",
-                "code": 0,
-                "status": 401,
-                "type": "yii\\web\\UnauthorizedHttpException"
-            }
-        });
-        */
+                return dispatch(changeLang(resp.lang));
+            })
+            .catch((resp) => {
+                /*
+                    {
+                        "name": "Unauthorized",
+                        "message": "You are requesting with an invalid credential.",
+                        "code": 0,
+                        "status": 401,
+                        "type": "yii\\web\\UnauthorizedHttpException"
+                    }
+                    {
+                        "name": "Unauthorized",
+                        "message": "Token expired",
+                        "code": 0,
+                        "status": 401,
+                        "type": "yii\\web\\UnauthorizedHttpException"
+                    }
+                */
+                if (resp && resp.status === 401) {
+                    const {token} = getState().user;
+                    if (resp.message === 'Token expired' && token) {
+                        return dispatch(authenticate(token));
+                    }
+
+                    dispatch(logout());
+                }
+            });
 }
 
 export function changePassword({
@@ -95,14 +110,20 @@ export function changePassword({
 }
 
 
-export function authenticate(token, refreshToken) {
-    if (!token || token.split('.').length !== 3) {
-        throw new Error('Invalid token');
-    }
+import authentication from 'services/api/authentication';
+export function authenticate(token, refreshToken) { // TODO: this action, probably, belongs to components/auth
+    const jwt = getJWTPayload(token);
 
-    return (dispatch) => {
+    return (dispatch, getState) => {
+        refreshToken = refreshToken || getState().user.refreshToken;
+
+        if (jwt.exp < Date.now() / 1000) {
+            return authentication.refreshToken(refreshToken)
+                .then((resp) => dispatch(authenticate(resp.access_token)))
+                .catch(() => dispatch(logout()));
+        }
+
         request.setAuthToken(token);
-
         return dispatch(fetchUserData()).then((resp) => {
             dispatch(updateUser({
                 isGuest: false,
@@ -112,4 +133,18 @@ export function authenticate(token, refreshToken) {
             return resp;
         });
     };
+}
+
+function getJWTPayload(jwt) {
+    const parts = (jwt || '').split('.');
+
+    if (parts.length !== 3) {
+        throw new Error('Invalid jwt token');
+    }
+
+    try {
+        return JSON.parse(atob(parts[1]));
+    } catch (err) {
+        throw new Error('Can not decode jwt token');
+    }
 }
