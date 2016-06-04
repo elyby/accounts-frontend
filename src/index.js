@@ -65,16 +65,21 @@ function restoreScroll() {
     setTimeout(() => {
         const id = hash.replace('#', '');
         const el = id ? document.getElementById(id) : null;
+        const viewPort = document.getElementById('view-port');
+
+        if (!viewPort) {
+            throw new Error('Can not find viewPort element');
+        }
 
         let y = 0;
         if (el) {
-            const {scrollTop} = document.body;
+            const {scrollTop} = viewPort;
             const {top} = el.getBoundingClientRect();
 
             y = scrollTop + top - SCROLL_ANCHOR_OFFSET;
         }
 
-        scrollTo(y);
+        scrollTo(y, viewPort);
     }, 100);
 }
 

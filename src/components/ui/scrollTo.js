@@ -8,9 +8,9 @@ const requestAnimationFrame = window.requestAnimationFrame || window.mozRequestA
     || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 const TIME_CONSTANT = 100;
-export default function scrollTo(y) {
+export default function scrollTo(y, viewPort) {
     const start = Date.now();
-    const {scrollTop} = document.body;
+    const {scrollTop} = viewPort;
     const amplitude = y - scrollTop;
 
     requestAnimationFrame(function animateScroll() {
@@ -24,7 +24,7 @@ export default function scrollTo(y) {
             delta = 0;
         }
 
-        window.scrollTo(0, y + delta);
+        viewPort.scrollTop = y + delta;
     });
 }
 

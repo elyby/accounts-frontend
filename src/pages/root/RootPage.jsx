@@ -14,7 +14,7 @@ import messages from './RootPage.intl.json';
 function RootPage(props) {
     return (
         <div className={styles.root}>
-            <div className={classNames(styles.root, {
+            <div id="view-port" className={classNames(styles.viewPort, {
                 [styles.isPopupActive]: props.isPopupActive
             })}>
                 <div className={styles.header}>
