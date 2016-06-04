@@ -32,6 +32,7 @@ export default class PasswordBody extends BaseAuthBody {
                         {user.email || user.username}
                     </div>
                 </div>
+
                 <Input {...this.bindField('password')}
                     icon="key"
                     type="password"
@@ -40,7 +41,7 @@ export default class PasswordBody extends BaseAuthBody {
                 />
 
                 <Checkbox {...this.bindField('rememberMe')}
-                    defaultChecked={true}
+                    defaultChecked
                     label={messages.rememberMe}
                 />
             </div>

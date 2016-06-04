@@ -48,6 +48,7 @@ describe('PasswordState', () => {
         (function() {
             const expectedLogin = 'login';
             const expectedPassword = 'password';
+            const expectedRememberMe = true;
 
             const testWith = (user) => {
                 it(`should call login with email or username and password. User: ${JSON.stringify(user)}`, () => {
@@ -58,11 +59,12 @@ describe('PasswordState', () => {
                         'login',
                         sinon.match({
                             login: expectedLogin,
-                            password: expectedPassword
+                            password: expectedPassword,
+                            rememberMe: expectedRememberMe,
                         })
                     ).returns({then() {}});
 
-                    state.resolve(context, {password: expectedPassword});
+                    state.resolve(context, {password: expectedPassword, rememberMe: expectedRememberMe});
                 });
             };
 

@@ -95,13 +95,21 @@ export function changePassword({
 }
 
 
-export function authenticate(token) {
+export function authenticate(token, refreshToken) {
     if (!token || token.split('.').length !== 3) {
         throw new Error('Invalid token');
     }
 
     return (dispatch) => {
         request.setAuthToken(token);
-        return dispatch(fetchUserData());
+
+        return dispatch(fetchUserData()).then((resp) => {
+            dispatch(updateUser({
+                isGuest: false,
+                token,
+                refreshToken
+            }));
+            return resp;
+        });
     };
 }

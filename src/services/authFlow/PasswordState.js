@@ -14,11 +14,12 @@ export default class PasswordState extends AbstractState {
         }
     }
 
-    resolve(context, {password}) {
+    resolve(context, {password, rememberMe}) {
         const {user} = context.getState();
 
         context.run('login', {
             password,
+            rememberMe,
             login: user.email || user.username
         })
         .then(() => context.setState(new CompleteState()));
