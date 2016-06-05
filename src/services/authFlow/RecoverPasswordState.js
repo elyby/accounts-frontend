@@ -7,7 +7,7 @@ export default class RecoverPasswordState extends AbstractState {
         const {user, routing} = context.getState();
 
         if (user.isGuest) {
-            const url = routing.location.pathname.indexOf('/recover-password') === 0
+            const url = routing.location.pathname.includes('/recover-password')
                 ? routing.location.pathname
                 : '/recover-password';
             context.navigate(url);

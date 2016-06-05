@@ -35,7 +35,7 @@ export default function routesFactory(store) {
     };
 
     const userOnly = {
-        onEnter: ({location}, replace) => {
+        onEnter: (nextState, replace) => {
             const {user} = store.getState();
 
             if (user.isGuest) {
@@ -56,7 +56,7 @@ export default function routesFactory(store) {
                 <Route path="/login" components={new Login()} {...startAuthFlow} />
                 <Route path="/password" components={new Password()} {...startAuthFlow} />
                 <Route path="/register" components={new Register()} {...startAuthFlow} />
-                <Route path="/activation" components={new Activation()} {...startAuthFlow} />
+                <Route path="/activation(/:key)" components={new Activation()} {...startAuthFlow} />
                 <Route path="/resend-activation" components={new ResendActivation()} {...startAuthFlow} />
                 <Route path="/oauth/permissions" components={new Permissions()} {...startAuthFlow} />
                 <Route path="/oauth/finish" component={Finish} {...startAuthFlow} />

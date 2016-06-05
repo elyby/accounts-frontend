@@ -4,12 +4,15 @@ import ResendActivationState from './ResendActivationState';
 
 export default class ActivationState extends AbstractState {
     enter(context) {
-        const {user} = context.getState();
+        const {user, routing} = context.getState();
 
         if (user.isActive) {
             context.setState(new CompleteState());
         } else {
-            context.navigate('/activation');
+            const url = routing.location.pathname.includes('/activation')
+                ? routing.location.pathname
+                : '/activation';
+            context.navigate(url);
         }
     }
 

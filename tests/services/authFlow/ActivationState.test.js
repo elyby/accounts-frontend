@@ -23,13 +23,33 @@ describe('ActivationState', () => {
 
     describe('#enter', () => {
         it('should navigate to /activation', () => {
+            const expectedPath = '/activation';
             context.getState.returns({
                 user: {
                     isActive: false
+                },
+                routing: {
+                    location: {pathname: expectedPath}
                 }
             });
 
             expectNavigate(mock, '/activation');
+
+            state.enter(context);
+        });
+
+        it('should navigate to /activation/key', () => {
+            const expectedPath = '/activation/sasx5AS4d61';
+            context.getState.returns({
+                user: {
+                    isActive: false
+                },
+                routing: {
+                    location: {pathname: expectedPath}
+                }
+            });
+
+            expectNavigate(mock, expectedPath);
 
             state.enter(context);
         });

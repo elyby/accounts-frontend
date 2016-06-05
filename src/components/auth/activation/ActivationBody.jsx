@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
@@ -12,9 +12,17 @@ export default class ActivationBody extends BaseAuthBody {
     static displayName = 'ActivationBody';
     static panelId = 'activation';
 
-    autoFocusField = 'key';
+    static propTypes = {
+        params: PropTypes.shape({
+            key: PropTypes.string
+        })
+    };
+
+    autoFocusField = this.props.params && this.props.params.key ? null : 'key';
 
     render() {
+        const {key} = this.props.params;
+
         return (
             <div>
                 {this.renderErrors()}
@@ -33,6 +41,9 @@ export default class ActivationBody extends BaseAuthBody {
                         color="blue"
                         style={{textAlign: 'center'}}
                         required
+                        value={key}
+                        readOnly={!!key}
+                        autoComplete="off"
                         placeholder={messages.enterTheCode}
                     />
                 </div>
