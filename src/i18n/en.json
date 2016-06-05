@@ -114,6 +114,7 @@
     "components.profile.preferencesDescription": "Here you can change the key preferences of your account. Please note that all actions must be confirmed by entering a password.",
     "components.profile.projectRules": "project rules",
     "components.profile.twoFactorAuth": "Two factor auth",
+    "components.userbar.login": "Sign in",
     "components.userbar.logout": "Logout",
     "components.userbar.register": "Join",
     "pages.root.siteName": "Ely.by",

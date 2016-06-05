@@ -12,6 +12,8 @@ import styles from './root.scss';
 import messages from './RootPage.intl.json';
 
 function RootPage(props) {
+    const isRegisterPage = props.location.pathname === '/register';
+
     return (
         <div className={styles.root}>
             <div id="view-port" className={classNames(styles.viewPort, {
@@ -23,7 +25,10 @@ function RootPage(props) {
                             <Message {...messages.siteName} />
                         </Link>
                         <div className={styles.userbar}>
-                            <Userbar {...props} onLogout={props.logout} />
+                            <Userbar {...props}
+                                onLogout={props.logout}
+                                guestAction={isRegisterPage ? 'login' : 'register'}
+                            />
                         </div>
                     </div>
                 </div>
@@ -38,6 +43,9 @@ function RootPage(props) {
 
 RootPage.displayName = 'RootPage';
 RootPage.propTypes = {
+    location: PropTypes.shape({
+        pathname: PropTypes.string
+    }).isRequired,
     children: PropTypes.element,
     logout: PropTypes.func.isRequired,
     isPopupActive: PropTypes.bool

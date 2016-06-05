@@ -114,6 +114,7 @@
     "components.profile.preferencesDescription": "Здесь вы можете сменить ключевые параметры вашего аккаунта. Обратите внимание, что для всех действий необходимо подтверждение при помощи ввода пароля.",
     "components.profile.projectRules": "правилам проекта",
     "components.profile.twoFactorAuth": "Двухфакторная аутентификация",
+    "components.userbar.login": "Вход",
     "components.userbar.logout": "Выход",
     "components.userbar.register": "Регистрация",
     "pages.root.siteName": "Ely.by",

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 import { Link } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
@@ -15,19 +15,41 @@ import LoggedInPanel from './LoggedInPanel';
 export default class Userbar extends Component {
     static displayName = 'Userbar';
     static propTypes = {
-        user: userShape
+        user: userShape,
+        guestAction: PropTypes.oneOf(['register', 'login'])
+    };
+
+    static defaultProps = {
+        guestAction: 'register'
     };
 
     render() {
         const { user } = this.props;
+        let { guestAction } = this.props;
+
+        switch (guestAction) {
+            case 'login':
+                guestAction = (
+                    <Link to="/login" className={buttons.blue}>
+                        <Message {...messages.login} />
+                    </Link>
+                );
+                break;
+            case 'register':
+            default:
+                guestAction = (
+                    <Link to="/register" className={buttons.blue}>
+                        <Message {...messages.register} />
+                    </Link>
+                );
+                break;
+        }
 
         return (
             <div className={styles.userbar}>
                 {user.isGuest
                     ? (
-                        <Link to="/register" className={buttons.blue}>
-                            <Message {...messages.register} />
-                        </Link>
+                        guestAction
                     )
                     : (
                         <LoggedInPanel {...this.props} />
