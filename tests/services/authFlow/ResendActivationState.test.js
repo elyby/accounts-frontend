@@ -26,7 +26,6 @@ describe('ResendActivationState', () => {
         it('should navigate to /resend-activation', () => {
             context.getState.returns({
                 user: {
-                    isGuest: false,
                     isActive: false
                 }
             });
@@ -40,7 +39,7 @@ describe('ResendActivationState', () => {
             context.getState.returns({
                 user: {
                     isGuest: true,
-                    isActive: true
+                    isActive: false
                 }
             });
 
@@ -52,7 +51,6 @@ describe('ResendActivationState', () => {
         it('should transition to complete state if account activated', () => {
             context.getState.returns({
                 user: {
-                    isGuest: false,
                     isActive: true
                 }
             });
@@ -80,7 +78,7 @@ describe('ResendActivationState', () => {
             const promise = Promise.resolve();
 
             mock.expects('run').returns(promise);
-            expectState(mock, CompleteState);
+            expectState(mock, ActivationState);
 
             state.resolve(context);
 
@@ -101,26 +99,15 @@ describe('ResendActivationState', () => {
 
     describe('#goBack', () => {
         it('should transition to activation', () => {
-            context.getState.returns({
-                user: {
-                    isGuest: false
-                }
-            });
-
             expectState(mock, ActivationState);
 
             state.goBack(context);
         });
 
-        it('should transition to register if guest', () => {
-            context.getState.returns({
-                user: {
-                    isGuest: true
-                }
-            });
-
+        it('should transition to register if it was active previousely', () => {
             expectState(mock, RegisterState);
 
+            context.prevState = new RegisterState();
             state.goBack(context);
         });
     });

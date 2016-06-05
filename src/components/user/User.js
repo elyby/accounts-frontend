@@ -28,7 +28,7 @@ export default class User {
             lang: '',
             goal: null, // the goal with wich user entered site
             isGuest: true,
-            isActive: true,
+            isActive: false,
             shouldChangePassword: false, // TODO: нужно ещё пробросить причину необходимости смены
             passwordChangedAt: null,
             hasMojangUsernameCollision: false,

@@ -5,6 +5,7 @@ import OAuthState from 'services/authFlow/OAuthState';
 import RegisterState from 'services/authFlow/RegisterState';
 import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
 import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
+import ActivationState from 'services/authFlow/ActivationState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
 import LoginState from 'services/authFlow/LoginState';
 
@@ -49,10 +50,27 @@ describe('AuthFlow', () => {
         });
 
         it('should call `leave` on previous state if any', () => {
-            const state1 = new AbstractState();
-            const state2 = new AbstractState();
+            class State1 extends AbstractState {}
+            class State2 extends AbstractState {}
+
+            const state1 = new State1();
+            const state2 = new State2();
             const spy1 = sinon.spy(state1, 'leave');
             const spy2 = sinon.spy(state2, 'leave');
+
+            flow.setState(state1);
+            flow.setState(state2);
+
+            sinon.assert.calledWith(spy1, flow);
+            sinon.assert.calledOnce(spy1);
+            sinon.assert.notCalled(spy2);
+        });
+
+        it('should not change state, if current state is of same type', () => {
+            const state1 = new AbstractState();
+            const state2 = new AbstractState();
+            const spy1 = sinon.spy(state1, 'enter');
+            const spy2 = sinon.spy(state2, 'enter');
 
             flow.setState(state1);
             flow.setState(state2);
@@ -169,7 +187,6 @@ describe('AuthFlow', () => {
             '/': LoginState,
             '/login': LoginState,
             '/password': LoginState,
-            '/activation': LoginState,
             '/change-password': LoginState,
             '/oauth/permissions': LoginState,
             '/oauth/finish': LoginState,
@@ -178,6 +195,7 @@ describe('AuthFlow', () => {
             '/recover-password': RecoverPasswordState,
             '/recover-password/key123': RecoverPasswordState,
             '/forgot-password': ForgotPasswordState,
+            '/activation': ActivationState,
             '/resend-activation': ResendActivationState
         }).forEach(([path, type]) => {
             it(`should transition to ${type.name} if ${path}`, () => {

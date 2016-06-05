@@ -25,7 +25,6 @@ describe('ActivationState', () => {
         it('should navigate to /activation', () => {
             context.getState.returns({
                 user: {
-                    isGuest: false,
                     isActive: false
                 }
             });
@@ -38,7 +37,6 @@ describe('ActivationState', () => {
         it('should transition to complete state if account activated', () => {
             context.getState.returns({
                 user: {
-                    isGuest: false,
                     isActive: true
                 }
             });

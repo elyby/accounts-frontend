@@ -5,6 +5,7 @@ import LoginState from './LoginState';
 import OAuthState from './OAuthState';
 import ForgotPasswordState from './ForgotPasswordState';
 import RecoverPasswordState from './RecoverPasswordState';
+import ActivationState from './ActivationState';
 import ResendActivationState from './ResendActivationState';
 
 // TODO: a way to unload service (when we are on account page)
@@ -70,12 +71,13 @@ export default class AuthFlow {
             throw new Error('State is required');
         }
 
-        // if (this.state instanceof state.constructor) {
-        //     // already in this state
-        //     return;
-        // }
+        if (this.state instanceof state.constructor) {
+            // already in this state
+            return;
+        }
 
         this.state && this.state.leave(this);
+        this.prevState = this.state;
         this.state = state;
         const resp = this.state.enter(this);
 
@@ -129,7 +131,6 @@ export default class AuthFlow {
             case '/':
             case '/login':
             case '/password':
-            case '/activation':
             case '/change-password':
             case '/oauth/permissions':
             case '/oauth/finish':
@@ -138,6 +139,9 @@ export default class AuthFlow {
 
             default:
                 switch (path.replace(/(.)\/.+/, '$1')) { // use only first part of an url
+                    case '/activation':
+                        this.setState(new ActivationState());
+                        break;
                     case '/recover-password':
                         this.setState(new RecoverPasswordState());
                         break;

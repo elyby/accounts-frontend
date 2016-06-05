@@ -7,7 +7,7 @@ export default class ResendActivationState extends AbstractState {
     enter(context) {
         const {user} = context.getState();
 
-        if (user.isActive && !user.isGuest) {
+        if (user.isActive) {
             context.setState(new CompleteState());
         } else {
             context.navigate('/resend-activation');
@@ -16,13 +16,11 @@ export default class ResendActivationState extends AbstractState {
 
     resolve(context, payload) {
         context.run('resendActivation', payload)
-            .then(() => context.setState(new CompleteState()));
+            .then(() => context.setState(new ActivationState()));
     }
 
     goBack(context) {
-        const {user} = context.getState();
-
-        if (user.isGuest) {
+        if (context.prevState instanceof RegisterState) {
             context.setState(new RegisterState());
         } else {
             context.setState(new ActivationState());
