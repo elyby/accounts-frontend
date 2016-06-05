@@ -20,6 +20,8 @@ $popupPadding: 20px;
     overflow-x: hidden;
     overflow-y: auto;
 
+    perspective: 600px;
+
     &:before {
         content: '';
         display: inline-block;
@@ -104,12 +106,14 @@ $popupPadding: 20px;
 /**
  * Transition states
  */
+$popupInitPosition: translateY(10%) rotateX(-8deg);
+
 .trEnter {
     opacity: 0;
 
     .popup {
         opacity: 0;
-        transform: translateY(-30%);
+        transform: $popupInitPosition;
     }
 
     &Active {
@@ -118,8 +122,8 @@ $popupPadding: 20px;
 
         .popup {
             opacity: 1;
-            transform: translateY(0);
-            transition: 0.2s ease;
+            transform: translateY(0) rotateX(0deg);
+            transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1); // easeOutQuint
         }
     }
 }
@@ -138,8 +142,8 @@ $popupPadding: 20px;
 
         .popup {
             opacity: 0;
-            transform: translateY(30%);
-            transition: 0.2s ease;
+            transform: $popupInitPosition;
+            transition: 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); // easeOutQuart
         }
     }
 }

@@ -16,7 +16,7 @@ $userBarHeight: 50px;
 
 .isPopupActive {
     filter: blur(5px);
-    transition: filter 0.4s ease;
+    transition: filter 0.4s 0.1s ease;
     overflow: hidden;
 }
 
