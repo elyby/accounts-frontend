@@ -18,7 +18,11 @@ export default class Dropdown extends FormComponent {
             }),
             PropTypes.string
         ]).isRequired,
-        items: PropTypes.arrayOf(PropTypes.string).isRequired,
+        items: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.string),
+            PropTypes.arrayOf(PropTypes.object)
+            // TODO: ^^^ я тут хотел добавить вариант с <Message /> объектом, не уверен, что вышло верно
+        ]).isRequired,
         block: PropTypes.bool,
         color: PropTypes.oneOf(colors)
     };

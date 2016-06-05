@@ -11,7 +11,14 @@ import popupStyles from 'components/ui/popup/popup.scss';
 import styles from './contactForm.scss';
 import messages from './contactForm.intl.json';
 
-const CONTACT_CATEGORIES = ['Foo', 'Bar', 'Baz'];
+const CONTACT_CATEGORIES = [
+    // TODO: сюда позже проставить реальные id категорий с backend
+    <Message {...messages.cannotAccessMyAccount} />,
+    <Message {...messages.foundBugOnSite} />,
+    <Message {...messages.improvementsSuggestion} />,
+    <Message {...messages.integrationQuestion} />,
+    <Message {...messages.other} />
+];
 
 export default class ContactForm extends Component {
     static displayName = 'ContactForm';
