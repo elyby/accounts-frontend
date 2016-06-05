@@ -27,7 +27,7 @@ export default class LoggedInPanel extends Component {
         const { user } = this.props;
 
         return (
-            <div className={buttonGroups.horizontalGroup}>
+            <div className={classNames(buttonGroups.horizontalGroup, styles.loggedInPanel)}>
                 <Link to="/" className={classNames(buttons.green, buttonGroups.item)}>
                     <span className={styles.userIcon} />
                     <span className={styles.userName}>{user.username}</span>

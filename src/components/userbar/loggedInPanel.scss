@@ -1,3 +1,6 @@
+.loggedInPanel {
+    justify-content: flex-end;
+}
 
 .userIcon {
     composes: user from 'components/ui/icons.scss';
