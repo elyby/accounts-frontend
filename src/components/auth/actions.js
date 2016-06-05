@@ -2,6 +2,7 @@ import { routeActions } from 'react-router-redux';
 
 import { updateUser, logout as logoutUser, changePassword as changeUserPassword, authenticate } from 'components/user/actions';
 import request from 'services/request';
+import authentication from 'services/api/authentication';
 
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';
@@ -9,28 +10,21 @@ export function login({login = '', password = '', rememberMe = false}) {
     const ACTIVATION_REQUIRED = 'error.account_not_activated';
 
     return wrapInLoader((dispatch) =>
-        request.post(
-            '/api/authentication/login',
+        authentication.login(
             {login, password, rememberMe}
         )
-        .then((resp) => {
-            dispatch(updateUser({
-                isGuest: false,
-                token: resp.jwt
-            }));
-
-            return dispatch(authenticate(resp.jwt));
-        })
+        .then(authHandler(dispatch))
         .catch((resp) => {
-            if (resp.errors.login === ACTIVATION_REQUIRED) {
-                return dispatch(needActivation());
-            } else if (resp.errors.password === PASSWORD_REQUIRED) {
-                return dispatch(updateUser({
-                    username: login,
-                    email: login
-                }));
-            } else if (resp.errors) {
-                if (resp.errors.login === LOGIN_REQUIRED && password) {
+            if (resp.errors) {
+                if (resp.errors.password === PASSWORD_REQUIRED) {
+                    return dispatch(updateUser({
+                        username: login,
+                        email: login
+                    }));
+                } else if (resp.errors.login === ACTIVATION_REQUIRED) {
+                    return dispatch(needActivation());
+                } else if (resp.errors.login === LOGIN_REQUIRED && password) {
+                    // return to the first step
                     dispatch(logout());
                 }
             }
@@ -76,14 +70,7 @@ export function recoverPassword({
             '/api/authentication/recover-password',
             {key, newPassword, newRePassword}
         )
-        .then((resp) => {
-            dispatch(updateUser({
-                isGuest: false,
-                isActive: true
-            }));
-
-            return dispatch(authenticate(resp.jwt));
-        })
+        .then(authHandler(dispatch))
         .catch(validationErrorsHandler(dispatch, '/forgot-password'))
     );
 }
@@ -118,14 +105,7 @@ export function activate({key = ''}) {
             '/api/signup/confirm',
             {key}
         )
-        .then((resp) => {
-            dispatch(updateUser({
-                isGuest: false,
-                isActive: true
-            }));
-
-            return dispatch(authenticate(resp.jwt));
-        })
+        .then(authHandler(dispatch))
         .catch(validationErrorsHandler(dispatch, '/resend-activation'))
     );
 }
@@ -339,6 +319,10 @@ function needActivation() {
         isActive: false,
         isGuest: false
     });
+}
+
+function authHandler(dispatch) {
+    return (resp) => dispatch(authenticate(resp.access_token, resp.refresh_token));
 }
 
 function validationErrorsHandler(dispatch, repeatUrl) {

@@ -56,22 +56,11 @@ export function logout() {
 export function fetchUserData() {
     return (dispatch) =>
         accounts.current()
-        .then((resp) => {
-            dispatch(updateUser(resp));
+            .then((resp) => {
+                dispatch(updateUser(resp));
 
-            return dispatch(changeLang(resp.lang));
-        });
-        /*
-        .catch((resp) => {
-            {
-                "name": "Unauthorized",
-                "message": "You are requesting with an invalid credential.",
-                "code": 0,
-                "status": 401,
-                "type": "yii\\web\\UnauthorizedHttpException"
-            }
-        });
-        */
+                return dispatch(changeLang(resp.lang));
+            });
 }
 
 export function changePassword({
@@ -94,14 +83,138 @@ export function changePassword({
         ;
 }
 
+let middlewareAdded = false;
+export function authenticate(token, refreshToken) { // TODO: this action, probably, belongs to components/auth
+    return (dispatch, getState) => {
+        if (!middlewareAdded) {
+            request.addMiddleware(tokenCheckMiddleware(dispatch, getState));
+            request.addMiddleware(tokenApplyMiddleware(dispatch, getState));
+            middlewareAdded = true;
+        }
 
-export function authenticate(token) {
-    if (!token || token.split('.').length !== 3) {
-        throw new Error('Invalid token');
+        refreshToken = refreshToken || getState().user.refreshToken;
+        dispatch(updateUser({
+            token,
+            refreshToken
+        }));
+
+        return dispatch(fetchUserData()).then((resp) => {
+            dispatch(updateUser({
+                isGuest: false
+            }));
+            return resp;
+        });
+    };
+}
+
+import authentication from 'services/api/authentication';
+function requestAccessToken(refreshToken, dispatch) {
+    let promise;
+    if (refreshToken) {
+        promise = authentication.refreshToken(refreshToken);
+    } else {
+        promise = Promise.reject();
     }
 
-    return (dispatch) => {
-        request.setAuthToken(token);
-        return dispatch(fetchUserData());
+    return promise
+        .then((resp) => dispatch(updateUser({
+            token: resp.access_token
+        })))
+        .catch(() => dispatch(logout()));
+}
+
+/**
+ * Ensures, that all user's requests have fresh access token
+ *
+ * @param  {Function} dispatch
+ * @param  {Function} getState
+ *
+ * @return {Object} middleware
+ */
+function tokenCheckMiddleware(dispatch, getState) {
+    return {
+        before(data) {
+            const {isGuest, refreshToken, token} = getState().user;
+            const isRefreshTokenRequest = data.url.includes('refresh-token');
+
+            if (isGuest || isRefreshTokenRequest || !token) {
+                return data;
+            }
+
+            const SAFETY_FACTOR = 60; // ask new token earlier to overcome time dissynchronization problem
+            const jwt = getJWTPayload(token);
+
+            if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
+                return requestAccessToken(refreshToken, dispatch).then(() => data);
+            }
+
+            return data;
+        },
+
+        catch(resp, restart) {
+            /*
+                {
+                    "name": "Unauthorized",
+                    "message": "You are requesting with an invalid credential.",
+                    "code": 0,
+                    "status": 401,
+                    "type": "yii\\web\\UnauthorizedHttpException"
+                }
+                {
+                    "name": "Unauthorized",
+                    "message": "Token expired",
+                    "code": 0,
+                    "status": 401,
+                    "type": "yii\\web\\UnauthorizedHttpException"
+                }
+            */
+            if (resp && resp.status === 401) {
+                const {refreshToken} = getState().user;
+                if (resp.message === 'Token expired' && refreshToken) {
+                    // request token and retry
+                    return requestAccessToken(refreshToken, dispatch).then(restart);
+                }
+
+                dispatch(logout());
+            }
+
+            return Promise.reject(resp);
+        }
     };
+}
+
+/**
+ * Applies Bearer header for all requests
+ *
+ * @param  {Function} dispatch
+ * @param  {Function} getState
+ *
+ * @return {Object} middleware
+ */
+function tokenApplyMiddleware(dispatch, getState) {
+    return {
+        before(data) {
+            const {token} = getState().user;
+
+            if (token) {
+                data.options.headers.Authorization = `Bearer ${token}`;
+            }
+
+            return data;
+        }
+    };
+}
+
+function getJWTPayload(jwt) {
+    const parts = (jwt || '').split('.');
+
+    if (parts.length !== 3) {
+        throw new Error('Invalid jwt token');
+    }
+
+    try {
+        return JSON.parse(atob(parts[1]));
+    } catch (err) {
+        throw new Error('Can not decode jwt token');
+    }
 }

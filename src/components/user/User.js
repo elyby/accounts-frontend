@@ -19,6 +19,7 @@ export default class User {
             id: null,
             uuid: null,
             token: '',
+            refreshToken: '',
             username: '',
             email: '',
             // will contain user's email or masked email
