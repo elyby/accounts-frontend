@@ -1,3 +1,7 @@
+/**
+ * A helpers for testing states in isolation from AuthFlow
+ */
+
 export function bootstrap() {
     const context = {
         getState: sinon.stub(),

@@ -34,7 +34,20 @@
     // @see: http://eslint.org/docs/rules/
     "rules": {
         // possible errors (including eslint:recommended)
-        "valid-jsdoc": ["warn", {"requireParamDescription": false, "requireReturnDescription": false}],
+        "valid-jsdoc": ["warn", {
+            "requireParamDescription": false,
+            "requireReturn": false,
+            "requireReturnDescription": false,
+            "prefer": {
+                "returns": "return"
+            },
+            "preferType": {
+                "String": "string",
+                "Object": "object",
+                "Number": "number",
+                "Function": "function"
+            }
+        }],
 
         // best practice
         "block-scoped-var": "error",

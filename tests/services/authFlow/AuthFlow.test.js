@@ -66,7 +66,7 @@ describe('AuthFlow', () => {
             sinon.assert.notCalled(spy2);
         });
 
-        it('should not change state, if current state is of same type', () => {
+        xit('should not change state, if current state is of the same type', () => {
             const state1 = new AbstractState();
             const state2 = new AbstractState();
             const spy1 = sinon.spy(state1, 'enter');
@@ -216,21 +216,21 @@ describe('AuthFlow', () => {
         it('should call callback', () => {
             const callback = sinon.stub();
 
-            flow.handleRequest('/', function() {}, callback);
+            flow.handleRequest('/', () => {}, callback);
 
             sinon.assert.calledOnce(callback);
         });
 
         it('should not call callback till returned from #enter() promise will be resolved', () => {
             let resolve;
-            const promise = {then: (cb) => {resolve = cb}};
+            const promise = {then: (cb) => {resolve = cb;}};
             const callback = sinon.stub();
             const state = new AbstractState();
             state.enter = () => promise;
 
             flow.setState = AuthFlow.prototype.setState.bind(flow, state);
 
-            flow.handleRequest('/', function() {}, callback);
+            flow.handleRequest('/', () => {}, callback);
 
             expect(resolve).to.be.a('function');
 

@@ -31,7 +31,7 @@ export default class AuthFlow {
                 if (this.replace) {
                     this.replace(route);
                 }
-                store.dispatch(routeActions.push(route));
+                store.dispatch(routeActions.push(route)); // TODO: may be deleted?
             }
 
             this.replace = null;
@@ -71,8 +71,13 @@ export default class AuthFlow {
             throw new Error('State is required');
         }
 
-        if (this.state instanceof state.constructor) {
-            // already in this state
+        // if (this.state instanceof state.constructor) {
+        //     // already in this state
+        //     return;
+        // }
+
+        if (this.state instanceof ResendActivationState && state instanceof ResendActivationState) {
+            // NOTE: a temporary workaround for resend-activation goBack to return to correct prevState
             return;
         }
 
