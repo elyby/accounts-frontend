@@ -66,20 +66,6 @@ describe('AuthFlow', () => {
             sinon.assert.notCalled(spy2);
         });
 
-        xit('should not change state, if current state is of the same type', () => {
-            const state1 = new AbstractState();
-            const state2 = new AbstractState();
-            const spy1 = sinon.spy(state1, 'enter');
-            const spy2 = sinon.spy(state2, 'enter');
-
-            flow.setState(state1);
-            flow.setState(state2);
-
-            sinon.assert.calledWith(spy1, flow);
-            sinon.assert.calledOnce(spy1);
-            sinon.assert.notCalled(spy2);
-        });
-
         it('should return promise, if #enter returns it', () => {
             const state = new AbstractState();
             const expected = Promise.resolve();
@@ -237,6 +223,18 @@ describe('AuthFlow', () => {
             sinon.assert.notCalled(callback);
             resolve();
             sinon.assert.calledOnce(callback);
+        });
+
+        it('should not handle the same request twice', () => {
+            const path = '/oauth';
+            const callback = sinon.stub();
+
+            flow.handleRequest(path, () => {}, callback);
+            flow.handleRequest(path, () => {}, callback);
+
+            sinon.assert.calledOnce(flow.setState);
+            sinon.assert.calledTwice(callback);
+            sinon.assert.calledWithExactly(flow.setState, sinon.match.instanceOf(OAuthState));
         });
 
         it('throws if unsupported request', () => {

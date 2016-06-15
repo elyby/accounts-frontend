@@ -28,6 +28,8 @@ export default class AuthFlow {
             const {routing} = this.getState();
 
             if (routing.location.pathname !== route) {
+                this.currentPath = route;
+
                 if (this.replace) {
                     this.replace(route);
                 }
@@ -71,16 +73,6 @@ export default class AuthFlow {
             throw new Error('State is required');
         }
 
-        // if (this.state instanceof state.constructor) {
-        //     // already in this state
-        //     return;
-        // }
-
-        if (this.state instanceof ResendActivationState && state instanceof ResendActivationState) {
-            // NOTE: a temporary workaround for resend-activation goBack to return to correct prevState
-            return;
-        }
-
         this.state && this.state.leave(this);
         this.prevState = this.state;
         this.state = state;
@@ -110,6 +102,14 @@ export default class AuthFlow {
     handleRequest(path, replace, callback = function() {}) {
         this.replace = replace;
         this.onReady = callback;
+
+        if (this.currentPath === path) {
+            // we are already handling this path
+            this.onReady();
+            return;
+        }
+
+        this.currentPath = path;
 
         if (path === '/') {
             // reset oauth data if user tried to navigate to index route

@@ -1,13 +1,8 @@
 import AuthFlow from 'services/authFlow/AuthFlow';
-import AbstractState from 'services/authFlow/AbstractState';
 
-import OAuthState from 'services/authFlow/OAuthState';
 import RegisterState from 'services/authFlow/RegisterState';
-import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
-import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 import ActivationState from 'services/authFlow/ActivationState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
-import LoginState from 'services/authFlow/LoginState';
 
 describe('AuthFlow.functional', () => {
     let flow;
@@ -60,9 +55,7 @@ describe('AuthFlow.functional', () => {
         it('should redirect guest / -> /login', () => {
             navigate('/');
 
-            // TODO: fix me. The commented line should be the correct assertion
-            // sinon.assert.calledOnce(flow.navigate);
-            sinon.assert.calledTwice(flow.navigate);
+            sinon.assert.calledOnce(flow.navigate);
             sinon.assert.calledWithExactly(flow.navigate, '/login');
         });
 
@@ -74,9 +67,7 @@ describe('AuthFlow.functional', () => {
             navigate('/login');
             navigate('/');
 
-            // TODO: fix me. The commented line should be the correct assertion
-            // sinon.assert.calledTwice(flow.navigate);
-            sinon.assert.calledThrice(flow.navigate);
+            sinon.assert.calledTwice(flow.navigate);
             sinon.assert.alwaysCalledWithExactly(flow.navigate, '/login');
         });
     });
