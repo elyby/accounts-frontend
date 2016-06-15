@@ -93,6 +93,12 @@
     background-image: url('icons/flag_ru.svg');
 }
 
+.langBe {
+    composes: langIco;
+
+    background-image: url('icons/flag_be.svg');
+}
+
 .trigger {
     color: #666;
     border-bottom: 1px dotted #666;

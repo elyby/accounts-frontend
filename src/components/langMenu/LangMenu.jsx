@@ -9,7 +9,8 @@ import messages from './langMenu.intl.json';
 
 const LANGS = {
     en: 'English',
-    ru: 'Русский'
+    ru: 'Русский',
+    be: 'Беларускі'
 };
 
 export default class LangMenu extends Component {
