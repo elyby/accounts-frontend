@@ -27,11 +27,10 @@ describe('ActivationState', () => {
             context.getState.returns({
                 user: {
                     isActive: false
-                },
-                routing: {
-                    location: {pathname: expectedPath}
                 }
             });
+
+            context.getCurrentPath.returns(expectedPath);
 
             expectNavigate(mock, '/activation');
 
@@ -43,11 +42,10 @@ describe('ActivationState', () => {
             context.getState.returns({
                 user: {
                     isActive: false
-                },
-                routing: {
-                    location: {pathname: expectedPath}
                 }
             });
+
+            context.getCurrentPath.returns(expectedPath);
 
             expectNavigate(mock, expectedPath);
 

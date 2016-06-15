@@ -4,11 +4,11 @@ import CompleteState from './CompleteState';
 
 export default class RecoverPasswordState extends AbstractState {
     enter(context) {
-        const {user, routing} = context.getState();
+        const {user} = context.getState();
 
         if (user.isGuest) {
-            const url = routing.location.pathname.includes('/recover-password')
-                ? routing.location.pathname
+            const url = context.getCurrentPath().includes('/recover-password')
+                ? context.getCurrentPath()
                 : '/recover-password';
             context.navigate(url);
         } else {

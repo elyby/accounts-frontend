@@ -25,9 +25,7 @@ export default class AuthFlow {
 
     setStore(store) {
         this.navigate = (route) => {
-            const {routing} = this.getState();
-
-            if (routing.location.pathname !== route) {
+            if (this.currentPath !== route) {
                 this.currentPath = route;
 
                 if (this.replace) {
@@ -89,6 +87,14 @@ export default class AuthFlow {
 
             return resp;
         }
+    }
+
+    getCurrentPath() {
+        return this.currentPath;
+    }
+
+    getQuery() {
+        return this.getState().routing.location.query;
     }
 
     /**

@@ -7,6 +7,8 @@ export function bootstrap() {
         getState: sinon.stub(),
         run() {},
         setState() {},
+        getCurrentPath: sinon.stub(),
+        getQuery: sinon.stub(),
         navigate() {}
     };
 

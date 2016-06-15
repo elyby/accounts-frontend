@@ -3,7 +3,7 @@ import CompleteState from './CompleteState';
 
 export default class OAuthState extends AbstractState {
     enter(context) {
-        const query = context.getState().routing.location.query;
+        const query = context.getQuery();
 
         return context.run('oAuthValidate', {
             clientId: query.client_id,

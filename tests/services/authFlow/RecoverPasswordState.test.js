@@ -25,11 +25,10 @@ describe('RecoverPasswordState', () => {
         it('should navigate to /recover-password', () => {
             const expectedPath = '/recover-password';
             context.getState.returns({
-                user: {isGuest: true},
-                routing: {
-                    location: {pathname: expectedPath}
-                }
+                user: {isGuest: true}
             });
+
+            context.getCurrentPath.returns(expectedPath);
 
             expectNavigate(mock, expectedPath);
 
@@ -39,11 +38,10 @@ describe('RecoverPasswordState', () => {
         it('should navigate to /recover-password/key', () => {
             const expectedPath = '/recover-password/sasx5AS4d61';
             context.getState.returns({
-                user: {isGuest: true},
-                routing: {
-                    location: {pathname: expectedPath}
-                }
+                user: {isGuest: true}
             });
+
+            context.getCurrentPath.returns(expectedPath);
 
             expectNavigate(mock, expectedPath);
 

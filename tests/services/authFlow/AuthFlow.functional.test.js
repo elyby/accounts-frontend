@@ -30,10 +30,6 @@ describe('AuthFlow.functional', () => {
         flow.setStore(store);
 
         navigate = function navigate(url) { // emulates router behaviour
-            state.routing = state.routing || {};
-            state.routing.location = state.routing.location || {};
-            state.routing.location.pathname = url;
-
             if (navigate.lastUrl !== url) {
                 navigate.lastUrl = url;
                 flow.handleRequest(url, navigate);
