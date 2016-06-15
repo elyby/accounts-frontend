@@ -8,9 +8,9 @@ import styles from './langMenu.scss';
 import messages from './langMenu.intl.json';
 
 const LANGS = {
+    be: 'Беларускі',
     en: 'English',
     ru: 'Русский',
-    be: 'Беларускі'
 };
 
 export default class LangMenu extends Component {
