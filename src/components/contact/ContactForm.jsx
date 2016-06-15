@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'components/ui/form';
-import site from 'services/api/site';
+import feedback from 'services/api/feedback';
 import icons from 'components/ui/icons.scss';
 import popupStyles from 'components/ui/popup/popup.scss';
 
@@ -94,7 +94,7 @@ export default class ContactForm extends Component {
     }
 
     onSubmit = () => {
-        site.contact(this.form.serialize())
+        feedback(this.form.serialize())
             .then(this.props.onClose)
             .catch((resp) => {
                 if (resp.errors) {
