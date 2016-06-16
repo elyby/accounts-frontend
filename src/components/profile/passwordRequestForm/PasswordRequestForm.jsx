@@ -2,8 +2,11 @@ import React, { Component, PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
+import classNames from 'classnames';
+
 import { Form, Button, Input, FormModel } from 'components/ui/form';
 import popupStyles from 'components/ui/popup/popup.scss';
+import styles from './passwordRequestForm.scss';
 
 import messages from './PasswordRequestForm.intl.json';
 
@@ -28,18 +31,28 @@ export default class PasswordRequestForm extends Component {
                     </h2>
                 </div>
 
-                <div className={popupStyles.body}>
+                <div className={classNames(popupStyles.body, styles.body)}>
+                    <span className={styles.lockIcon} />
+
+                    <div className={styles.description}>
+                        <Message {...messages.description} />
+                    </div>
+
                     <Input {...form.bindField('password')}
                         type="password"
                         required
                         autoFocus
                         color="green"
                         skin="light"
-                        icon="key"
-                        placeholder={messages.pleaseEnterPassword}
+                        center
                     />
                 </div>
-                <Button color="green" label="OK" block type="submit" />
+                <Button
+                    color="green"
+                    label={messages.continue}
+                    block
+                    type="submit"
+                />
             </Form>
         );
     }
