@@ -47,7 +47,7 @@ export default class RecoverPasswordBody extends BaseAuthBody {
 
                 <Input {...this.bindField('key')}
                     color="lightViolet"
-                    style={{textAlign: 'center'}} // ну это уже низко
+                    center
                     required
                     value={key}
                     readOnly={!!key}

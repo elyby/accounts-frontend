@@ -164,13 +164,16 @@
     position: relative;
 }
 
+.textFieldCenter {
+    text-align: center;
+}
+
 @include input-theme('green', $green);
 @include input-theme('blue', $blue);
 @include input-theme('red', $red);
 @include input-theme('darkBlue', $dark_blue);
 @include input-theme('lightViolet', $light_violet);
 @include input-theme('violet', $violet);
-
 
 /**
  * Checkbox

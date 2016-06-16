@@ -28,7 +28,8 @@ export default class Input extends FormInputComponent {
         error: PropTypes.string,
         icon: PropTypes.string,
         skin: PropTypes.oneOf(skins),
-        color: PropTypes.oneOf(colors)
+        color: PropTypes.oneOf(colors),
+        center: PropTypes.bool
     };
 
     static defaultProps = {
@@ -37,7 +38,7 @@ export default class Input extends FormInputComponent {
     };
 
     render() {
-        const { color, skin } = this.props;
+        const { color, skin, center } = this.props;
         let { icon, label } = this.props;
 
         const props = {
@@ -65,7 +66,7 @@ export default class Input extends FormInputComponent {
         if (icon) {
             baseClass = styles.formIconRow;
             icon = (
-                <div className={classNames(styles.textFieldIcon, icons[icon])} />
+                <span className={classNames(styles.textFieldIcon, icons[icon])} />
             );
         }
 
@@ -76,7 +77,10 @@ export default class Input extends FormInputComponent {
                     <input ref={this.setEl}
                         className={classNames(
                             styles[`${skin}TextField`],
-                            styles[`${color}TextField`]
+                            styles[`${color}TextField`],
+                            {
+                                [styles.textFieldCenter]: center
+                            }
                         )}
                         {...props}
                     />

@@ -39,7 +39,7 @@ export default class ActivationBody extends BaseAuthBody {
                 <div className={styles.formRow}>
                     <Input {...this.bindField('key')}
                         color="blue"
-                        style={{textAlign: 'center'}}
+                        center
                         required
                         value={key}
                         readOnly={!!key}
