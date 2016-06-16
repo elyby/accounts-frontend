@@ -52,9 +52,7 @@ const errorsMap = {
     'error.password_too_short': () => <Message {...messages.passwordTooShort} />,
     'error.rePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />,
     'error.rulesAgreement_required': () => <Message {...messages.rulesAgreementRequired} />,
-    'error.you_must_accept_rules': () => errorsMap['error.rulesAgreement_required'](),
     'error.key_required': () => <Message {...messages.keyRequired} />,
-    'error.key_is_required': () => errorsMap['error.key_required'](),
     'error.key_not_exists': (props) => (
         <span>
             <Message {...messages.keyNotExists} />
@@ -69,11 +67,10 @@ const errorsMap = {
 
     'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
 
-    'error.email_frequency': (props) => <Message {...messages.emailFrequency} values={{
+    'error.recently_sent_message': (props) => <Message {...messages.emailFrequency} values={{
         // for msLeft @see AuthError.jsx
         time: <Relative value={props.msLeft} updateInterval={1000} />
     }} />,
-    'error.recently_sent_message': (props) => errorsMap['error.email_frequency'](props),
 
     'error.email_not_found': () => <Message {...messages.emailNotFound} />,
     'error.account_already_activated': () => <Message {...messages.accountAlreadyActivated} />,
