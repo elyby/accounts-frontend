@@ -41,11 +41,7 @@ export class PopupStack extends Component {
 
                     return (
                         <div className={styles.overlay} key={index} onClick={this.onOverlayClick(popup, props)}>
-                            <div className={styles.popupWrapper}>
-                                <div className={styles.popup}>
-                                    <Popup {...props} />
-                                </div>
-                            </div>
+                            <Popup {...props} />
                         </div>
                     );
                 })}

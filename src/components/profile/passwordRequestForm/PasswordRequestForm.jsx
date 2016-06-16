@@ -22,38 +22,42 @@ export default class PasswordRequestForm extends Component {
         const {form} = this.props;
 
         return (
-            <Form onSubmit={this.onFormSubmit}
-                form={form}
-            >
-                <div className={popupStyles.header}>
-                    <h2 className={popupStyles.headerTitle}>
-                        <Message {...messages.title} />
-                    </h2>
+            <div className={styles.requestPasswordForm}>
+                <div className={popupStyles.popup}>
+                    <Form onSubmit={this.onFormSubmit}
+                        form={form}
+                    >
+                        <div className={popupStyles.header}>
+                            <h2 className={popupStyles.headerTitle}>
+                                <Message {...messages.title} />
+                            </h2>
+                        </div>
+
+                        <div className={classNames(popupStyles.body, styles.body)}>
+                            <span className={styles.lockIcon} />
+
+                            <div className={styles.description}>
+                                <Message {...messages.description} />
+                            </div>
+
+                            <Input {...form.bindField('password')}
+                                type="password"
+                                required
+                                autoFocus
+                                color="green"
+                                skin="light"
+                                center
+                            />
+                        </div>
+                        <Button
+                            color="green"
+                            label={messages.continue}
+                            block
+                            type="submit"
+                        />
+                    </Form>
                 </div>
-
-                <div className={classNames(popupStyles.body, styles.body)}>
-                    <span className={styles.lockIcon} />
-
-                    <div className={styles.description}>
-                        <Message {...messages.description} />
-                    </div>
-
-                    <Input {...form.bindField('password')}
-                        type="password"
-                        required
-                        autoFocus
-                        color="green"
-                        skin="light"
-                        center
-                    />
-                </div>
-                <Button
-                    color="green"
-                    label={messages.continue}
-                    block
-                    type="submit"
-                />
-            </Form>
+            </div>
         );
     }
 

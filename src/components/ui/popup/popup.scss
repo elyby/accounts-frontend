@@ -1,7 +1,21 @@
 @import '~components/ui/colors.scss';
 @import '~components/ui/fonts.scss';
 
-$popupPadding: 20px;
+$popupPadding: 20px; // Отступ контента внутри попапа
+$popupMargin: 20px; // Отступ попапа от краёв окна
+
+@mixin popupBounding($width, $padding: null) {
+    @if ($padding == null) {
+        $padding: $popupMargin;
+    }
+
+    @if ($padding != $popupMargin) {
+        margin: $padding auto;
+        padding: 0 $padding;
+    }
+
+    max-width: $width;
+}
 
 .overlay {
     position: fixed;
@@ -32,15 +46,12 @@ $popupPadding: 20px;
 }
 
 .popupWrapper {
-    $padding: 20px;
-    $maxPopupWidth: 500px;
+    box-sizing: content-box;
+    margin: $popupMargin auto;
+    padding: 0 $popupMargin;
 
     display: inline-block;
     width: 100%;
-    max-width: $maxPopupWidth + $padding * 2;
-    box-sizing: border-box;
-    margin: $padding auto;
-    padding: 0 $padding;
     vertical-align: middle;
 }
 
