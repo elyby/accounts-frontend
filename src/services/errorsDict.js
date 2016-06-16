@@ -63,7 +63,6 @@ const errorsMap = {
 
     'error.newPassword_required': () => <Message {...messages.newPasswordRequired} />,
     'error.newRePassword_required': () => <Message {...messages.newRePasswordRequired} />,
-    'error.newRePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />,
 
     'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
 
