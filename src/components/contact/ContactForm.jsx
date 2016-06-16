@@ -20,17 +20,20 @@ const CONTACT_CATEGORIES = [
     <Message {...messages.other} />
 ];
 
-export default class ContactForm extends Component {
+class ContactForm extends Component {
     static displayName = 'ContactForm';
 
     static propTypes = {
-        onClose: PropTypes.func.isRequired
+        onClose: PropTypes.func.isRequired,
+        user: PropTypes.shape({
+            email: PropTypes.string
+        }).isRequired
     };
 
     form = new FormModel();
 
     render() {
-        const {onClose} = this.props;
+        const {onClose, user} = this.props;
         const {form} = this;
 
         return (
@@ -69,6 +72,7 @@ export default class ContactForm extends Component {
                                     label={messages.email}
                                     type="email"
                                     skin="light"
+                                    defaultValue={user.email}
                                 />
                             </div>
                         </div>
@@ -106,3 +110,9 @@ export default class ContactForm extends Component {
             ;
     };
 }
+
+import { connect } from 'react-redux';
+
+export default connect((state) => ({
+    user: state.user
+}))(ContactForm);
