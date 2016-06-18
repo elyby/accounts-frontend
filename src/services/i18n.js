@@ -43,7 +43,7 @@ export default {
                     require.context(
                         'bundle?name=[name]-polyfill-data!intl/locale-data/jsonp',
                         false,
-                        /\.\/(en|ru)\.js$/
+                        /\.\/(en|ru|be)\.js$/
                     )(`./${locale}.js`)(resolve);
                 });
             }));
