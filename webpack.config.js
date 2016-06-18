@@ -154,11 +154,7 @@ var webpackConfig = {
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
-                loader: 'url?limit=1000'
-            },
-            { // TODO: увы, эта штука пока не работает. Хеш добавляется через ./webpack/node-sass-iconfont-importer
-                test: /\.(woff|woff2|eot|ttf)$/,
-                loader: 'url'
+                loader: 'url?limit=1000&name=assets/[name].[ext]?[hash]'
             },
             {
                 test: /\.json$/,
