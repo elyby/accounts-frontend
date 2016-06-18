@@ -3,39 +3,20 @@ import 'polyfills';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider as ReduxProvider } from 'react-redux';
-
-// midleware, который позволяет возвращать из экшенов функции
-// это полезно для работы с асинхронными действиями,
-// а также дает возможность проверить какие-либо условия перед запуском экшена
-// или даже вообще его не запускать в зависимости от условий
-import thunk from 'redux-thunk';
-
 import { Router, browserHistory } from 'react-router';
-import { syncHistory, routeReducer } from 'react-router-redux';
 
 import { factory as userFactory } from 'components/user/factory';
 import { IntlProvider } from 'components/i18n';
-import reducers from 'reducers';
 import routesFactory from 'routes';
+import storeFactory from 'storeFactory';
 
-const reducer = combineReducers({
-    ...reducers,
-    routing: routeReducer
-});
-
-const reduxRouterMiddleware = syncHistory(browserHistory);
-
-const store = applyMiddleware(
-    reduxRouterMiddleware,
-    thunk
-)(createStore)(reducer);
+const store = storeFactory();
 
 userFactory(store)
 .then(() => {
     // allow :active styles in mobile Safary
-    document.addEventListener("touchstart", () => {}, true);
+    document.addEventListener('touchstart', () => {}, true);
 
     ReactDOM.render(
         <ReduxProvider store={store}>
@@ -50,7 +31,6 @@ userFactory(store)
         </ReduxProvider>,
         document.getElementById('app')
     );
-
 });
 
 import scrollTo from 'components/ui/scrollTo';

@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import Userbar from 'components/userbar/Userbar';
 import PopupStack from 'components/ui/popup/PopupStack';
+import DevTools from 'containers/DevTools';
 
 import styles from './root.scss';
 
@@ -14,6 +15,7 @@ import messages from './RootPage.intl.json';
 function RootPage(props) {
     const isRegisterPage = props.location.pathname === '/register';
 
+    /* global process: false */
     return (
         <div className={styles.root}>
             <div id="view-port" className={classNames(styles.viewPort, {
@@ -37,6 +39,7 @@ function RootPage(props) {
                 </div>
             </div>
             <PopupStack />
+            {process.env.NODE_ENV === 'production' ? null : <DevTools /> }
         </div>
     );
 }
