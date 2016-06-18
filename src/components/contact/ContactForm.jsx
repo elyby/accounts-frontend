@@ -33,8 +33,8 @@ class ContactForm extends Component {
     form = new FormModel();
 
     render() {
-        const {onClose, user} = this.props;
-        const {form} = this;
+        const {isSuccessfullySent = false} = this.state || {};
+        const {onClose} = this.props;
 
         return (
             <div className={styles.contactForm}>
@@ -46,62 +46,74 @@ class ContactForm extends Component {
                         <span className={classNames(icons.close, popupStyles.close)} onClick={onClose} />
                     </div>
 
-                    <Form form={form} onSubmit={this.onSubmit}>
-                        <div className={popupStyles.body}>
-                            <div className={styles.philosophicalThought}>
-                                <Message {...messages.philosophicalThought} />
-                            </div>
-
-                            <div className={styles.formDisclaimer}>
-                                <Message {...messages.disclaimer} /><br />
-                            </div>
-
-                            <div className={styles.pairInputRow}>
-                                <div className={styles.pairInput}>
-                                    <Input
-                                        {...form.bindField('subject')}
-                                        required
-                                        label={messages.subject}
-                                        skin="light"
-                                    />
-                                </div>
-
-                                <div className={styles.pairInput}>
-                                    <Input
-                                        {...form.bindField('email')}
-                                        required
-                                        label={messages.email}
-                                        type="email"
-                                        skin="light"
-                                        defaultValue={user.email}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className={styles.formMargin}>
-                                <Dropdown label={messages.whichQuestion} items={CONTACT_CATEGORIES} block />
-                            </div>
-
-                            <TextArea
-                                {...form.bindField('message')}
-                                required
-                                label={messages.message}
-                                skin="light"
-                            />
-                        </div>
-
-                        <div className={styles.footer}>
-                            <Button label={messages.send} block />
-                        </div>
-                    </Form>
+                    {isSuccessfullySent
+                        ? (<div>Hello world<Button onClick={onClose} label="Close" /></div>)
+                        : this.renderForm()
+                    }
                 </div>
             </div>
         );
     }
 
+    renderForm() {
+        const {form} = this;
+        const {user} = this.props;
+
+        return (
+            <Form form={form} onSubmit={this.onSubmit}>
+                <div className={popupStyles.body}>
+                    <div className={styles.philosophicalThought}>
+                        <Message {...messages.philosophicalThought} />
+                    </div>
+
+                    <div className={styles.formDisclaimer}>
+                        <Message {...messages.disclaimer} /><br />
+                    </div>
+
+                    <div className={styles.pairInputRow}>
+                        <div className={styles.pairInput}>
+                            <Input
+                                {...form.bindField('subject')}
+                                required
+                                label={messages.subject}
+                                skin="light"
+                            />
+                        </div>
+
+                        <div className={styles.pairInput}>
+                            <Input
+                                {...form.bindField('email')}
+                                required
+                                label={messages.email}
+                                type="email"
+                                skin="light"
+                                defaultValue={user.email}
+                            />
+                        </div>
+                    </div>
+
+                    <div className={styles.formMargin}>
+                        <Dropdown label={messages.whichQuestion} items={CONTACT_CATEGORIES} block />
+                    </div>
+
+                    <TextArea
+                        {...form.bindField('message')}
+                        required
+                        label={messages.message}
+                        skin="light"
+                    />
+                </div>
+
+                <div className={styles.footer}>
+                    <Button label={messages.send} block />
+                </div>
+            </Form>
+        );
+    }
+
     onSubmit = () => {
         feedback(this.form.serialize())
-            .then(this.props.onClose)
+            .then(() => this.setState({isSuccessfullySent: true}))
             .catch((resp) => {
                 if (resp.errors) {
                     this.form.setErrors(resp.errors);
