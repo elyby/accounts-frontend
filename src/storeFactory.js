@@ -8,7 +8,6 @@ import { syncHistory } from 'react-router-redux';
 import { browserHistory } from 'react-router';
 
 import reducers from 'reducers';
-import DevTools from 'containers/DevTools';
 
 export default function storeFactory() {
     const reduxRouterMiddleware = syncHistory(browserHistory);
@@ -22,6 +21,7 @@ export default function storeFactory() {
     if (process.env.NODE_ENV === 'production') {
         enhancer = compose(middlewares);
     } else {
+        const DevTools = require('containers/DevTools').default;
         enhancer = compose(middlewares, DevTools.instrument());
     }
 
