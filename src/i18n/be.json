@@ -163,7 +163,6 @@
     "services.loginRequired": "Калі ласка, укажыце E‑mail ці нік",
     "services.newPasswordRequired": "Калі ласка, запоўніце поле пароля",
     "services.newRePasswordRequired": "Калі ласка, увядзіце паўтор пароля",
-    "services.oldHashStrategy": "Sorry, but your account's password is too old. Please change your password in order to perform this action.",
     "services.passwordRequired": "Калі ласка, увядзіце пароль",
     "services.passwordTooShort": "Пароль павінен быць не менш за 8 сімвалаў ў даўжыню",
     "services.passwordsDoesNotMatch": "Паролі не супадаюць",

@@ -163,7 +163,6 @@
     "services.loginRequired": "Please enter E‑mail or username",
     "services.newPasswordRequired": "Please enter new password",
     "services.newRePasswordRequired": "Please repeat new password",
-    "services.oldHashStrategy": "Sorry, but your account's password is too old. Please change your password in order to perform this action.",
     "services.passwordRequired": "Please enter password",
     "services.passwordTooShort": "Your password should be at least 8 characters length",
     "services.passwordsDoesNotMatch": "The passwords does not match",

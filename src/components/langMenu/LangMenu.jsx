@@ -11,6 +11,7 @@ const LANGS = {
     be: 'Беларускі',
     en: 'English',
     ru: 'Русский',
+    uk: 'Українська',
 };
 
 export default class LangMenu extends Component {

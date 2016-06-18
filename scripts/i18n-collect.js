@@ -7,7 +7,7 @@ import prompt from 'prompt';
 const MESSAGES_PATTERN = `../dist/messages/**/*.json`;
 const LANG_DIR = `../src/i18n`;
 const DEFAULT_LOCALE = 'en';
-const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be');
+const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be', 'uk');
 
 /**
  * Aggregates the default messages that were extracted from the app's
@@ -17,7 +17,7 @@ const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be');
  */
 let idToFileMap = {};
 let duplicateIds = [];
-let defaultMessages = globSync(MESSAGES_PATTERN)
+const defaultMessages = globSync(MESSAGES_PATTERN)
     .map((filename) => [filename, JSON.parse(fs.readFileSync(filename, 'utf8'))])
     .reduce((collection, [file, descriptors]) => {
         descriptors.forEach(({id, defaultMessage}) => {
