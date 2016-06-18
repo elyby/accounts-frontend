@@ -38,7 +38,9 @@ export default class Dropdown extends FormInputComponent {
     };
 
     componentDidMount() {
-        document.addEventListener('click', this.onBodyClick);
+        // listen to capturing phase to ensure, that our event handler will be
+        // called before all other
+        document.addEventListener('click', this.onBodyClick, true);
     }
 
     componentWillUnmount() {
@@ -129,6 +131,7 @@ export default class Dropdown extends FormInputComponent {
 
             if (!el.contains(event.target) && el !== event.taget) {
                 event.preventDefault();
+                event.stopPropagation();
 
                 this.toggle();
             }
