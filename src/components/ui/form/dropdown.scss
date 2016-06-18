@@ -43,6 +43,13 @@ $dropdownPadding: 15px;
     }
 }
 
+.label {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .opened {
 
 }
@@ -98,6 +105,8 @@ $dropdownPadding: 15px;
 }
 
 .menuItem {
+    composes: label;
+
     height: 50px;
     padding: 0 13px;
     overflow: hidden;

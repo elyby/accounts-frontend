@@ -60,7 +60,7 @@ export default class Dropdown extends FormInputComponent {
                     [styles.block]: block,
                     [styles.opened]: isActive
                 })} {...this.props} onClick={this.onToggle}>
-                    {label}
+                    <span className={styles.label}>{label}</span>
                     <span className={styles.toggleIcon} />
 
                     <div className={styles.menu}>
