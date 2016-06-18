@@ -93,7 +93,12 @@ class ContactForm extends Component {
                     </div>
 
                     <div className={styles.formMargin}>
-                        <Dropdown label={messages.whichQuestion} items={CONTACT_CATEGORIES} block />
+                        <Dropdown
+                            {...form.bindField('category')}
+                            label={messages.whichQuestion}
+                            items={CONTACT_CATEGORIES}
+                            block
+                        />
                     </div>
 
                     <TextArea

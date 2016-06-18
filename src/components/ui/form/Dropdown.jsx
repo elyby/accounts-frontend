@@ -6,9 +6,9 @@ import classNames from 'classnames';
 import { colors, COLOR_GREEN } from 'components/ui';
 
 import styles from './dropdown.scss';
-import FormComponent from './FormComponent';
+import FormInputComponent from './FormInputComponent';
 
-export default class Dropdown extends FormComponent {
+export default class Dropdown extends FormInputComponent {
     static displayName = 'Dropdown';
 
     static propTypes = {
@@ -18,11 +18,12 @@ export default class Dropdown extends FormComponent {
             }),
             PropTypes.string
         ]).isRequired,
-        items: PropTypes.oneOfType([
-            PropTypes.arrayOf(PropTypes.string),
-            PropTypes.arrayOf(PropTypes.object)
-            // TODO: ^^^ я тут хотел добавить вариант с <Message /> объектом, не уверен, что вышло верно
-        ]).isRequired,
+        items: PropTypes.arrayOf(PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.shape({
+                id: PropTypes.string
+            })
+        ])).isRequired,
         block: PropTypes.bool,
         color: PropTypes.oneOf(colors)
     };
@@ -33,7 +34,7 @@ export default class Dropdown extends FormComponent {
 
     state = {
         isActive: false,
-        activeItem: this.props.label
+        activeItem: null
     };
 
     componentDidMount() {
@@ -46,25 +47,30 @@ export default class Dropdown extends FormComponent {
 
     render() {
         const { color, block, items } = this.props;
-        const {isActive, activeItem} = this.state;
+        const {isActive} = this.state;
 
-        const label = this.formatMessage(activeItem);
+        const activeItem = this.getActiveItem();
+        const label = this.formatMessage(activeItem.label);
 
         return (
-            <div className={classNames(styles[color], {
-                [styles.block]: block,
-                [styles.opened]: isActive
-            })} {...this.props} onClick={this.onToggle}>
-                {label}
-                <span className={styles.toggleIcon} />
+            <div>
+                <div className={classNames(styles[color], {
+                    [styles.block]: block,
+                    [styles.opened]: isActive
+                })} {...this.props} onClick={this.onToggle}>
+                    {label}
+                    <span className={styles.toggleIcon} />
 
-                <div className={styles.menu}>
-                    {items.map((item, key) => (
-                        <div className={styles.menuItem} key={key} onClick={this.onSelectItem(item)}>
-                            {item}
-                        </div>
-                    ))}
+                    <div className={styles.menu}>
+                        {Object.entries(items).map(([value, label]) => (
+                            <div className={styles.menuItem} key={value} onClick={this.onSelectItem({value, label})}>
+                                {label}
+                            </div>
+                        ))}
+                    </div>
                 </div>
+
+                {this.renderError()}
             </div>
         );
     }
@@ -83,6 +89,32 @@ export default class Dropdown extends FormComponent {
                 activeItem: item
             });
         };
+    }
+
+    getActiveItem() {
+        const {items} = this.props;
+        let {activeItem} = this.state;
+
+        if (!activeItem) {
+            activeItem = {
+                label: this.props.label,
+                value: ''
+            };
+
+            if (!activeItem.label) {
+                const firstItem = Object.entries(items)[0];
+                activeItem = {
+                    label: firstItem[1],
+                    value: firstItem[0]
+                };
+            }
+        }
+
+        return activeItem;
+    }
+
+    getValue() {
+        return this.getActiveItem().value;
     }
 
     onToggle = (event) => {
