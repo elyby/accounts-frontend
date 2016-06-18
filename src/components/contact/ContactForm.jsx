@@ -37,7 +37,7 @@ class ContactForm extends Component {
         const {onClose} = this.props;
 
         return (
-            <div className={styles.contactForm}>
+            <div className={isSuccessfullySent ? styles.successState : styles.contactForm}>
                 <div className={popupStyles.popup}>
                     <div className={popupStyles.header}>
                         <h2 className={popupStyles.headerTitle}>
@@ -46,10 +46,7 @@ class ContactForm extends Component {
                         <span className={classNames(icons.close, popupStyles.close)} onClick={onClose} />
                     </div>
 
-                    {isSuccessfullySent
-                        ? (<div>Hello world<Button onClick={onClose} label="Close" /></div>)
-                        : this.renderForm()
-                    }
+                    {isSuccessfullySent ? this.renderSuccess() : this.renderForm()}
                 </div>
             </div>
         );
@@ -113,6 +110,28 @@ class ContactForm extends Component {
                     <Button label={messages.send} block />
                 </div>
             </Form>
+        );
+    }
+
+    renderSuccess() {
+        const {form} = this;
+        const email = form.value('email');
+        const {onClose} = this.props;
+
+        return (
+            <div>
+                <div className={styles.successBody}>
+                    <span className={styles.successIcon} />
+                    <div className={styles.successDescription}>
+                        <Message {...messages.youMessageReceived} />
+                    </div>
+                    <div className={styles.sentToEmail}>{email}</div>
+                </div>
+
+                <div className={styles.footer}>
+                    <Button label={messages.close} block onClick={onClose} />
+                </div>
+            </div>
         );
     }
 

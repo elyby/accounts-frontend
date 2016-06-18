@@ -53,6 +53,8 @@ $popupMargin: 20px; // Отступ попапа от краёв окна
     display: inline-block;
     width: 100%;
     vertical-align: middle;
+
+    transition: max-width .3s;
 }
 
 .popup {

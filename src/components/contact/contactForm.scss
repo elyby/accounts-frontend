@@ -2,6 +2,8 @@
 @import '~components/ui/fonts.scss';
 @import '~components/ui/popup/popup.scss';
 
+/* Form state */
+
 .contactForm {
     composes: popupWrapper from 'components/ui/popup/popup.scss';
 
@@ -40,6 +42,43 @@
 .formMargin {
     margin-bottom: 20px;
 }
+
+/* Success State */
+
+.successState {
+    composes: popupWrapper from 'components/ui/popup/popup.scss';
+
+    @include popupBounding(320px);
+}
+
+.successBody {
+    composes: body from 'components/ui/popup/popup.scss';
+
+    text-align: center;
+}
+
+.successDescription {
+    @extend .formDisclaimer;
+
+    margin-bottom: 15px;
+}
+
+.successIcon {
+    composes: checkmark from 'components/ui/icons.scss';
+
+    font-size: 90px;
+    color: #AAA;
+    margin-bottom: 20px;
+    line-height: 71px;
+}
+
+.sentToEmail {
+    font-family: $font-family-title;
+    color: #444;
+    font-size: 18px;
+}
+
+/* Common */
 
 .footer {
     margin-top: 0;
