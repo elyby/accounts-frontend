@@ -2,6 +2,7 @@ import { routeActions } from 'react-router-redux';
 
 import request from 'services/request';
 import accounts from 'services/api/accounts';
+import authentication from 'services/api/authentication';
 import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';
@@ -45,6 +46,7 @@ export function setUser(payload) {
 
 export function logout() {
     return (dispatch, getState) => {
+        authentication.logout();
         dispatch(setUser({
             lang: getState().user.lang,
             isGuest: true
@@ -107,7 +109,6 @@ export function authenticate(token, refreshToken) { // TODO: this action, probab
     };
 }
 
-import authentication from 'services/api/authentication';
 function requestAccessToken(refreshToken, dispatch) {
     let promise;
     if (refreshToken) {

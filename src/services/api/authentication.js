@@ -12,6 +12,10 @@ export default {
         );
     },
 
+    logout() {
+        return request.post('/api/authentication/logout');
+    },
+
     refreshToken(refresh_token) {
         return request.post(
             '/api/authentication/refresh-token',
