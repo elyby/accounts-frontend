@@ -41,6 +41,8 @@ import { connect } from 'react-redux';
 import ContactForm from 'components/contact/ContactForm';
 import { create as createPopup } from 'components/ui/popup/actions';
 
+// mark this component, as not pure, because it is stateless,
+// but should be re-rendered, if current lang was changed
 export default connect(null, {
     createPopup: () => createPopup(ContactForm)
-})(FooterMenu);
+}, null, {pure: false})(FooterMenu);
