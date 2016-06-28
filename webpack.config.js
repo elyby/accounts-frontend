@@ -9,6 +9,8 @@ var cssnano = require('cssnano');
 var cssUrl = require("postcss-url");
 var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 
+var vendor = Object.keys(require('./package.json').dependencies);
+
 /**
  * TODO: https://babeljs.io/docs/plugins/
  * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
@@ -52,24 +54,7 @@ var rootPath = path.resolve('./src');
 var webpackConfig = {
     entry: {
         app: path.join(__dirname, 'src'),
-        vendor: [
-            'babel-polyfill',
-            'whatwg-fetch',
-            'classnames',
-            'history',
-            'intl-format-cache',
-            'intl-messageformat',
-            'react',
-            'react-dom',
-            'react-helmet',
-            'react-intl',
-            'react-motion',
-            'react-redux',
-            'react-router',
-            'react-router-redux',
-            'redux',
-            'redux-thunk'
-        ]
+        vendor: vendor
     },
 
     output: {
