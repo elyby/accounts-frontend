@@ -25,7 +25,7 @@ const rules = [
             <Message {...messages.mainProvision2} />,
             <Message {...messages.mainProvision3} />,
             <Message {...messages.mainProvision4} values={{
-                link: (<Link to={'/register'}>https://account.ely.by/register</Link>)
+                link: (<Link to="/register">https://account.ely.by/register</Link>)
             }} />
         ]
     },
@@ -130,6 +130,11 @@ export default class RulesPage extends Component {
     }
 
     onRuleClick(event) {
+        if (event.defaultPrevented || event.target.tagName.toLowerCase() === 'a') {
+            // some-one have already processed this event or it is a link
+            return;
+        }
+
         const {id} = event.currentTarget;
         const {router} = this.context;
         const newLocation = router.createLocation({...location, hash: `#${id}`});
