@@ -6,9 +6,9 @@ var webpack = require('webpack');
 var loaderUtils = require('loader-utils');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var cssUrl = require('./webpack/cssUrl');
+var cssUrl = require('webpack-utils/cssUrl');
 var cssImport = require('postcss-import');
-var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
+var iconfontImporter = require('webpack-utils/node-sass-iconfont-importer');
 
 var vendor = Object.keys(require('./package.json').dependencies);
 
@@ -196,7 +196,7 @@ var webpackConfig = {
 
     resolveLoader: {
         alias: {
-            intl: path.resolve('./webpack/intl-loader')
+            intl: path.resolve('webpack-utils/intl-loader')
         }
     },
 

@@ -9,7 +9,7 @@
   "repository": "git@bitbucket.org:ErickSkrauch/ely.by-account.git",
   "scripts": {
     "start": "rm -rf dist/ && webpack-dev-server --progress --colors",
-    "up": "npm update && cd ./webpack && npm update && cd ../scripts && npm update",
+    "up": "npm update",
     "test": "karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "i18n": "cd ./scripts && ./node_modules/.bin/babel-node i18n-collect.js",
@@ -84,10 +84,12 @@
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.0.11",
     "sass-loader": "^4.0.0",
+    "scripts": "file:scripts",
     "sinon": "^1.15.3",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0"
+    "webpack-dev-server": "^1.14.0",
+    "webpack-utils": "file:webpack-utils"
   }
 }
