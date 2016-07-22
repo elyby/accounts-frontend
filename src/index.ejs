@@ -16,8 +16,6 @@
 
 <%= require('first-render').default %>
 
-<link href="//fonts.googleapis.com/css?family=Roboto:400,500&subset=latin,cyrillic" rel="stylesheet" type="text/css">
-<link href="//fonts.googleapis.com/css?family=Roboto+Condensed&subset=latin,cyrillic" rel="stylesheet" type="text/css">
 <% for (var css in htmlWebpackPlugin.files.css) { %>
     <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
 <% } %>

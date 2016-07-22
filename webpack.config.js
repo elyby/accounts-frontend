@@ -3,13 +3,16 @@
 var path = require('path');
 
 var webpack = require('webpack');
+var loaderUtils = require('loader-utils');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var cssnano = require('cssnano');
-var cssUrl = require("postcss-url");
+var cssUrl = require('./webpack/cssUrl');
+var cssImport = require('postcss-import');
 var iconfontImporter = require('./webpack/node-sass-iconfont-importer');
 
 var vendor = Object.keys(require('./package.json').dependencies);
+
+const rootPath = path.resolve('./src');
 
 /**
  * TODO: https://babeljs.io/docs/plugins/
@@ -24,15 +27,11 @@ var vendor = Object.keys(require('./package.json').dependencies);
  * https://github.com/davezuko/react-redux-starter-kit
  */
 
-var isProduction = process.argv.some(function(arg) {
-    return arg === '-p';
-});
+const isProduction = process.argv.some((arg) => arg === '-p');
 
-var isTest = process.argv.some(function(arg) {
-    return arg.indexOf('karma') !== -1;
-});
+const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
 
-var isDockerized = !!process.env.DOCKERIZED;
+const isDockerized = !!process.env.DOCKERIZED;
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
 if (isTest) {
@@ -40,8 +39,8 @@ if (isTest) {
 }
 
 const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
-var config;
 
+var config;
 try {
     config = require('./config/dev.json');
 } catch (err) {
@@ -49,7 +48,29 @@ try {
     throw err;
 }
 
-var rootPath = path.resolve('./src');
+const cssLoaderQuery = {
+    modules: true,
+    importLoaders: 2,
+    url: false,
+    localIdentName: CSS_CLASS_TEMPLATE,
+
+    /**
+     * cssnano options
+     */
+    sourcemap: !isProduction,
+    autoprefixer: {
+        add: true,
+        remove: true,
+        browsers: ['last 2 versions']
+    },
+    safe: true,
+    // отключаем минификацию цветов, что бы она не ломала такие выражения:
+    // composes: black from './buttons.scss';
+    colormin: false,
+    discardComments: {
+        removeAll: true
+    }
+};
 
 var webpackConfig = {
     entry: {
@@ -70,7 +91,7 @@ var webpackConfig = {
 
     externals: isTest ? {
         // http://airbnb.io/enzyme/docs/guides/webpack.html
-        'cheerio': 'window',
+        cheerio: 'window',
         'react/lib/ExecutionEnvironment': true,
         'react/lib/ReactContext': true,
         'react/addons': true
@@ -130,7 +151,7 @@ var webpackConfig = {
             {
                 test: /\.scss$/,
                 extractInProduction: true,
-                loader: 'style!css?modules&importLoaders=2&localIdentName=' + CSS_CLASS_TEMPLATE + '!postcss!sass'
+                loader: 'style!css?' + JSON.stringify(cssLoaderQuery) + '!sass!postcss?syntax=postcss-scss'
             },
             {
                 test: /\.jsx?$/,
@@ -139,7 +160,19 @@ var webpackConfig = {
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
-                loader: 'url?limit=1000&name=assets/[name].[ext]?[hash]'
+                loader: 'url',
+                query: {
+                    limit: 1000,
+                    name: 'assets/[name].[ext]?[hash]'
+                }
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf)$/, // NOTE: svg is loaded by another loader for now
+                loader: 'file',
+                query: {
+                    name: 'assets/fonts/[name].[ext]?[hash]'
+                }
+
             },
             {
                 test: /\.json$/,
@@ -163,7 +196,7 @@ var webpackConfig = {
 
     resolveLoader: {
         alias: {
-            'intl': path.resolve('./webpack/intl-loader')
+            intl: path.resolve('./webpack/intl-loader')
         }
     },
 
@@ -173,41 +206,36 @@ var webpackConfig = {
         })
     },
 
-    postcss: [
-        cssUrl({
-            url: function(url, decl, from, dirname, to, options, result) {
-                // scss не правильно резолвит относительные урлы.
-                // добавляем к урлам остаток пути, что бы они были относительно root
-                //
-                // Например:
-                // file: components/ui/foo.scss
-                // ./images/foo.png -> components/ui/images/foo.png
+    postcss() {
+        // TODO: иконочные шрифты эмитятся > 1 раза
+        return [
+            cssImport({
+                path: rootPath,
+                addDependencyTo: webpack,
 
-                if (url.indexOf('./') === 0) {
-                    var relativeToRoot = dirname.split(rootPath + '/')[1];
+                resolve: ((defaultResolve) =>
+                    (url, basedir, importOptions) =>
+                        defaultResolve(loaderUtils.urlToRequest(url), basedir, importOptions)
+                )(require('postcss-import/lib/resolve-id')),
 
-                    return path.join(relativeToRoot, url);
-                }
+                load: ((defaultLoad) =>
+                    (filename, importOptions) => {
+                        if (/\.font.(js|json)$/.test(filename)) {
+                            return new Promise((resolve, reject) =>
+                                this.loadModule(filename, (err, source) =>
+                                    err ? reject(err) : resolve(this.exec(source))
+                                )
+                            );
+                        }
 
-                return url;
-            }
-        }),
-        cssnano({
-            // sourcemap: !isProduction,
-            autoprefixer: {
-                add: true,
-                remove: true,
-                browsers: ['last 2 versions']
-            },
-            safe: true,
-            // отключаем минификацию цветов, что бы она не ломала такие выражения:
-            // composes: black from './buttons.scss';
-            colormin: false,
-            discardComments: {
-                removeAll: true
-            }
-        })
-    ]
+                        return defaultLoad(filename, importOptions);
+                    }
+                )(require('postcss-import/lib/load-content'))
+            }),
+
+            cssUrl(this)
+        ];
+    }
 };
 
 if (isDockerized) {
@@ -220,7 +248,7 @@ if (isDockerized) {
 if (isProduction) {
     webpackConfig.module.loaders.forEach((loader) => {
         if (loader.extractInProduction) {
-            var parts = loader.loader.split('!');
+            const parts = loader.loader.split('!');
             loader.loader = ExtractTextPlugin.extract(
                 parts[0],
                 parts.slice(1)
