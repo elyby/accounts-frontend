@@ -116,6 +116,13 @@ export function resendActivation({email = ''}) {
             '/api/signup/repeat-message',
             {email}
         )
+        .then((resp) => {
+            dispatch(updateUser({
+                email
+            }));
+
+            return resp;
+        })
         .catch(validationErrorsHandler(dispatch))
     );
 }
