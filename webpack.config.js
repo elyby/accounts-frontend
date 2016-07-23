@@ -47,6 +47,8 @@ try {
     console.error('\n\n===\nPlease create dev.json config under ./config based on template.dev.json\n===\n\n');
     throw err;
 }
+const fileCache = {};
+
 
 const cssLoaderQuery = {
     modules: true,
@@ -207,7 +209,6 @@ var webpackConfig = {
     },
 
     postcss() {
-        // TODO: иконочные шрифты эмитятся > 1 раза
         return [
             cssImport({
                 path: rootPath,
@@ -221,11 +222,18 @@ var webpackConfig = {
                 load: ((defaultLoad) =>
                     (filename, importOptions) => {
                         if (/\.font.(js|json)$/.test(filename)) {
-                            return new Promise((resolve, reject) =>
-                                this.loadModule(filename, (err, source) =>
-                                    err ? reject(err) : resolve(this.exec(source))
-                                )
-                            );
+                            if (!fileCache[filename] || !isProduction) {
+                                // do not execute loader on the same file twice
+                                // this is an overcome for a bug with ExtractTextPlugin, for isProduction === true
+                                // when @imported files may be processed mutiple times
+                                fileCache[filename] = new Promise((resolve, reject) =>
+                                    this.loadModule(filename, (err, source) =>
+                                        err ? reject(err) : resolve(this.exec(source))
+                                    )
+                                );
+                            }
+
+                            return fileCache[filename];
                         }
 
                         return defaultLoad(filename, importOptions);
@@ -248,10 +256,12 @@ if (isDockerized) {
 if (isProduction) {
     webpackConfig.module.loaders.forEach((loader) => {
         if (loader.extractInProduction) {
+            // remove style-loader from chain and pass through ExtractTextPlugin
             const parts = loader.loader.split('!');
+
             loader.loader = ExtractTextPlugin.extract(
-                parts[0],
-                parts.slice(1)
+                parts[0], // style-loader
+                parts.slice(1) // css-loader and rest
                     .join('!')
                     .replace(/[&?]sourcemap/, '')
             );
