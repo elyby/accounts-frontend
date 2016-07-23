@@ -8,7 +8,6 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var cssUrl = require('webpack-utils/cssUrl');
 var cssImport = require('postcss-import');
-var iconfontImporter = require('webpack-utils/node-sass-iconfont-importer');
 
 var vendor = Object.keys(require('./package.json').dependencies);
 
@@ -118,7 +117,6 @@ var webpackConfig = {
     devtool: isTest ? 'inline-source-map' : 'eval',
 
     plugins: [
-        new iconfontImporter.Plugin(),
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV)
@@ -200,12 +198,6 @@ var webpackConfig = {
         alias: {
             intl: path.resolve('webpack-utils/intl-loader')
         }
-    },
-
-    sassLoader: {
-        importer: iconfontImporter({
-            test: /\.font.(js|json)$/
-        })
     },
 
     postcss() {
