@@ -1,5 +1,6 @@
 import RegisterState from 'services/authFlow/RegisterState';
 import CompleteState from 'services/authFlow/CompleteState';
+import ActivationState from 'services/authFlow/ActivationState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
@@ -81,10 +82,16 @@ describe('RegisterState', () => {
     });
 
     describe('#reject', () => {
+        it('should transition to activation', () => {
+            expectState(mock, ActivationState);
+
+            state.reject(context, {});
+        });
+
         it('should transition to resend-activation', () => {
             expectState(mock, ResendActivationState);
 
-            state.reject(context);
+            state.reject(context, {requestEmail: true});
         });
     });
 });

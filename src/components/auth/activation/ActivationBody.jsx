@@ -22,6 +22,7 @@ export default class ActivationBody extends BaseAuthBody {
 
     render() {
         const {key} = this.props.params;
+        const email = this.context.user.email;
 
         return (
             <div>
@@ -31,9 +32,16 @@ export default class ActivationBody extends BaseAuthBody {
                     <div className={styles.descriptionImage} />
 
                     <div className={styles.descriptionText}>
-                        <Message {...messages.activationMailWasSent} values={{
-                            email: (<b>{this.context.user.email}</b>)
-                        }} />
+                        {email
+                            ? (
+                                <Message {...messages.activationMailWasSent} values={{
+                                    email: (<b>{email}</b>)
+                                }} />
+                            )
+                            : (
+                                <Message {...messages.activationMailWasSentNoEmail} />
+                            )
+                        }
                     </div>
                 </div>
                 <div className={styles.formRow}>

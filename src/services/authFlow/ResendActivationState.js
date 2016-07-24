@@ -19,6 +19,10 @@ export default class ResendActivationState extends AbstractState {
             .then(() => context.setState(new ActivationState()));
     }
 
+    reject(context) {
+        context.setState(new ActivationState());
+    }
+
     goBack(context) {
         if (context.prevState instanceof RegisterState) {
             context.setState(new RegisterState());

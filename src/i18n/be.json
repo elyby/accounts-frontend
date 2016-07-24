@@ -1,6 +1,7 @@
 {
     "components.auth.activation.accountActivationTitle": "Актывацыя акаунта",
     "components.auth.activation.activationMailWasSent": "На {email} высланы ліст з інструкцыямі па завяршэнні рэгістрацыі",
+    "components.auth.activation.activationMailWasSentNoEmail": "Please check your E-mail for the message with the last registration step",
     "components.auth.activation.confirmEmail": "Пацверджанне E‑mail",
     "components.auth.activation.didNotReceivedEmail": "Не атрымалі E‑mail?",
     "components.auth.activation.enterTheCode": "Увядзіце код з E‑mail тут",

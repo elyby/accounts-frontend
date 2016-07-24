@@ -1,6 +1,7 @@
 {
     "components.auth.activation.accountActivationTitle": "Активація акаунту",
     "components.auth.activation.activationMailWasSent": "На {email} відправлено повідомлення з інструкціями по завершенню реєстрації",
+    "components.auth.activation.activationMailWasSentNoEmail": "На ваш E-mail відправлено повідомлення з інструкціями по завершенню реєстрації",
     "components.auth.activation.confirmEmail": "Підтвердження E‑mail",
     "components.auth.activation.didNotReceivedEmail": "Не отримали E‑mail?",
     "components.auth.activation.enterTheCode": "Вкажіть код з E‑mail",
@@ -21,7 +22,7 @@
     "components.auth.finish.copy": "Скопіювати",
     "components.auth.finish.passCodeToApp": "Щоб завершити процес авторизації, будь ласка, передайте {appName} цей код",
     "components.auth.finish.waitAppReaction": "Будь ласка, дочекайтеся реакції вашої програми",
-    "components.auth.forgotPassword.alreadyHaveCode": "Вже отримав код",
+    "components.auth.forgotPassword.alreadyHaveCode": "Вже є код",
     "components.auth.forgotPassword.pleasePressButton": "Натисніть на кнопку нижче, щоб отримати E-mail з кодом для відновлення пароля.",
     "components.auth.forgotPassword.sendMail": "Відправити повідомлення",
     "components.auth.forgotPassword.specifyEmail": "Вкажіть реєстраційну E-mail адресу або останній використаний нік від вашого облікового запису, і ми відправимо E-mail з подальшими інструкціями щодо відновлення пароля.",

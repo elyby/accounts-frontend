@@ -7,7 +7,7 @@ export default function RejectionLink(props, context) {
         <a href="#" onClick={(event) => {
             event.preventDefault();
 
-            context.reject();
+            context.reject(props.payload);
         }}>
             <Message {...props.label} />
         </a>
@@ -16,6 +16,8 @@ export default function RejectionLink(props, context) {
 
 RejectionLink.displayName = 'RejectionLink';
 RejectionLink.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    payload: PropTypes.object, // Custom payload for active state
     label: PropTypes.shape({
         id: PropTypes.string
     }).isRequired

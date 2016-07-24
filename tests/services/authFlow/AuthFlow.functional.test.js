@@ -133,7 +133,7 @@ describe('AuthFlow.functional', () => {
             navigate('/register');
             expect(flow.state).to.be.instanceof(RegisterState);
 
-            flow.state.reject(flow);
+            flow.state.reject(flow, {requestEmail: true});
             expect(flow.state).to.be.instanceof(ResendActivationState);
 
             flow.state.goBack(flow);

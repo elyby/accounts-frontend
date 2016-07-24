@@ -1,5 +1,6 @@
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
+import ActivationState from './ActivationState';
 import ResendActivationState from './ResendActivationState';
 
 export default class RegisterState extends AbstractState {
@@ -18,7 +19,11 @@ export default class RegisterState extends AbstractState {
             .then(() => context.setState(new CompleteState()));
     }
 
-    reject(context) {
-        context.setState(new ResendActivationState());
+    reject(context, payload) {
+        if (payload.requestEmail) {
+            context.setState(new ResendActivationState());
+        } else {
+            context.setState(new ActivationState());
+        }
     }
 }

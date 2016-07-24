@@ -1,6 +1,7 @@
 {
     "components.auth.activation.accountActivationTitle": "Активация аккаунта",
     "components.auth.activation.activationMailWasSent": "На {email} отправлено письмо с инструкциями по завершению регистрации",
+    "components.auth.activation.activationMailWasSentNoEmail": "На ваш E-mail отправлено письмо с инструкциями по завершению регистрации",
     "components.auth.activation.confirmEmail": "Подтверждение E‑mail",
     "components.auth.activation.didNotReceivedEmail": "Не получили E‑mail?",
     "components.auth.activation.enterTheCode": "Укажите код из E‑mail здесь",
@@ -21,7 +22,7 @@
     "components.auth.finish.copy": "Скопировать",
     "components.auth.finish.passCodeToApp": "Чтобы завершить процесс авторизации, пожалуйста, передай {appName} этот код",
     "components.auth.finish.waitAppReaction": "Пожалуйста, дождитесь реакции вашего приложения",
-    "components.auth.forgotPassword.alreadyHaveCode": "Уже получил код",
+    "components.auth.forgotPassword.alreadyHaveCode": "Уже есть код",
     "components.auth.forgotPassword.pleasePressButton": "Нажмите на кнопку ниже, чтобы получить E‑mail с кодом для восстановления пароля.",
     "components.auth.forgotPassword.sendMail": "Отправить письмо",
     "components.auth.forgotPassword.specifyEmail": "Укажите регистрационный E‑mail адрес или последний использованный ник от вашего аккаунта, и мы отправим E‑mail с дальнейшими инструкциями по восстановлению пароля.",

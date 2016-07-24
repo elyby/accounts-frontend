@@ -97,6 +97,14 @@ describe('ResendActivationState', () => {
         });
     });
 
+    describe('#reject', () => {
+        it('should transition to activate state on reject', () => {
+            expectState(mock, ActivationState);
+
+            state.reject(context);
+        });
+    });
+
     describe('#goBack', () => {
         it('should transition to activation', () => {
             expectState(mock, ActivationState);

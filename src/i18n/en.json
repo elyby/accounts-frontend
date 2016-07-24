@@ -1,6 +1,7 @@
 {
     "components.auth.activation.accountActivationTitle": "Account activation",
-    "components.auth.activation.activationMailWasSent": "Please check {email} for the message with the last registration step",
+    "components.auth.activation.activationMailWasSent": "Please check {email} for the message with further instructions",
+    "components.auth.activation.activationMailWasSentNoEmail": "Please check your E-mail for the message with further instructions",
     "components.auth.activation.confirmEmail": "Confirm E‑mail",
     "components.auth.activation.didNotReceivedEmail": "Did not received E‑mail?",
     "components.auth.activation.enterTheCode": "Enter the code from E‑mail here",
