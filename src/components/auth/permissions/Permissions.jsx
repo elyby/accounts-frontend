@@ -1,17 +1,17 @@
-import React from 'react';
-
-import { Button } from 'components/ui/form';
-import RejectionLink from 'components/auth/RejectionLink';
-import AuthTitle from 'components/auth/AuthTitle';
-
+import factory from 'components/auth/factory';
 import messages from './Permissions.intl.json';
 import Body from './PermissionsBody';
 
-export default function Permissions() {
-    return {
-        Title: () => <AuthTitle title={messages.permissionsTitle} />,
-        Body,
-        Footer: () => <Button color="orange" autoFocus label={messages.approve} type="submit" />,
-        Links: () => <RejectionLink label={messages.decline} />
-    };
-}
+export default factory({
+    title: messages.permissionsTitle,
+    body: Body,
+    footer: {
+        color: 'orange',
+        autoFocus: true,
+        label: messages.approve
+    },
+    links: {
+        label: messages.decline
+    }
+});
+

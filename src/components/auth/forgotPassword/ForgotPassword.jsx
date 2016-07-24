@@ -1,17 +1,17 @@
-import React from 'react';
-
-import { Button } from 'components/ui/form';
-import RejectionLink from 'components/auth/RejectionLink';
-import AuthTitle from 'components/auth/AuthTitle';
+import factory from 'components/auth/factory';
 
 import messages from './ForgotPassword.intl.json';
 import Body from './ForgotPasswordBody';
 
-export default function ForgotPassword() {
-    return {
-        Title: () => <AuthTitle title={messages.title} />,
-        Body,
-        Footer: () => <Button color="lightViolet" autoFocus label={messages.sendMail} type="submit" />,
-        Links: () => <RejectionLink label={messages.alreadyHaveCode} />
-    };
-}
+export default factory({
+    title: messages.title,
+    body: Body,
+    footer: {
+        color: 'lightViolet',
+        autoFocus: true,
+        label: messages.sendMail
+    },
+    links: {
+        label: messages.alreadyHaveCode
+    }
+});
