@@ -105,9 +105,8 @@
         "no-label-var": "error",
         "no-shadow-restricted-names": "error",
         "no-shadow": "off",
-        "no-undef-init": "warn",
+        "no-undef-init": "error",
         "no-undef": "error",
-        "no-undefined": "error",
         "no-use-before-define": ["warn", "nofunc"],
 
         // CommonJS
