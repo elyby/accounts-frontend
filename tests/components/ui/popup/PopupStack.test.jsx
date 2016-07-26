@@ -124,7 +124,7 @@ describe('<PopupStack />', () => {
         sinon.assert.calledOnce(props.destroy);
     });
 
-    it('should hide first popup in stack', () => {
+    it('should hide first popup in stack if esc pressed', () => {
         const props = {
             destroy: sinon.stub(),
             popups: [

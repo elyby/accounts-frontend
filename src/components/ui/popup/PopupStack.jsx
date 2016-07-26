@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { browserHistory } from 'react-router';
 
 import styles from './popup.scss';
 
@@ -17,10 +18,12 @@ export class PopupStack extends Component {
 
     componentWillMount() {
         document.addEventListener('keyup', this.onKeyPress);
+        this.unlistenTransition = browserHistory.listenBefore(this.onRouteLeave);
     }
 
     componentWillUnmount() {
         document.removeEventListener('keyup', this.onKeyPress);
+        this.unlistenTransition();
     }
 
     render() {
@@ -68,13 +71,23 @@ export class PopupStack extends Component {
         };
     }
 
+    popStack() {
+        const popup = this.props.popups.slice(-1)[0];
+
+        if (popup && !popup.disableOverlayClose) {
+            this.props.destroy(popup);
+        }
+    }
+
     onKeyPress = (event) => {
         if (event.which === 27) { // ESC key
-            const popup = this.props.popups.slice(-1)[0];
+            this.popStack();
+        }
+    };
 
-            if (popup && !popup.disableOverlayClose) {
-                this.props.destroy(popup);
-            }
+    onRouteLeave = (nextLocation) => {
+        if (nextLocation) {
+            this.popStack();
         }
     };
 }
