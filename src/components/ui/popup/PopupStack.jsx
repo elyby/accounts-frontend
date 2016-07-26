@@ -15,6 +15,14 @@ export class PopupStack extends Component {
         destroy: PropTypes.func.isRequired
     };
 
+    componentWillMount() {
+        document.addEventListener('keyup', this.onKeyPress);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keyup', this.onKeyPress);
+    }
+
     render() {
         const {popups} = this.props;
 
@@ -59,6 +67,16 @@ export class PopupStack extends Component {
             this.props.destroy(popup);
         };
     }
+
+    onKeyPress = (event) => {
+        if (event.which === 27) { // ESC key
+            const popup = this.props.popups.slice(-1)[0];
+
+            if (popup && !popup.disableOverlayClose) {
+                this.props.destroy(popup);
+            }
+        }
+    };
 }
 
 import { connect } from 'react-redux';

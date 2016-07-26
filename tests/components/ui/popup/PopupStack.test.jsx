@@ -105,4 +105,63 @@ describe('<PopupStack />', () => {
 
         sinon.assert.notCalled(props.destroy);
     });
+
+    it('should hide popup, when esc pressed', () => {
+        const props = {
+            destroy: sinon.stub(),
+            popups: [
+                {
+                    Popup: DummyPopup
+                }
+            ]
+        };
+        mount(<PopupStack {...props} />);
+
+        const event = new Event('keyup');
+        event.which = 27;
+        document.dispatchEvent(event);
+
+        sinon.assert.calledOnce(props.destroy);
+    });
+
+    it('should hide first popup in stack', () => {
+        const props = {
+            destroy: sinon.stub(),
+            popups: [
+                {
+                    Popup() {return null;}
+                },
+                {
+                    Popup: DummyPopup
+                }
+            ]
+        };
+        mount(<PopupStack {...props} />);
+
+        const event = new Event('keyup');
+        event.which = 27;
+        document.dispatchEvent(event);
+
+        sinon.assert.calledOnce(props.destroy);
+        sinon.assert.calledWithExactly(props.destroy, props.popups[1]);
+    });
+
+    it('should NOT hide popup on esc pressed if disableOverlayClose', () => {
+        const props = {
+            destroy: sinon.stub(),
+            popups: [
+                {
+                    Popup: DummyPopup,
+                    disableOverlayClose: true
+                }
+            ]
+        };
+        mount(<PopupStack {...props} />);
+
+        const event = new Event('keyup');
+        event.which = 27;
+        document.dispatchEvent(event);
+
+        sinon.assert.notCalled(props.destroy);
+    });
 });
