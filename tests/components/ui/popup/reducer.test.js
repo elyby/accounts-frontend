@@ -11,36 +11,38 @@ describe('popup/reducer', () => {
 
     describe('#create', () => {
         it('should create popup', () => {
+            const actual = reducer(undefined, create({
+                Popup: FakeComponent
+            }));
+
+            expect(actual.popups[0]).to.be.deep.equal({
+                Popup: FakeComponent
+            });
+        });
+
+        it('should support shortcut popup creation', () => {
             const actual = reducer(undefined, create(FakeComponent));
 
             expect(actual.popups[0]).to.be.deep.equal({
-                type: FakeComponent,
-                props: {}
+                Popup: FakeComponent
             });
         });
 
-        it('should store props', () => {
-            const expectedProps = {foo: 'bar'};
-            const actual = reducer(undefined, create(FakeComponent, expectedProps));
-
-            expect(actual.popups[0]).to.be.deep.equal({
-                type: FakeComponent,
-                props: expectedProps
-            });
-        });
-
-        it('should not remove existed popups', () => {
-            let actual = reducer(undefined, create(FakeComponent));
-            actual = reducer(actual, create(FakeComponent));
+        it('should create multiple popups', () => {
+            let actual = reducer(undefined, create({
+                Popup: FakeComponent
+            }));
+            actual = reducer(actual, create({
+                Popup: FakeComponent
+            }));
 
             expect(actual.popups[1]).to.be.deep.equal({
-                type: FakeComponent,
-                props: {}
+                Popup: FakeComponent
             });
         });
 
         it('throws when no type provided', () => {
-            expect(() => reducer(undefined, create())).to.throw('Popup type is required');
+            expect(() => reducer(undefined, create())).to.throw('Popup is required');
         });
     });
 
@@ -62,16 +64,14 @@ describe('popup/reducer', () => {
         });
 
         it('should not remove something, that it should not', () => {
-            state = reducer(state, create('foo'));
+            state = reducer(state, create({
+                Popup: FakeComponent
+            }));
 
             state = reducer(state, destroy(popup));
 
             expect(state.popups).to.have.length(1);
             expect(state.popups[0]).to.not.equal(popup);
-        });
-
-        it('throws when no type provided', () => {
-            expect(() => reducer(undefined, destroy({}))).to.throw('Popup type is required');
         });
     });
 });

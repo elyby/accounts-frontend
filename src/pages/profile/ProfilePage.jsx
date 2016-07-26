@@ -74,24 +74,27 @@ export default connect(null, {
 
         function requestPassword(form) {
             return new Promise((resolve) => {
-                dispatch(createPopup(PasswordRequestForm, (props) => ({
-                    form,
-                    disableOverlayClose: true,
-                    onSubmit: () => {
-                        form.beginLoading();
-                        sendData()
-                            .catch((resp) => {
-                                if (resp.errors) {
-                                    form.setErrors(resp.errors);
-                                }
+                dispatch(createPopup({
+                    Popup(props) {
+                        const onSubmit = () => {
+                            form.beginLoading();
+                            sendData()
+                                .catch((resp) => {
+                                    if (resp.errors) {
+                                        form.setErrors(resp.errors);
+                                    }
 
-                                return Promise.reject(resp);
-                            })
-                            .then(resolve)
-                            .then(props.onClose)
-                            .finally(() => form.endLoading());
-                    }
-                })));
+                                    return Promise.reject(resp);
+                                })
+                                .then(resolve)
+                                .then(props.onClose)
+                                .finally(() => form.endLoading());
+                        };
+
+                        return <PasswordRequestForm form={form} onSubmit={onSubmit} />;
+                    },
+                    disableOverlayClose: true
+                }));
             });
         }
     }

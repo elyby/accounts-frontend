@@ -30,18 +30,13 @@ export class PopupStack extends Component {
                 transitionLeaveTimeout={500}
             >
                 {popups.map((popup, index) => {
-                    const Popup = popup.type;
-
-                    const defaultProps = {
-                        onClose: this.onClose(popup)
-                    };
-                    const props = typeof popup.props === 'function'
-                        ? popup.props(defaultProps)
-                        : {...defaultProps, ...popup.props};
+                    const {Popup} = popup;
 
                     return (
-                        <div className={styles.overlay} key={index} onClick={this.onOverlayClick(popup, props)}>
-                            <Popup {...props} />
+                        <div className={styles.overlay} key={index}
+                            onClick={this.onOverlayClick(popup)}
+                        >
+                            <Popup onClose={this.onClose(popup)} />
                         </div>
                     );
                 })}
@@ -53,9 +48,9 @@ export class PopupStack extends Component {
         return this.props.destroy.bind(null, popup);
     }
 
-    onOverlayClick(popup, popupProps) {
+    onOverlayClick(popup) {
         return (event) => {
-            if (event.target !== event.currentTarget || popupProps.disableOverlayClose) {
+            if (event.target !== event.currentTarget || popup.disableOverlayClose) {
                 return;
             }
 

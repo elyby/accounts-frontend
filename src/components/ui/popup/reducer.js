@@ -6,20 +6,16 @@ export default combineReducers({
     popups
 });
 
-function popups(popups = [], {type, payload}) {
+function popups(popups = [], {type, payload = {}}) {
     switch (type) {
         case POPUP_CREATE:
-            if (!payload.type) {
-                throw new Error('Popup type is required');
+            if (!payload.Popup) {
+                throw new Error('Popup is required');
             }
 
             return popups.concat(payload);
 
         case POPUP_DESTROY:
-            if (!payload.type) {
-                throw new Error('Popup type is required');
-            }
-
             return popups.filter((popup) => popup !== payload);
 
         default:

@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import { PopupStack } from 'components/ui/popup/PopupStack';
+import styles from 'components/ui/popup/popup.scss';
 
-function DummyPopup() {}
+function DummyPopup() {return null;}
 
 describe('<PopupStack />', () => {
     it('renders all popup components', () => {
@@ -12,10 +13,10 @@ describe('<PopupStack />', () => {
             destroy: () => {},
             popups: [
                 {
-                    type: DummyPopup
+                    Popup: DummyPopup
                 },
                 {
-                    type: DummyPopup
+                    Popup: DummyPopup
                 }
             ]
         };
@@ -24,7 +25,7 @@ describe('<PopupStack />', () => {
         expect(component.find(DummyPopup)).to.have.length(2);
     });
 
-    it('should pass provided props', () => {
+    it('should pass onClose as props', () => {
         const expectedProps = {
             foo: 'bar'
         };
@@ -33,47 +34,29 @@ describe('<PopupStack />', () => {
             destroy: () => {},
             popups: [
                 {
-                    type: DummyPopup,
-                    props: expectedProps
-                }
-            ]
-        };
-        const component = shallow(<PopupStack {...props} />);
+                    Popup: (props = {}) => {
+                        expect(props.onClose).to.be.a('function');
 
-        expect(component.find(DummyPopup).prop('foo')).to.be.equal(expectedProps.foo);
-    });
-
-    it('should use props as proxy if it is function', () => {
-        const expectedProps = {
-            foo: 'bar'
-        };
-
-        const props = {
-            destroy: () => {},
-            popups: [
-                {
-                    type: DummyPopup,
-                    props: (props) => {
-                        expect(props).to.have.property('onClose');
-
-                        return expectedProps;
+                        return <DummyPopup {...expectedProps} />;
                     }
                 }
             ]
         };
-        const component = shallow(<PopupStack {...props} />);
+        const component = mount(<PopupStack {...props} />);
 
-        expect(component.find(DummyPopup).props()).to.be.deep.equal(expectedProps);
+        const popup = component.find(DummyPopup);
+        expect(popup).to.have.length(1);
+        expect(popup.props()).to.deep.equal(expectedProps);
     });
 
     it('should hide popup, when onClose called', () => {
         const props = {
             popups: [
                 {
-                    type: DummyPopup
+                    Popup: DummyPopup
                 },
                 {
-                    type: DummyPopup
+                    Popup: DummyPopup
                 }
             ],
             destroy: sinon.stub()
@@ -84,5 +67,42 @@ describe('<PopupStack />', () => {
 
         sinon.assert.calledOnce(props.destroy);
         sinon.assert.calledWith(props.destroy, sinon.match.same(props.popups[1]));
+    });
+
+    it('should hide popup, when overlay clicked', () => {
+        const preventDefault = sinon.stub();
+        const props = {
+            destroy: sinon.stub(),
+            popups: [
+                {
+                    Popup: DummyPopup
+                }
+            ]
+        };
+        const component = shallow(<PopupStack {...props} />);
+
+        const overlay = component.find(`.${styles.overlay}`);
+        overlay.simulate('click', {target: 1, currentTarget: 1, preventDefault});
+
+        sinon.assert.calledOnce(props.destroy);
+        sinon.assert.calledOnce(preventDefault);
+    });
+
+    it('should hide popup on overlay click if disableOverlayClose', () => {
+        const props = {
+            destroy: sinon.stub(),
+            popups: [
+                {
+                    Popup: DummyPopup,
+                    disableOverlayClose: true
+                }
+            ]
+        };
+        const component = shallow(<PopupStack {...props} />);
+
+        const overlay = component.find(`.${styles.overlay}`);
+        overlay.simulate('click', {target: 1, currentTarget: 1, preventDefault() {}});
+
+        sinon.assert.notCalled(props.destroy);
     });
 });
