@@ -176,7 +176,8 @@ describe('AuthFlow', () => {
             '/change-password': LoginState,
             '/oauth/permissions': LoginState,
             '/oauth/finish': LoginState,
-            '/oauth': OAuthState,
+            '/oauth2/v1': OAuthState,
+            '/oauth2': OAuthState,
             '/register': RegisterState,
             '/recover-password': RecoverPasswordState,
             '/recover-password/key123': RecoverPasswordState,
@@ -226,7 +227,7 @@ describe('AuthFlow', () => {
         });
 
         it('should not handle the same request twice', () => {
-            const path = '/oauth';
+            const path = '/oauth2';
             const callback = sinon.stub();
 
             flow.handleRequest(path, () => {}, callback);

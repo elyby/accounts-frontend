@@ -50,7 +50,7 @@ export default function routesFactory(store) {
 
             <Route path="rules" component={RulesPage} />
 
-            <Route path="oauth" component={OAuthInit} {...startAuthFlow} />
+            <Route path="oauth2(/:version)" component={OAuthInit} {...startAuthFlow} />
 
             <Route path="auth" component={AuthPage}>
                 <Route path="/login" components={new Login()} {...startAuthFlow} />

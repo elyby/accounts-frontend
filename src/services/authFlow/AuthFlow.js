@@ -122,8 +122,9 @@ export default class AuthFlow {
             this.run('setOAuthRequest', {});
         }
 
-        switch (path) { // use only first part of an url
-            case '/oauth':
+        switch (path) {
+            case '/oauth2/v1':
+            case '/oauth2':
                 this.setState(new OAuthState());
                 break;
 

@@ -56,7 +56,7 @@ describe('components/auth/actions', () => {
             request.get.returns(Promise.resolve(resp));
 
             return callThunk(oAuthValidate, oauthData).then(() => {
-                sinon.assert.calledWith(request.get, '/api/oauth/validate');
+                sinon.assert.calledWith(request.get, '/api/oauth2/v1/validate');
                 sinon.assert.calledWith(dispatch, setClient(resp.client));
                 sinon.assert.calledWith(dispatch, setOAuthRequest(resp.oAuth));
                 sinon.assert.calledWith(dispatch, setScopes(resp.session.scopes));
@@ -83,7 +83,7 @@ describe('components/auth/actions', () => {
             request.post.returns(Promise.resolve(resp));
 
             return callThunk(oAuthComplete).then(() => {
-                sinon.assert.calledWithMatch(request.post, /\/api\/oauth\/complete/);
+                sinon.assert.calledWithMatch(request.post, /\/api\/oauth2\/v1\/complete/);
                 sinon.assert.calledWith(dispatch, setOAuthCode({
                     success: true,
                     code: '123',

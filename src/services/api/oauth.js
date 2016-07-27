@@ -3,7 +3,7 @@ import request from 'services/request';
 export default {
     validate(oauthData) {
         return request.get(
-            '/api/oauth/validate',
+            '/api/oauth2/v1/validate',
             getOAuthRequest(oauthData)
         ).catch(handleOauthParamsValidation);
     },
@@ -12,7 +12,7 @@ export default {
         const query = request.buildQuery(getOAuthRequest(oauthData));
 
         return request.post(
-            `/api/oauth/complete?${query}`,
+            `/api/oauth2/v1/complete?${query}`,
             typeof params.accept === 'undefined' ? {} : {accept: params.accept}
         ).catch((resp = {}) => {
             if (resp.statusCode === 401 && resp.error === 'access_denied') {

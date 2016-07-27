@@ -96,7 +96,7 @@ describe('AuthFlow.functional', () => {
             redirectUri: expectedRedirect
         })});
 
-        navigate('/oauth');
+        navigate('/oauth2');
 
         sinon.assert.calledThrice(flow.run);
         sinon.assert.calledWith(flow.run.getCall(0), 'oAuthValidate');
