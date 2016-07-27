@@ -3,6 +3,7 @@ import { routeActions } from 'react-router-redux';
 import { updateUser, logout as logoutUser, changePassword as changeUserPassword, authenticate } from 'components/user/actions';
 import request from 'services/request';
 import authentication from 'services/api/authentication';
+import oauth from 'services/api/oauth';
 
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';
@@ -146,100 +147,50 @@ export function logout() {
 
 // TODO: move to oAuth actions?
 // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session
-export function oAuthValidate(oauth) {
+export function oAuthValidate(oauthData) {
     return wrapInLoader((dispatch) =>
-        request.get(
-            '/api/oauth/validate',
-            getOAuthRequest(oauth)
-        )
-        .then((resp) => {
-            dispatch(setClient(resp.client));
-            dispatch(setOAuthRequest(resp.oAuth));
-            dispatch(setScopes(resp.session.scopes));
-        })
-        .catch((resp = {}) => { // TODO
-            handleOauthParamsValidation(resp);
-        })
+        oauth.validate(oauthData)
+            .then((resp) => {
+                dispatch(setClient(resp.client));
+                dispatch(setOAuthRequest(resp.oAuth));
+                dispatch(setScopes(resp.session.scopes));
+            })
+            .catch(handleOauthParamsValidation)
     );
 }
 
 export function oAuthComplete(params = {}) {
-    return wrapInLoader((dispatch, getState) => {
-        const oauth = getState().auth.oauth;
-        const query = request.buildQuery(getOAuthRequest(oauth));
+    return wrapInLoader((dispatch, getState) =>
+        oauth.complete(getState().auth.oauth, params)
+            .then((resp) => {
+                if (resp.redirectUri.startsWith('static_page')) {
+                    resp.code = resp.redirectUri.match(/code=(.+)&/)[1];
+                    resp.redirectUri = resp.redirectUri.match(/^(.+)\?/)[1];
+                    resp.displayCode = resp.redirectUri === 'static_page_with_code';
 
-        return request.post(
-            `/api/oauth/complete?${query}`,
-            typeof params.accept === 'undefined' ? {} : {accept: params.accept}
-        )
-        .catch((resp = {}) => { // TODO
-            if (resp.statusCode === 401 && resp.error === 'access_denied') {
-                // user declined permissions
-                return {
-                    success: false,
-                    redirectUri: resp.redirectUri
-                };
-            }
+                    dispatch(setOAuthCode({
+                        success: resp.success,
+                        code: resp.code,
+                        displayCode: resp.displayCode
+                    }));
+                }
 
-            handleOauthParamsValidation(resp);
+                return resp;
+            }, (resp) => {
+                if (resp.acceptRequired) {
+                    dispatch(requirePermissionsAccept());
+                }
 
-            if (resp.status === 401 && resp.name === 'Unauthorized') {
-                const error = new Error('Unauthorized');
-                error.unauthorized = true;
-                throw error;
-            }
-
-            if (resp.statusCode === 401 && resp.error === 'accept_required') {
-                const error = new Error('Permissions accept required');
-                error.acceptRequired = true;
-                dispatch(requirePermissionsAccept());
-                throw error;
-            }
-        })
-        .then((resp) => {
-            if (resp.redirectUri.startsWith('static_page')) {
-                resp.code = resp.redirectUri.match(/code=(.+)&/)[1];
-                resp.redirectUri = resp.redirectUri.match(/^(.+)\?/)[1];
-                resp.displayCode = resp.redirectUri === 'static_page_with_code';
-                dispatch(setOAuthCode({
-                    success: resp.success,
-                    code: resp.code,
-                    displayCode: resp.displayCode
-                }));
-            }
-
-            return resp;
-        });
-    });
-}
-
-function getOAuthRequest(oauth) {
-    return {
-        client_id: oauth.clientId,
-        redirect_uri: oauth.redirectUrl,
-        response_type: oauth.responseType,
-        scope: oauth.scope,
-        state: oauth.state
-    };
+                return handleOauthParamsValidation(resp);
+            })
+    );
 }
 
 function handleOauthParamsValidation(resp = {}) {
-    let userMessage;
-    if (resp.statusCode === 400 && resp.error === 'invalid_request') {
-        userMessage = `Invalid request (${resp.parameter} required).`;
-    } else if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
-        userMessage = `Invalid response type '${resp.parameter}'.`;
-    } else if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
-        userMessage = `Invalid scope '${resp.parameter}'.`;
-    } else if (resp.statusCode === 401 && resp.error === 'invalid_client') {
-        userMessage = 'Can not find application you are trying to authorize.';
-    } else {
-        return;
-    }
-
     /* eslint no-alert: "off" */
-    alert(userMessage);
-    throw new Error('Error completing request');
+    resp.userMessage && alert(resp.userMessage);
+
+    return Promise.reject(resp);
 }
 
 export const SET_CLIENT = 'set_client';
