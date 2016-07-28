@@ -160,14 +160,13 @@ var webpackConfig = {
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
-                loader: 'url',
+                loader: 'file',
                 query: {
-                    limit: 1000,
                     name: 'assets/[name].[ext]?[hash]'
                 }
             },
             {
-                test: /\.(woff|woff2|eot|ttf)$/, // NOTE: svg is loaded by another loader for now
+                test: /\.(woff|woff2|ttf)$/,
                 loader: 'file',
                 query: {
                     name: 'assets/fonts/[name].[ext]?[hash]'
