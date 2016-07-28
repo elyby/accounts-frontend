@@ -22,8 +22,8 @@ const errorsMap = {
     'error.login_not_exist': () => <Message {...messages.loginNotExist} />,
     'error.password_required': () => <Message {...messages.passwordRequired} />,
 
-    'error.password_invalid': () => <Message {...messages.invalidPassword} />,
-    'error.password_incorrect': (props) => (
+    'error.password_incorrect': (props = {}) => (
+        // props are handled in validationErrorsHandler in components/auth/actions
         <span>
             <Message {...messages.invalidPassword} />
             {props.isGuest ? errorsMap.suggestResetPassword() : null}
@@ -40,7 +40,8 @@ const errorsMap = {
     'error.email_too_long': () => <Message {...messages.emailToLong} />,
     'error.email_invalid': () => <Message {...messages.emailInvalid} />,
     'error.email_is_tempmail': () => <Message {...messages.emailIsTempmail} />,
-    'error.email_not_available': (props) => (
+    'error.email_not_available': (props = {}) => (
+        // props are handled in validationErrorsHandler in components/auth/actions
         <span>
             <Message {...messages.emailNotAvailable} />
             {props.isGuest ? errorsMap.suggestResetPassword() : null}
