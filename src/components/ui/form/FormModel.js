@@ -11,9 +11,9 @@ export default class FormModel {
      * Usage:
      * <input {...this.form.bindField('foo')} type="text" />
      *
-     * @param  {string} name - the name of field
+     * @param {string} name - the name of field
      *
-     * @return {Object} ref and name props for component
+     * @return {object} - ref and name props for component
      */
     bindField(name) {
         this.fields[name] = {};
@@ -36,6 +36,11 @@ export default class FormModel {
         return props;
     }
 
+    /**
+     * Focuses field
+     *
+     * @param {string} fieldId - an id of field to focus
+     */
     focus(fieldId) {
         if (!this.fields[fieldId]) {
             throw new Error(`Can not focus. The field with an id ${fieldId} does not exists`);
@@ -44,6 +49,13 @@ export default class FormModel {
         this.fields[fieldId].focus();
     }
 
+    /**
+     * Get a value of field
+     *
+     * @param {string} fieldId - an id of field to get value of
+     *
+     * @return {string}
+     */
     value(fieldId) {
         const field = this.fields[fieldId];
 
@@ -58,6 +70,11 @@ export default class FormModel {
         return field.getValue();
     }
 
+    /**
+     * Add errors to form fields
+     *
+     * @param {object} errors - object maping {fieldId: errorMessage}
+     */
     setErrors(errors) {
         const oldErrors = this.errors;
         this.errors = errors;
@@ -69,14 +86,29 @@ export default class FormModel {
         });
     }
 
+    /**
+     * Get error by id
+     *
+     * @param {string} fieldId - an id of field to get error for
+     *
+     * @return {string|null}
+     */
     getError(fieldId) {
         return this.errors[fieldId] || null;
     }
 
+    /**
+     * @return {bool}
+     */
     hasErrors() {
         return Object.keys(this.errors).length > 0;
     }
 
+    /**
+     * Convert form into key-value object representation
+     *
+     * @return {object}
+     */
     serialize() {
         return Object.keys(this.fields).reduce((acc, fieldId) => {
             acc[fieldId] = this.fields[fieldId].getValue();
@@ -88,7 +120,7 @@ export default class FormModel {
     /**
      * Bind handler to listen for form loading state change
      *
-     * @param {Function} fn
+     * @param {function} fn
      */
     addLoadingListener(fn) {
         this.removeLoadingListener(fn);
@@ -98,22 +130,31 @@ export default class FormModel {
     /**
      * Remove form loading state handler
      *
-     * @param {Function} fn
+     * @param {function} fn
      */
     removeLoadingListener(fn) {
         this.handlers = this.handlers.filter((handler) => handler !== fn);
     }
 
+    /**
+     * Switch form in loading state
+     */
     beginLoading() {
         this._isLoading = true;
         this.notifyHandlers();
     }
 
+    /**
+     * Disable loading state
+     */
     endLoading() {
         this._isLoading = false;
         this.notifyHandlers();
     }
 
+    /**
+     * @api private
+     */
     notifyHandlers() {
         this.handlers.forEach((fn) => fn(this._isLoading));
     }

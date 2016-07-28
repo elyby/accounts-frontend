@@ -61,6 +61,15 @@ export default connect(null, {
                 if (resp.errors) {
                     Reflect.deleteProperty(resp.errors, 'password');
 
+                    if (resp.errors.email && resp.data && resp.data.canRepeatIn) {
+                        resp.errors.email = {
+                            type: resp.errors.email,
+                            payload: {
+                                msLeft: resp.data.canRepeatIn * 1000
+                            }
+                        };
+                    }
+
                     if (Object.keys(resp.errors).length) {
                         form.setErrors(resp.errors);
                         return Promise.reject(resp);

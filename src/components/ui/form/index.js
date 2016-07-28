@@ -5,6 +5,7 @@ import Button from './Button';
 import Form from './Form';
 import FormModel from './FormModel';
 import Dropdown from './Dropdown';
+import FormError from './FormError';
 
 export {
     Input,
@@ -13,5 +14,6 @@ export {
     Checkbox,
     Form,
     FormModel,
-    Dropdown
+    Dropdown,
+    FormError
 };

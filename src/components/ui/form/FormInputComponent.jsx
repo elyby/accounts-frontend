@@ -1,9 +1,7 @@
 import React, { PropTypes } from 'react';
 
-import errorsDict from 'services/errorsDict';
-
-import styles from './form.scss';
 import FormComponent from './FormComponent';
+import FormError from './FormError';
 
 export default class FormInputComponent extends FormComponent {
     static displayName = 'FormInputComponent';
@@ -27,15 +25,7 @@ export default class FormInputComponent extends FormComponent {
     renderError() {
         const error = this.state && this.state.error || this.props.error;
 
-        if (error) {
-            return (
-                <div className={styles.fieldError}>
-                    {errorsDict.resolve(error)}
-                </div>
-            );
-        }
-
-        return null;
+        return <FormError error={error} />;
     }
 
     setError(error) {

@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import Helmet from 'react-helmet';
 import { Motion, spring } from 'react-motion';
 
-import { Input, Button, Form, FormModel } from 'components/ui/form';
+import { Input, Button, Form, FormModel, FormError } from 'components/ui/form';
 import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
 import helpLinks from 'components/auth/helpLinks.scss';
@@ -181,7 +181,7 @@ export default class ChangeEmail extends Component {
         );
     }
 
-    renderStep0({email}) {
+    renderStep0({email, form}) {
         return (
             <div className={styles.formBody}>
                 <div className={styles.formRow}>
@@ -194,6 +194,8 @@ export default class ChangeEmail extends Component {
                     <h2 className={changeEmail.currentAccountEmail}>
                         {email}
                     </h2>
+
+                    <FormError error={form.getError('email')} />
                 </div>
 
                 <div className={styles.formRow}>
