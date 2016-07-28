@@ -7,8 +7,8 @@ import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';
 /**
- * @param  {string|Object} payload jwt token or user object
- * @return {Object} action definition
+ * @param  {string|object} payload jwt token or user object
+ * @return {object} action definition
  */
 export function updateUser(payload) {
     return {
@@ -45,14 +45,14 @@ export function setUser(payload) {
 }
 
 export function logout() {
-    return (dispatch, getState) => {
-        authentication.logout();
-        dispatch(setUser({
-            lang: getState().user.lang,
-            isGuest: true
-        }));
-        dispatch(routeActions.push('/login'));
-    };
+    return (dispatch, getState) =>
+        authentication.logout().then(() => {
+            dispatch(setUser({
+                lang: getState().user.lang,
+                isGuest: true
+            }));
+            dispatch(routeActions.push('/login'));
+        });
 }
 
 export function fetchUserData() {
@@ -127,10 +127,10 @@ function requestAccessToken(refreshToken, dispatch) {
 /**
  * Ensures, that all user's requests have fresh access token
  *
- * @param  {Function} dispatch
- * @param  {Function} getState
+ * @param  {function} dispatch
+ * @param  {function} getState
  *
- * @return {Object} middleware
+ * @return {object} middleware
  */
 function tokenCheckMiddleware(dispatch, getState) {
     return {
@@ -187,10 +187,10 @@ function tokenCheckMiddleware(dispatch, getState) {
 /**
  * Applies Bearer header for all requests
  *
- * @param  {Function} dispatch
- * @param  {Function} getState
+ * @param  {function} dispatch
+ * @param  {function} getState
  *
- * @return {Object} middleware
+ * @return {object} middleware
  */
 function tokenApplyMiddleware(dispatch, getState) {
     return {
