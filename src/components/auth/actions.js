@@ -1,9 +1,9 @@
 import { routeActions } from 'react-router-redux';
 
 import { updateUser, logout as logoutUser, changePassword as changeUserPassword, authenticate } from 'components/user/actions';
-import request from 'services/request';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
+import signup from 'services/api/signup';
 
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';
@@ -50,14 +50,11 @@ export function forgotPassword({
     login = ''
 }) {
     return wrapInLoader((dispatch, getState) =>
-        request.post(
-            '/api/authentication/forgot-password',
-            {login}
-        )
-        .then(({data = {}}) => dispatch(updateUser({
-            maskedEmail: data.emailMask || getState().user.email
-        })))
-        .catch(validationErrorsHandler(dispatch))
+        authentication.forgotPassword({login})
+            .then(({data = {}}) => dispatch(updateUser({
+                maskedEmail: data.emailMask || getState().user.email
+            })))
+            .catch(validationErrorsHandler(dispatch))
     );
 }
 
@@ -67,12 +64,9 @@ export function recoverPassword({
     newRePassword = ''
 }) {
     return wrapInLoader((dispatch) =>
-        request.post(
-            '/api/authentication/recover-password',
-            {key, newPassword, newRePassword}
-        )
-        .then(authHandler(dispatch))
-        .catch(validationErrorsHandler(dispatch, '/forgot-password'))
+        authentication.recoverPassword({key, newPassword, newRePassword})
+            .then(authHandler(dispatch))
+            .catch(validationErrorsHandler(dispatch, '/forgot-password'))
     );
 }
 
@@ -84,10 +78,11 @@ export function register({
     rulesAgreement = false
 }) {
     return wrapInLoader((dispatch, getState) =>
-        request.post(
-            '/api/signup',
-            {email, username, password, rePassword, rulesAgreement, lang: getState().user.lang}
-        )
+        signup.register({
+            email, username,
+            password, rePassword,
+            rulesAgreement, lang: getState().user.lang
+        })
         .then(() => {
             dispatch(updateUser({
                 username,
@@ -102,29 +97,23 @@ export function register({
 
 export function activate({key = ''}) {
     return wrapInLoader((dispatch) =>
-        request.post(
-            '/api/signup/confirm',
-            {key}
-        )
-        .then(authHandler(dispatch))
-        .catch(validationErrorsHandler(dispatch, '/resend-activation'))
+        signup.activate({key})
+            .then(authHandler(dispatch))
+            .catch(validationErrorsHandler(dispatch, '/resend-activation'))
     );
 }
 
 export function resendActivation({email = ''}) {
     return wrapInLoader((dispatch) =>
-        request.post(
-            '/api/signup/repeat-message',
-            {email}
-        )
-        .then((resp) => {
-            dispatch(updateUser({
-                email
-            }));
+        signup.resendActivation({email})
+            .then((resp) => {
+                dispatch(updateUser({
+                    email
+                }));
 
-            return resp;
-        })
-        .catch(validationErrorsHandler(dispatch))
+                return resp;
+            })
+            .catch(validationErrorsHandler(dispatch))
     );
 }
 
