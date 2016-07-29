@@ -1,6 +1,12 @@
 const middlewares = [];
 
 export default {
+    /**
+     * @param {string} url
+     * @param {object} data
+     *
+     * @return {Promise}
+     */
     post(url, data) {
         return doFetch(url, {
             method: 'POST',
@@ -11,6 +17,12 @@ export default {
         });
     },
 
+    /**
+     * @param {string} url
+     * @param {object} data
+     *
+     * @return {Promise}
+     */
     get(url, data) {
         if (typeof data === 'object') {
             const separator = url.indexOf('?') === -1 ? '?' : '&';
@@ -20,8 +32,27 @@ export default {
         return doFetch(url);
     },
 
+    /**
+     * Serializes object into encoded key=value presentation
+     *
+     * @param {object} data
+     *
+     * @return {string}
+     */
     buildQuery,
 
+    /**
+     * @param {object} middleware
+     * @param {function} [middleware.before] - a function({url, options}), that will be called before executing request.
+     *                                         It will get data object {url, options} as an argument and should return
+     *                                         Promise, that will resolve into new data object
+     * @param {function} [middleware.then] - a function(resp), that will be called on successful request result. It will
+     *                                       get response as an argument and should return a Promise that resolves to
+     *                                       the new response
+     * @param {function} [middleware.catch] - a function(resp, restart), that will be called on request fail. It will
+     *                                        get response and callback to restart request as an arguments and should
+     *                                        return a Promise that resolves to the new response.
+     */
     addMiddleware(middleware) {
         if (!middlewares.find((mdware) => mdware === middleware)) {
             middlewares.push(middleware);
@@ -53,9 +84,9 @@ function doFetch(url, options = {}) {
 }
 
 /**
- * @param  {string} action - the name of middleware's hook (before|then|catch)
- * @param  {Object} data - the initial data to pass through middlewares chain
- * @param  {Function} restart - a function to restart current request (for `catch` hook)
+ * @param {string} action - the name of middleware's hook (before|then|catch)
+ * @param {object} data - the initial data to pass through middlewares chain
+ * @param {function} restart - a function to restart current request (for `catch` hook)
  *
  * @return {Promise}
  */
@@ -68,22 +99,36 @@ function runMiddlewares(action, data, restart) {
         );
 }
 
+/**
+ * Converts specific js values to query friendly values
+ *
+ * @param {any} value
+ *
+ * @return {string}
+ */
 function convertQueryValue(value) {
     if (typeof value === 'undefined') {
         return '';
     }
 
     if (value === true) {
-        return 1;
+        return '1';
     }
 
     if (value === false) {
-        return 0;
+        return '0';
     }
 
     return value;
 }
 
+/**
+ * Serializes object into encoded key=value presentation
+ *
+ * @param {object} data
+ *
+ * @return {string}
+ */
 function buildQuery(data = {}) {
     return Object.keys(data)
         .map(
