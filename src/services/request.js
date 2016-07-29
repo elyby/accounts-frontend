@@ -54,7 +54,7 @@ export default {
      *                                        return a Promise that resolves to the new response.
      */
     addMiddleware(middleware) {
-        if (!middlewares.find((mdware) => mdware === middleware)) {
+        if (!middlewares.some((mdware) => mdware === middleware)) {
             middlewares.push(middleware);
         }
     }
@@ -62,7 +62,7 @@ export default {
 
 
 const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
-const toJSON = (resp) => resp.json();
+const toJSON = (resp) => resp.json().then((json) => ({...json, originalResponse: resp}));
 const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {throw resp;});
 const handleResponseSuccess = (resp) => Promise[resp.success || typeof resp.success === 'undefined' ? 'resolve' : 'reject'](resp);
 
@@ -94,7 +94,7 @@ function runMiddlewares(action, data, restart) {
     return middlewares
         .filter((middleware) => middleware[action])
         .reduce(
-            (promise, middleware) => promise.then((resp) => middleware[action](resp, restart)),
+            (promise, middleware) => promise[/^catch|then$/.test(action) ? action : 'then']((resp) => middleware[action](resp, restart)),
             Promise[action === 'catch' ? 'reject' : 'resolve'](data)
         );
 }

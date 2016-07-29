@@ -6,7 +6,6 @@ import classNames from 'classnames';
 
 import Userbar from 'components/userbar/Userbar';
 import PopupStack from 'components/ui/popup/PopupStack';
-import BSoD from 'components/ui/bsod/BSoD';
 
 import styles from './root.scss';
 
@@ -22,10 +21,6 @@ if (process.env.NODE_ENV === 'production') {
 
 function RootPage(props) {
     const isRegisterPage = props.location.pathname === '/register';
-
-    if (props.bsod) {
-        return <BSoD />;
-    }
 
     return (
         <div className={styles.root}>
@@ -61,7 +56,6 @@ RootPage.propTypes = {
         pathname: PropTypes.string
     }).isRequired,
     children: PropTypes.element,
-    bsod: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
     isPopupActive: PropTypes.bool.isRequired
 };
@@ -70,7 +64,6 @@ import { connect } from 'react-redux';
 import { logout } from 'components/user/actions';
 
 export default connect((state) => ({
-    bsod: state.bsod,
     user: state.user,
     isPopupActive: state.popup.popups.length > 0
 }), {

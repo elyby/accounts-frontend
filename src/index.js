@@ -10,14 +10,14 @@ import { factory as userFactory } from 'components/user/factory';
 import { IntlProvider } from 'components/i18n';
 import routesFactory from 'routes';
 import storeFactory from 'storeFactory';
+import bsodFactory from 'components/ui/bsod/factory';
 
 const store = storeFactory();
 
+bsodFactory(store, stopLoading);
+
 userFactory(store)
 .then(() => {
-    // allow :active styles in mobile Safary
-    document.addEventListener('touchstart', () => {}, true);
-
     ReactDOM.render(
         <ReduxProvider store={store}>
             <IntlProvider>
