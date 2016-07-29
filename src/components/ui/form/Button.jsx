@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
 import { colors, COLOR_GREEN } from 'components/ui';
+import { omit } from 'functions';
 
 import FormComponent from './FormComponent';
 
@@ -28,18 +29,18 @@ export default class Button extends FormComponent {
     render() {
         const { color, block, small } = this.props;
 
-        const props = {
-            ...this.props
-        };
+        const props = omit(this.props, Object.keys(Button.propTypes));
 
-        props.label = this.formatMessage(props.label);
+        const label = this.formatMessage(this.props.label);
 
         return (
             <button className={classNames(buttons[color], {
                 [buttons.block]: block,
                 [buttons.smallButton]: small
-            })} {...props}>
-                {props.label}
+            })}
+                {...props}
+            >
+                {label}
             </button>
         );
     }

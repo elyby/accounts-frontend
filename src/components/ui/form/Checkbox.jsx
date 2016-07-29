@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
+import { omit } from 'functions';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
@@ -32,10 +33,12 @@ export default class Checkbox extends FormInputComponent {
 
         label = this.formatMessage(label);
 
+        const props = omit(this.props, Object.keys(Checkbox.propTypes));
+
         return (
             <div className={classNames(styles[`${color}CheckboxRow`], styles[`${skin}CheckboxRow`])}>
                 <label className={styles.checkboxContainer}>
-                    <input ref={this.setEl} className={styles.checkboxInput} type="checkbox" {...this.props} />
+                    <input ref={this.setEl} className={styles.checkboxInput} type="checkbox" {...props} />
                     <div className={styles.checkbox} />
                     {label}
                 </label>

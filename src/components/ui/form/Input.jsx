@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 import classNames from 'classnames';
 
-import { uniqueId } from 'functions';
+import { uniqueId, omit } from 'functions';
 import icons from 'components/ui/icons.scss';
 import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
 
@@ -41,10 +41,10 @@ export default class Input extends FormInputComponent {
         const { color, skin, center } = this.props;
         let { icon, label } = this.props;
 
-        const props = {
+        const props = omit({
             type: 'text',
             ...this.props
-        };
+        }, Object.keys(Input.propTypes).filter((prop) => prop !== 'placeholder'));
 
         if (label) {
             if (!props.id) {

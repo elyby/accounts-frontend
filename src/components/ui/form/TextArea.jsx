@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 import classNames from 'classnames';
 
-import { uniqueId } from 'functions';
+import { uniqueId, omit } from 'functions';
 import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
 
 import styles from './form.scss';
@@ -38,10 +38,10 @@ export default class TextArea extends FormInputComponent {
         const { color, skin } = this.props;
         let { label } = this.props;
 
-        const props = {
+        const props = omit({
             type: 'text',
             ...this.props
-        };
+        }, Object.keys(TextArea.propTypes).filter((prop) => prop !== 'placeholder'));
 
         if (label) {
             if (!props.id) {

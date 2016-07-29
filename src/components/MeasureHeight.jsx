@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
+import { omit } from 'functions';
+
 /**
  * MeasureHeight is a component that allows you to measure the height of elements wrapped.
  *
@@ -47,7 +49,9 @@ export default class MeasureHeight extends Component {
     }
 
     render() {
-        return <div {...this.props} />;
+        const props = omit(this.props, Object.keys(MeasureHeight.propTypes));
+
+        return <div {...props} />;
     }
 
     measure() {
