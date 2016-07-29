@@ -48,7 +48,8 @@ function restoreScroll() {
         const viewPort = document.getElementById('view-port');
 
         if (!viewPort) {
-            throw new Error('Can not find viewPort element');
+            console.log('Can not find viewPort element');
+            return;
         }
 
         let y = 0;
