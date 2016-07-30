@@ -1,4 +1,6 @@
-const middlewares = [];
+import PromiseMiddlewareLayer from './PromiseMiddlewareLayer';
+
+const middlewareLayer = new PromiseMiddlewareLayer();
 
 export default {
     /**
@@ -54,9 +56,7 @@ export default {
      *                                        return a Promise that resolves to the new response.
      */
     addMiddleware(middleware) {
-        if (!middlewares.some((mdware) => mdware === middleware)) {
-            middlewares.push(middleware);
-        }
+        middlewareLayer.add(middleware);
     }
 };
 
@@ -73,30 +73,14 @@ function doFetch(url, options = {}) {
     options.headers = options.headers || {};
     options.headers.Accept = 'application/json';
 
-    return runMiddlewares('before', {url, options})
+    return middlewareLayer.run('before', {url, options})
         .then(({url, options}) => fetch(url, options))
         .then(checkStatus)
         .then(toJSON, rejectWithJSON)
         .then(handleResponseSuccess)
-        .then((resp) => runMiddlewares('then', resp))
-        .catch((resp) => runMiddlewares('catch', resp, () => doFetch(url, options)))
+        .then((resp) => middlewareLayer.run('then', resp))
+        .catch((resp) => middlewareLayer.run('catch', resp, () => doFetch(url, options)))
         ;
-}
-
-/**
- * @param {string} action - the name of middleware's hook (before|then|catch)
- * @param {object} data - the initial data to pass through middlewares chain
- * @param {function} restart - a function to restart current request (for `catch` hook)
- *
- * @return {Promise}
- */
-function runMiddlewares(action, data, restart) {
-    return middlewares
-        .filter((middleware) => middleware[action])
-        .reduce(
-            (promise, middleware) => promise[/^catch|then$/.test(action) ? action : 'then']((resp) => middleware[action](resp, restart)),
-            Promise[action === 'catch' ? 'reject' : 'resolve'](data)
-        );
 }
 
 /**
