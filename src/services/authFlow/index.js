@@ -1,4 +1,4 @@
-import AuthFlow from './authFlow/AuthFlow';
+import AuthFlow from './AuthFlow';
 
 import * as actions from 'components/auth/actions';
 import {updateUser} from 'components/user/actions';
