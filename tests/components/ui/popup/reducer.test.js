@@ -1,3 +1,5 @@
+import expect from 'unexpected';
+
 import reducer from 'components/ui/popup/reducer';
 import {create, destroy} from 'components/ui/popup/actions';
 
@@ -5,8 +7,8 @@ describe('popup/reducer', () => {
     it('should have no popups by default', () => {
         const actual = reducer(undefined, {});
 
-        expect(actual.popups).to.be.an('array');
-        expect(actual.popups).to.be.empty;
+        expect(actual.popups, 'to be an', 'array');
+        expect(actual.popups, 'to be empty');
     });
 
     describe('#create', () => {
@@ -15,7 +17,7 @@ describe('popup/reducer', () => {
                 Popup: FakeComponent
             }));
 
-            expect(actual.popups[0]).to.be.deep.equal({
+            expect(actual.popups[0], 'to equal', {
                 Popup: FakeComponent
             });
         });
@@ -23,7 +25,7 @@ describe('popup/reducer', () => {
         it('should support shortcut popup creation', () => {
             const actual = reducer(undefined, create(FakeComponent));
 
-            expect(actual.popups[0]).to.be.deep.equal({
+            expect(actual.popups[0], 'to equal', {
                 Popup: FakeComponent
             });
         });
@@ -36,13 +38,13 @@ describe('popup/reducer', () => {
                 Popup: FakeComponent
             }));
 
-            expect(actual.popups[1]).to.be.deep.equal({
+            expect(actual.popups[1], 'to equal', {
                 Popup: FakeComponent
             });
         });
 
         it('throws when no type provided', () => {
-            expect(() => reducer(undefined, create())).to.throw('Popup is required');
+            expect(() => reducer(undefined, create()), 'to throw', 'Popup is required');
         });
     });
 
@@ -56,11 +58,11 @@ describe('popup/reducer', () => {
         });
 
         it('should remove popup', () => {
-            expect(state.popups).to.have.length(1);
+            expect(state.popups, 'to have length', 1);
 
             state = reducer(state, destroy(popup));
 
-            expect(state.popups).to.have.length(0);
+            expect(state.popups, 'to have length', 0);
         });
 
         it('should not remove something, that it should not', () => {
@@ -70,8 +72,8 @@ describe('popup/reducer', () => {
 
             state = reducer(state, destroy(popup));
 
-            expect(state.popups).to.have.length(1);
-            expect(state.popups[0]).to.not.equal(popup);
+            expect(state.popups, 'to have length', 1);
+            expect(state.popups[0], 'not to be', popup);
         });
     });
 });

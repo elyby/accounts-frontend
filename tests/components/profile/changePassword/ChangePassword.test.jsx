@@ -1,3 +1,4 @@
+import expect from 'unexpected';
 import React from 'react';
 
 import { shallow } from 'enzyme';
@@ -8,16 +9,16 @@ describe('<ChangePassword />', () => {
     it('renders two <Input /> components', () => {
         const component = shallow(<ChangePassword onSubmit={() => {}} />);
 
-        expect(component.find('Input')).to.have.length(2);
+        expect(component.find('Input'), 'to satisfy', {length: 2});
     });
 
 
     it('should call onSubmit if passwords entered', () => {
-        const onSubmit = sinon.spy();
+        const onSubmit = sinon.spy().named('onSubmit');
         const component = shallow(<ChangePassword onSubmit={onSubmit} />);
 
         component.find('Form').simulate('submit');
 
-        sinon.assert.calledOnce(onSubmit);
+        expect(onSubmit, 'was called');
     });
 });

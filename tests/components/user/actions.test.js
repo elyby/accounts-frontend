@@ -1,3 +1,5 @@
+import expect from 'unexpected';
+
 import { routeActions } from 'react-router-redux';
 
 import request from 'services/request';
@@ -9,8 +11,8 @@ import {
 
 
 describe('components/user/actions', () => {
-    const dispatch = sinon.stub();
-    const getState = sinon.stub();
+    const dispatch = sinon.stub().named('dispatch');
+    const getState = sinon.stub().named('getState');
 
     const callThunk = function(fn, ...args) {
         const thunk = fn(...args);
@@ -22,8 +24,8 @@ describe('components/user/actions', () => {
         dispatch.reset();
         getState.reset();
         getState.returns({});
-        sinon.stub(request, 'get');
-        sinon.stub(request, 'post');
+        sinon.stub(request, 'get').named('request.get');
+        sinon.stub(request, 'post').named('request.post');
     });
 
     afterEach(() => {
@@ -42,14 +44,16 @@ describe('components/user/actions', () => {
             request.post.returns(new Promise((resolve) => {
                 setTimeout(() => {
                     // we must not overwrite user's token till request starts
-                    sinon.assert.notCalled(dispatch);
+                    expect(dispatch, 'was not called');
 
                     resolve();
                 }, 0);
             }));
 
             return callThunk(logout).then(() => {
-                sinon.assert.calledWith(request.post, '/api/authentication/logout');
+                expect(request.post, 'to have a call satisfying', [
+                    '/api/authentication/logout'
+                ]);
             });
         });
 
@@ -63,10 +67,12 @@ describe('components/user/actions', () => {
             request.post.returns(Promise.resolve());
 
             return callThunk(logout).then(() => {
-                sinon.assert.calledWith(dispatch, setUser({
-                    lang: 'foo',
-                    isGuest: true
-                }));
+                expect(dispatch, 'to have a call satisfying', [
+                    setUser({
+                        lang: 'foo',
+                        isGuest: true
+                    })
+                ]);
             });
         });
 
@@ -80,7 +86,9 @@ describe('components/user/actions', () => {
             request.post.returns(Promise.resolve());
 
             return callThunk(logout).then(() => {
-                sinon.assert.calledWith(dispatch, routeActions.push('/login'));
+                expect(dispatch, 'to have a call satisfying', [
+                    routeActions.push('/login')
+                ]);
             });
         });
     });

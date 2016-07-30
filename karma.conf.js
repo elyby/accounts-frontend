@@ -10,7 +10,7 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha', 'sinon', 'chai'],
+        frameworks: ['mocha', 'sinon'],
 
 
         // list of files / patterns to load in the browser
@@ -35,7 +35,7 @@ module.exports = function(config) {
 
 
         webpackServer: {
-            noInfo: true //please don't spam the console when running in karma!
+            noInfo: true // please don't spam the console when running in karma!
         },
 
 
@@ -43,6 +43,12 @@ module.exports = function(config) {
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: ['nyan'],
+
+        nyanReporter: {
+            // suppress the red background on errors in the error
+            // report at the end of the test run
+            suppressErrorHighlighting: true
+        },
 
 
         // web server port

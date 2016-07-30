@@ -1,3 +1,5 @@
+import expect from 'unexpected';
+
 import AuthFlow from 'services/authFlow/AuthFlow';
 
 import RegisterState from 'services/authFlow/RegisterState';
@@ -12,16 +14,15 @@ describe('AuthFlow.functional', () => {
     let navigate;
 
     beforeEach(() => {
-        actions = {test: sinon.stub()};
-        actions.test.returns('passed');
+        actions = {};
         store = {
-            getState: sinon.stub(),
+            getState: sinon.stub().named('store.getState'),
             dispatch: sinon.spy(({type, payload = {}}) => {
                 if (type === '@@router/TRANSITION' && payload.method === 'push') {
                     // emulate redux-router
-                    navigate.apply(null, payload.args);
+                    navigate(...payload.args);
                 }
-            })
+            }).named('store.dispatch')
         };
 
         state = {};
@@ -36,8 +37,8 @@ describe('AuthFlow.functional', () => {
             }
         };
 
-        sinon.stub(flow, 'run');
-        sinon.spy(flow, 'navigate');
+        sinon.stub(flow, 'run').named('flow.run');
+        sinon.spy(flow, 'navigate').named('flow.navigate');
         store.getState.returns(state);
     });
 
@@ -51,8 +52,8 @@ describe('AuthFlow.functional', () => {
         it('should redirect guest / -> /login', () => {
             navigate('/');
 
-            sinon.assert.calledOnce(flow.navigate);
-            sinon.assert.calledWithExactly(flow.navigate, '/login');
+            expect(flow.navigate, 'was called once');
+            expect(flow.navigate, 'to have a call satisfying', ['/login']);
         });
 
         it('should redirect guest to /login after /login -> /', () => {
@@ -63,8 +64,8 @@ describe('AuthFlow.functional', () => {
             navigate('/login');
             navigate('/');
 
-            sinon.assert.calledTwice(flow.navigate);
-            sinon.assert.alwaysCalledWithExactly(flow.navigate, '/login');
+            expect(flow.navigate, 'was called twice');
+            expect(flow.navigate, 'to have a call satisfying', ['/login']);
         });
     });
 
@@ -98,10 +99,11 @@ describe('AuthFlow.functional', () => {
 
         navigate('/oauth2');
 
-        sinon.assert.calledThrice(flow.run);
-        sinon.assert.calledWith(flow.run.getCall(0), 'oAuthValidate');
-        sinon.assert.calledWith(flow.run.getCall(1), 'oAuthComplete');
-        sinon.assert.calledWithExactly(flow.run.getCall(2), 'redirect', expectedRedirect);
+        expect(flow.run, 'to have calls satisfying', [
+            ['oAuthValidate', {}],
+            ['oAuthComplete', {}],
+            ['redirect', expectedRedirect]
+        ]);
     });
 
     describe('/resend-activation #goBack()', () => {
@@ -120,24 +122,24 @@ describe('AuthFlow.functional', () => {
 
         it('should goBack to /activation', () => {
             navigate('/activation');
-            expect(flow.state).to.be.instanceof(ActivationState);
+            expect(flow.state, 'to be a', ActivationState);
 
             flow.state.reject(flow);
-            expect(flow.state).to.be.instanceof(ResendActivationState);
+            expect(flow.state, 'to be a', ResendActivationState);
 
             flow.state.goBack(flow);
-            expect(flow.state).to.be.instanceof(ActivationState);
+            expect(flow.state, 'to be a', ActivationState);
         });
 
         it('should goBack to /register', () => {
             navigate('/register');
-            expect(flow.state).to.be.instanceof(RegisterState);
+            expect(flow.state, 'to be a', RegisterState);
 
             flow.state.reject(flow, {requestEmail: true});
-            expect(flow.state).to.be.instanceof(ResendActivationState);
+            expect(flow.state, 'to be a', ResendActivationState);
 
             flow.state.goBack(flow);
-            expect(flow.state).to.be.instanceof(RegisterState);
+            expect(flow.state, 'to be a', RegisterState);
         });
     });
 });

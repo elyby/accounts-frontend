@@ -91,6 +91,7 @@ var webpackConfig = {
     },
 
     externals: isTest ? {
+        sinon: 'sinon',
         // http://airbnb.io/enzyme/docs/guides/webpack.html
         cheerio: 'window',
         'react/lib/ExecutionEnvironment': true,

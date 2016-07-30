@@ -1,6 +1,9 @@
+import expect from 'unexpected';
+
 import request from 'services/request';
 
 import {
+    setLoadingState,
     oAuthValidate,
     oAuthComplete,
     setClient,
@@ -19,21 +22,29 @@ const oauthData = {
 };
 
 describe('components/auth/actions', () => {
-    const dispatch = sinon.stub();
-    const getState = sinon.stub();
+    const dispatch = sinon.stub().named('dispatch');
+    const getState = sinon.stub().named('getState');
 
-    const callThunk = function(fn, ...args) {
+    function callThunk(fn, ...args) {
         const thunk = fn(...args);
 
         return thunk(dispatch, getState);
-    };
+    }
+
+    function expectDispatchCalls(calls) {
+        expect(dispatch, 'to have calls satisfying', [
+            [setLoadingState(true)]
+        ].concat(calls).concat([
+            [setLoadingState(false)]
+        ]));
+    }
 
     beforeEach(() => {
         dispatch.reset();
         getState.reset();
         getState.returns({});
-        sinon.stub(request, 'get');
-        sinon.stub(request, 'post');
+        sinon.stub(request, 'get').named('request.get');
+        sinon.stub(request, 'post').named('request.post');
     });
 
     afterEach(() => {
@@ -42,10 +53,10 @@ describe('components/auth/actions', () => {
     });
 
     describe('#oAuthValidate()', () => {
-        it('should dispatch setClient, setOAuthRequest and setScopes', () => {
-            // TODO: the assertions may be splitted up to one per test
+        let resp;
 
-            const resp = {
+        beforeEach(() => {
+            resp = {
                 client: {id: 123},
                 oAuth: {state: 123},
                 session: {
@@ -54,12 +65,21 @@ describe('components/auth/actions', () => {
             };
 
             request.get.returns(Promise.resolve(resp));
+        });
 
+        it('should send get request to an api', () => {
             return callThunk(oAuthValidate, oauthData).then(() => {
-                sinon.assert.calledWith(request.get, '/api/oauth2/v1/validate');
-                sinon.assert.calledWith(dispatch, setClient(resp.client));
-                sinon.assert.calledWith(dispatch, setOAuthRequest(resp.oAuth));
-                sinon.assert.calledWith(dispatch, setScopes(resp.session.scopes));
+                expect(request.get, 'to have a call satisfying', ['/api/oauth2/v1/validate', {}]);
+            });
+        });
+
+        it('should dispatch setClient, setOAuthRequest and setScopes', () => {
+            return callThunk(oAuthValidate, oauthData).then(() => {
+                expectDispatchCalls([
+                    [setClient(resp.client)],
+                    [setOAuthRequest(resp.oAuth)],
+                    [setScopes(resp.session.scopes)]
+                ]);
             });
         });
     });
@@ -73,8 +93,20 @@ describe('components/auth/actions', () => {
             });
         });
 
+        it('should post to api/oauth2/complete', () => {
+            request.post.returns(Promise.resolve({
+                redirectUri: ''
+            }));
+
+            return callThunk(oAuthComplete).then(() => {
+                expect(request.post, 'to have a call satisfying', [
+                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&scope=&state=',
+                    {}
+                ]);
+            });
+        });
+
         it('should dispatch setOAuthCode for static_page redirect', () => {
-            // TODO: it may be split on separate url and dispatch tests
             const resp = {
                 success: true,
                 redirectUri: 'static_page?code=123&state='
@@ -83,12 +115,15 @@ describe('components/auth/actions', () => {
             request.post.returns(Promise.resolve(resp));
 
             return callThunk(oAuthComplete).then(() => {
-                sinon.assert.calledWithMatch(request.post, /\/api\/oauth2\/v1\/complete/);
-                sinon.assert.calledWith(dispatch, setOAuthCode({
-                    success: true,
-                    code: '123',
-                    displayCode: false
-                }));
+                expectDispatchCalls([
+                    [
+                        setOAuthCode({
+                            success: true,
+                            code: '123',
+                            displayCode: false
+                        })
+                    ]
+                ]);
             });
         });
 
@@ -102,7 +137,7 @@ describe('components/auth/actions', () => {
             request.post.returns(Promise.reject(resp));
 
             return callThunk(oAuthComplete).then((resp) => {
-                expect(resp).to.be.deep.equal({
+                expect(resp, 'to equal', {
                     success: false,
                     redirectUri: 'redirectUri'
                 });
@@ -118,8 +153,10 @@ describe('components/auth/actions', () => {
             request.post.returns(Promise.reject(resp));
 
             return callThunk(oAuthComplete).catch((resp) => {
-                expect(resp.acceptRequired).to.be.true;
-                sinon.assert.calledWith(dispatch, requirePermissionsAccept());
+                expect(resp.acceptRequired, 'to be true');
+                expectDispatchCalls([
+                    [requirePermissionsAccept()]
+                ]);
             });
         });
     });

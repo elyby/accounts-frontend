@@ -1,3 +1,5 @@
+import expect from 'unexpected';
+
 import AuthFlow from 'services/authFlow/AuthFlow';
 import AbstractState from 'services/authFlow/AbstractState';
 
@@ -16,19 +18,21 @@ describe('AuthFlow', () => {
     let actions;
 
     beforeEach(() => {
-        actions = {test: sinon.stub()};
+        actions = {
+            test: sinon.stub().named('actions.test')
+        };
         actions.test.returns('passed');
 
         flow = new AuthFlow(actions);
     });
 
     it('throws when no actions provided', () => {
-        expect(() => new AuthFlow()).to.throw('AuthFlow requires an actions object');
+        expect(() => new AuthFlow(), 'to throw', 'AuthFlow requires an actions object');
     });
 
     it('should not allow to mutate actions', () => {
-        expect(() => flow.actions.foo = 'bar').to.throw(/readonly/);
-        expect(() => flow.actions.test = 'hacked').to.throw(/readonly/);
+        expect(() => flow.actions.foo = 'bar', 'to throw', /readonly/);
+        expect(() => flow.actions.test = 'hacked', 'to throw', /readonly/);
     });
 
     describe('#setState', () => {
@@ -36,17 +40,17 @@ describe('AuthFlow', () => {
             const state = new AbstractState();
             flow.setState(state);
 
-            expect(flow.state).to.be.equal(state);
+            expect(flow.state, 'to be', state);
         });
 
         it('should call #enter() on new state and pass reference to itself', () => {
             const state = new AbstractState();
-            const spy = sinon.spy(state, 'enter');
+            const spy = sinon.spy(state, 'enter').named('state.enter');
 
             flow.setState(state);
 
-            sinon.assert.calledWith(spy, flow);
-            sinon.assert.calledOnce(spy);
+            expect(spy, 'was called once');
+            expect(spy, 'to have a call satisfying', [flow]);
         });
 
         it('should call `leave` on previous state if any', () => {
@@ -61,9 +65,9 @@ describe('AuthFlow', () => {
             flow.setState(state1);
             flow.setState(state2);
 
-            sinon.assert.calledWith(spy1, flow);
-            sinon.assert.calledOnce(spy1);
-            sinon.assert.notCalled(spy2);
+            expect(spy1, 'was called once');
+            expect(spy1, 'to have a call satisfying', [flow]);
+            expect(spy2, 'was not called');
         });
 
         it('should return promise, if #enter returns it', () => {
@@ -74,11 +78,11 @@ describe('AuthFlow', () => {
 
             const actual = flow.setState(state);
 
-            expect(actual).to.be.equal(expected);
+            expect(actual, 'to be', expected);
         });
 
         it('should throw if no state', () => {
-            expect(() => flow.setState()).to.throw('State is required');
+            expect(() => flow.setState(), 'to throw', 'State is required');
         });
     });
 
@@ -88,7 +92,7 @@ describe('AuthFlow', () => {
         beforeEach(() => {
             store = {
                 getState() {},
-                dispatch: sinon.stub()
+                dispatch: sinon.stub().named('store.dispatch')
             };
 
             flow.setStore(store);
@@ -97,76 +101,76 @@ describe('AuthFlow', () => {
         it('should dispatch an action', () => {
             flow.run('test');
 
-            sinon.assert.calledOnce(store.dispatch);
-            sinon.assert.calledWith(store.dispatch, 'passed');
+            expect(store.dispatch, 'was called once');
+            expect(store.dispatch, 'to have a call satisfying', ['passed']);
         });
 
         it('should dispatch an action with payload given', () => {
             flow.run('test', 'arg');
 
-            sinon.assert.calledOnce(actions.test);
-            sinon.assert.calledWith(actions.test, 'arg');
+            expect(actions.test, 'was called once');
+            expect(actions.test, 'to have a call satisfying', ['arg']);
         });
 
         it('should return action dispatch result', () => {
             const expected = 'dispatch called';
             store.dispatch.returns(expected);
 
-            expect(flow.run('test')).to.be.equal(expected);
+            expect(flow.run('test'), 'to be', expected);
         });
 
         it('throws when running unexisted action', () => {
-            expect(() => flow.run('123')).to.throw('Action 123 does not exists');
+            expect(() => flow.run('123'), 'to throw', 'Action 123 does not exists');
         });
     });
 
     describe('#goBack', () => {
         it('should call goBack on state passing itself as argument', () => {
             const state = new AbstractState();
-            sinon.stub(state, 'goBack');
+            sinon.stub(state, 'goBack').named('state.goBack');
             flow.setState(state);
 
             flow.goBack();
 
-            sinon.assert.calledOnce(state.goBack);
-            sinon.assert.calledWith(state.goBack, flow);
+            expect(state.goBack, 'was called once');
+            expect(state.goBack, 'to have a call satisfying', [flow]);
         });
     });
 
     describe('#resolve', () => {
         it('should call resolve on state passing itself and payload as arguments', () => {
             const state = new AbstractState();
-            sinon.stub(state, 'resolve');
+            sinon.stub(state, 'resolve').named('state.resolve');
             flow.setState(state);
 
             const expectedPayload = {foo: 'bar'};
 
             flow.resolve(expectedPayload);
 
-            sinon.assert.calledOnce(state.resolve);
-            sinon.assert.calledWithExactly(state.resolve, flow, expectedPayload);
+            expect(state.resolve, 'was called once');
+            expect(state.resolve, 'to have a call satisfying', [flow, expectedPayload]);
         });
     });
 
     describe('#reject', () => {
         it('should call reject on state passing itself and payload as arguments', () => {
             const state = new AbstractState();
-            sinon.stub(state, 'reject');
+            sinon.stub(state, 'reject').named('state.reject');
             flow.setState(state);
 
             const expectedPayload = {foo: 'bar'};
 
             flow.reject(expectedPayload);
 
-            sinon.assert.calledOnce(state.reject);
-            sinon.assert.calledWithExactly(state.reject, flow, expectedPayload);
+            expect(state.reject, 'was called once');
+            expect(state.reject, 'to have a call satisfying', [flow, expectedPayload]);
         });
     });
 
     describe('#handleRequest()', () => {
         beforeEach(() => {
-            sinon.stub(flow, 'setState');
-            sinon.stub(flow, 'run');
+            sinon.stub(flow, 'setState').named('flow.setState');
+            sinon.stub(flow, 'run').named('flow.run');
         });
 
         Object.entries({
@@ -188,30 +192,33 @@ describe('AuthFlow', () => {
             it(`should transition to ${type.name} if ${path}`, () => {
                 flow.handleRequest(path);
 
-                sinon.assert.calledOnce(flow.setState);
-                sinon.assert.calledWithExactly(flow.setState, sinon.match.instanceOf(type));
+                expect(flow.setState, 'was called once');
+                expect(flow.setState, 'to have a call satisfying', [
+                    expect.it('to be a', type)
+                ]);
             });
         });
 
         it('should run setOAuthRequest if /', () => {
             flow.handleRequest('/');
 
-            sinon.assert.calledOnce(flow.run);
-            sinon.assert.calledWithExactly(flow.run, 'setOAuthRequest', {});
+            expect(flow.run, 'was called once');
+            expect(flow.run, 'to have a call satisfying', ['setOAuthRequest', {}]);
         });
 
         it('should call callback', () => {
-            const callback = sinon.stub();
+            const callback = sinon.stub().named('callback');
 
             flow.handleRequest('/', () => {}, callback);
 
-            sinon.assert.calledOnce(callback);
+            expect(callback, 'was called once');
         });
 
         it('should not call callback till returned from #enter() promise will be resolved', () => {
             let resolve;
             const promise = {then: (cb) => {resolve = cb;}};
-            const callback = sinon.stub();
+            const callback = sinon.stub().named('callback');
+
             const state = new AbstractState();
             state.enter = () => promise;
 
@@ -219,11 +226,11 @@ describe('AuthFlow', () => {
 
             flow.handleRequest('/', () => {}, callback);
 
-            expect(resolve).to.be.a('function');
+            expect(resolve, 'to be', callback);
 
-            sinon.assert.notCalled(callback);
+            expect(callback, 'was not called');
             resolve();
-            sinon.assert.calledOnce(callback);
+            expect(callback, 'was called once');
         });
 
         it('should not handle the same request twice', () => {
@@ -233,13 +240,15 @@ describe('AuthFlow', () => {
             flow.handleRequest(path, () => {}, callback);
             flow.handleRequest(path, () => {}, callback);
 
-            sinon.assert.calledOnce(flow.setState);
-            sinon.assert.calledTwice(callback);
-            sinon.assert.calledWithExactly(flow.setState, sinon.match.instanceOf(OAuthState));
+            expect(flow.setState, 'was called once');
+            expect(flow.setState, 'to have a call satisfying', [
+                expect.it('to be a', OAuthState)
+            ]);
+            expect(callback, 'was called twice');
         });
 
         it('throws if unsupported request', () => {
-            expect(() => flow.handleRequest('/foo/bar')).to.throw('Unsupported request: /foo/bar');
+            expect(() => flow.handleRequest('/foo/bar'), 'to throw', 'Unsupported request: /foo/bar');
         });
     });
 });

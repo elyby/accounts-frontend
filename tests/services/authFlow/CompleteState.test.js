@@ -1,3 +1,5 @@
+import expect from 'unexpected';
+
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
 import ActivationState from 'services/authFlow/ActivationState';
@@ -174,8 +176,8 @@ describe('CompleteState', () => {
                 'oAuthComplete',
                 sinon.match.object
             ).returns({then(success, fail) {
-                expect(success).to.be.a('function');
-                expect(fail).to.be.a('function');
+                expect(success, 'to be a', 'function');
+                expect(fail, 'to be a', 'function');
             }});
 
             state.enter(context);
@@ -260,16 +262,16 @@ describe('CompleteState', () => {
     describe('permissions accept', () => {
         it('should set flags, when user accepted permissions', () => {
             state = new CompleteState();
-            expect(state.isPermissionsAccepted).to.be.undefined;
+            expect(state.isPermissionsAccepted, 'to be undefined');
 
             state = new CompleteState({accept: undefined});
-            expect(state.isPermissionsAccepted).to.be.undefined;
+            expect(state.isPermissionsAccepted, 'to be undefined');
 
             state = new CompleteState({accept: true});
-            expect(state.isPermissionsAccepted).to.be.true;
+            expect(state.isPermissionsAccepted, 'to be true');
 
             state = new CompleteState({accept: false});
-            expect(state.isPermissionsAccepted).to.be.false;
+            expect(state.isPermissionsAccepted, 'to be false');
         });
 
         it('should run oAuthComplete passing accept: true', () => {
