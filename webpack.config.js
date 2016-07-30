@@ -82,7 +82,7 @@ var webpackConfig = {
     output: {
         path: path.join(__dirname, 'dist'),
         publicPath: '/',
-        filename: '[name].js'
+        filename: '[name].js?[hash]'
     },
 
     resolve: {
@@ -141,7 +141,7 @@ var webpackConfig = {
             fetch: 'imports?this=>self!exports?self.fetch!whatwg-fetch'
         })
     ].concat(isTest ? [] : [
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js')
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]')
     ]).concat(isProduction ? [
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin()
