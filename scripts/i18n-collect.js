@@ -1,11 +1,12 @@
+/* eslint-disable no-console */
 import fs from 'fs';
 import {sync as globSync} from 'glob';
 import {sync as mkdirpSync} from 'mkdirp';
 import chalk from 'chalk';
 import prompt from 'prompt';
 
-const MESSAGES_PATTERN = `../dist/messages/**/*.json`;
-const LANG_DIR = `../src/i18n`;
+const MESSAGES_PATTERN = '../dist/messages/**/*.json';
+const LANG_DIR = '../src/i18n';
 const DEFAULT_LOCALE = 'en';
 const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be', 'uk');
 
@@ -17,7 +18,7 @@ const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be', 'uk');
  */
 let idToFileMap = {};
 let duplicateIds = [];
-const defaultMessages = globSync(MESSAGES_PATTERN)
+const collectedMessages = globSync(MESSAGES_PATTERN)
     .map((filename) => [filename, JSON.parse(fs.readFileSync(filename, 'utf8'))])
     .reduce((collection, [file, descriptors]) => {
         descriptors.forEach(({id, defaultMessage}) => {
@@ -49,19 +50,42 @@ const defaultMessagesPath = `${LANG_DIR}/${DEFAULT_LOCALE}.json`;
 let keysToUpdate = [];
 let keysToAdd = [];
 let keysToRemove = [];
+const keysToRename = [];
 const isNotMarked = (value) => value.slice(0, 2) !== '--';
 try {
     const prevMessages = JSON.parse(fs.readFileSync(defaultMessagesPath, 'utf8'));
-    keysToAdd = Object.keys(defaultMessages).filter((key) => !prevMessages[key]);
-    keysToRemove = Object.keys(prevMessages).filter((key) => !defaultMessages[key]).filter(isNotMarked);
+    const prevMessagesMap = Object.entries(prevMessages).reduce((acc, [key, value]) => {
+        if (acc[value]) {
+            acc[value].push(key);
+        } else {
+            acc[value] = [key];
+        }
+
+        return acc;
+    }, {});
+    keysToAdd = Object.keys(collectedMessages).filter((key) => !prevMessages[key]);
+    keysToRemove = Object.keys(prevMessages).filter((key) => !collectedMessages[key]).filter(isNotMarked);
     keysToUpdate = Object.entries(prevMessages).reduce((acc, [key, message]) =>
-        acc.concat(defaultMessages[key] && defaultMessages[key] !== message ? key : [])
+        acc.concat(collectedMessages[key] && collectedMessages[key] !== message ? key : [])
     , []);
-} catch(err) {
+
+    // detect keys to rename, mutating keysToAdd and keysToRemove
+    [].concat(keysToAdd).forEach((toKey) => {
+        const keys = prevMessagesMap[collectedMessages[toKey]] || [];
+        const fromKey = keys.find((fromKey) => keysToRemove.indexOf(fromKey) > -1);
+
+        if (fromKey) {
+            keysToRename.push([fromKey, toKey]);
+
+            keysToRemove.splice(keysToRemove.indexOf(fromKey), 1);
+            keysToAdd.splice(keysToAdd.indexOf(toKey), 1);
+        }
+    });
+} catch (err) {
     console.log(chalk.yellow(`Can not read ${defaultMessagesPath}. The new file will be created.`), err);
 }
 
-if (!keysToAdd.length && !keysToRemove.length && !keysToUpdate.length) {
+if (!keysToAdd.length && !keysToRemove.length && !keysToUpdate.length && !keysToRename.length) {
     return console.log(chalk.green('Everything is up to date!'));
 }
 
@@ -69,17 +93,24 @@ console.log(chalk.magenta(`The diff relative to default locale (${DEFAULT_LOCALE
 
 if (keysToRemove.length) {
     console.log('The following keys will be removed:');
-    console.log(chalk.red('\n - ') + keysToRemove.join(chalk.red('\n - ')) + '\n');
+    console.log([chalk.red('\n - '), keysToRemove.join(chalk.red('\n - ')), '\n'].join(''));
 }
 
 if (keysToAdd.length) {
     console.log('The following keys will be added:');
-    console.log(chalk.green('\n + ') + keysToAdd.join(chalk.green('\n + ')) + '\n');
+    console.log([chalk.green('\n + '), keysToAdd.join(chalk.green('\n + ')), '\n'].join(''));
 }
 
 if (keysToUpdate.length) {
     console.log('The following keys will be updated:');
-    console.log(chalk.yellow('\n @ ') + keysToUpdate.join(chalk.yellow('\n @ ')) + '\n');
+    console.log([chalk.yellow('\n @ '), keysToUpdate.join(chalk.yellow('\n @ ')), '\n'].join(''));
+}
+
+if (keysToRename.length) {
+    console.log('The following keys will be renamed:\n');
+    console.log(keysToRename.reduce((str, pair) =>
+        [str, pair[0], chalk.yellow(' -> '), pair[1], '\n'].join('')
+    , ''));
 }
 
 prompt.start();
@@ -119,21 +150,26 @@ function buildLocales() {
             console.log(chalk.yellow(`Can not read ${destPath}. The new file will be created.`), err);
         }
 
+        keysToRename.forEach(([fromKey, toKey]) => {
+            newMessages[toKey] = newMessages[fromKey];
+            delete newMessages[fromKey];
+        });
         keysToRemove.forEach((key) => {
             delete newMessages[key];
         });
         keysToUpdate.forEach((key) => {
             newMessages[`--${key}`] = newMessages[key];
+            newMessages[key] = collectedMessages[key];
         });
-        keysToAdd.concat(keysToUpdate).forEach((key) => {
-            newMessages[key] = defaultMessages[key];
+        keysToAdd.forEach((key) => {
+            newMessages[key] = collectedMessages[key];
         });
 
-        const sortedKeys = Object.keys(newMessages).sort((a, b) => {
-            a = a.replace(/^\-+/, '');
-            b = b.replace(/^\-+/, '');
+        const sortedKeys = Object.keys(newMessages).sort((key1, key2) => {
+            key1 = key1.replace(/^\-+/, '');
+            key2 = key2.replace(/^\-+/, '');
 
-            return a < b || !isNotMarked(a) ? -1 : 1;
+            return key1 < key2 || !isNotMarked(key1) ? -1 : 1;
         });
 
         const sortedNewMessages = sortedKeys.reduce((acc, key) => {
