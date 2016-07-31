@@ -18,3 +18,25 @@ export function omit(obj, keys) {
 
     return newObj;
 }
+
+/**
+ * Asynchronously loads script
+ *
+ * @param {string} src
+ *
+ * @return {Promise}
+ */
+export function loadScript(src) {
+    const script = document.createElement('script');
+
+    script.async = true;
+    script.defer = true;
+    script.src = src;
+
+    return new Promise((resolve, reject) => {
+        script.onlaod = resolve;
+        script.onerror = reject;
+
+        document.body.appendChild(script);
+    });
+}

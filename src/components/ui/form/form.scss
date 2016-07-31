@@ -295,6 +295,15 @@
     }
 }
 
+.captcha {
+    width: 302px;
+    height: 76px;
+    // minimum captcha width is 302px, which can not be changed
+    // using transform to scale down to 296px
+    transform-origin: 0;
+    transform: scaleX(0.98);
+}
+
 /**
  * Form validation
  */

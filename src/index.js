@@ -11,6 +11,9 @@ import { IntlProvider } from 'components/i18n';
 import routesFactory from 'routes';
 import storeFactory from 'storeFactory';
 import bsodFactory from 'components/ui/bsod/factory';
+import captcha from 'services/captcha';
+
+captcha.setApiKey('6LdUZiYTAAAAAEjDGi9kEu0MRKYHYWskPFNXSYOV'); // TODO
 
 const store = storeFactory();
 

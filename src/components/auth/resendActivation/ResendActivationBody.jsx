@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
-import { Input } from 'components/ui/form';
+import { Input, Captcha } from 'components/ui/form';
 import registerMessages from 'components/auth/register/Register.intl.json';
 
 import BaseAuthBody from 'components/auth/BaseAuthBody';
@@ -25,16 +25,16 @@ export default class ResendActivation extends BaseAuthBody {
                     <Message {...messages.specifyYourEmail} />
                 </div>
 
-                <div className={styles.formRow}>
-                    <Input {...this.bindField('email')}
-                        icon="envelope"
-                        color="blue"
-                        type="email"
-                        required
-                        placeholder={registerMessages.yourEmail}
-                        defaultValue={this.context.user.email}
-                    />
-                </div>
+                <Input {...this.bindField('email')}
+                    icon="envelope"
+                    color="blue"
+                    type="email"
+                    required
+                    placeholder={registerMessages.yourEmail}
+                    defaultValue={this.context.user.email}
+                />
+
+                <Captcha {...this.bindField('captcha')} />
             </div>
         );
     }

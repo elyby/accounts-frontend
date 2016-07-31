@@ -5,6 +5,7 @@ import Button from './Button';
 import Form from './Form';
 import FormModel from './FormModel';
 import Dropdown from './Dropdown';
+import Captcha from './Captcha';
 import FormError from './FormError';
 
 export {
@@ -15,5 +16,6 @@ export {
     Form,
     FormModel,
     Dropdown,
+    Captcha,
     FormError
 };

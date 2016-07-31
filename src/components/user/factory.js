@@ -3,7 +3,7 @@ import { authenticate, changeLang } from 'components/user/actions';
 /**
  * Initializes User state with the fresh data
  *
- * @param  {Object} store - redux store
+ * @param {object} store - redux store
  *
  * @return {Promise} a promise, that resolves in User state
  */

@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import request from 'services/request';
+import captcha from 'services/captcha';
 import accounts from 'services/api/accounts';
 import authentication from 'services/api/authentication';
 import { setLocale } from 'components/i18n/actions';
@@ -26,6 +27,9 @@ export function changeLang(lang) {
             if (!isGuest && oldLang !== lang) {
                 accounts.changeLang(lang);
             }
+
+            // TODO: probably should be moved from here, because it is side effect
+            captcha.setLang(lang);
 
             dispatch({
                 type: CHANGE_LANG,

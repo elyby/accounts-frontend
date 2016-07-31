@@ -22,10 +22,10 @@ export default {
         );
     },
 
-    resendActivation({email = ''}) {
+    resendActivation({email = '', captcha}) {
         return request.post(
             '/api/signup/repeat-message',
-            {email}
+            {email, captcha}
         );
     }
 };

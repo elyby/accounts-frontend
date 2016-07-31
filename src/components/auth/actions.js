@@ -103,9 +103,9 @@ export function activate({key = ''}) {
     );
 }
 
-export function resendActivation({email = ''}) {
+export function resendActivation({email = '', captcha}) {
     return wrapInLoader((dispatch) =>
-        signup.resendActivation({email})
+        signup.resendActivation({email, captcha})
             .then((resp) => {
                 dispatch(updateUser({
                     email
