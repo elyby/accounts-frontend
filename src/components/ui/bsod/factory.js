@@ -5,10 +5,10 @@ import dispatchBsod, { inject } from './dispatchBsod';
 export default function factory(store, stopLoading) {
     inject(store, stopLoading);
 
-    // do bsod for 500 errors
+    // do bsod for 500/404 errors
     request.addMiddleware({
         catch(resp) {
-            if (resp && resp.originalResponse.status === 500) {
+            if (resp && [500, 404].indexOf(resp.originalResponse.status) > -1) {
                 dispatchBsod();
             }
 
