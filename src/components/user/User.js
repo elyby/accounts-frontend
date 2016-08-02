@@ -4,7 +4,7 @@ const KEY_USER = 'user';
 
 export default class User {
     /**
-     * @param  {Object|string|undefined} data plain object or jwt token or empty to load from storage
+     * @param  {object|string|undefined} data plain object or jwt token or empty to load from storage
      *
      * @return {User}
      */
@@ -30,6 +30,7 @@ export default class User {
             goal: null, // the goal with wich user entered site
             isGuest: true,
             isActive: false,
+            shouldAcceptRules: false, // whether user need to review updated rules
             shouldChangePassword: false, // TODO: нужно ещё пробросить причину необходимости смены
             passwordChangedAt: null,
             hasMojangUsernameCollision: false,

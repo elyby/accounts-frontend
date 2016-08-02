@@ -3,6 +3,7 @@ import LoginState from './LoginState';
 import PermissionsState from './PermissionsState';
 import ActivationState from './ActivationState';
 import ChangePasswordState from './ChangePasswordState';
+import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
 
 export default class CompleteState extends AbstractState {
@@ -19,6 +20,8 @@ export default class CompleteState extends AbstractState {
             context.setState(new LoginState());
         } else if (!user.isActive) {
             context.setState(new ActivationState());
+        } else if (user.shouldAcceptRules) {
+            context.setState(new AcceptRulesState());
         } else if (user.shouldChangePassword) {
             context.setState(new ChangePasswordState());
         } else if (auth.oauth && auth.oauth.clientId) {

@@ -33,6 +33,7 @@ const contexts = [
     ['login', 'password', 'forgotPassword', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
     ['changePassword'],
+    ['acceptRules'],
     ['permissions']
 ];
 

@@ -5,6 +5,7 @@ import AbstractState from 'services/authFlow/AbstractState';
 
 import OAuthState from 'services/authFlow/OAuthState';
 import RegisterState from 'services/authFlow/RegisterState';
+import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
 import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 import ActivationState from 'services/authFlow/ActivationState';
@@ -178,6 +179,7 @@ describe('AuthFlow', () => {
             '/login': LoginState,
             '/password': LoginState,
             '/change-password': LoginState,
+            '/accept-rules': LoginState,
             '/oauth/permissions': LoginState,
             '/oauth/finish': LoginState,
             '/oauth2/v1': OAuthState,

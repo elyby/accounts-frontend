@@ -17,6 +17,10 @@ export default {
         );
     },
 
+    acceptRules() {
+        return request.post('/api/accounts/accept-rules');
+    },
+
     changeUsername({
         username = '',
         password = ''

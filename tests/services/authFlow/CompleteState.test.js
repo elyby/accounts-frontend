@@ -4,6 +4,7 @@ import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
 import ActivationState from 'services/authFlow/ActivationState';
 import ChangePasswordState from 'services/authFlow/ChangePasswordState';
+import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import FinishState from 'services/authFlow/FinishState';
 import PermissionsState from 'services/authFlow/PermissionsState';
 
@@ -86,6 +87,35 @@ describe('CompleteState', () => {
             context.getState.returns({
                 user: {
                     shouldChangePassword: true,
+                    isGuest: false
+                },
+                auth: {}
+            });
+
+            expectState(mock, ActivationState);
+
+            state.enter(context);
+        });
+
+        it('should transition to accept-rules if shouldAcceptRules', () => {
+            context.getState.returns({
+                user: {
+                    shouldAcceptRules: true,
+                    isActive: true,
+                    isGuest: false
+                },
+                auth: {}
+            });
+
+            expectState(mock, AcceptRulesState);
+
+            state.enter(context);
+        });
+
+        it('should transition to activation with higher priority than shouldAcceptRules', () => {
+            context.getState.returns({
+                user: {
+                    shouldAcceptRules: true,
                     isGuest: false
                 },
                 auth: {}

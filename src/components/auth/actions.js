@@ -1,6 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, changePassword as changeUserPassword, authenticate } from 'components/user/actions';
+import { updateUser, logout as logoutUser, changePassword as changeUserPassword, acceptRules as userAcceptRules, authenticate } from 'components/user/actions';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
@@ -42,6 +42,13 @@ export function changePassword({
 }) {
     return wrapInLoader((dispatch) =>
         dispatch(changeUserPassword({password, newPassword, newRePassword, logoutAll: false}))
+            .catch(validationErrorsHandler(dispatch))
+    );
+}
+
+export function acceptRules() {
+    return wrapInLoader((dispatch) =>
+        dispatch(userAcceptRules())
             .catch(validationErrorsHandler(dispatch))
     );
 }

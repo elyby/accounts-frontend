@@ -89,6 +89,19 @@ export function changePassword({
         ;
 }
 
+export function acceptRules() {
+    return (dispatch) =>
+        accounts.acceptRules()
+        .then((resp) => {
+            dispatch(updateUser({
+                shouldAcceptRules: false
+            }));
+
+            return resp;
+        })
+        ;
+}
+
 let middlewareAdded = false;
 export function authenticate(token, refreshToken) { // TODO: this action, probably, belongs to components/auth
     return (dispatch, getState) => {
