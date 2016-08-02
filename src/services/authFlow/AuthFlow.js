@@ -144,7 +144,6 @@ export default class AuthFlow {
             case '/login':
             case '/password':
             case '/accept-rules':
-            case '/change-password':
             case '/oauth/permissions':
             case '/oauth/finish':
                 this.setState(new LoginState());

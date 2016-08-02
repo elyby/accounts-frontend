@@ -32,7 +32,6 @@ const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
 const contexts = [
     ['login', 'password', 'forgotPassword', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
-    ['changePassword'],
     ['acceptRules'],
     ['permissions']
 ];

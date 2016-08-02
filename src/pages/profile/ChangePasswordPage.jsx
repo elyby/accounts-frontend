@@ -31,8 +31,7 @@ class ChangePasswordPage extends Component {
             sendData: () => accounts.changePassword(form.serialize())
         }).then(() => {
             this.props.updateUser({
-                passwordChangedAt: Date.now() / 1000,
-                shouldChangePassword: false
+                passwordChangedAt: Date.now() / 1000
             });
             this.context.goToProfile();
         });

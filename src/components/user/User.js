@@ -31,7 +31,6 @@ export default class User {
             isGuest: true,
             isActive: false,
             shouldAcceptRules: false, // whether user need to review updated rules
-            shouldChangePassword: false, // TODO: нужно ещё пробросить причину необходимости смены
             passwordChangedAt: null,
             hasMojangUsernameCollision: false,
         };

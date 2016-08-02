@@ -83,9 +83,6 @@ export default class Profile extends Component {
                                 value={<Message {...messages.changedAt} values={{
                                     at: (<Relative value={user.passwordChangedAt * 1000} updateInterval={1000} />)
                                 }} />}
-                                warningMessage={user.shouldChangePassword ? (
-                                    <HTMLMessage {...messages.oldHashingAlgoWarning} />
-                                ) : ''}
                             />
 
                             <ProfileField

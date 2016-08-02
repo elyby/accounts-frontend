@@ -12,8 +12,6 @@ import ActivationState from 'services/authFlow/ActivationState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
 import LoginState from 'services/authFlow/LoginState';
 
-// TODO: navigate and state switching
-
 describe('AuthFlow', () => {
     let flow;
     let actions;
@@ -178,7 +176,6 @@ describe('AuthFlow', () => {
             '/': LoginState,
             '/login': LoginState,
             '/password': LoginState,
-            '/change-password': LoginState,
             '/accept-rules': LoginState,
             '/oauth/permissions': LoginState,
             '/oauth/finish': LoginState,

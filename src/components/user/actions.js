@@ -69,26 +69,6 @@ export function fetchUserData() {
             });
 }
 
-export function changePassword({
-    password = '',
-    newPassword = '',
-    newRePassword = '',
-    logoutAll = true,
-}) {
-    return (dispatch) =>
-        accounts.changePassword(
-            {password, newPassword, newRePassword, logoutAll}
-        )
-        .then((resp) => {
-            dispatch(updateUser({
-                shouldChangePassword: false
-            }));
-
-            return resp;
-        })
-        ;
-}
-
 export function acceptRules() {
     return (dispatch) =>
         accounts.acceptRules()

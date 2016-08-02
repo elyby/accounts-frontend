@@ -5,7 +5,6 @@
     "preferencesDescription": "Here you can change the key preferences of your account. Please note that all actions must be confirmed by entering a password.",
     "mojangPriorityWarning": "A Mojang account with the same nickname was found. According to {rules}, account owner has the right to demand the restoration of control over nickname.",
     "projectRules": "project rules",
-    "oldHashingAlgoWarning": "Your was hashed with an old hashing algorithm.<br />Please, change password.",
     "changedAt": "Changed {at}",
     "disabled": "Disabled",
     "nickname": "Nickname",

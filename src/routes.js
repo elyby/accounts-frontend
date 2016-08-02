@@ -20,7 +20,6 @@ import Permissions from 'components/auth/permissions/Permissions';
 import Activation from 'components/auth/activation/Activation';
 import ResendActivation from 'components/auth/resendActivation/ResendActivation';
 import Password from 'components/auth/password/Password';
-import ChangePassword from 'components/auth/changePassword/ChangePassword';
 import AcceptRules from 'components/auth/acceptRules/AcceptRules';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import RecoverPassword from 'components/auth/recoverPassword/RecoverPassword';
@@ -62,7 +61,6 @@ export default function routesFactory(store) {
                 <Route path="/oauth/permissions" components={new Permissions()} {...startAuthFlow} />
                 <Route path="/oauth/finish" component={Finish} {...startAuthFlow} />
                 <Route path="/accept-rules" components={new AcceptRules()} {...startAuthFlow} />
-                <Route path="/change-password" components={new ChangePassword()} {...startAuthFlow} />
                 <Route path="/forgot-password" components={new ForgotPassword()} {...startAuthFlow} />
                 <Route path="/recover-password(/:key)" components={new RecoverPassword()} {...startAuthFlow} />
             </Route>

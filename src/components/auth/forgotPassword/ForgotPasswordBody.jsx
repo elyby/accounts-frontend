@@ -25,8 +25,6 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         const login = user.email || user.username || '';
         const isLoginEditShown = this.state.isLoginEdit;
 
-        // TODO: нужно парсить инфу о том, какой кд у отправки кода и во сколько точно можно будет повторить
-
         return (
             <div>
                 {this.renderErrors()}

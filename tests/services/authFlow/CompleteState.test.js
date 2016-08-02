@@ -3,7 +3,6 @@ import expect from 'unexpected';
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
 import ActivationState from 'services/authFlow/ActivationState';
-import ChangePasswordState from 'services/authFlow/ChangePasswordState';
 import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import FinishState from 'services/authFlow/FinishState';
 import PermissionsState from 'services/authFlow/PermissionsState';
@@ -58,35 +57,6 @@ describe('CompleteState', () => {
         it('should transition to activation if account is not activated', () => {
             context.getState.returns({
                 user: {
-                    isGuest: false
-                },
-                auth: {}
-            });
-
-            expectState(mock, ActivationState);
-
-            state.enter(context);
-        });
-
-        it('should transition to change-password if shouldChangePassword', () => {
-            context.getState.returns({
-                user: {
-                    shouldChangePassword: true,
-                    isActive: true,
-                    isGuest: false
-                },
-                auth: {}
-            });
-
-            expectState(mock, ChangePasswordState);
-
-            state.enter(context);
-        });
-
-        it('should transition to activation with higher priority than shouldChangePassword', () => {
-            context.getState.returns({
-                user: {
-                    shouldChangePassword: true,
                     isGuest: false
                 },
                 auth: {}

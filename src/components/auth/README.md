@@ -10,6 +10,8 @@ To add new panel you need to:
 * connect component to `routes`
 * whatever else you need
 
+Commit id with example: f4d315c
+
 # TODO
 
 This flow must be simplified

@@ -4,13 +4,11 @@ import { FormattedMessage as Message } from 'react-intl';
 
 import { Input } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
-import changePassword from 'components/auth/changePassword/ChangePassword.intl.json';
 
 import styles from './recoverPassword.scss';
 import messages from './RecoverPassword.intl.json';
 
 // TODO: activation code field may be decoupled into common component and reused here and in activation panel
-// TODO: new password fields may be decoupled into common component and reused here and in changePassword panel
 
 export default class RecoverPasswordBody extends BaseAuthBody {
     static displayName = 'RecoverPasswordBody';
@@ -64,7 +62,7 @@ export default class RecoverPasswordBody extends BaseAuthBody {
                     color="lightViolet"
                     type="password"
                     required
-                    placeholder={changePassword.newPassword}
+                    placeholder={messages.newPassword}
                 />
 
                 <Input {...this.bindField('newRePassword')}
@@ -72,7 +70,7 @@ export default class RecoverPasswordBody extends BaseAuthBody {
                     color="lightViolet"
                     type="password"
                     required
-                    placeholder={changePassword.newRePassword}
+                    placeholder={messages.newRePassword}
                 />
             </div>
         );
