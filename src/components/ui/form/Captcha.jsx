@@ -26,7 +26,10 @@ export default class Captcha extends FormInputComponent {
 
     render() {
         return (
-            <div ref={this.setEl} className={styles.captcha} />
+            <div>
+                <div ref={this.setEl} className={styles.captcha} />
+                {this.renderError()}
+            </div>
         );
     }
 

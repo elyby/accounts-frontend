@@ -62,7 +62,11 @@ export default {
 
 
 const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
-const toJSON = (resp) => resp.json().then((json) => ({...json, originalResponse: resp}));
+const toJSON = (resp) => resp.json().then((json) => {
+    json.originalResponse = resp;
+
+    return json;
+});
 const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {throw resp;});
 const handleResponseSuccess = (resp) => Promise[resp.success || typeof resp.success === 'undefined' ? 'resolve' : 'reject'](resp);
 

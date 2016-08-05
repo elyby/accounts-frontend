@@ -1,4 +1,5 @@
 {
+    "captchaRequired": "Please, solve the captcha",
     "invalidPassword": "You have entered wrong account password.",
     "suggestResetPassword": "Are you have {link}?",
     "forgotYourPassword": "forgot your password",

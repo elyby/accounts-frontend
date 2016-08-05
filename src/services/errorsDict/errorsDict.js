@@ -5,6 +5,8 @@ import { Link } from 'react-router';
 
 import messages from './errorsDict.intl.json';
 
+/* eslint-disable react/prop-types, react/display-name, react/no-multi-comp, no-use-before-define */
+
 export default {
     resolve(error) {
         let payload = {};
@@ -73,6 +75,8 @@ const errorsMap = {
 
     'error.email_not_found': () => <Message {...messages.emailNotFound} />,
     'error.account_already_activated': () => <Message {...messages.accountAlreadyActivated} />,
+
+    'error.captcha_required': () => <Message {...messages.captchaRequired} />,
 
     suggestResetPassword: () => (
         <span>

@@ -147,6 +147,7 @@
     "pages.rules.title": "Правила сайта",
     "services.errorsDict.accountAlreadyActivated": "Этот аккаунт уже активирован",
     "services.errorsDict.accountNotActivated": "Аккаунт не активирован",
+    "services.errorsDict.captchaRequired": "Пожалуйста, решите каптчу",
     "services.errorsDict.doYouWantRequestKey": "Желаете отправить новый код?",
     "services.errorsDict.emailFrequency": "Пожалуйста, успокойтесь, вы запрашиваете E‑mail слишком часто. Новый ключ можно будет заказать {time}.",
     "services.errorsDict.emailInvalid": "Указан неправильный E‑mail",

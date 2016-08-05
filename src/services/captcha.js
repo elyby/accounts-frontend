@@ -1,4 +1,5 @@
 import { loadScript } from 'functions';
+import options from 'services/api/options';
 
 let readyPromise;
 let lang = 'en';
@@ -14,11 +15,7 @@ export default {
      * @return {Promise}
      */
     render(el, {skin: theme, onSetCode: callback}) {
-        if (!sitekey) {
-            throw new Error('Site key is required to render captcha');
-        }
-
-        return loadApi().then(() =>
+        return this.loadApi().then(() =>
             window.grecaptcha.render(el, {
                 sitekey,
                 theme,
@@ -43,17 +40,26 @@ export default {
      */
     setApiKey(apiKey) {
         sitekey = apiKey;
+    },
+
+    /**
+     * @api private
+     *
+     * @return {Promise}
+     */
+    loadApi() {
+        if (!readyPromise) {
+            readyPromise = Promise.all([
+                new Promise((resolve) => {
+                    window.onReCaptchaReady = resolve;
+                }),
+                options.get().then((resp) => this.setApiKey(resp.reCaptchaPublicKey))
+            ]);
+
+            loadScript(`https://www.google.com/recaptcha/api.js?onload=onReCaptchaReady&render=explicit&hl=${lang}`);
+        }
+
+        return readyPromise;
     }
 };
 
-function loadApi() {
-    if (!readyPromise) {
-        readyPromise = new Promise((resolve) => {
-            window.onReCaptchaReady = resolve;
-        });
-
-        loadScript(`https://www.google.com/recaptcha/api.js?onload=onReCaptchaReady&render=explicit&hl=${lang}`);
-    }
-
-    return readyPromise;
-}

@@ -147,6 +147,7 @@
     "pages.rules.title": "Site rules",
     "services.errorsDict.accountAlreadyActivated": "This account is already activated",
     "services.errorsDict.accountNotActivated": "The account is not activated",
+    "services.errorsDict.captchaRequired": "Please, solve the captcha",
     "services.errorsDict.doYouWantRequestKey": "Do you want to request a new key?",
     "services.errorsDict.emailFrequency": "Please cool down, you are requesting E‑mails too often. New key can be retrieved {time}.",
     "services.errorsDict.emailInvalid": "E‑mail is invalid",

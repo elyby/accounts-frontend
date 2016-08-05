@@ -146,6 +146,7 @@
     "pages.rules.title": "Правила сайту",
     "services.errorsDict.accountAlreadyActivated": "Цей обліковий запис вже активований",
     "services.errorsDict.accountNotActivated": "Акаунт не активований",
+    "services.errorsDict.captchaRequired": "Будь ласка, розв`яжіть капчу",
     "services.errorsDict.doYouWantRequestKey": "Бажаєте відправити новий код?",
     "services.errorsDict.emailFrequency": "Будь ласка, заспокойтесь, ви запитуєте E-mail занадто часто. Новий ключ можна буде замовити {time}.",
     "services.errorsDict.emailInvalid": "Вказано невірний E-mail",
