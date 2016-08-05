@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router';
 
-import { Input, Checkbox } from 'components/ui/form';
+import { Input, Checkbox, Captcha } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import passwordMessages from 'components/auth/password/Password.intl.json';
 
@@ -53,6 +53,8 @@ export default class RegisterBody extends BaseAuthBody {
                     required
                     placeholder={messages.repeatPassword}
                 />
+
+                <Captcha {...this.bindField('captcha')} />
 
                 <Checkbox {...this.bindField('rulesAgreement')}
                     color="blue"

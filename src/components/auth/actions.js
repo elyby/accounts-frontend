@@ -71,13 +71,15 @@ export function register({
     username = '',
     password = '',
     rePassword = '',
+    captcha = '',
     rulesAgreement = false
 }) {
     return wrapInLoader((dispatch, getState) =>
         signup.register({
             email, username,
             password, rePassword,
-            rulesAgreement, lang: getState().user.lang
+            rulesAgreement, lang: getState().user.lang,
+            captcha
         })
         .then(() => {
             dispatch(updateUser({

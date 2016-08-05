@@ -7,11 +7,12 @@ export default {
         password = '',
         rePassword = '',
         rulesAgreement = false,
-        lang = ''
+        lang = '',
+        captcha = ''
     }) {
         return request.post(
             '/api/signup',
-            {email, username, password, rePassword, rulesAgreement, lang}
+            {email, username, password, rePassword, rulesAgreement, lang, captcha}
         );
     },
 
