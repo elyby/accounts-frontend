@@ -296,12 +296,35 @@
 }
 
 .captcha {
-    width: 302px;
-    height: 76px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 302px;
+    height: 77px;
+    overflow: hidden;
+
+    border: 2px solid;
+    transition: border-color .25s;
+
+    > div {
+        margin: -2px;
+    }
+
+    &:hover {
+        border-color: #aaa;
+    }
+
     // minimum captcha width is 302px, which can not be changed
     // using transform to scale down to 296px
-    transform-origin: 0;
-    transform: scaleX(0.98);
+    // transform-origin: 0;
+    // transform: scaleX(0.98);
+}
+
+.darkCaptcha {
+    border-color: lighter($black);
+}
+
+.lightCaptcha {
+    border-color: #dcd8cd;
 }
 
 /**

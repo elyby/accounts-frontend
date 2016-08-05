@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 
+import classNames from 'classnames';
+
 import captcha from 'services/captcha';
 import { skins, SKIN_DARK } from 'components/ui';
 
@@ -25,9 +27,14 @@ export default class Captcha extends FormInputComponent {
     }
 
     render() {
+        const {skin} = this.props;
+
         return (
             <div>
-                <div ref={this.setEl} className={styles.captcha} />
+                <div ref={this.setEl} className={classNames(
+                    styles.captcha,
+                    styles[`${skin}Captcha`]
+                )} />
                 {this.renderError()}
             </div>
         );
