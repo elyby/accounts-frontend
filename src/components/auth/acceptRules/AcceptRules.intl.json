@@ -1,6 +1,7 @@
 {
-    "title": "Accept new rules",
+    "title": "Terms of use",
     "accept": "Accept",
-    "decline": "Decline",
-    "description": "We have updated our {link}. In order to get access to accounts.ely.by service, you need to accept them."
+    "decline_and_logout": "Decline and logout",
+    "description1": "We have updated our {link}.",
+    "description2": "In order to continue using {name} service, you need to accept them."
 }

@@ -1,8 +1,9 @@
 {
-    "components.auth.acceptRules.accept": "Accept",
-    "components.auth.acceptRules.decline": "Decline",
-    "components.auth.acceptRules.description": "We have updated our {link}. In order to get access to accounts.ely.by service, you need to accept them.",
-    "components.auth.acceptRules.title": "Accept new rules",
+    "components.auth.acceptRules.accept": "Принять",
+    "components.auth.acceptRules.decline_and_logout": "Отказаться и выйти",
+    "components.auth.acceptRules.description1": "Мы обновили {link}.",
+    "components.auth.acceptRules.description2": "Чтобы продолжить использование сервиса {name}, вам необходимо принять их.",
+    "components.auth.acceptRules.title": "Пользовательское соглашение",
     "components.auth.activation.accountActivationTitle": "Активация аккаунта",
     "components.auth.activation.activationMailWasSent": "На {email} отправлено письмо с инструкциями по завершению регистрации",
     "components.auth.activation.activationMailWasSentNoEmail": "На ваш E-mail отправлено письмо с инструкциями по завершению регистрации",
