@@ -109,6 +109,7 @@ $formColumnWidth: 416px;
 
 .uuid {
     font-family: $font-family-title;
+    white-space: nowrap;
 }
 
 @media (max-width: 720px) {
