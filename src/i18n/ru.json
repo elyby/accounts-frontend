@@ -38,6 +38,8 @@
     "components.auth.permissions.approve": "Разрешить",
     "components.auth.permissions.decline": "Отмена",
     "components.auth.permissions.permissionsTitle": "Права приложения",
+    "components.auth.permissions.scope_account_email": "Доступ к вашему E‑mail адресу",
+    "components.auth.permissions.scope_account_info": "Доступ к данным вашего аккаунта (без раскрытия E‑mail)",
     "components.auth.permissions.scope_minecraft_server_session": "Авторизация на серверах Minecraft",
     "components.auth.permissions.scope_offline_access": "Доступ к данным профиля, когда вы не в сети",
     "components.auth.permissions.theAppNeedsAccess1": "Этому приложению нужен доступ",

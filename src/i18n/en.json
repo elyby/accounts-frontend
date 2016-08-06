@@ -38,6 +38,8 @@
     "components.auth.permissions.approve": "Approve",
     "components.auth.permissions.decline": "Decline",
     "components.auth.permissions.permissionsTitle": "Application permissions",
+    "components.auth.permissions.scope_account_email": "Access to you E‑mail address",
+    "components.auth.permissions.scope_account_info": "Access to you profile data (without disclosing E‑mail)",
     "components.auth.permissions.scope_minecraft_server_session": "Authorization data for minecraft server",
     "components.auth.permissions.scope_offline_access": "Access to your profile data, when you offline",
     "components.auth.permissions.theAppNeedsAccess1": "This application needs access",

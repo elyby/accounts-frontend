@@ -38,6 +38,8 @@
     "components.auth.permissions.approve": "Дозволити",
     "components.auth.permissions.decline": "Відмінити",
     "components.auth.permissions.permissionsTitle": "Права додатку",
+    "components.auth.permissions.scope_account_email": "Access to you E‑mail address",
+    "components.auth.permissions.scope_account_info": "Access to you profile data (without disclosing E‑mail)",
     "components.auth.permissions.scope_minecraft_server_session": "Авторизація на серверахMinecraft",
     "components.auth.permissions.scope_offline_access": "Доступ до даних профілю, коли ви не в мережі",
     "components.auth.permissions.theAppNeedsAccess1": "Цьому додатку потрібен доступ",
