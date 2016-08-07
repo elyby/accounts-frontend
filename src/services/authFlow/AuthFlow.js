@@ -25,8 +25,10 @@ export default class AuthFlow {
 
     setStore(store) {
         this.navigate = (route) => {
-            if (this.currentPath !== route) {
-                this.currentPath = route;
+            if (this.getRequest().path !== route) {
+                this.currentRequest = {
+                    path: route
+                };
 
                 if (this.replace) {
                     this.replace(route);
@@ -89,33 +91,40 @@ export default class AuthFlow {
         }
     }
 
-    getCurrentPath() {
-        return this.currentPath;
-    }
-
-    getQuery() {
-        return this.getState().routing.location.query;
+    /**
+     * @return {object} - current request object
+     */
+    getRequest() {
+        return this.currentRequest ? {...this.currentRequest} : {};
     }
 
     /**
      * This should be called from onEnter prop of react-router Route component
      *
-     * @param {string} path
+     * @param {object} request
+     * @param {string} request.path
+     * @param {object} request.params
+     * @param {object} request.query
      * @param {function} replace
      * @param {function} [callback = function() {}] - an optional callback function to be called, when state will be stabilized
      *                                                (state's enter function's promise resolved)
      */
-    handleRequest(path, replace, callback = function() {}) {
+    handleRequest(request, replace, callback = function() {}) {
+        const {path, params = {}, query = {}} = request;
         this.replace = replace;
         this.onReady = callback;
 
-        if (this.currentPath === path) {
+        if (!path) {
+            throw new Error('The request.path is required');
+        }
+
+        if (this.getRequest().path === path) {
             // we are already handling this path
             this.onReady();
             return;
         }
 
-        this.currentPath = path;
+        this.currentRequest = request;
 
         if (path === '/') {
             // reset oauth data if user tried to navigate to index route
@@ -159,7 +168,9 @@ export default class AuthFlow {
                         break;
 
                     default:
-                        throw new Error(`Unsupported request: ${path}`);
+                        console.log('Unsupported request', {path, query, params});
+                        replace('/404');
+                        break;
                 }
         }
 

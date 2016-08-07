@@ -7,8 +7,8 @@ export default class RecoverPasswordState extends AbstractState {
         const {user} = context.getState();
 
         if (user.isGuest) {
-            const url = context.getCurrentPath().includes('/recover-password')
-                ? context.getCurrentPath()
+            const url = context.getRequest().path.includes('/recover-password')
+                ? context.getRequest().path
                 : '/recover-password';
             context.navigate(url);
         } else {

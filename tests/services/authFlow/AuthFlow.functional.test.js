@@ -30,10 +30,10 @@ describe('AuthFlow.functional', () => {
         flow = new AuthFlow(actions);
         flow.setStore(store);
 
-        navigate = function navigate(url) { // emulates router behaviour
-            if (navigate.lastUrl !== url) {
-                navigate.lastUrl = url;
-                flow.handleRequest(url, navigate);
+        navigate = function navigate(path, extra = {}) { // emulates router behaviour
+            if (navigate.lastUrl !== path) {
+                navigate.lastUrl = path;
+                flow.handleRequest({path, ...extra}, navigate);
             }
         };
 
@@ -97,7 +97,7 @@ describe('AuthFlow.functional', () => {
             redirectUri: expectedRedirect
         })});
 
-        navigate('/oauth2');
+        navigate('/oauth2', {query: {}});
 
         expect(flow.run, 'to have calls satisfying', [
             ['oAuthValidate', {}],

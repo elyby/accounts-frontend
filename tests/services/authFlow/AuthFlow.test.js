@@ -5,7 +5,6 @@ import AbstractState from 'services/authFlow/AbstractState';
 
 import OAuthState from 'services/authFlow/OAuthState';
 import RegisterState from 'services/authFlow/RegisterState';
-import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
 import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 import ActivationState from 'services/authFlow/ActivationState';
@@ -189,7 +188,7 @@ describe('AuthFlow', () => {
             '/resend-activation': ResendActivationState
         }).forEach(([path, type]) => {
             it(`should transition to ${type.name} if ${path}`, () => {
-                flow.handleRequest(path);
+                flow.handleRequest({path});
 
                 expect(flow.setState, 'was called once');
                 expect(flow.setState, 'to have a call satisfying', [
@@ -199,7 +198,7 @@ describe('AuthFlow', () => {
         });
 
         it('should run setOAuthRequest if /', () => {
-            flow.handleRequest('/');
+            flow.handleRequest({path: '/'});
 
             expect(flow.run, 'was called once');
             expect(flow.run, 'to have a call satisfying', ['setOAuthRequest', {}]);
@@ -208,7 +207,7 @@ describe('AuthFlow', () => {
         it('should call callback', () => {
             const callback = sinon.stub().named('callback');
 
-            flow.handleRequest('/', () => {}, callback);
+            flow.handleRequest({path: '/'}, () => {}, callback);
 
             expect(callback, 'was called once');
         });
@@ -223,7 +222,7 @@ describe('AuthFlow', () => {
 
             flow.setState = AuthFlow.prototype.setState.bind(flow, state);
 
-            flow.handleRequest('/', () => {}, callback);
+            flow.handleRequest({path: '/'}, () => {}, callback);
 
             expect(resolve, 'to be', callback);
 
@@ -236,8 +235,8 @@ describe('AuthFlow', () => {
             const path = '/oauth2';
             const callback = sinon.stub();
 
-            flow.handleRequest(path, () => {}, callback);
-            flow.handleRequest(path, () => {}, callback);
+            flow.handleRequest({path}, () => {}, callback);
+            flow.handleRequest({path}, () => {}, callback);
 
             expect(flow.setState, 'was called once');
             expect(flow.setState, 'to have a call satisfying', [
@@ -247,7 +246,27 @@ describe('AuthFlow', () => {
         });
 
         it('throws if unsupported request', () => {
-            expect(() => flow.handleRequest('/foo/bar'), 'to throw', 'Unsupported request: /foo/bar');
+            const replace = sinon.stub().named('replace');
+
+            flow.handleRequest({path: '/foo/bar'}, replace);
+
+            expect(replace, 'to have a call satisfying', ['/404']);
+        });
+    });
+
+    describe('#getRequest()', () => {
+        beforeEach(() => {
+            sinon.stub(flow, 'setState').named('flow.setState');
+            sinon.stub(flow, 'run').named('flow.run');
+        });
+
+        it('should return a copy of current request', () => {
+            const request = {path: '/', query: {foo: 'bar'}, params: {baz: 'bud'}};
+
+            flow.handleRequest(request);
+
+            expect(flow.getRequest(), 'to equal', request);
+            expect(flow.getRequest(), 'not to be', request);
         });
     });
 });

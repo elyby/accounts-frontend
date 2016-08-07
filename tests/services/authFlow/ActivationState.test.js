@@ -30,7 +30,7 @@ describe('ActivationState', () => {
                 }
             });
 
-            context.getCurrentPath.returns(expectedPath);
+            context.getRequest.returns({path: expectedPath});
 
             expectNavigate(mock, '/activation');
 
@@ -45,7 +45,7 @@ describe('ActivationState', () => {
                 }
             });
 
-            context.getCurrentPath.returns(expectedPath);
+            context.getRequest.returns({path: expectedPath});
 
             expectNavigate(mock, expectedPath);
 

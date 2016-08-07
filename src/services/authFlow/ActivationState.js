@@ -9,8 +9,8 @@ export default class ActivationState extends AbstractState {
         if (user.isActive) {
             context.setState(new CompleteState());
         } else {
-            const url = context.getCurrentPath().includes('/activation')
-                ? context.getCurrentPath()
+            const url = context.getRequest().path.includes('/activation')
+                ? context.getRequest().path
                 : '/activation';
             context.navigate(url);
         }

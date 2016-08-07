@@ -28,7 +28,7 @@ describe('RecoverPasswordState', () => {
                 user: {isGuest: true}
             });
 
-            context.getCurrentPath.returns(expectedPath);
+            context.getRequest.returns({path: expectedPath});
 
             expectNavigate(mock, expectedPath);
 
@@ -41,7 +41,7 @@ describe('RecoverPasswordState', () => {
                 user: {isGuest: true}
             });
 
-            context.getCurrentPath.returns(expectedPath);
+            context.getRequest.returns({path: expectedPath});
 
             expectNavigate(mock, expectedPath);
 

@@ -30,7 +30,7 @@ describe('OAuthState', () => {
                 state: 'state'
             };
 
-            context.getQuery.returns(query);
+            context.getRequest.returns({query});
 
             expectRun(
                 mock,
@@ -50,7 +50,7 @@ describe('OAuthState', () => {
         it('should transition to complete state on success', () => {
             const promise = Promise.resolve();
 
-            context.getQuery.returns({});
+            context.getRequest.returns({query: {}});
 
             mock.expects('run').returns(promise);
             expectState(mock, CompleteState);
