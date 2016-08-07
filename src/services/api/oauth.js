@@ -51,19 +51,15 @@ function getOAuthRequest(oauthData) {
 }
 
 function handleOauthParamsValidation(resp = {}) {
-    let userMessage;
-
     if (resp.statusCode === 400 && resp.error === 'invalid_request') {
-        userMessage = `Invalid request (${resp.parameter} required).`;
+        resp.userMessage = `Invalid request (${resp.parameter} required).`;
     } else if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
-        userMessage = `Invalid response type '${resp.parameter}'.`;
+        resp.userMessage = `Invalid response type '${resp.parameter}'.`;
     } else if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
-        userMessage = `Invalid scope '${resp.parameter}'.`;
+        resp.userMessage = `Invalid scope '${resp.parameter}'.`;
     } else if (resp.statusCode === 401 && resp.error === 'invalid_client') {
-        userMessage = 'Can not find application you are trying to authorize.';
-    } else {
-        return;
+        resp.userMessage = 'Can not find application you are trying to authorize.';
     }
 
-    return Promise.reject(userMessage);
+    return Promise.reject(resp);
 }

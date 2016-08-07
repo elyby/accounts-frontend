@@ -4,6 +4,7 @@ import { updateUser, logout as logoutUser, acceptRules as userAcceptRules, authe
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
+import dispatchBsod from 'components/ui/bsod/dispatchBsod';
 
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';
@@ -166,16 +167,20 @@ export function oAuthComplete(params = {}) {
             }, (resp) => {
                 if (resp.acceptRequired) {
                     dispatch(requirePermissionsAccept());
-                }
 
-                return handleOauthParamsValidation(resp);
+                    return Promise.reject(resp);
+                } else {
+                    return handleOauthParamsValidation(resp);
+                }
             })
     );
 }
 
 function handleOauthParamsValidation(resp = {}) {
-    /* eslint no-alert: "off" */
-    resp.userMessage && alert(resp.userMessage);
+    dispatchBsod();
+
+    // eslint-disable-next-line no-alert
+    resp.userMessage && setTimeout(() => alert(resp.userMessage), 500); // 500 ms to allow re-render
 
     return Promise.reject(resp);
 }
