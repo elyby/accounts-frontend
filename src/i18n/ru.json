@@ -1,6 +1,6 @@
 {
     "components.auth.acceptRules.accept": "Принять",
-    "components.auth.acceptRules.decline_and_logout": "Отказаться и выйти",
+    "components.auth.acceptRules.declineAndLogout": "Отказаться и выйти",
     "components.auth.acceptRules.description1": "Мы обновили {link}.",
     "components.auth.acceptRules.description2": "Чтобы продолжить использование сервиса {name}, вам необходимо принять их.",
     "components.auth.acceptRules.title": "Пользовательское соглашение",

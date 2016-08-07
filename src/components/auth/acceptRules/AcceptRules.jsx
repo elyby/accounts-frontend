@@ -12,6 +12,6 @@ export default factory({
         label: messages.accept
     },
     links: {
-        label: messages.decline_and_logout
+        label: messages.declineAndLogout
     }
 });

@@ -1,7 +1,7 @@
 {
-    "title": "Terms of use",
+    "title": "User Agreement",
     "accept": "Accept",
-    "decline_and_logout": "Decline and logout",
+    "declineAndLogout": "Decline and logout",
     "description1": "We have updated our {link}.",
     "description2": "In order to continue using {name} service, you need to accept them."
 }
