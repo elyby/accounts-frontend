@@ -49,14 +49,24 @@ export function setUser(payload) {
 }
 
 export function logout() {
-    return (dispatch, getState) =>
-        authentication.logout().then(() => {
-            dispatch(setUser({
-                lang: getState().user.lang,
-                isGuest: true
-            }));
-            dispatch(routeActions.push('/login'));
+    return (dispatch, getState) => {
+        if (getState().user.token) {
+            authentication.logout();
+        }
+
+        return new Promise((resolve) => {
+            setTimeout(() => { // a tiny timeout to allow logout before user's token will be removed
+                dispatch(setUser({
+                    lang: getState().user.lang,
+                    isGuest: true
+                }));
+
+                dispatch(routeActions.push('/login'));
+
+                resolve();
+            }, 0);
         });
+    };
 }
 
 export function fetchUserData() {

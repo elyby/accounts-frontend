@@ -34,62 +34,83 @@ describe('components/user/actions', () => {
     });
 
     describe('#logout()', () => {
-        it('should post to /api/authentication/logout with user jwt', () => {
-            getState.returns({
-                user: {
-                    lang: 'foo'
-                }
-            });
-
-            request.post.returns(new Promise((resolve) => {
-                setTimeout(() => {
-                    // we must not overwrite user's token till request starts
-                    expect(dispatch, 'was not called');
-
-                    resolve();
-                }, 0);
-            }));
-
-            return callThunk(logout).then(() => {
-                expect(request.post, 'to have a call satisfying', [
-                    '/api/authentication/logout'
-                ]);
-            });
-        });
-
-        it('should change user to guest', () => {
-            getState.returns({
-                user: {
-                    lang: 'foo'
-                }
-            });
-
+        beforeEach(() => {
             request.post.returns(Promise.resolve());
-
-            return callThunk(logout).then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    setUser({
-                        lang: 'foo',
-                        isGuest: true
-                    })
-                ]);
-            });
         });
 
-        it('should redirect to /login', () => {
-            getState.returns({
-                user: {
-                    lang: 'foo'
-                }
+        describe('user with jwt', () => {
+            beforeEach(() => {
+                getState.returns({
+                    user: {
+                        token: 'iLoveRockNRoll',
+                        lang: 'foo'
+                    }
+                });
             });
 
-            request.post.returns(Promise.resolve());
+            it('should post to /api/authentication/logout with user jwt', () => {
+                // TODO: need an integration test with a middleware, because this
+                // test is not reliable to check, whether logout request will have token inside
+                request.post.returns(new Promise((resolve) => {
+                    setTimeout(() => {
+                        // we must not overwrite user's token till request starts
+                        expect(dispatch, 'was not called');
 
-            return callThunk(logout).then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    routeActions.push('/login')
-                ]);
+                        resolve();
+                    }, 0);
+                }));
+
+                return callThunk(logout).then(() => {
+                    expect(request.post, 'to have a call satisfying', [
+                        '/api/authentication/logout'
+                    ]);
+                });
             });
+
+            testChangedToGuest();
+            testRedirectedToLogin();
         });
+
+        describe('user without jwt', () => { // (a guest with partially filled user's state)
+            beforeEach(() => {
+                getState.returns({
+                    user: {
+                        lang: 'foo'
+                    }
+                });
+            });
+
+            it('should not post to /api/authentication/logout', () =>
+                callThunk(logout).then(() => {
+                    expect(request.post, 'was not called');
+                })
+            );
+
+            testChangedToGuest();
+            testRedirectedToLogin();
+        });
+
+        function testChangedToGuest() {
+            it('should change user to guest', () =>
+                callThunk(logout).then(() => {
+                    expect(dispatch, 'to have a call satisfying', [
+                        setUser({
+                            lang: 'foo',
+                            isGuest: true
+                        })
+                    ]);
+                })
+            );
+        }
+
+        function testRedirectedToLogin() {
+            it('should redirect to /login', () =>
+                callThunk(logout).then(() => {
+                    expect(dispatch, 'to have a call satisfying', [
+                        routeActions.push('/login')
+                    ]);
+                })
+            );
+        }
     });
 });
