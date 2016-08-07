@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 
 import classNames from 'classnames';
 
+import { omit } from 'functions';
+
 import styles from './panel.scss';
 import icons from './icons.scss';
 
@@ -81,7 +83,7 @@ export class PanelBodyHeader extends Component {
         });
 
         return (
-            <div className={className} {...this.props}>
+            <div className={className} {...omit(this.props, Object.keys(PanelBodyHeader.propTypes))}>
                 {close}
                 {children}
             </div>
