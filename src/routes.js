@@ -45,13 +45,15 @@ export default function routesFactory(store) {
         }
     };
 
+    // TODO: when react-router v3 is out, should update to oauth2(/v1)(/:clientId)
+    // to oauth2(/:version)(/:clientId) with the help of new route matching options
     return (
         <Route path="/" component={RootPage}>
             <IndexRoute component={IndexPage} {...startAuthFlow} />
 
             <Route path="rules" component={RulesPage} />
 
-            <Route path="oauth2(/:version)" component={OAuthInit} {...startAuthFlow} />
+            <Route path="oauth2(/v1)(/:clientId)" component={OAuthInit} {...startAuthFlow} />
 
             <Route path="auth" component={AuthPage}>
                 <Route path="/login" components={new Login()} {...startAuthFlow} />

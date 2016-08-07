@@ -95,7 +95,12 @@ export default class AuthFlow {
      * @return {object} - current request object
      */
     getRequest() {
-        return this.currentRequest ? {...this.currentRequest} : {};
+        return {
+            path: '',
+            query: {},
+            params: {},
+            ...this.currentRequest
+        };
     }
 
     /**
@@ -132,11 +137,6 @@ export default class AuthFlow {
         }
 
         switch (path) {
-            case '/oauth2/v1':
-            case '/oauth2':
-                this.setState(new OAuthState());
-                break;
-
             case '/register':
                 this.setState(new RegisterState());
                 break;
@@ -160,6 +160,9 @@ export default class AuthFlow {
 
             default:
                 switch (path.replace(/(.)\/.+/, '$1')) { // use only first part of an url
+                    case '/oauth2':
+                        this.setState(new OAuthState());
+                        break;
                     case '/activation':
                         this.setState(new ActivationState());
                         break;

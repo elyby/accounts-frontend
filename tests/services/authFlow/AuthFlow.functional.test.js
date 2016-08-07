@@ -33,7 +33,7 @@ describe('AuthFlow.functional', () => {
         navigate = function navigate(path, extra = {}) { // emulates router behaviour
             if (navigate.lastUrl !== path) {
                 navigate.lastUrl = path;
-                flow.handleRequest({path, ...extra}, navigate);
+                flow.handleRequest({path, query: {}, params: {}, ...extra}, navigate);
             }
         };
 
@@ -69,41 +69,36 @@ describe('AuthFlow.functional', () => {
         });
     });
 
-    it('should oauth without any rendering if no acceptance required', () => {
-        const expectedRedirect = 'foo';
+    describe('oauth', () => {
+        it('should oauth without any rendering if no acceptance required', () => {
+            const expectedRedirect = 'foo';
 
-        Object.assign(state, {
-            user: {
-                isGuest: false,
-                isActive: true
-            },
+            Object.assign(state, {
+                user: {
+                    isGuest: false,
+                    isActive: true
+                },
 
-            routing: {
-                location: {
-                    query: {
+                auth: {
+                    oauth: {
+                        clientId: 123
                     }
                 }
-            },
+            });
 
-            auth: {
-                oauth: {
-                    clientId: 123
-                }
-            }
+            flow.run.onCall(0).returns({then: (fn) => fn()});
+            flow.run.onCall(1).returns({then: (fn) => fn({
+                redirectUri: expectedRedirect
+            })});
+
+            navigate('/oauth2');
+
+            expect(flow.run, 'to have calls satisfying', [
+                ['oAuthValidate', {}],
+                ['oAuthComplete', {}],
+                ['redirect', expectedRedirect]
+            ]);
         });
-
-        flow.run.onCall(0).returns({then: (fn) => fn()});
-        flow.run.onCall(1).returns({then: (fn) => fn({
-            redirectUri: expectedRedirect
-        })});
-
-        navigate('/oauth2', {query: {}});
-
-        expect(flow.run, 'to have calls satisfying', [
-            ['oAuthValidate', {}],
-            ['oAuthComplete', {}],
-            ['redirect', expectedRedirect]
-        ]);
     });
 
     describe('/resend-activation #goBack()', () => {
@@ -111,12 +106,6 @@ describe('AuthFlow.functional', () => {
             state.user = {
                 isGuest: true,
                 isActive: false
-            };
-
-            state.routing = {
-                location: {
-                    pathname: ''
-                }
             };
         });
 

@@ -178,6 +178,7 @@ describe('AuthFlow', () => {
             '/accept-rules': LoginState,
             '/oauth/permissions': LoginState,
             '/oauth/finish': LoginState,
+            '/oauth2/v1/foo': OAuthState,
             '/oauth2/v1': OAuthState,
             '/oauth2': OAuthState,
             '/register': RegisterState,
@@ -258,6 +259,18 @@ describe('AuthFlow', () => {
         beforeEach(() => {
             sinon.stub(flow, 'setState').named('flow.setState');
             sinon.stub(flow, 'run').named('flow.run');
+        });
+
+        it('should return request with path, query, params', () => {
+            const request = {path: '/'};
+
+            flow.handleRequest(request);
+
+            expect(flow.getRequest(), 'to equal', {
+                ...request,
+                query: {},
+                params: {}
+            });
         });
 
         it('should return a copy of current request', () => {
