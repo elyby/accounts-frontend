@@ -16,7 +16,7 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
             const {isGuest, refreshToken, token} = getState().user;
             const isRefreshTokenRequest = data.url.includes('refresh-token');
 
-            if (isGuest || isRefreshTokenRequest || !token) {
+            if (isGuest || isRefreshTokenRequest) {
                 return data;
             }
 
@@ -65,14 +65,14 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
 function requestAccessToken(refreshToken, dispatch) {
     let promise;
     if (refreshToken) {
-        promise = authentication.refreshToken(refreshToken);
+        promise = authentication.requestToken(refreshToken);
     } else {
         promise = Promise.reject();
     }
 
     return promise
-        .then((resp) => dispatch(updateUser({
-            token: resp.access_token
+        .then(({token}) => dispatch(updateUser({
+            token
         })))
         .catch(() => dispatch(logout()));
 }

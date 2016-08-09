@@ -36,10 +36,19 @@ export default {
         );
     },
 
-    refreshToken(refresh_token) {
+    /**
+     * Request new access token using a refreshToken
+     *
+     * @param {string} refreshToken
+     *
+     * @return {Promise} - resolves to {token}
+     */
+    requestToken(refreshToken) {
         return request.post(
             '/api/authentication/refresh-token',
-            {refresh_token}
-        );
+            {refresh_token: refreshToken}
+        ).then((resp) => ({
+            token: resp.access_token
+        }));
     }
 };

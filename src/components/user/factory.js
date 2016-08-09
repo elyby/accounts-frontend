@@ -4,6 +4,8 @@ import request from 'services/request';
 import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';
 import refreshTokenMiddleware from './middlewares/refreshTokenMiddleware';
 
+let promise;
+
 /**
  * Initializes User state with the fresh data
  *
@@ -12,10 +14,14 @@ import refreshTokenMiddleware from './middlewares/refreshTokenMiddleware';
  * @return {Promise} - a promise, that resolves in User state
  */
 export function factory(store) {
+    if (promise) {
+        return promise;
+    }
+
     request.addMiddleware(refreshTokenMiddleware(store));
     request.addMiddleware(bearerHeaderMiddleware(store));
 
-    return new Promise((resolve, reject) => {
+    promise = new Promise((resolve, reject) => {
         const {user} = store.getState();
 
         if (user.token) {
@@ -26,4 +32,6 @@ export function factory(store) {
         // auto-detect guests language
         store.dispatch(changeLang(user.lang)).then(resolve, reject);
     });
+
+    return promise;
 }
