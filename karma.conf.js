@@ -1,28 +1,27 @@
 // Karma configuration
 // Generated on Sat Jun 13 2015 12:22:02 GMT+0300 (EEST)
 
-module.exports = function(config) {
-    config.set({
+// https://docs.gitlab.com/ce/ci/variables/README.html
+// noinspection Eslint
+const isCi = typeof process.env.CI !== 'undefined';
 
+module.exports = function(config) {
+    const params = {
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
-
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['mocha', 'sinon'],
-
 
         // list of files / patterns to load in the browser
         files: [
             'tests/index.js'
         ],
 
-
         // list of files to exclude
         exclude: [
         ],
-
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
@@ -30,14 +29,11 @@ module.exports = function(config) {
             'tests/index.js': ['webpack', 'sourcemap']
         },
 
-
         webpack: require('./webpack.config.js'),
-
 
         webpackServer: {
             noInfo: true // please don't spam the console when running in karma!
         },
-
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
@@ -50,19 +46,15 @@ module.exports = function(config) {
             suppressErrorHighlighting: true
         },
 
-
         // web server port
         port: 9876,
-
 
         // enable / disable colors in the output (reporters and logs)
         colors: true,
 
-
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
-
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
@@ -74,5 +66,13 @@ module.exports = function(config) {
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false
-    });
+    };
+
+    if (isCi) {
+        params.reporters = ['dots'];
+        params.autoWatch = false;
+        params.singleRun = true;
+    }
+
+    config.set(params);
 };
