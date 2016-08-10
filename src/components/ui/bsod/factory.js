@@ -8,7 +8,7 @@ export default function factory(store, stopLoading) {
     // do bsod for 500/404 errors
     request.addMiddleware({
         catch(resp) {
-            if (resp && [500, 404].indexOf(resp.originalResponse.status) > -1) {
+            if (resp && resp.originalResponse && [500, 404].indexOf(resp.originalResponse.status) > -1) {
                 dispatchBsod();
             }
 

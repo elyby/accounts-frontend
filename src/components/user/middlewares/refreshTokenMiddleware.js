@@ -13,18 +13,22 @@ import {updateUser, logout} from '../actions';
 export default function refreshTokenMiddleware({dispatch, getState}) {
     return {
         before(data) {
-            const {isGuest, refreshToken, token} = getState().user;
+            const {refreshToken, token} = getState().user;
             const isRefreshTokenRequest = data.url.includes('refresh-token');
 
-            if (isGuest || isRefreshTokenRequest) {
+            if (!token || isRefreshTokenRequest) {
                 return data;
             }
 
-            const SAFETY_FACTOR = 60; // ask new token earlier to overcome time dissynchronization problem
-            const jwt = getJWTPayload(token);
+            try {
+                const SAFETY_FACTOR = 60; // ask new token earlier to overcome time dissynchronization problem
+                const jwt = getJWTPayload(token);
 
-            if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
-                return requestAccessToken(refreshToken, dispatch).then(() => data);
+                if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
+                    return requestAccessToken(refreshToken, dispatch).then(() => data);
+                }
+            } catch (err) {
+                dispatch(logout());
             }
 
             return data;

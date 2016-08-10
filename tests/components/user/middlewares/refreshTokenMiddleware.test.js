@@ -32,8 +32,7 @@ describe('refreshTokenMiddleware', () => {
             getState.returns({
                 user: {
                     token: expiredToken,
-                    refreshToken,
-                    isGuest: false
+                    refreshToken
                 }
             });
 
@@ -55,14 +54,10 @@ describe('refreshTokenMiddleware', () => {
             });
         });
 
-        it('should not be applied for guests', () => {
+        it('should not be applied if no token', () => {
             getState.returns({
-                user: {
-                    isGuest: true
-                }
+                user: {}
             });
-
-            authentication.requestToken.returns(Promise.resolve({token: validToken}));
 
             const data = {url: 'foo'};
             const resp = middleware.before(data);
@@ -77,8 +72,6 @@ describe('refreshTokenMiddleware', () => {
                 user: {}
             });
 
-            authentication.requestToken.returns(Promise.resolve({token: validToken}));
-
             const data = {url: '/refresh-token'};
             const resp = middleware.before(data);
 
@@ -88,13 +81,13 @@ describe('refreshTokenMiddleware', () => {
         });
 
         xit('should update user with new token'); // TODO: need a way to test, that action was called
+        xit('should logout if invalid token'); // TODO: need a way to test, that action was called
 
         xit('should logout if token request failed', () => {
             getState.returns({
                 user: {
                     token: expiredToken,
-                    refreshToken,
-                    isGuest: false
+                    refreshToken
                 }
             });
 
@@ -116,13 +109,6 @@ describe('refreshTokenMiddleware', () => {
             });
 
             const restart = sinon.stub().named('restart');
-
-            const data = {
-                url: 'foo',
-                options: {
-                    headers: {}
-                }
-            };
 
             authentication.requestToken.returns(Promise.resolve({token: validToken}));
 
