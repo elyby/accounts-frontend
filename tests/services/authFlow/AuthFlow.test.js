@@ -33,6 +33,59 @@ describe('AuthFlow', () => {
         expect(() => flow.actions.test = 'hacked', 'to throw', /readonly/);
     });
 
+    describe('#setStore', () => {
+        afterEach(() => {
+            localStorage.removeItem('oauthData');
+        });
+
+        it('should create #navigate, #getState, #dispatch', () => {
+            flow.setStore({
+                getState() {},
+                dispatch() {}
+            });
+
+            expect(flow.getState, 'to be defined');
+            expect(flow.dispatch, 'to be defined');
+            expect(flow.navigate, 'to be defined');
+        });
+
+        it('should restore oauth state from localStorage', () => {
+            const oauthData = {};
+            localStorage.setItem('oauthData', JSON.stringify({
+                timestamp: Date.now() - 10,
+                payload: oauthData
+            }));
+
+            sinon.stub(flow, 'run').named('flow.run');
+
+            flow.setStore({
+                getState() {},
+                dispatch() {}
+            });
+
+            expect(flow.run, 'to have a call satisfying', [
+                'oAuthValidate', oauthData
+            ]);
+        });
+
+        it('should not restore outdated (>1h) oauth state', () => {
+            const oauthData = {};
+            localStorage.setItem('oauthData', JSON.stringify({
+                timestamp: Date.now() - 60 * 60 * 1000,
+                payload: oauthData
+            }));
+
+            sinon.stub(flow, 'run').named('flow.run');
+
+            flow.setStore({
+                getState() {},
+                dispatch() {}
+            });
+
+            expect(flow.run, 'was not called');
+        });
+    });
+
     describe('#setState', () => {
         it('should change state', () => {
             const state = new AbstractState();
@@ -196,13 +249,6 @@ describe('AuthFlow', () => {
                     expect.it('to be a', type)
                 ]);
             });
-        });
-
-        it('should run setOAuthRequest if /', () => {
-            flow.handleRequest({path: '/'});
-
-            expect(flow.run, 'was called once');
-            expect(flow.run, 'to have a call satisfying', ['setOAuthRequest', {}]);
         });
 
         it('should call callback', () => {

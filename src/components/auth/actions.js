@@ -142,12 +142,18 @@ export function oAuthValidate(oauthData) {
                 dispatch(setClient(resp.client));
                 dispatch(setOAuthRequest(resp.oAuth));
                 dispatch(setScopes(resp.session.scopes));
+                localStorage.setItem('oauthData', JSON.stringify({ // @see services/authFlow/AuthFlow
+                    timestamp: Date.now(),
+                    payload: oauthData
+                }));
             })
             .catch(handleOauthParamsValidation)
     );
 }
 
 export function oAuthComplete(params = {}) {
+    localStorage.removeItem('oauthData');
+
     return wrapInLoader((dispatch, getState) =>
         oauth.complete(getState().auth.oauth, params)
             .then((resp) => {

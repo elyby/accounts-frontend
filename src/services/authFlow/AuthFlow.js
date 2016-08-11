@@ -8,8 +8,6 @@ import RecoverPasswordState from './RecoverPasswordState';
 import ActivationState from './ActivationState';
 import ResendActivationState from './ResendActivationState';
 
-// TODO: a way to unload service (when we are on account page)
-
 export default class AuthFlow {
     constructor(actions) {
         if (typeof actions !== 'object') {
@@ -41,6 +39,8 @@ export default class AuthFlow {
 
         this.getState = store.getState.bind(store);
         this.dispatch = store.dispatch.bind(store);
+
+        this.restoreOAuthState();
     }
 
     resolve(payload = {}) {
@@ -131,11 +131,6 @@ export default class AuthFlow {
 
         this.currentRequest = request;
 
-        if (path === '/') {
-            // reset oauth data if user tried to navigate to index route
-            this.run('setOAuthRequest', {});
-        }
-
         switch (path) {
             case '/register':
                 this.setState(new RegisterState());
@@ -178,5 +173,18 @@ export default class AuthFlow {
         }
 
         this.onReady();
+    }
+
+    /**
+     * @api private
+     */
+    restoreOAuthState() {
+        try {
+            const data = JSON.parse(localStorage.getItem('oauthData'));
+
+            if (Date.now() - data.timestamp < 60 * 60 * 1000) {
+                this.run('oAuthValidate', data.payload);
+            }
+        } catch (err) {/* bad luck :( */}
     }
 }
