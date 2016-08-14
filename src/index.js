@@ -74,4 +74,7 @@ if (process.env.NODE_ENV !== 'production') {
     window.testOAuth = () => location.href = '/oauth2/v1/ely?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session';
     window.testOAuthStatic = () => location.href = '/oauth2/v1/ely?client_id=ely&redirect_uri=static_page_with_code&response_type=code&scope=minecraft_server_session';
     window.testOAuthStaticCode = () => location.href = '/oauth2/v1/ely?client_id=ely&redirect_uri=static_page&response_type=code&scope=minecraft_server_session';
+
+    // expose Perf
+    window.Perf = require('react-addons-perf');
 }

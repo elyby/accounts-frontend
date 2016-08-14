@@ -193,11 +193,13 @@
         "react/jsx-pascal-case": "warn",
         "react/jsx-uses-react": "warn",
         "react/jsx-uses-vars": "warn",
-        "react/no-danger": "warn",
+        "react/jsx-no-comment-textnodes": "warn",
+        "react/jsx-wrap-multilines": "warn",
         "react/no-deprecated": "warn",
         "react/no-did-mount-set-state": "warn",
         "react/no-did-update-set-state": "warn",
         "react/no-direct-mutation-state": "warn",
+        "react/require-render-return": "warn",
         "react/no-is-mounted": "warn",
         "react/no-multi-comp": "warn",
         "react/no-string-refs": "warn",
@@ -205,9 +207,7 @@
         "react/prefer-es6-class": "warn",
         "react/prop-types": "warn",
         "react/react-in-jsx-scope": "warn",
-        "react/require-extension": "warn",
         "react/self-closing-comp": "warn",
-        "react/sort-comp": ["warn", {"order": ["lifecycle", "render", "everything-else"]}],
-        "react/wrap-multilines": "warn"
+        "react/sort-comp": ["warn", {"order": ["lifecycle", "render", "everything-else"]}]
     }
 }
