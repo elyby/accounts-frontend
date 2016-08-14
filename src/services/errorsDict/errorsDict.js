@@ -77,6 +77,7 @@ const errorsMap = {
     'error.account_already_activated': () => <Message {...messages.accountAlreadyActivated} />,
 
     'error.captcha_required': () => <Message {...messages.captchaRequired} />,
+    'error.captcha_invalid': () => errorsMap['error.captcha_required'](),
 
     suggestResetPassword: () => (
         <span>

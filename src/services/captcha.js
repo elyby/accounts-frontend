@@ -12,7 +12,7 @@ export default {
      * @param {function} options.onSetCode - the callback, that will be called with
      *                                       captcha verification code, after user successfully solves captcha
      *
-     * @return {Promise}
+     * @return {Promise} - resolves to captchaId
      */
     render(el, {skin: theme, onSetCode: callback}) {
         return this.loadApi().then(() =>
@@ -22,6 +22,13 @@ export default {
                 callback
             })
         );
+    },
+
+    /**
+     * @param {string} captchaId - captcha id, returned from render promise
+     */
+    reset(captchaId) {
+        this.loadApi().then(() => window.grecaptcha.reset(captchaId));
     },
 
     /**

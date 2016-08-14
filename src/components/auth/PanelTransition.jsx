@@ -241,12 +241,12 @@ class PanelTransition extends Component {
     willLeave = (config) => this.getTransitionStyles(config, {isLeave: true});
 
     /**
-     * @param  {Object} config
-     * @param  {string} config.key
-     * @param  {Object} [options]
-     * @param  {Object} [options.isLeave=false] - true, if this is a leave transition
+     * @param {object} config
+     * @param {string} config.key
+     * @param {object} [options]
+     * @param {object} [options.isLeave=false] - true, if this is a leave transition
      *
-     * @return {Object}
+     * @return {object}
      */
     getTransitionStyles({key}, options = {}) {
         const {isLeave = false} = options;
@@ -298,7 +298,7 @@ class PanelTransition extends Component {
     /**
      * Tries to auto focus form fields after transition end
      *
-     * @param  {number} length number of panels transitioned
+     * @param {number} length number of panels transitioned
      */
     tryToAutoFocus(length) {
         if (!this.body) {
@@ -337,7 +337,11 @@ class PanelTransition extends Component {
         };
 
         const backButton = (
-            <button style={sideScrollStyle} type="button" onClick={this.onGoBack} className={panelStyles.headerControl}>
+            <button style={sideScrollStyle}
+                className={panelStyles.headerControl}
+                type="button"
+                onClick={this.onGoBack}
+            >
                 <span className={icons.arrowLeft} />
             </button>
         );
@@ -412,11 +416,11 @@ class PanelTransition extends Component {
     }
 
     /**
-     * @param  {string} key
-     * @param  {Object} style
-     * @param  {number} style.opacitySpring
+     * @param {string} key
+     * @param {object} style
+     * @param {number} style.opacitySpring
      *
-     * @return {Object}
+     * @return {object}
      */
     getDefaultTransitionStyles(key, {opacitySpring}) {
         return {
@@ -430,11 +434,11 @@ class PanelTransition extends Component {
     }
 
     /**
-     * @param  {number} value
-     * @param  {string} direction='X' - X|Y
-     * @param  {string} unit='%' - %|px etc
+     * @param {number} value
+     * @param {string} direction='X' - X|Y
+     * @param {string} unit='%' - %|px etc
      *
-     * @return {Object}
+     * @return {object}
      */
     translate(value, direction = 'X', unit = '%') {
         return {

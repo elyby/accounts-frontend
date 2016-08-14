@@ -23,10 +23,14 @@ export default class Captcha extends FormInputComponent {
     };
 
     componentDidMount() {
-        setTimeout(() => captcha.render(this.el, {
-            skin: this.props.skin,
-            onSetCode: this.setCode
-        }), this.props.delay);
+        setTimeout(() =>
+            captcha.render(this.el, {
+                skin: this.props.skin,
+                onSetCode: this.setCode
+            })
+            .then((captchaId) => this.captchaId = captchaId),
+            this.props.delay
+        );
     }
 
     render() {
@@ -37,10 +41,12 @@ export default class Captcha extends FormInputComponent {
                 <div className={styles.captchaLoader}>
                     <ComponentLoader />
                 </div>
+
                 <div ref={this.setEl} className={classNames(
                     styles.captcha,
                     styles[`${skin}Captcha`]
                 )} />
+
                 {this.renderError()}
             </div>
         );
@@ -48,6 +54,16 @@ export default class Captcha extends FormInputComponent {
 
     getValue() {
         return this.state && this.state.code;
+    }
+
+    reset() {
+        captcha.reset(this.captchaId);
+    }
+
+    setError(error) {
+        super.setError(error);
+
+        this.reset();
     }
 
     setCode = (code) => this.setState({code});

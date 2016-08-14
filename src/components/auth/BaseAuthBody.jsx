@@ -18,9 +18,20 @@ export default class BaseAuthBody extends Component {
                 payload: PropTypes.object
             })]),
             scopes: PropTypes.array
-        }),
+        }).isRequired,
         user: userShape
     };
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        // TODO: we must not access Form#fields. This is a temporary
+        // solution to reset Captcha, when the form does not handle errors
+        if (nextContext.auth.error
+            && this.form.fields.captcha
+            && nextContext.auth.error !== this.context.auth.error
+        ) {
+            this.form.fields.captcha.reset();
+        }
+    }
 
     renderErrors() {
         return this.context.auth.error
