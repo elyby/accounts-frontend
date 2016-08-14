@@ -1,0 +1,70 @@
+@import '~components/ui/colors.scss';
+
+.componentLoader {
+    width: 100%;
+    text-align: center;
+}
+
+.spins {
+    height: 40px;
+}
+
+.spin {
+    height: 20px;
+    width: 20px;
+    // background: $green;
+    display: inline-block;
+    margin: 10px 2px;
+    opacity: 0;
+    animation: loaderAnimation 1s infinite;
+}
+
+.spin1 {
+    animation-delay: 0s;
+}
+
+.spin2 {
+    animation-delay: 0.1s;
+}
+
+.spin3 {
+    animation-delay: 0.2s;
+}
+
+.spin4 {
+    animation-delay: 0.3s;
+}
+
+.spin5 {
+    animation-delay: 0.4s;
+}
+
+/**
+ * Skins
+ */
+.lightComponentLoader {
+    .spin {
+        background: #fff;
+    }
+}
+
+.darkComponentLoader {
+    .spin {
+        background: #444;
+    }
+}
+
+@keyframes loaderAnimation {
+    0% {
+        opacity:0;
+    }
+
+    50% {
+        opacity:1;
+        transform: scaleY(2)
+    }
+
+    100% {
+        opacity:0;
+    }
+}
