@@ -295,7 +295,12 @@
     }
 }
 
+.captchaContainer {
+    position: relative;
+}
+
 .captcha {
+    position: relative;
     box-sizing: border-box;
     width: 100%;
     max-width: 302px;
@@ -325,6 +330,13 @@
 
 .lightCaptcha {
     border-color: #dcd8cd;
+}
+
+.captchaLoader {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
 }
 
 /**

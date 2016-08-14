@@ -54,7 +54,7 @@ export default class RegisterBody extends BaseAuthBody {
                     placeholder={messages.repeatPassword}
                 />
 
-                <Captcha {...this.bindField('captcha')} />
+                <Captcha {...this.bindField('captcha')} delay={600} />
 
                 <Checkbox {...this.bindField('rulesAgreement')}
                     color="blue"

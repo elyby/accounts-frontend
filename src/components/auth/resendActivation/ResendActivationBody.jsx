@@ -34,7 +34,7 @@ export default class ResendActivation extends BaseAuthBody {
                     defaultValue={this.context.user.email}
                 />
 
-                <Captcha {...this.bindField('captcha')} />
+                <Captcha {...this.bindField('captcha')} delay={600} />
             </div>
         );
     }
