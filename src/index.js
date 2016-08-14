@@ -61,7 +61,7 @@ function restoreScroll() {
         }
 
         scrollTo(y, viewPort);
-    }, 100);
+    }, 200);
 }
 
 function stopLoading() {

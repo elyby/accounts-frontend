@@ -40,3 +40,6 @@ export function loadScript(src) {
         document.body.appendChild(script);
     });
 }
+
+export const rAF = window.requestAnimationFrame || window.mozRequestAnimationFrame
+    || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;

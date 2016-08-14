@@ -46,7 +46,9 @@ export default class Form extends Component {
             });
         }
 
-        if (typeof nextProps.isLoading !== 'undefined') {
+        if (typeof nextProps.isLoading !== 'undefined'
+            && nextProps.isLoading !== this.state.isLoading
+        ) {
             this.setState({
                 isLoading: nextProps.isLoading
             });

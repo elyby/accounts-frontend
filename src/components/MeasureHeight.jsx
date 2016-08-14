@@ -1,7 +1,7 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import { omit } from 'functions';
+import { omit, rAF } from 'functions';
 
 /**
  * MeasureHeight is a component that allows you to measure the height of elements wrapped.
@@ -23,7 +23,7 @@ import { omit } from 'functions';
  * </MeasureHeight>
  */
 
-export default class MeasureHeight extends Component {
+export default class MeasureHeight extends PureComponent {
     static displayName = 'MeasureHeight';
     static propTypes = {
         shouldMeasure: PropTypes.func,
@@ -55,6 +55,6 @@ export default class MeasureHeight extends Component {
     }
 
     measure() {
-        this.props.onMeasure(this.el.offsetHeight);
+        rAF(() => this.props.onMeasure(this.el.offsetHeight));
     }
 }
