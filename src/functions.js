@@ -41,5 +41,8 @@ export function loadScript(src) {
     });
 }
 
-export const rAF = window.requestAnimationFrame || window.mozRequestAnimationFrame
-    || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+export const rAF = window.requestAnimationFrame
+    || window.mozRequestAnimationFrame
+    || window.webkitRequestAnimationFrame
+    || window.msRequestAnimationFrame
+    || ((cb) => setTimeout(cb, 1000 / 60));
