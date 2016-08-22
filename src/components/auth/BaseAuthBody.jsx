@@ -23,19 +23,14 @@ export default class BaseAuthBody extends Component {
     };
 
     componentWillReceiveProps(nextProps, nextContext) {
-        // TODO: we must not access Form#fields. This is a temporary
-        // solution to reset Captcha, when the form does not handle errors
-        if (nextContext.auth.error
-            && this.form.fields.captcha
-            && nextContext.auth.error !== this.context.auth.error
-        ) {
-            this.form.fields.captcha.reset();
+        if (nextContext.auth.error !== this.context.auth.error) {
+            this.form.setErrors(nextContext.auth.error || {});
         }
     }
 
     renderErrors() {
-        return this.context.auth.error
-            ? <AuthError error={this.context.auth.error} onClose={this.onClearErrors} />
+        return this.form.hasErrors()
+            ? <AuthError error={this.form.getFirstError()} onClose={this.onClearErrors} />
             : null
             ;
     }
@@ -46,7 +41,9 @@ export default class BaseAuthBody extends Component {
 
     onClearErrors = this.context.clearErrors;
 
-    form = new FormModel();
+    form = new FormModel({
+        renderErrors: false
+    });
 
     bindField = this.form.bindField.bind(this.form);
     serialize = this.form.serialize.bind(this.form);

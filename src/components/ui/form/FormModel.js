@@ -6,6 +6,15 @@ export default class FormModel {
     handlers = [];
 
     /**
+     * @param {object} options
+     * @param {bool} [options.renderErrors=true] - whether the bound filed should
+     *                                             render their errors
+     */
+    constructor(options = {}) {
+        this.renderErrors = options.renderErrors !== false;
+    }
+
+    /**
      * Connects form with React's component
      *
      * Usage:
@@ -29,7 +38,7 @@ export default class FormModel {
             }
         };
 
-        if (this.getError(name)) {
+        if (this.renderErrors && this.getError(name)) {
             props.error = this.getError(name);
         }
 
@@ -73,17 +82,35 @@ export default class FormModel {
     /**
      * Add errors to form fields
      *
-     * @param {object} errors - object maping {fieldId: errorMessage}
+     * errorType may be string or object {type: string, payload: object}, where
+     * payload is additional data for errorType
+     *
+     * @param {object} errors - object maping {fieldId: errorType}
      */
     setErrors(errors) {
+        if (typeof errors !== 'object' || errors === null) {
+            throw new Error('Errors must be an object');
+        }
+
         const oldErrors = this.errors;
         this.errors = errors;
 
         Object.keys(this.fields).forEach((fieldId) => {
-            if (oldErrors[fieldId] || errors[fieldId]) {
-                this.fields[fieldId].setError(errors[fieldId] || null);
+            if (this.renderErrors) {
+                if (oldErrors[fieldId] || errors[fieldId]) {
+                    this.fields[fieldId].setError(errors[fieldId] || null);
+                }
             }
+
+            this.fields[fieldId].onFormInvalid();
         });
+    }
+
+    /**
+     * @return {object|string|null}
+     */
+    getFirstError() {
+        return this.errors ? Object.values(this.errors).shift() : null;
     }
 
     /**
@@ -91,7 +118,7 @@ export default class FormModel {
      *
      * @param {string} fieldId - an id of field to get error for
      *
-     * @return {string|null}
+     * @return {string|object|null}
      */
     getError(fieldId) {
         return this.errors[fieldId] || null;

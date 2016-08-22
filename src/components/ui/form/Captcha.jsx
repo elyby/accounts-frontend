@@ -52,17 +52,15 @@ export default class Captcha extends FormInputComponent {
         );
     }
 
-    getValue() {
-        return this.state && this.state.code;
-    }
-
     reset() {
         captcha.reset(this.captchaId);
     }
 
-    setError(error) {
-        super.setError(error);
+    getValue() {
+        return this.state && this.state.code;
+    }
 
+    onFormInvalid() {
         this.reset();
     }
 

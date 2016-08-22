@@ -29,4 +29,11 @@ export default class FormComponent extends Component {
      */
     focus() {
     }
+
+    /**
+     * A hook, that called, when the form was submitted with invalid data
+     * This is usefull for the cases, when some field needs to be refreshed e.g. captcha
+     */
+    onFormInvalid() {
+    }
 }

@@ -117,16 +117,16 @@ export function resendActivation({email = '', captcha}) {
 }
 
 export const ERROR = 'error';
-export function setError(error) {
+export function setErrors(errors) {
     return {
         type: ERROR,
-        payload: error,
+        payload: errors,
         error: true
     };
 }
 
 export function clearErrors() {
-    return setError(null);
+    return setErrors(null);
 }
 
 export function logout() {
@@ -284,32 +284,31 @@ function authHandler(dispatch) {
 function validationErrorsHandler(dispatch, repeatUrl) {
     return (resp) => {
         if (resp.errors) {
+            const firstError = Object.keys(resp.errors)[0];
             const error = {
-                type: resp.errors[Object.keys(resp.errors)[0]],
+                type: resp.errors[firstError],
                 payload: {
                     isGuest: true
                 }
             };
 
             if (resp.data) {
+                // TODO: this should be formatted on backend
                 Object.assign(error.payload, resp.data);
             }
 
             if (['error.key_not_exists', 'error.key_expire'].includes(error.type) && repeatUrl) {
+                // TODO: this should be formatted on backend
                 Object.assign(error.payload, {
                     repeatUrl
                 });
             }
 
-            dispatch(setError(error));
+            resp.errors[firstError] = error;
+
+            dispatch(setErrors(resp.errors));
         }
 
         return Promise.reject(resp);
-
-        // TODO: log unexpected errors
-        // We can get here something like:
-        // code: 500
-        // {"name":"Invalid Configuration","message":"","code":0,"type":"yii\\base\\InvalidConfigException","file":"/home/sleepwalker/www/account/api/components/ReCaptcha/Component.php","line":12,"stack-trace":["#0 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Object.php(107): api\\components\\ReCaptcha\\Component->init()","#1 [internal function]: yii\\base\\Object->__construct(Array)","#2 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/di/Container.php(368): ReflectionClass->newInstanceArgs(Array)","#3 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/di/Container.php(153): yii\\di\\Container->build('api\\\\components\\\\...', Array, Array)","#4 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/BaseYii.php(344): yii\\di\\Container->get('api\\\\components\\\\...', Array, Array)","#5 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/di/ServiceLocator.php(133): yii\\BaseYii::createObject(Array)","#6 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/di/ServiceLocator.php(71): yii\\di\\ServiceLocator->get('reCaptcha')","#7 /home/sleepwalker/www/account/api/components/ReCaptcha/Validator.php(20): yii\\di\\ServiceLocator->__get('reCaptcha')","#8 /home/sleepwalker/www/account/api/components/ReCaptcha/Validator.php(25): api\\components\\ReCaptcha\\Validator->getComponent()","#9 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Object.php(107): api\\components\\ReCaptcha\\Validator->init()","#10 [internal function]: yii\\base\\Object->__construct(Array)","#11 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/di/Container.php(374): ReflectionClass->newInstanceArgs(Array)","#12 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/di/Container.php(153): yii\\di\\Container->build('api\\\\components\\\\...', Array, Array)","#13 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/BaseYii.php(344): yii\\di\\Container->get('api\\\\components\\\\...', Array, Array)","#14 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/validators/Validator.php(209): yii\\BaseYii::createObject(Array)","#15 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Model.php(445): yii\\validators\\Validator::createValidator('api\\\\components\\\\...', Object(api\\models\\RegistrationForm), Array, Array)","#16 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Model.php(409): yii\\base\\Model->createValidators()","#17 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Model.php(185): yii\\base\\Model->getValidators()","#18 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Model.php(751): yii\\base\\Model->scenarios()","#19 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Model.php(695): yii\\base\\Model->safeAttributes()","#20 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Model.php(823): yii\\base\\Model->setAttributes(Array)","#21 /home/sleepwalker/www/account/api/controllers/SignupController.php(41): yii\\base\\Model->load(Array)","#22 [internal function]: api\\controllers\\SignupController->actionIndex()","#23 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/InlineAction.php(55): call_user_func_array(Array, Array)","#24 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Controller.php(154): yii\\base\\InlineAction->runWithParams(Array)","#25 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Module.php(454): yii\\base\\Controller->runAction('', Array)","#26 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/web/Application.php(84): yii\\base\\Module->runAction('signup', Array)","#27 /home/sleepwalker/www/ely/vendor/yiisoft/yii2/base/Application.php(375): yii\\web\\Application->handleRequest(Object(yii\\web\\Request))","#28 /home/sleepwalker/www/account/api/web/index.php(18): yii\\base\\Application->run()","#29 {main}"]}
-        // We need here status code. Probably `request` module should add _request field en each resp
     };
 }

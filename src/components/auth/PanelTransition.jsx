@@ -70,7 +70,7 @@ class PanelTransition extends Component {
             })
         }).isRequired,
         user: userShape.isRequired,
-        setError: PropTypes.func.isRequired,
+        setErrors: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired,
         resolve: PropTypes.func.isRequired,
         reject: PropTypes.func.isRequired,
@@ -233,9 +233,7 @@ class PanelTransition extends Component {
         this.body.onFormSubmit();
     };
 
-    onFormInvalid = (errors) => {
-        this.props.setError(Object.values(errors).shift());
-    };
+    onFormInvalid = (errors) => this.props.setErrors(errors);
 
     willEnter = (config) => this.getTransitionStyles(config);
     willLeave = (config) => this.getTransitionStyles(config, {isLeave: true});
@@ -316,7 +314,7 @@ class PanelTransition extends Component {
     }
 
     shouldMeasureHeight() {
-        return '' + this.props.auth.error + this.state.isHeightDirty + this.props.user.lang;
+        return [this.props.auth.error, this.state.isHeightDirty, this.props.user.lang].join('');
     }
 
     getHeader({key, style, data}) {
@@ -455,5 +453,5 @@ export default connect((state) => ({
     reject: authFlow.reject.bind(authFlow)
 }), {
     clearErrors: actions.clearErrors,
-    setError: actions.setError
+    setErrors: actions.setErrors
 })(PanelTransition);
