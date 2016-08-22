@@ -149,6 +149,7 @@
     "pages.rules.mainProvisions": "Основные положения",
     "pages.rules.title": "Правила сайта",
     "services.errorsDict.accountAlreadyActivated": "Этот аккаунт уже активирован",
+    "services.errorsDict.accountBanned": "Аккаунт заблокирован",
     "services.errorsDict.accountNotActivated": "Аккаунт не активирован",
     "services.errorsDict.captchaRequired": "Пожалуйста, решите каптчу",
     "services.errorsDict.doYouWantRequestKey": "Желаете отправить новый код?",

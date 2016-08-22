@@ -149,6 +149,7 @@
     "pages.rules.mainProvisions": "Основні положення",
     "pages.rules.title": "Правила сайту",
     "services.errorsDict.accountAlreadyActivated": "Цей обліковий запис вже активований",
+    "services.errorsDict.accountBanned": "",
     "services.errorsDict.accountNotActivated": "Акаунт не активований",
     "services.errorsDict.captchaRequired": "Будь ласка, розв`яжіть капчу",
     "services.errorsDict.doYouWantRequestKey": "Бажаєте відправити новий код?",

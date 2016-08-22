@@ -67,6 +67,7 @@ const errorsMap = {
     'error.newRePassword_required': () => <Message {...messages.newRePasswordRequired} />,
 
     'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
+    'error.account_banned': () => <Message {...messages.accountBanned} />,
 
     'error.recently_sent_message': (props) => <Message {...messages.emailFrequency} values={{
         // for msLeft @see AuthError.jsx

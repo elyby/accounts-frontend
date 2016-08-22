@@ -149,6 +149,7 @@
     "pages.rules.mainProvisions": "Main provisions",
     "pages.rules.title": "Site rules",
     "services.errorsDict.accountAlreadyActivated": "This account is already activated",
+    "services.errorsDict.accountBanned": "Account is blocked",
     "services.errorsDict.accountNotActivated": "The account is not activated",
     "services.errorsDict.captchaRequired": "Please, solve the captcha",
     "services.errorsDict.doYouWantRequestKey": "Do you want to request a new key?",
