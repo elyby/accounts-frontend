@@ -9,6 +9,7 @@ export default class OAuthState extends AbstractState {
             clientId: query.client_id || params.clientId,
             redirectUrl: query.redirect_uri,
             responseType: query.response_type,
+            description: query.description,
             scope: query.scope,
             state: query.state
         }).then(() => context.setState(new CompleteState()));

@@ -39,12 +39,23 @@ export default {
         });
     }
 };
-
+/**
+ * @param {object} oauthData
+ * @param {string} oauthData.clientId
+ * @param {string} oauthData.redirectUrl
+ * @param {string} oauthData.responseType
+ * @param {string} oauthData.description
+ * @param {string} oauthData.scope
+ * @param {string} oauthData.state
+ *
+ * @return {object}
+ */
 function getOAuthRequest(oauthData) {
     return {
         client_id: oauthData.clientId,
         redirect_uri: oauthData.redirectUrl,
         response_type: oauthData.responseType,
+        description: oauthData.description,
         scope: oauthData.scope,
         state: oauthData.state
     };

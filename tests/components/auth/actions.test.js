@@ -100,7 +100,7 @@ describe('components/auth/actions', () => {
 
             return callThunk(oAuthComplete).then(() => {
                 expect(request.post, 'to have a call satisfying', [
-                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&scope=&state=',
+                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&description=&scope=&state=',
                     {}
                 ]);
             });

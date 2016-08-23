@@ -133,9 +133,20 @@ export function logout() {
     return logoutUser();
 }
 
-// TODO: move to oAuth actions?
-// test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session
+/**
+ * @param {object} oauthData
+ * @param {string} oauthData.clientId
+ * @param {string} oauthData.redirectUrl
+ * @param {string} oauthData.responseType
+ * @param {string} oauthData.description
+ * @param {string} oauthData.scope
+ * @param {string} oauthData.state
+ *
+ * @return {Promise}
+ */
 export function oAuthValidate(oauthData) {
+    // TODO: move to oAuth actions?
+    // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
     return wrapInLoader((dispatch) =>
         oauth.validate(oauthData)
             .then((resp) => {
@@ -175,9 +186,9 @@ export function oAuthComplete(params = {}) {
                     dispatch(requirePermissionsAccept());
 
                     return Promise.reject(resp);
-                } else {
-                    return handleOauthParamsValidation(resp);
                 }
+
+                return handleOauthParamsValidation(resp);
             })
     );
 }
