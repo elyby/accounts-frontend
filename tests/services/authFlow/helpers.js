@@ -25,8 +25,12 @@ export function expectState(mock, state) {
     );
 }
 
-export function expectNavigate(mock, route) {
-    return mock.expects('navigate').once().withExactArgs(route);
+export function expectNavigate(mock, route, options) {
+    if (options) {
+        return mock.expects('navigate').once().withExactArgs(route, sinon.match(options));
+    } else {
+        return mock.expects('navigate').once().withExactArgs(route);
+    }
 }
 
 export function expectRun(mock, ...args) {

@@ -23,7 +23,12 @@ export default class AuthFlow {
     }
 
     setStore(store) {
-        this.navigate = (route) => {
+        /**
+         * @param {string} route
+         * @param {object} options
+         * @param {object} options.replace
+         */
+        this.navigate = (route, options = {}) => {
             if (this.getRequest().path !== route) {
                 this.currentRequest = {
                     path: route
@@ -32,7 +37,7 @@ export default class AuthFlow {
                 if (this.replace) {
                     this.replace(route);
                 }
-                store.dispatch(routeActions.push(route)); // TODO: may be deleted?
+                store.dispatch(routeActions[options.replace ? 'replace' : 'push'](route));
             }
 
             this.replace = null;

@@ -22,7 +22,25 @@ describe('PermissionsState', () => {
 
     describe('#enter', () => {
         it('should navigate to /oauth/permissions', () => {
-            expectNavigate(mock, '/oauth/permissions');
+            context.getRequest.returns({
+                path: '/'
+            });
+
+            expectNavigate(mock, '/oauth/permissions', {
+                replace: false
+            });
+
+            state.enter(context);
+        });
+
+        it('should replace instead of push if current request contains oauth2', () => {
+            context.getRequest.returns({
+                path: '/oauth2'
+            });
+
+            expectNavigate(mock, '/oauth/permissions', {
+                replace: true
+            });
 
             state.enter(context);
         });
