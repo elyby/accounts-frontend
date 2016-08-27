@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import classNames from 'classnames';
 
+import { omit } from 'functions';
 import { colors, COLOR_GREEN } from 'components/ui';
 
 import styles from './dropdown.scss';
@@ -53,13 +54,17 @@ export default class Dropdown extends FormInputComponent {
 
         const activeItem = this.getActiveItem();
         const label = this.formatMessage(activeItem.label);
+        const props = omit(this.props, Object.keys(Dropdown.propTypes));
 
         return (
             <div>
                 <div className={classNames(styles[color], {
                     [styles.block]: block,
                     [styles.opened]: isActive
-                })} {...this.props} onClick={this.onToggle}>
+                })}
+                    {...props}
+                    onClick={this.onToggle}
+                >
                     <span className={styles.label}>{label}</span>
                     <span className={styles.toggleIcon} />
 
