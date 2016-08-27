@@ -162,12 +162,18 @@ export function oAuthValidate(oauthData) {
     );
 }
 
+/**
+ * @param {object} params
+ * @param {bool} params.accept=false
+ *
+ * @return {Promise}
+ */
 export function oAuthComplete(params = {}) {
-    localStorage.removeItem('oauthData');
-
     return wrapInLoader((dispatch, getState) =>
         oauth.complete(getState().auth.oauth, params)
             .then((resp) => {
+                localStorage.removeItem('oauthData');
+
                 if (resp.redirectUri.startsWith('static_page')) {
                     resp.code = resp.redirectUri.match(/code=(.+)&/)[1];
                     resp.redirectUri = resp.redirectUri.match(/^(.+)\?/)[1];
@@ -195,6 +201,7 @@ export function oAuthComplete(params = {}) {
 
 function handleOauthParamsValidation(resp = {}) {
     dispatchBsod();
+    localStorage.removeItem('oauthData');
 
     // eslint-disable-next-line no-alert
     resp.userMessage && setTimeout(() => alert(resp.userMessage), 500); // 500 ms to allow re-render

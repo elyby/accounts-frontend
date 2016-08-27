@@ -6,6 +6,7 @@ import OAuthState from './OAuthState';
 import ForgotPasswordState from './ForgotPasswordState';
 import RecoverPasswordState from './RecoverPasswordState';
 import ActivationState from './ActivationState';
+import CompleteState from './CompleteState';
 import ResendActivationState from './ResendActivationState';
 
 export default class AuthFlow {
@@ -39,8 +40,6 @@ export default class AuthFlow {
 
         this.getState = store.getState.bind(store);
         this.dispatch = store.dispatch.bind(store);
-
-        this.restoreOAuthState();
     }
 
     resolve(payload = {}) {
@@ -131,6 +130,10 @@ export default class AuthFlow {
 
         this.currentRequest = request;
 
+        if (this.restoreOAuthState()) {
+            return;
+        }
+
         switch (path) {
             case '/register':
                 this.setState(new RegisterState());
@@ -176,15 +179,25 @@ export default class AuthFlow {
     }
 
     /**
+     * Tries to restore last oauth request, if it was stored in localStorage
+     * in last 2 hours
      * @api private
+     *
+     * @return {bool} - whether oauth state is being restored
      */
     restoreOAuthState() {
         try {
             const data = JSON.parse(localStorage.getItem('oauthData'));
+            const expirationTime = 2 * 60 * 60 * 1000; // 2h
 
-            if (Date.now() - data.timestamp < 60 * 60 * 1000) {
-                this.run('oAuthValidate', data.payload);
+            if (Date.now() - data.timestamp < expirationTime) {
+                this.run('oAuthValidate', data.payload)
+                    .then(() => this.setState(new CompleteState()));
+
+                return true;
             }
         } catch (err) {/* bad luck :( */}
+
+        return false;
     }
 }

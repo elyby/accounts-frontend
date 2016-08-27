@@ -10,6 +10,7 @@ import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 import ActivationState from 'services/authFlow/ActivationState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
 import LoginState from 'services/authFlow/LoginState';
+import CompleteState from 'services/authFlow/CompleteState';
 
 describe('AuthFlow', () => {
     let flow;
@@ -34,10 +35,6 @@ describe('AuthFlow', () => {
     });
 
     describe('#setStore', () => {
-        afterEach(() => {
-            localStorage.removeItem('oauthData');
-        });
-
         it('should create #navigate, #getState, #dispatch', () => {
             flow.setStore({
                 getState() {},
@@ -48,39 +45,64 @@ describe('AuthFlow', () => {
             expect(flow.dispatch, 'to be defined');
             expect(flow.navigate, 'to be defined');
         });
+    });
 
-        it('should restore oauth state from localStorage', () => {
-            const oauthData = {};
+    describe('#restoreOAuthState', () => {
+        let oauthData;
+
+        beforeEach(() => {
+            oauthData = {foo: 'bar'};
             localStorage.setItem('oauthData', JSON.stringify({
                 timestamp: Date.now() - 10,
                 payload: oauthData
             }));
 
             sinon.stub(flow, 'run').named('flow.run');
+            flow.run.returns({then: (fn) => fn()});
+            sinon.stub(flow, 'setState').named('flow.setState');
+        });
 
-            flow.setStore({
-                getState() {},
-                dispatch() {}
-            });
+        afterEach(() => {
+            localStorage.removeItem('oauthData');
+        });
+
+        it('should call to restoreOAuthState', () => {
+            sinon.stub(flow, 'restoreOAuthState').named('flow.restoreOAuthState');
+
+            flow.handleRequest({path: '/'});
+
+            expect(flow.restoreOAuthState, 'was called');
+        });
+
+        it('should restore oauth state from localStorage', () => {
+            flow.handleRequest({path: '/'});
 
             expect(flow.run, 'to have a call satisfying', [
                 'oAuthValidate', oauthData
             ]);
         });
 
+        it('should transition to CompleteState', () => {
+            flow.handleRequest({path: '/'});
+
+            expect(flow.setState, 'to have a call satisfying', [
+                expect.it('to be a', CompleteState)
+            ]);
+        });
+
+        it('should not handle current request', () => {
+            flow.handleRequest({path: '/'});
+
+            expect(flow.setState, 'was called once');
+        });
+
         it('should not restore outdated (>1h) oauth state', () => {
-            const oauthData = {};
             localStorage.setItem('oauthData', JSON.stringify({
-                timestamp: Date.now() - 60 * 60 * 1000,
+                timestamp: Date.now() - 2 * 60 * 60 * 1000,
                 payload: oauthData
             }));
 
-            sinon.stub(flow, 'run').named('flow.run');
-
-            flow.setStore({
-                getState() {},
-                dispatch() {}
-            });
+            flow.handleRequest({path: '/'});
 
             expect(flow.run, 'was not called');
         });
