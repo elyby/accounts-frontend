@@ -33,7 +33,7 @@ export default class PermissionsBody extends BaseAuthBody {
                             <Message {...messages.youAuthorizedAs} />
                         </div>
                         <div className={styles.authInfoEmail}>
-                            {user.email}
+                            {user.username}
                         </div>
                     </div>
                 </PanelBodyHeader>

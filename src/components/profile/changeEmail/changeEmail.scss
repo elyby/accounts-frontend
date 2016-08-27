@@ -66,6 +66,9 @@
 
 .currentAccountEmail {
     text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 1.2;
 }
 
 
@@ -77,4 +80,5 @@
     display: inline-block;
     white-space: normal;
     vertical-align: top;
+    max-width: 100%;
 }
