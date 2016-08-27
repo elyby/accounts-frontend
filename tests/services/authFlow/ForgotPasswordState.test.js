@@ -84,6 +84,25 @@ describe('ForgotPasswordState', () => {
             state.resolve(context, {});
         });
 
+        it('should call forgotPassword with email from payload if any', () => {
+            const expectedLogin = 'foo@bar.com';
+            context.getState.returns({
+                user: {
+                    email: 'should.not@be.used'
+                }
+            });
+
+            expectRun(
+                mock,
+                'forgotPassword',
+                sinon.match({
+                    login: expectedLogin
+                })
+            ).returns({then() {}});
+
+            state.resolve(context, {email: expectedLogin});
+        });
+
         it('should call forgotPassword with username', () => {
             const expectedLogin = 'foobar';
             context.getState.returns({

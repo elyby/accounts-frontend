@@ -18,8 +18,8 @@ export default class ForgotPasswordState extends AbstractState {
         }
     }
 
-    resolve(context) {
-        context.run('forgotPassword', {login: this.getLogin(context)})
+    resolve(context, payload = {}) {
+        context.run('forgotPassword', {login: payload.email || this.getLogin(context)})
             .then(() => context.setState(new RecoverPasswordState()));
     }
 
