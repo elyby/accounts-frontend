@@ -149,6 +149,7 @@
     "pages.rules.mainProvisions": "Асноўныя палажэнні",
     "pages.rules.title": "Правілы сайта",
     "services.errorsDict.accountAlreadyActivated": "Гэты акаўнт ужо актываваны",
+    "services.errorsDict.accountBanned": "",
     "services.errorsDict.accountNotActivated": "Акаўнт не актываваны",
     "services.errorsDict.captchaRequired": "Калі ласка, вырашыце капчу",
     "services.errorsDict.doYouWantRequestKey": "Не жадаеце адаслаць новы код?",
