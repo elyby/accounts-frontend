@@ -52,38 +52,35 @@ let keysToAdd = [];
 let keysToRemove = [];
 const keysToRename = [];
 const isNotMarked = (value) => value.slice(0, 2) !== '--';
-try {
-    const prevMessages = JSON.parse(fs.readFileSync(defaultMessagesPath, 'utf8'));
-    const prevMessagesMap = Object.entries(prevMessages).reduce((acc, [key, value]) => {
-        if (acc[value]) {
-            acc[value].push(key);
-        } else {
-            acc[value] = [key];
-        }
 
-        return acc;
-    }, {});
-    keysToAdd = Object.keys(collectedMessages).filter((key) => !prevMessages[key]);
-    keysToRemove = Object.keys(prevMessages).filter((key) => !collectedMessages[key]).filter(isNotMarked);
-    keysToUpdate = Object.entries(prevMessages).reduce((acc, [key, message]) =>
-        acc.concat(collectedMessages[key] && collectedMessages[key] !== message ? key : [])
-    , []);
+const prevMessages = readJSON(defaultMessagesPath);
+const prevMessagesMap = Object.entries(prevMessages).reduce((acc, [key, value]) => {
+    if (acc[value]) {
+        acc[value].push(key);
+    } else {
+        acc[value] = [key];
+    }
 
-    // detect keys to rename, mutating keysToAdd and keysToRemove
-    [].concat(keysToAdd).forEach((toKey) => {
-        const keys = prevMessagesMap[collectedMessages[toKey]] || [];
-        const fromKey = keys.find((fromKey) => keysToRemove.indexOf(fromKey) > -1);
+    return acc;
+}, {});
+keysToAdd = Object.keys(collectedMessages).filter((key) => !prevMessages[key]);
+keysToRemove = Object.keys(prevMessages).filter((key) => !collectedMessages[key]).filter(isNotMarked);
+keysToUpdate = Object.entries(prevMessages).reduce((acc, [key, message]) =>
+    acc.concat(collectedMessages[key] && collectedMessages[key] !== message ? key : [])
+, []);
 
-        if (fromKey) {
-            keysToRename.push([fromKey, toKey]);
+// detect keys to rename, mutating keysToAdd and keysToRemove
+[].concat(keysToAdd).forEach((toKey) => {
+    const keys = prevMessagesMap[collectedMessages[toKey]] || [];
+    const fromKey = keys.find((fromKey) => keysToRemove.indexOf(fromKey) > -1);
 
-            keysToRemove.splice(keysToRemove.indexOf(fromKey), 1);
-            keysToAdd.splice(keysToAdd.indexOf(toKey), 1);
-        }
-    });
-} catch (err) {
-    console.log(chalk.yellow(`Can not read ${defaultMessagesPath}. The new file will be created.`), err);
-}
+    if (fromKey) {
+        keysToRename.push([fromKey, toKey]);
+
+        keysToRemove.splice(keysToRemove.indexOf(fromKey), 1);
+        keysToAdd.splice(keysToAdd.indexOf(toKey), 1);
+    }
+});
 
 if (!keysToAdd.length && !keysToRemove.length && !keysToUpdate.length && !keysToRename.length) {
     return console.log(chalk.green('Everything is up to date!'));
@@ -142,13 +139,7 @@ function buildLocales() {
 
     SUPPORTED_LANGS.map((lang) => {
         const destPath = `${LANG_DIR}/${lang}.json`;
-
-        let newMessages = {};
-        try {
-            newMessages = JSON.parse(fs.readFileSync(destPath, 'utf8'));
-        } catch (err) {
-            console.log(chalk.yellow(`Can not read ${destPath}. The new file will be created.`), err);
-        }
+        const newMessages = readJSON(destPath);
 
         keysToRename.forEach(([fromKey, toKey]) => {
             newMessages[toKey] = newMessages[fromKey];
@@ -180,4 +171,14 @@ function buildLocales() {
 
         fs.writeFileSync(destPath, JSON.stringify(sortedNewMessages, null, 4) + '\n');
     });
+}
+
+function readJSON(destPath) {
+    try {
+        return JSON.parse(fs.readFileSync(destPath, 'utf8'));
+    } catch (err) {
+        console.log(chalk.yellow(`Can not read ${destPath}. The new file will be created.`), `(${err.message})`);
+    }
+
+    return {};
 }
