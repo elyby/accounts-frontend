@@ -14,7 +14,7 @@ const LANGS = {
     uk: 'Українська',
 };
 
-export default class LangMenu extends Component {
+class LangMenu extends Component {
     static displayName = 'LangMenu';
     static propTypes = {
         showCurrentLang: PropTypes.bool,
@@ -56,7 +56,8 @@ export default class LangMenu extends Component {
                         {Object.keys(LANGS).map((lang) => (
                             <li className={classNames(styles.menuItem, {
                                 [styles.activeMenuItem]: lang === userLang
-                            })} onClick={this.onChangeLang(lang)} key={lang}>
+                            })} onClick={this.onChangeLang(lang)} key={lang}
+                            >
                                 {this.renderLangLabel(lang)}
                             </li>
                         ))}
