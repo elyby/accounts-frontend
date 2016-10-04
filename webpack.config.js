@@ -1,15 +1,15 @@
 /* eslint-env node */
 
-var path = require('path');
+const path = require('path');
 
-var webpack = require('webpack');
-var loaderUtils = require('loader-utils');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var cssUrl = require('webpack-utils/cssUrl');
-var cssImport = require('postcss-import');
+const webpack = require('webpack');
+const loaderUtils = require('loader-utils');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const cssUrl = require('webpack-utils/cssUrl');
+const cssImport = require('postcss-import');
 
-var vendor = Object.keys(require('./package.json').dependencies);
+const vendor = Object.keys(require('./package.json').dependencies);
 
 const rootPath = path.resolve('./src');
 
@@ -39,15 +39,7 @@ if (isTest) {
 
 const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
 
-var config;
-try {
-    config = require('./config/dev.json');
-} catch (err) {
-    console.error('\n\n===\nPlease create dev.json config under ./config based on template.dev.json\n===\n\n');
-    throw err;
-}
 const fileCache = {};
-
 
 const cssLoaderQuery = {
     modules: true,
@@ -98,22 +90,6 @@ var webpackConfig = {
         'react/lib/ReactContext': true,
         'react/addons': true
     } : {},
-
-    devServer: {
-        host: 'localhost',
-        port: 8080,
-        proxy: {
-            '/api*': {
-                headers: {
-                    host: config.apiHost.replace(/https?:|\//g, '')
-                },
-                target: config.apiHost
-            }
-        },
-        hot: true,
-        inline: true,
-        historyApiFallback: true
-    },
 
     devtool: isTest ? 'inline-source-map' : 'eval',
 
@@ -238,13 +214,6 @@ var webpackConfig = {
     }
 };
 
-if (isDockerized) {
-    webpackConfig.watchOptions = {
-        poll: 2000
-    };
-    webpackConfig.devServer.host = '0.0.0.0';
-}
-
 if (isProduction) {
     webpackConfig.module.loaders.forEach((loader) => {
         if (loader.extractInProduction) {
@@ -268,10 +237,41 @@ if (isProduction) {
 }
 
 if (!isProduction && !isTest) {
+    var config;
+    try {
+        config = require('./config/dev.json');
+    } catch (err) {
+        console.error('\n\n===\nPlease create dev.json config under ./config based on template.dev.json\n===\n\n');
+        throw err;
+    }
+
     webpackConfig.plugins.push(
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin()
     );
+
+    webpackConfig.devServer = {
+        host: 'localhost',
+        port: 8080,
+        proxy: {
+            '/api*': {
+                headers: {
+                    host: config.apiHost.replace(/https?:|\//g, '')
+                },
+                target: config.apiHost
+            }
+        },
+        hot: true,
+        inline: true,
+        historyApiFallback: true
+    };
+}
+
+if (isDockerized) {
+    webpackConfig.watchOptions = {
+        poll: 2000
+    };
+    webpackConfig.devServer.host = '0.0.0.0';
 }
 
 module.exports = webpackConfig;
