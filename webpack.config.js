@@ -254,11 +254,9 @@ if (!isProduction && !isTest) {
         host: 'localhost',
         port: 8080,
         proxy: {
-            '/api*': {
-                headers: {
-                    host: config.apiHost.replace(/https?:|\//g, '')
-                },
-                target: config.apiHost
+            '/api': {
+                target: config.apiHost,
+                changeOrigin: true // add host http-header, based on target
             }
         },
         hot: true,
