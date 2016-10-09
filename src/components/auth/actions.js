@@ -19,9 +19,18 @@ export function login({login = '', password = '', rememberMe = false}) {
         .catch((resp) => {
             if (resp.errors) {
                 if (resp.errors.password === PASSWORD_REQUIRED) {
+                    let username = '';
+                    let email = '';
+
+                    if (/[@.]/.test(login)) {
+                        email = login;
+                    } else {
+                        username = login;
+                    }
+
                     return dispatch(updateUser({
-                        username: login,
-                        email: login
+                        username,
+                        email
                     }));
                 } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                     return dispatch(needActivation());
