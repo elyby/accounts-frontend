@@ -13,6 +13,13 @@ const vendor = Object.keys(require('./package.json').dependencies);
 
 const rootPath = path.resolve('./src');
 
+var config = {};
+try {
+    config = require('./config/env.js');
+} catch (err) {
+    console.error('\n\n===\nCan not find config/env.js. Running with defaults\n===\n\n', err);
+}
+
 /**
  * TODO: https://babeljs.io/docs/plugins/
  * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
@@ -110,7 +117,8 @@ var webpackConfig = {
             inject: false,
             minify: {
                 collapseWhitespace: isProduction
-            }
+            },
+            ga: config.ga
         }),
         new webpack.ProvidePlugin({
             // window.fetch polyfill
@@ -237,32 +245,26 @@ if (isProduction) {
 }
 
 if (!isProduction && !isTest) {
-    var config;
-    try {
-        config = require('./config/dev.json');
-    } catch (err) {
-        console.error('\n\n===\nPlease create dev.json config under ./config based on template.dev.json\n===\n\n');
-        throw err;
-    }
-
     webpackConfig.plugins.push(
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin()
     );
 
-    webpackConfig.devServer = {
-        host: 'localhost',
-        port: 8080,
-        proxy: {
-            '/api': {
-                target: config.apiHost,
-                changeOrigin: true // add host http-header, based on target
-            }
-        },
-        hot: true,
-        inline: true,
-        historyApiFallback: true
-    };
+    if (config.apiHost) {
+        webpackConfig.devServer = {
+            host: 'localhost',
+            port: 8080,
+            proxy: {
+                '/api': {
+                    target: config.apiHost,
+                    changeOrigin: true // add host http-header, based on target
+                }
+            },
+            hot: true,
+            inline: true,
+            historyApiFallback: true
+        };
+    }
 }
 
 if (isDockerized) {
