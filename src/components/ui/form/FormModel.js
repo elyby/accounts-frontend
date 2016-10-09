@@ -102,7 +102,9 @@ export default class FormModel {
                 }
             }
 
-            this.fields[fieldId].onFormInvalid();
+            if (this.hasErrors()) {
+                this.fields[fieldId].onFormInvalid();
+            }
         });
     }
 
