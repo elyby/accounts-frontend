@@ -46,9 +46,9 @@ $popupMargin: 20px; // Отступ попапа от краёв окна
 }
 
 .popupWrapper {
-    box-sizing: content-box;
-    margin: $popupMargin auto;
-    padding: 0 $popupMargin;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: $popupMargin;
 
     display: inline-block;
     width: 100%;
@@ -143,6 +143,7 @@ $popupInitPosition: translateY(10%) rotateX(-8deg);
 
 .trLeave {
     opacity: 1;
+    overflow: hidden;
 
     .popup {
         opacity: 1;

@@ -22,6 +22,8 @@ if (process.env.NODE_ENV === 'production') {
 function RootPage(props) {
     const isRegisterPage = props.location.pathname === '/register';
 
+    document.body.style.overflow = props.isPopupActive ? 'hidden' : '';
+
     return (
         <div className={styles.root}>
             <div id="view-port" className={classNames(styles.viewPort, {

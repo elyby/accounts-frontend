@@ -5,19 +5,15 @@ $userBarHeight: 50px;
 
 .root {
     height: 100%;
-    overflow: hidden;
 }
 
 .viewPort {
     height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .isPopupActive {
     filter: blur(5px);
     transition: filter 0.4s 0.1s ease;
-    overflow: hidden;
 }
 
 .wrapper {
@@ -55,14 +51,10 @@ $userBarHeight: 50px;
     composes: wrapper;
     position: relative;
 
-    // place for header
     min-height: 100%;
-    // hack to enable min-height/height 100% in parent elements
-    // http://stackoverflow.com/a/21836870/2039203
-    // http://stackoverflow.com/questions/2341821/height100-vs-min-height100
-    height: 0;
     box-sizing: border-box;
-    padding-top: $userBarHeight;
+
+    padding-top: $userBarHeight; // place for header
 }
 
 .userbar {
