@@ -6,6 +6,8 @@ import ReactDOM from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 
+import webFont from 'webfontloader';
+
 import { factory as userFactory } from 'components/user/factory';
 import { IntlProvider } from 'components/i18n';
 import routesFactory from 'routes';
@@ -16,7 +18,22 @@ const store = storeFactory();
 
 bsodFactory(store, stopLoading);
 
-userFactory(store)
+const fontLoadingPromise = new Promise((resolve) =>
+    webFont.load({
+        classes: false,
+        active: resolve,
+        inactive: resolve, // TODO: may be we should track such cases
+        timeout: 2000,
+        custom: {
+            families: ['Roboto', 'Roboto Condensed']
+        }
+    })
+);
+
+Promise.all([
+    userFactory(store),
+    fontLoadingPromise
+])
 .then(() => {
     ReactDOM.render(
         <ReduxProvider store={store}>
@@ -32,6 +49,11 @@ userFactory(store)
         document.getElementById('app')
     );
 });
+
+
+function stopLoading() {
+    document.getElementById('loader').classList.remove('is-active');
+}
 
 import scrollTo from 'components/ui/scrollTo';
 const SCROLL_ANCHOR_OFFSET = 80; // 50 + 30 (header height + some spacing)
@@ -62,10 +84,6 @@ function restoreScroll() {
 
         scrollTo(y, viewPort);
     }, 200);
-}
-
-function stopLoading() {
-    document.getElementById('loader').classList.remove('is-active');
 }
 
 /* global process: false */
