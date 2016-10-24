@@ -191,6 +191,9 @@ export default class AuthFlow {
      * @return {bool} - whether oauth state is being restored
      */
     restoreOAuthState() {
+        // TODO: Свят, тут бага
+        return false;
+
         try {
             const data = JSON.parse(localStorage.getItem('oauthData'));
             const expirationTime = 2 * 60 * 60 * 1000; // 2h
