@@ -58,7 +58,8 @@ describe('AuthFlow', () => {
             }));
 
             sinon.stub(flow, 'run').named('flow.run');
-            flow.run.returns({then: (fn) => fn()});
+            const promiseLike = {then: (fn) => fn() || promiseLike};
+            flow.run.returns(promiseLike);
             sinon.stub(flow, 'setState').named('flow.setState');
         });
 
@@ -94,6 +95,14 @@ describe('AuthFlow', () => {
             flow.handleRequest({path: '/'});
 
             expect(flow.setState, 'was called once');
+        });
+
+        it('should call onReady after state restoration', () => {
+            const onReady = sinon.stub().named('onReady');
+
+            flow.handleRequest({path: '/login'}, null, onReady);
+
+            expect(onReady, 'was called');
         });
 
         it('should not restore oauth state for /register route', () => {

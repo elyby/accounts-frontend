@@ -202,7 +202,8 @@ export default class AuthFlow {
 
             if (Date.now() - data.timestamp < expirationTime) {
                 this.run('oAuthValidate', data.payload)
-                    .then(() => this.setState(new CompleteState()));
+                    .then(() => this.setState(new CompleteState()))
+                    .then(() => this.onReady());
 
                 return true;
             }
