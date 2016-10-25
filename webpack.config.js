@@ -112,7 +112,7 @@ var webpackConfig = {
         new HtmlWebpackPlugin({
             template: 'src/index.ejs',
             favicon: 'src/favicon.ico',
-            hash: isProduction,
+            hash: false, // webpack does this for all our assets automagically
             filename: 'index.html',
             inject: false,
             minify: {
