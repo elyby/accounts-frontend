@@ -191,8 +191,10 @@ export default class AuthFlow {
      * @return {bool} - whether oauth state is being restored
      */
     restoreOAuthState() {
-        // TODO: Свят, тут бага
-        return false;
+        if (this.getRequest().path.indexOf('/register') === 0) {
+            // allow register
+            return;
+        }
 
         try {
             const data = JSON.parse(localStorage.getItem('oauthData'));

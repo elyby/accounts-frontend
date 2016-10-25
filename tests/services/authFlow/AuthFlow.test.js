@@ -96,6 +96,12 @@ describe('AuthFlow', () => {
             expect(flow.setState, 'was called once');
         });
 
+        it('should not restore oauth state for /register route', () => {
+            flow.handleRequest({path: '/register'});
+
+            expect(flow.run, 'was not called'); // this.run('oAuthValidate'...
+        });
+
         it('should not restore outdated (>1h) oauth state', () => {
             localStorage.setItem('oauthData', JSON.stringify({
                 timestamp: Date.now() - 2 * 60 * 60 * 1000,
