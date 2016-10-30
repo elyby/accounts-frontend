@@ -1,4 +1,5 @@
 import request from 'services/request';
+import accounts from 'services/api/accounts';
 
 export default {
     login({
@@ -34,6 +35,23 @@ export default {
             '/api/authentication/recover-password',
             {key, newPassword, newRePassword}
         );
+    },
+
+    /**
+     * Resolves if token is valid
+     *
+     * @param {object} options
+     * @param {string} options.token
+     * @param {string} options.refreshToken
+     *
+     * @return {Promise} - resolves with options.token or with a new token
+     *                     if it was refreshed
+     */
+    validateToken({token, refreshToken}) {
+        // TODO: use refresh token to get fresh token. Dont forget, that it may be broken by refreshTokenMiddleware
+        // TODO: cover with tests
+        return accounts.current({token, autoRefreshToken: false})
+            .then(() => ({token, refreshToken}));
     },
 
     /**

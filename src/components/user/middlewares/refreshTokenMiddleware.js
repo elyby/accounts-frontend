@@ -12,12 +12,12 @@ import {updateUser, logout} from '../actions';
  */
 export default function refreshTokenMiddleware({dispatch, getState}) {
     return {
-        before(data) {
+        before(req) {
             const {refreshToken, token} = getState().user;
-            const isRefreshTokenRequest = data.url.includes('refresh-token');
+            const isRefreshTokenRequest = req.url.includes('refresh-token');
 
-            if (!token || isRefreshTokenRequest) {
-                return data;
+            if (!token || isRefreshTokenRequest || req.options.autoRefreshToken === false) {
+                return req;
             }
 
             try {
@@ -25,33 +25,17 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
                 const jwt = getJWTPayload(token);
 
                 if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
-                    return requestAccessToken(refreshToken, dispatch).then(() => data);
+                    return requestAccessToken(refreshToken, dispatch).then(() => req);
                 }
             } catch (err) {
                 dispatch(logout());
             }
 
-            return data;
+            return req;
         },
 
-        catch(resp, restart) {
-            /*
-                {
-                    "name": "Unauthorized",
-                    "message": "You are requesting with an invalid credential.",
-                    "code": 0,
-                    "status": 401,
-                    "type": "yii\\web\\UnauthorizedHttpException"
-                }
-                {
-                    "name": "Unauthorized",
-                    "message": "Token expired",
-                    "code": 0,
-                    "status": 401,
-                    "type": "yii\\web\\UnauthorizedHttpException"
-                }
-            */
-            if (resp && resp.status === 401) {
+        catch(resp, req, restart) {
+            if (resp && resp.status === 401 && req.options.autoRefreshToken !== false) {
                 const {refreshToken} = getState().user;
                 if (resp.message === 'Token expired' && refreshToken) {
                     // request token and retry

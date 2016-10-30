@@ -1,8 +1,18 @@
 import request from 'services/request';
 
 export default {
-    current() {
-        return request.get('/api/accounts/current');
+    /**
+     * @param {object} options
+     * @param {object} [options.token] - an optional token to overwrite headers in middleware
+     * @param {bool} [options.autoRefreshToken=true] - disable token auto refresh during request
+     *
+     * @return {Promise<User>}
+     */
+    current(options = {}) {
+        return request.get('/api/accounts/current', {}, {
+            token: options.token,
+            autoRefreshToken: options.autoRefreshToken
+        });
     },
 
     changePassword({

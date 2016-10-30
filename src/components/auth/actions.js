@@ -36,7 +36,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                     return dispatch(needActivation());
                 } else if (resp.errors.login === LOGIN_REQUIRED && password) {
                     // return to the first step
-                    dispatch(logout());
+                    return dispatch(logout());
                 }
             }
 
