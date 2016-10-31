@@ -33,6 +33,7 @@
     "react-router": "^2.0.0",
     "react-router-redux": "^3.0.0",
     "redux": "^3.0.4",
+    "redux-localstorage": "^0.4.1",
     "redux-thunk": "^2.0.0",
     "webfontloader": "^1.6.26",
     "whatwg-fetch": "^1.0.0"
