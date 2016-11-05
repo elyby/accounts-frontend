@@ -1,4 +1,5 @@
-import { authenticate, changeLang } from 'components/user/actions';
+import { changeLang } from 'components/user/actions';
+import { authenticate } from 'components/accounts/actions';
 
 import request from 'services/request';
 import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';
@@ -22,11 +23,11 @@ export function factory(store) {
     request.addMiddleware(bearerHeaderMiddleware(store));
 
     promise = new Promise((resolve, reject) => {
-        const {user} = store.getState();
+        const {user, accounts} = store.getState();
 
-        if (user.token) {
+        if (accounts.active || user.token) {
             // authorizing user if it is possible
-            return store.dispatch(authenticate(user.token)).then(resolve, reject);
+            return store.dispatch(authenticate(accounts.active || user)).then(resolve, reject);
         }
 
         // auto-detect guests language

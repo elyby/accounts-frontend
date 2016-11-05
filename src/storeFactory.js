@@ -17,7 +17,8 @@ export default function storeFactory() {
         thunk
     );
     const persistStateEnhancer = persistState([
-        'accounts'
+        'accounts',
+        'user'
     ], {key: 'redux-storage'});
 
     /* global process: false */

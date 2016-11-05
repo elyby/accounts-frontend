@@ -9,7 +9,9 @@
 export default function bearerHeaderMiddleware({getState}) {
     return {
         before(req) {
-            let {token} = getState().user;
+            const {user, accounts} = getState();
+
+            let {token} = accounts.active ? accounts.active : user;
 
             if (req.options.token) {
                 token = req.options.token;

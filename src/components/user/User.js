@@ -33,10 +33,6 @@ export default class User {
             // frontend app specific attributes
             isGuest: true,
             goal: null, // the goal with wich user entered site
-
-            // TODO: the following does not belongs here. Move it later
-            token: '',
-            refreshToken: '',
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {

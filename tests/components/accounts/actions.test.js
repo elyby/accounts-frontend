@@ -2,21 +2,23 @@ import expect from 'unexpected';
 
 import accounts from 'services/api/accounts';
 import { authenticate, revoke, add, activate, remove, ADD, REMOVE, ACTIVATE } from 'components/accounts/actions';
+import { SET_LOCALE } from 'components/i18n/actions';
 
-import { updateUser, logout } from 'components/user/actions';
+import { updateUser } from 'components/user/actions';
 
 const account = {
     id: 1,
     username: 'username',
     email: 'email@test.com',
     token: 'foo',
-    refreshToken: 'foo'
+    refreshToken: 'bar'
 };
 
 const user = {
     id: 1,
     username: 'username',
     email: 'email@test.com',
+    lang: 'be'
 };
 
 describe('Accounts actions', () => {
@@ -24,10 +26,10 @@ describe('Accounts actions', () => {
     let getState;
 
     beforeEach(() => {
-        dispatch = sinon.spy(function dispatch(arg) {
-            return typeof arg === 'function' ? arg(dispatch, getState) : arg;
-        }).named('dispatch');
-        getState = sinon.stub().named('getState');
+        dispatch = sinon.spy((arg) =>
+            typeof arg === 'function' ? arg(dispatch, getState) : arg
+        ).named('store.dispatch');
+        getState = sinon.stub().named('store.getState');
 
         getState.returns({
             accounts: [],
@@ -43,13 +45,13 @@ describe('Accounts actions', () => {
     });
 
     describe('#authenticate()', () => {
-        it('should request user state using token', () => {
-            authenticate(account)(dispatch);
-
-            expect(accounts.current, 'to have a call satisfying', [
-                {token: account.token}
-            ]);
-        });
+        it('should request user state using token', () =>
+            authenticate(account)(dispatch).then(() =>
+                expect(accounts.current, 'to have a call satisfying', [
+                    {token: account.token}
+                ])
+            )
+        );
 
         it(`dispatches ${ADD} action`, () =>
             authenticate(account)(dispatch).then(() =>
@@ -67,10 +69,18 @@ describe('Accounts actions', () => {
             )
         );
 
+        it(`dispatches ${SET_LOCALE} action`, () =>
+            authenticate(account)(dispatch).then(() =>
+                expect(dispatch, 'to have a call satisfying', [
+                    {type: SET_LOCALE, payload: {locale: 'be'}}
+                ])
+            )
+        );
+
         it('should update user state', () =>
             authenticate(account)(dispatch).then(() =>
                 expect(dispatch, 'to have a call satisfying', [
-                    updateUser(user)
+                    updateUser({...user, isGuest: false})
                 ])
             )
         );
@@ -84,14 +94,9 @@ describe('Accounts actions', () => {
         it('rejects when bad auth data', () => {
             accounts.current.returns(Promise.reject({}));
 
-            const promise = authenticate(account)(dispatch);
-
-            expect(promise, 'to be rejected');
-
-            return promise.catch(() => {
-                expect(dispatch, 'was not called');
-                return Promise.resolve();
-            });
+            return expect(authenticate(account)(dispatch), 'to be rejected').then(() =>
+                expect(dispatch, 'was not called')
+            );
         });
     });
 
@@ -108,27 +113,42 @@ describe('Accounts actions', () => {
             const account2 = {...account, id: 2};
 
             getState.returns({
-                accounts: [account2]
+                accounts: [account]
             });
 
-            return revoke(account)(dispatch, getState).then(() =>
-                expect(dispatch, 'to have calls satisfying', [
-                    [remove(account)],
-                    [expect.it('to be a function')]
-                    // [authenticate(account2)] // TODO: this is not a plain action. How should we simplify its testing?
-                ])
-            );
+            return revoke(account2)(dispatch, getState).then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    remove(account2)
+                ]);
+                expect(dispatch, 'to have a call satisfying', [
+                    activate(account)
+                ]);
+                expect(dispatch, 'to have a call satisfying', [
+                    updateUser({...user, isGuest: false})
+                ]);
+                // expect(dispatch, 'to have calls satisfying', [
+                //     [remove(account2)],
+                //     [expect.it('to be a function')]
+                //     // [authenticate(account2)] // TODO: this is not a plain action. How should we simplify its testing?
+                // ])
+            });
         });
 
         it('should logout if no other accounts available', () => {
-            revoke(account)(dispatch, getState)
-                .then(() =>
-                    expect(dispatch, 'to have calls satisfying', [
-                        [remove(account)],
-                        [expect.it('to be a function')]
-                        // [logout()] // TODO: this is not a plain action. How should we simplify its testing?
-                    ])
-                );
+            revoke(account)(dispatch, getState).then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    remove(account)
+                ]);
+                expect(dispatch, 'to have a call satisfying', [
+                    {payload: {isGuest: true}}
+                    // updateUser({isGuest: true})
+                ]);
+                // expect(dispatch, 'to have calls satisfying', [
+                //     [remove(account)],
+                //     [expect.it('to be a function')]
+                //     // [logout()] // TODO: this is not a plain action. How should we simplify its testing?
+                // ])
+            });
         });
     });
 });

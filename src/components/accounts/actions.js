@@ -1,6 +1,7 @@
 import authentication from 'services/api/authentication';
 import accounts from 'services/api/accounts';
 import { updateUser, logout } from 'components/user/actions';
+import { setLocale } from 'components/i18n/actions';
 
 /**
  * @typedef {object} Account
@@ -35,9 +36,13 @@ export function authenticate({token, refreshToken}) {
             .then(({user, account}) => {
                 dispatch(add(account));
                 dispatch(activate(account));
-                dispatch(updateUser(user));
+                dispatch(updateUser({
+                    isGuest: false,
+                    ...user
+                }));
 
-                return account;
+                return dispatch(setLocale(user.lang))
+                    .then(() => account);
             });
     };
 }
@@ -93,5 +98,16 @@ export function activate(account) {
     return {
         type: ACTIVATE,
         payload: account
+    };
+}
+
+export const UPDATE_TOKEN = 'accounts:updateToken';
+/**
+ * @param {string} token
+ */
+export function updateToken(token) {
+    return {
+        type: UPDATE_TOKEN,
+        payload: token
     };
 }

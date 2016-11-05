@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, acceptRules as userAcceptRules, authenticate } from 'components/user/actions';
+import { updateUser, logout as logoutUser, acceptRules as userAcceptRules } from 'components/user/actions';
+import { authenticate } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
@@ -305,7 +306,10 @@ function needActivation() {
 }
 
 function authHandler(dispatch) {
-    return (resp) => dispatch(authenticate(resp.access_token, resp.refresh_token));
+    return (resp) => dispatch(authenticate({
+        token: resp.access_token,
+        refreshToken: resp.refresh_token
+    }));
 }
 
 function validationErrorsHandler(dispatch, repeatUrl) {

@@ -1,4 +1,4 @@
-import { ADD, REMOVE, ACTIVATE } from './actions';
+import { ADD, REMOVE, ACTIVATE, UPDATE_TOKEN } from './actions';
 
 /**
  * @typedef {AccountsState}
@@ -14,7 +14,10 @@ import { ADD, REMOVE, ACTIVATE } from './actions';
  * @return {AccountsState}
  */
 export default function accounts(
-    state,
+    state = {
+        active: null,
+        available: []
+    },
     {type, payload = {}}
 ) {
     switch (type) {
@@ -49,10 +52,20 @@ export default function accounts(
                 available: state.available.filter((account) => account.id !== payload.id)
             };
 
-        default:
+        case UPDATE_TOKEN:
+            if (typeof payload !== 'string') {
+                throw new Error('payload must be a jwt token');
+            }
+
             return {
-                active: null,
-                available: []
+                ...state,
+                active: {
+                    ...state.active,
+                    token: payload
+                }
             };
+
+        default:
+            return state;
     }
 }

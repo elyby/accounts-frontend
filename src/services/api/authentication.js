@@ -1,7 +1,7 @@
 import request from 'services/request';
 import accounts from 'services/api/accounts';
 
-export default {
+const authentication = {
     login({
         login = '',
         password = '',
@@ -48,10 +48,27 @@ export default {
      *                     if it was refreshed
      */
     validateToken({token, refreshToken}) {
-        // TODO: use refresh token to get fresh token. Dont forget, that it may be broken by refreshTokenMiddleware
-        // TODO: cover with tests
-        return accounts.current({token, autoRefreshToken: false})
-            .then(() => ({token, refreshToken}));
+        return new Promise((resolve) => {
+            if (typeof token !== 'string') {
+                throw new Error('token must be a string');
+            }
+
+            if (typeof refreshToken !== 'string') {
+                throw new Error('refreshToken must be a string');
+            }
+
+            resolve();
+        })
+        .then(() => accounts.current({token, autoRefreshToken: false}))
+        .then(() => ({token, refreshToken}))
+        .catch((resp) => {
+            if (resp.message === 'Token expired') {
+                return authentication.requestToken(refreshToken)
+                    .then(({token}) => ({token, refreshToken}));
+            }
+
+            return Promise.reject(resp);
+        });
     },
 
     /**
@@ -70,3 +87,5 @@ export default {
         }));
     }
 };
+
+export default authentication;

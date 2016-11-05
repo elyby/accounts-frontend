@@ -1,5 +1,6 @@
 import authentication from 'services/api/authentication';
-import {updateUser, logout} from '../actions';
+import { updateToken } from 'components/accounts/actions';
+import { logout } from '../actions';
 
 /**
  * Ensures, that all user's requests have fresh access token
@@ -13,8 +14,20 @@ import {updateUser, logout} from '../actions';
 export default function refreshTokenMiddleware({dispatch, getState}) {
     return {
         before(req) {
-            const {refreshToken, token} = getState().user;
+            const {user, accounts} = getState();
+
+            let refreshToken;
+            let token;
+
             const isRefreshTokenRequest = req.url.includes('refresh-token');
+
+            if (accounts.active) {
+                token = accounts.active.token;
+                refreshToken = accounts.active.refreshToken;
+            } else { // #legacy token
+                token = user.token;
+                refreshToken = user.refreshToken;
+            }
 
             if (!token || isRefreshTokenRequest || req.options.autoRefreshToken === false) {
                 return req;
@@ -28,21 +41,24 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
                     return requestAccessToken(refreshToken, dispatch).then(() => req);
                 }
             } catch (err) {
-                dispatch(logout());
+                // console.error('Bad token', err); // TODO: it would be cool to log such things to backend
+                return dispatch(logout()).then(() => req);
             }
 
-            return req;
+            return Promise.resolve(req);
         },
 
         catch(resp, req, restart) {
             if (resp && resp.status === 401 && req.options.autoRefreshToken !== false) {
-                const {refreshToken} = getState().user;
+                const {user, accounts} = getState();
+                const {refreshToken} = accounts.active ? accounts.active : user;
+
                 if (resp.message === 'Token expired' && refreshToken) {
                     // request token and retry
                     return requestAccessToken(refreshToken, dispatch).then(restart);
                 }
 
-                dispatch(logout());
+                return dispatch(logout()).then(() => Promise.reject(resp));
             }
 
             return Promise.reject(resp);
@@ -59,9 +75,7 @@ function requestAccessToken(refreshToken, dispatch) {
     }
 
     return promise
-        .then(({token}) => dispatch(updateUser({
-            token
-        })))
+        .then(({token}) => dispatch(updateToken(token)))
         .catch(() => dispatch(logout()));
 }
 

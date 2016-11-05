@@ -3,6 +3,7 @@ import expect from 'unexpected';
 import refreshTokenMiddleware from 'components/user/middlewares/refreshTokenMiddleware';
 
 import authentication from 'services/api/authentication';
+import { updateToken } from 'components/accounts/actions';
 
 const refreshToken = 'foo';
 const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE0NzA3NjE0NDMsImV4cCI6MTQ3MDc2MTQ0MywiaWF0IjoxNDcwNzYxNDQzLCJqdGkiOiJpZDEyMzQ1NiJ9.gWdnzfQQvarGpkbldUvB8qdJZSVkvdNtCbhbbl2yJW8';
@@ -18,7 +19,9 @@ describe('refreshTokenMiddleware', () => {
         sinon.stub(authentication, 'requestToken').named('authentication.requestToken');
 
         getState = sinon.stub().named('store.getState');
-        dispatch = sinon.stub().named('store.dispatch');
+        dispatch = sinon.spy((arg) =>
+            typeof arg === 'function' ? arg(dispatch, getState) : arg
+        ).named('store.dispatch');
 
         middleware = refreshTokenMiddleware({getState, dispatch});
     });
@@ -27,14 +30,21 @@ describe('refreshTokenMiddleware', () => {
         authentication.requestToken.restore();
     });
 
+    it('must be till 2100 to test with validToken', () =>
+        expect(new Date().getFullYear(), 'to be less than', 2100)
+    );
+
     describe('#before', () => {
         describe('when token expired', () => {
             beforeEach(() => {
                 getState.returns({
-                    user: {
-                        token: expiredToken,
-                        refreshToken
-                    }
+                    accounts: {
+                        active: {
+                            token: expiredToken,
+                            refreshToken
+                        }
+                    },
+                    user: {}
                 });
             });
 
@@ -76,21 +86,94 @@ describe('refreshTokenMiddleware', () => {
                 expect(authentication.requestToken, 'was not called');
             });
 
-            xit('should update user with new token'); // TODO: need a way to test, that action was called
-            xit('should logout if invalid token'); // TODO: need a way to test, that action was called
+            it('should update user with new token', () => {
+                const data = {
+                    url: 'foo',
+                    options: {
+                        headers: {}
+                    }
+                };
 
-            xit('should logout if token request failed', () => {
+                authentication.requestToken.returns(Promise.resolve({token: validToken}));
+
+                return middleware.before(data).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        updateToken(validToken)
+                    ])
+                );
+            });
+
+            it('should if token can not be parsed', () => {
+                getState.returns({
+                    accounts: {
+                        active: {
+                            token: 'realy bad token',
+                            refreshToken
+                        }
+                    },
+                    user: {}
+                });
+
+                const req = {url: 'foo', options: {}};
+
+                return expect(middleware.before(req), 'to be fulfilled with', req).then(() => {
+                    expect(authentication.requestToken, 'was not called');
+
+                    expect(dispatch, 'to have a call satisfying', [
+                        {payload: {isGuest: true}}
+                    ]);
+                });
+            });
+
+            it('should logout if token request failed', () => {
                 authentication.requestToken.returns(Promise.reject());
 
-                return middleware.before({url: 'foo'}).then((resp) => {
-                    // TODO: need a way to test, that action was called
-                    expect(dispatch, 'to have a call satisfying', logout);
+                return expect(middleware.before({url: 'foo', options: {}}), 'to be fulfilled').then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        {payload: {isGuest: true}}
+                    ])
+                );
+            });
+        });
+
+        describe('when token expired legacy user', () => {
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        active: null
+                    },
+                    user: {
+                        token: expiredToken,
+                        refreshToken
+                    }
+                });
+            });
+
+            it('should request new token', () => {
+                const data = {
+                    url: 'foo',
+                    options: {
+                        headers: {}
+                    }
+                };
+
+                authentication.requestToken.returns(Promise.resolve({token: validToken}));
+
+                return middleware.before(data).then((resp) => {
+                    expect(resp, 'to satisfy', data);
+
+                    expect(authentication.requestToken, 'to have a call satisfying', [
+                        refreshToken
+                    ]);
                 });
             });
         });
 
         it('should not be applied if no token', () => {
             getState.returns({
+                accounts: {
+                    active: null
+                },
                 user: {}
             });
 
@@ -114,7 +197,15 @@ describe('refreshTokenMiddleware', () => {
 
         const badTokenReponse = {
             name: 'Unauthorized',
-            message: 'Token expired',
+            message: 'You are requesting with an invalid credential.',
+            code: 0,
+            status: 401,
+            type: 'yii\\web\\UnauthorizedHttpException'
+        };
+
+        const incorrectTokenReponse = {
+            name: 'Unauthorized',
+            message: 'Incorrect token',
             code: 0,
             status: 401,
             type: 'yii\\web\\UnauthorizedHttpException'
@@ -124,9 +215,10 @@ describe('refreshTokenMiddleware', () => {
 
         beforeEach(() => {
             getState.returns({
-                user: {
-                    refreshToken
-                }
+                accounts: {
+                    active: {refreshToken}
+                },
+                user: {}
             });
 
             restart = sinon.stub().named('restart');
@@ -143,12 +235,27 @@ describe('refreshTokenMiddleware', () => {
             })
         );
 
-        xit('should logout user if token cannot be refreshed', () => {
-            // TODO: need a way to test, that action was called
-            return middleware.catch(badTokenReponse, {options: {}}, restart).then(() => {
-                // TODO
-            });
-        });
+        it('should logout user if invalid credential', () =>
+            expect(
+                middleware.catch(badTokenReponse, {options: {}}, restart),
+                'to be rejected'
+            ).then(() =>
+                expect(dispatch, 'to have a call satisfying', [
+                    {payload: {isGuest: true}}
+                ])
+            )
+        );
+
+        it('should logout user if token is incorrect', () =>
+            expect(
+                middleware.catch(incorrectTokenReponse, {options: {}}, restart),
+                'to be rejected'
+            ).then(() =>
+                expect(dispatch, 'to have a call satisfying', [
+                    {payload: {isGuest: true}}
+                ])
+            )
+        );
 
         it('should pass the request through if options.autoRefreshToken === false', () => {
             const promise = middleware.catch(expiredResponse, {
@@ -174,6 +281,26 @@ describe('refreshTokenMiddleware', () => {
                 expect(restart, 'was not called');
                 expect(authentication.requestToken, 'was not called');
             });
+        });
+
+        describe('legacy user.refreshToken', () => {
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        active: null
+                    },
+                    user: {refreshToken}
+                });
+            });
+
+            it('should request new token if expired', () =>
+                middleware.catch(expiredResponse, {options: {}}, restart).then(() => {
+                    expect(authentication.requestToken, 'to have a call satisfying', [
+                        refreshToken
+                    ]);
+                    expect(restart, 'was called');
+                })
+            );
         });
     });
 });

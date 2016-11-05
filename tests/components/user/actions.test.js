@@ -11,8 +11,10 @@ import {
 
 
 describe('components/user/actions', () => {
-    const dispatch = sinon.stub().named('dispatch');
-    const getState = sinon.stub().named('getState');
+    const getState = sinon.stub().named('store.getState');
+    const dispatch = sinon.spy((arg) =>
+        typeof arg === 'function' ? arg(dispatch, getState) : arg
+    ).named('store.dispatch');
 
     const callThunk = function(fn, ...args) {
         const thunk = fn(...args);
