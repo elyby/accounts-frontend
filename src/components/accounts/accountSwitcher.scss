@@ -1,10 +1,27 @@
+@import '~components/ui/colors.scss';
+
 .accountSwitcher {
     background: #fff;
     color: #444;
+    text-align: left;
+}
+
+.lightAccountSwitcher {
+    background: #fff;
+}
+
+.darkAccountSwitcher {
+    background: $black;
 }
 
 .logoutIcon {
     composes: exit from 'components/ui/icons.scss';
+
+    color: #cdcdcd;
+}
+
+.nextIcon {
+    composes: arrowRight from 'components/ui/icons.scss';
 
     color: #cdcdcd;
 }

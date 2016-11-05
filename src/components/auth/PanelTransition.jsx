@@ -33,7 +33,7 @@ const contexts = [
     ['login', 'password', 'forgotPassword', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
     ['acceptRules'],
-    ['permissions']
+    ['chooseAccount', 'permissions']
 ];
 
 if (process.env.NODE_ENV !== 'production') {

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 
 import classNames from 'classnames';
 
@@ -12,8 +12,7 @@ import { userShape } from 'components/user/User';
 export default class LoggedInPanel extends Component {
     static displayName = 'LoggedInPanel';
     static propTypes = {
-        user: userShape,
-        onLogout: PropTypes.func.isRequired
+        user: userShape
     };
 
     render() {
@@ -28,16 +27,10 @@ export default class LoggedInPanel extends Component {
                     <span className={styles.expandIcon} />
 
                     <div className={classNames(styles.accountSwitcherContainer)}>
-                        <AccountSwitcher />
+                        <AccountSwitcher skin="light" />
                     </div>
                 </div>
             </div>
         );
     }
-
-    onLogout = (event) => {
-        event.preventDefault();
-
-        this.props.onLogout();
-    };
 }

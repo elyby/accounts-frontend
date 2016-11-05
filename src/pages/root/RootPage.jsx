@@ -36,7 +36,6 @@ function RootPage(props) {
                         </Link>
                         <div className={styles.userbar}>
                             <Userbar {...props}
-                                onLogout={props.logout}
                                 guestAction={isRegisterPage ? 'login' : 'register'}
                             />
                         </div>
@@ -58,16 +57,12 @@ RootPage.propTypes = {
         pathname: PropTypes.string
     }).isRequired,
     children: PropTypes.element,
-    logout: PropTypes.func.isRequired,
     isPopupActive: PropTypes.bool.isRequired
 };
 
 import { connect } from 'react-redux';
-import { logout } from 'components/user/actions';
 
 export default connect((state) => ({
     user: state.user,
     isPopupActive: state.popup.popups.length > 0
-}), {
-    logout
-})(RootPage);
+}))(RootPage);

@@ -1,0 +1,5 @@
+{
+    "chooseAccountTitle": "Choose an account",
+    "addAccount": "Log into another account",
+    "description": "You have logged in into multiple accounts. Please choose the one, you want to use to authorize {appName}"
+}
