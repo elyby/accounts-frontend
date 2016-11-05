@@ -3,6 +3,9 @@
 }
 
 .item {
+    // TODO: in some cases we do not need overflow hidden
+    // probably, it is better to create a separate class for children, that will
+    // enable overflow hidden and ellipsis
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

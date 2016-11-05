@@ -1,5 +1,14 @@
 .loggedInPanel {
-    justify-content: flex-end;
+}
+
+.activeAccount {
+    position: relative;
+
+    &:hover {
+        .accountSwitcherContainer {
+            display: block;
+        }
+    }
 }
 
 .userIcon {
@@ -11,12 +20,22 @@
     padding-right: 5px;
 }
 
+.expandIcon {
+    composes: arrow from 'components/ui/icons.scss';
+
+    margin-left: 5px;
+    font-size: 12px;
+}
+
 .userName {
 
 }
 
-.logoutIcon {
-    composes: exit from 'components/ui/icons.scss';
+.accountSwitcherContainer {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    cursor: auto;
 
-    color: #cdcdcd;
+    display: none;
 }

@@ -1,0 +1,10 @@
+.accountSwitcher {
+    background: #fff;
+    color: #444;
+}
+
+.logoutIcon {
+    composes: exit from 'components/ui/icons.scss';
+
+    color: #cdcdcd;
+}
