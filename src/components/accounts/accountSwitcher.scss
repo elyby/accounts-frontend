@@ -1,9 +1,17 @@
 @import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+$borderColor: #EEE;
 
 .accountSwitcher {
     background: #fff;
     color: #444;
     text-align: left;
+    width: 205px;
+
+    $border: 1px solid $borderColor;
+    border-left: $border;
+    border-right: $border;
 }
 
 .lightAccountSwitcher {
@@ -12,6 +20,64 @@
 
 .darkAccountSwitcher {
     background: $black;
+}
+
+.item {
+    padding: 15px;
+    border-bottom: 1px solid $borderColor;
+}
+
+.accountIcon {
+    composes: minecraft-character from 'components/ui/icons.scss';
+
+    font-size: 40px;
+    color: $green;
+    float: left;
+}
+
+.activeAccountInfo {
+    margin-left: 29px;
+}
+
+.activeAccountUsername {
+    font-size: 20px;
+    line-height: normal; // button style override
+    color: $green;
+}
+
+.activeAccountEmail {
+    font-size: 10px;
+    color: #999;
+
+    line-height: normal; // button style override
+    font-family: $font-family-base; // button style override
+}
+
+.links {
+    margin-top: 6px;
+}
+
+.link {
+    line-height: normal; // button style override
+    font-size: 12px; // button style override
+    margin-bottom: 3px;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+
+    a {
+        color: #666;
+        font-size: 12px;
+        border-bottom: 1px dotted #666;
+        text-decoration: none;
+        transition: .25s;
+
+        &:hover {
+            border-bottom-color: #777;
+            color: #777;
+        }
+    }
 }
 
 .logoutIcon {

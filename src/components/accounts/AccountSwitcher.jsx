@@ -59,26 +59,32 @@ export default class AccountSwitcher extends Component {
                 styles[`${skin}AccountSwitcher`],
             )}>
                 {highlightActiveAccount ? (
-                    <div>
-                        <div className="account-icon"></div>
-                        <div>
-                            <div>
+                    <div className={styles.item}>
+                        <div className={styles.accountIcon}></div>
+                        <div className={styles.activeAccountInfo}>
+                            <div className={styles.activeAccountUsername}>
                                 {accounts.active.username}
                             </div>
-                            <div>
+                            <div className={styles.activeAccountEmail}>
                                 {accounts.active.email}
                             </div>
-                            <a href="">
-                                <Message {...messages.goToEly} />
-                            </a>
-                            <a href="">
-                                <Message {...messages.logout} />
-                            </a>
+                            <div className={styles.links}>
+                                <div className={styles.link}>
+                                    <a href="">
+                                        <Message {...messages.goToEly} />
+                                    </a>
+                                </div>
+                                <div className={styles.link}>
+                                    <a href="" className={styles.link}>
+                                        <Message {...messages.logout} />
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ) : null}
                 {available.map((account) => (
-                    <div key={account.id}>
+                    <div className={styles.item} key={account.id}>
                         <div className="account-icon"></div>
                         <div>
                             <div>

@@ -1,8 +1,14 @@
+@import '~components/ui/colors.scss';
+
 .loggedInPanel {
 }
 
 .activeAccount {
     position: relative;
+
+    $border: 1px solid rgba(#fff, .15);
+    border-left: $border;
+    border-right: $border;
 
     &:hover {
         .accountSwitcherContainer {
@@ -21,10 +27,11 @@
 }
 
 .expandIcon {
-    composes: arrow from 'components/ui/icons.scss';
+    composes: caret from 'components/ui/icons.scss';
 
-    margin-left: 5px;
-    font-size: 12px;
+    margin-left: 4px;
+    font-size: 6px;
+    color: #CCC;
 }
 
 .userName {
