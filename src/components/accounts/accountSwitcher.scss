@@ -1,82 +1,228 @@
 @import '~components/ui/colors.scss';
 @import '~components/ui/fonts.scss';
 
-$borderColor: #EEE;
+// TODO: эту константу можно заимпортить из panel.scss, но это приводит к странным ошибкам
+//@import '~components/ui/panel.scss';
+$bodyLeftRightPadding: 20px;
+
+$lightBorderColor: #EEE;
 
 .accountSwitcher {
-    background: #fff;
-    color: #444;
     text-align: left;
-    width: 205px;
+}
 
-    $border: 1px solid $borderColor;
-    border-left: $border;
-    border-right: $border;
+.accountInfo {
+
+}
+
+.accountUsername {
+    line-height: normal; // button style override
+}
+
+.accountEmail {
+    line-height: normal; // button style override
+    font-family: $font-family-base; // button style override
 }
 
 .lightAccountSwitcher {
     background: #fff;
+    color: #444;
+    width: 205px;
+
+    $border: 1px solid $lightBorderColor;
+    border-left: $border;
+    border-right: $border;
+    border-bottom: 7px solid darker($green);
+
+    .item {
+        padding: 15px;
+        border-bottom: 1px solid $lightBorderColor;
+    }
+
+    .accountSwitchItem {
+        cursor: pointer;
+        transition: .25s;
+
+        &:hover {
+            background-color: $lightButtonLight;
+        }
+
+        &:active {
+            background-color: $lightButtonDark;
+        }
+    }
+
+    .accountIcon {
+        font-size: 27px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .activeAccountIcon {
+        font-size: 40px;
+    }
+
+    .activeAccountInfo {
+        margin-left: 29px;
+    }
+
+    .activeAccountUsername {
+        font-size: 20px;
+        line-height: normal; // button style override
+        color: $green;
+    }
+
+    .activeAccountEmail {
+    }
+
+    .links {
+        margin-top: 6px;
+    }
+
+    .link {
+        line-height: normal; // button style override
+        font-size: 12px; // button style override
+        margin-bottom: 3px;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+
+        a {
+            color: #666;
+            font-size: 12px;
+            border-bottom: 1px dotted #666;
+            text-decoration: none;
+            transition: .25s;
+
+            &:hover {
+                border-bottom-color: #aaa;
+                color: #777;
+            }
+        }
+    }
+
+    .accountInfo {
+        margin-left: 29px;
+        margin-right: 25px;
+    }
+
+    .accountUsername {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .accountEmail {
+        font-size: 10px;
+        color: #999;
+    }
+
+    .addAccount {
+    }
 }
 
 .darkAccountSwitcher {
     background: $black;
-}
 
-.item {
-    padding: 15px;
-    border-bottom: 1px solid $borderColor;
+    $border: 1px solid lighter($black);
+
+    .item {
+        padding: 15px 20px;
+        border-top: 1px solid lighter($black);
+        transition: .25s;
+        cursor: pointer;
+
+        &:hover {
+            background-color: lighter($black);
+        }
+
+        &:active {
+            background-color: darker($black);
+        }
+
+        &:last-of-type {
+            border-bottom: $border;
+        }
+    }
+
+    .accountIcon {
+        font-size: 35px;
+    }
+
+    .accountInfo {
+        margin-left: 30px;
+        margin-right: 26px;
+    }
+
+    .accountUsername {
+        color: #fff;
+    }
+
+    .accountEmail {
+        color: #666;
+        font-size: 12px;
+    }
 }
 
 .accountIcon {
     composes: minecraft-character from 'components/ui/icons.scss';
 
-    font-size: 40px;
-    color: $green;
     float: left;
-}
 
-.activeAccountInfo {
-    margin-left: 29px;
-}
-
-.activeAccountUsername {
-    font-size: 20px;
-    line-height: normal; // button style override
-    color: $green;
-}
-
-.activeAccountEmail {
-    font-size: 10px;
-    color: #999;
-
-    line-height: normal; // button style override
-    font-family: $font-family-base; // button style override
-}
-
-.links {
-    margin-top: 6px;
-}
-
-.link {
-    line-height: normal; // button style override
-    font-size: 12px; // button style override
-    margin-bottom: 3px;
-
-    &:last-of-type {
-        margin-bottom: 0;
+    &1 {
+        color: $green;
     }
 
-    a {
-        color: #666;
-        font-size: 12px;
-        border-bottom: 1px dotted #666;
-        text-decoration: none;
-        transition: .25s;
+    &2 {
+        color: $blue;
+    }
 
-        &:hover {
-            border-bottom-color: #777;
-            color: #777;
-        }
+    &3 {
+        color: $violet;
+    }
+
+    &4 {
+        color: $orange;
+    }
+
+    &5 {
+        color: $dark_blue;
+    }
+
+    &6 {
+        color: $light_violet;
+    }
+
+    &7 {
+        color: $red;
+    }
+}
+
+.addIcon {
+    composes: plus from 'components/ui/icons.scss';
+
+    color: $green;
+    position: relative;
+    bottom: 1px;
+    margin-right: 3px;
+}
+
+.nextIcon {
+    composes: arrowRight from 'components/ui/icons.scss';
+
+    position: relative;
+    float: right;
+
+    font-size: 24px;
+    color: #4E4E4E;
+    line-height: 35px;
+    left: 0;
+
+    transition: color .25s, left .5s;
+
+    .item:hover & {
+        color: #aaa;
+        left: 5px;
     }
 }
 
@@ -84,10 +230,11 @@ $borderColor: #EEE;
     composes: exit from 'components/ui/icons.scss';
 
     color: #cdcdcd;
-}
+    float: right;
+    line-height: 27px;
+    transition: .25s;
 
-.nextIcon {
-    composes: arrowRight from 'components/ui/icons.scss';
-
-    color: #cdcdcd;
+    &:hover {
+        color: #777;
+    }
 }

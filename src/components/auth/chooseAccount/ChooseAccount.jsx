@@ -9,4 +9,3 @@ export default factory({
         label: messages.addAccount
     }
 });
-

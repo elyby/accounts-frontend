@@ -19,7 +19,9 @@ export default class Button extends FormComponent {
             PropTypes.string
         ]).isRequired,
         block: PropTypes.bool,
-        color: PropTypes.oneOf(colors)
+        small: PropTypes.bool,
+        color: PropTypes.oneOf(colors),
+        className: PropTypes.string
     };
 
     static defaultProps = {
@@ -27,7 +29,7 @@ export default class Button extends FormComponent {
     };
 
     render() {
-        const { color, block, small } = this.props;
+        const { color, block, small, className } = this.props;
 
         const props = omit(this.props, Object.keys(Button.propTypes));
 
@@ -37,7 +39,7 @@ export default class Button extends FormComponent {
             <button className={classNames(buttons[color], {
                 [buttons.block]: block,
                 [buttons.smallButton]: small
-            })}
+            }, className)}
                 {...props}
             >
                 {label}

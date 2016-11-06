@@ -10,8 +10,8 @@ $light: #ebe8e1;
 $black: #232323;
 
 $defaultButtonTextColor : #fff;
-$black-button-light: #392f2c;
-$black-button-dark: #1e0b11;
+$lightButtonLight: #f5f5f5;
+$lightButtonDark: #f5f5f5; // TODO: найти оптимальный цвет для прожатого состояния
 
 @function darker($color) {
     $elyColorsMap : (

@@ -42,7 +42,6 @@
     }
 }
 
-// TODO: не уверен на счёт этого класса. Мб может лучше добавить это как класс-модификатор для .button?
 .smallButton {
     composes: button;
 
@@ -52,20 +51,23 @@
     line-height: 30px;
 }
 
-.black {
+.light {
     composes: button;
 
-    background-color: $black;
+    background-color: #fff;
+    color: #444;
 
     &:hover {
-        background-color: $black-button-light;
+        color: #262626;
+        background-color: $lightButtonLight;
     }
 
     &:active {
-        background-color: $black-button-dark;
+        background-color: $lightButtonDark;
     }
 }
 
+@include button-theme('black', $black);
 @include button-theme('blue', $blue);
 @include button-theme('green', $green);
 @include button-theme('orange', $orange);

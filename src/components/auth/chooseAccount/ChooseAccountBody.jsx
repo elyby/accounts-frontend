@@ -21,7 +21,7 @@ export default class ChooseAccountBody extends BaseAuthBody {
             <div>
                 {this.renderErrors()}
 
-                <div>
+                <div className={styles.description}>
                     <Message {...messages.description} values={{
                         appName: <span className={styles.appName}>{client.name}</span>
                     }} />

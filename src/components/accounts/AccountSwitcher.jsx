@@ -3,7 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
 
-import { skins, SKIN_DARK } from 'components/ui';
+import { skins, SKIN_DARK, COLOR_LIGHT } from 'components/ui';
+import { Button } from 'components/ui/form';
 
 import styles from './accountSwitcher.scss';
 import messages from './AccountSwitcher.intl.json';
@@ -12,9 +13,9 @@ const accounts = {
     active: {id: 7, username: 'SleepWalker', email: 'danilenkos@auroraglobal.com'},
     available: [
         {id: 7, username: 'SleepWalker', email: 'danilenkos@auroraglobal.com'},
-        {id: 8, username: 'ErickSkrauch', email: 'erick@foo.bar'},
-        {id: 9, username: 'Ely-en', email: 'ely@-enfoo.bar'},
-        {id: 10, username: 'Ely-by', email: 'ely-by@foo.bar'},
+        {id: 8, username: 'ErickSkrauch', email: 'erickskrauch@yandex.ru'},
+        {id: 9, username: 'Ely-en', email: 'ely-en@ely.by'},
+        {id: 10, username: 'Ely-by', email: 'ely-pt@ely.by'},
     ]
 };
 
@@ -31,7 +32,7 @@ export default class AccountSwitcher extends Component {
             }))
         }),
         skin: PropTypes.oneOf(skins),
-        hightLightActiveAccount: PropTypes.bool, // whether active account should be expanded and shown on the top
+        highlightActiveAccount: PropTypes.bool, // whether active account should be expanded and shown on the top
         allowLogout: PropTypes.bool, // whether to show logout icon near each account
         allowAdd: PropTypes.bool // whether to show add account button
     };
@@ -60,12 +61,16 @@ export default class AccountSwitcher extends Component {
             )}>
                 {highlightActiveAccount ? (
                     <div className={styles.item}>
-                        <div className={styles.accountIcon}></div>
+                        <div className={classNames(
+                            styles.accountIcon,
+                            styles.activeAccountIcon,
+                            styles.accountIcon1
+                        )}></div>
                         <div className={styles.activeAccountInfo}>
                             <div className={styles.activeAccountUsername}>
                                 {accounts.active.username}
                             </div>
-                            <div className={styles.activeAccountEmail}>
+                            <div className={classNames(styles.accountEmail, styles.activeAccountEmail)}>
                                 {accounts.active.email}
                             </div>
                             <div className={styles.links}>
@@ -83,30 +88,47 @@ export default class AccountSwitcher extends Component {
                         </div>
                     </div>
                 ) : null}
-                {available.map((account) => (
-                    <div className={styles.item} key={account.id}>
-                        <div className="account-icon"></div>
-                        <div>
-                            <div>
-                                {account.username}
-                            </div>
-                            <div>
-                                {account.email}
-                            </div>
-                        </div>
+                {available.map((account, id) => (
+                    <div className={classNames(styles.item, styles.accountSwitchItem)} key={account.id}>
+                        <div className={classNames(
+                            styles.accountIcon,
+                            styles[`accountIcon${id % 7 + (highlightActiveAccount ? 2 : 1)}`]
+                        )}></div>
+
                         {allowLogout ? (
                             <div className={styles.logoutIcon}></div>
                         ) : (
                             <div className={styles.nextIcon}></div>
                         )}
+
+                        <div className={styles.accountInfo}>
+                            <div className={styles.accountUsername}>
+                                {account.username}
+                            </div>
+                            <div className={styles.accountEmail}>
+                                {account.email}
+                            </div>
+                        </div>
                     </div>
                 ))}
                 {allowAdd ? (
                     <div>
-                        <div>
-                            <span className={styles.addAccount}>+</span>
-                            <Message {...messages.addAccount} />
-                        </div>
+                        <Button
+                            color={COLOR_LIGHT}
+                            block
+                            small
+                            className={styles.addAccount}
+                            label={
+                                <Message {...messages.addAccount}>
+                                    {(message) =>
+                                        <span>
+                                            <div className={styles.addIcon} />
+                                            {message}
+                                        </span>
+                                    }
+                                </Message>
+                            }
+                        />
                     </div>
                 ) : null}
             </div>
