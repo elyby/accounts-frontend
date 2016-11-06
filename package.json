@@ -51,6 +51,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-runtime": "^6.0.0",
     "bundle-loader": "^0.5.4",
+    "circular-dependency-plugin": "^2.0.0",
     "css-loader": "^0.23.0",
     "enzyme": "^2.2.0",
     "eslint": "^3.1.1",
