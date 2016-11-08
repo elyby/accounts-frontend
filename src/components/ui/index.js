@@ -9,7 +9,7 @@ export const COLOR_LIGHT_VIOLET = 'lightViolet';
 export const COLOR_ORANGE = 'orange';
 export const COLOR_RED = 'red';
 export const COLOR_BLACK = 'black';
-export const COLOR_LIGHT = 'light';
+export const COLOR_WHITE = 'white';
 
 export const colors = [
     COLOR_GREEN,
@@ -20,7 +20,7 @@ export const colors = [
     COLOR_ORANGE,
     COLOR_RED,
     COLOR_BLACK,
-    COLOR_LIGHT
+    COLOR_WHITE
 ];
 
 export const skins = [SKIN_DARK, SKIN_LIGHT];

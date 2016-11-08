@@ -51,7 +51,7 @@
     line-height: 30px;
 }
 
-.light {
+.white {
     composes: button;
 
     background-color: #fff;
@@ -59,11 +59,11 @@
 
     &:hover {
         color: #262626;
-        background-color: $lightButtonLight;
+        background-color: $whiteButtonLight;
     }
 
     &:active {
-        background-color: $lightButtonDark;
+        background-color: $whiteButtonDark;
     }
 }
 

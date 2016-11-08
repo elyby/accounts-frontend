@@ -44,11 +44,11 @@ $lightBorderColor: #EEE;
         transition: .25s;
 
         &:hover {
-            background-color: $lightButtonLight;
+            background-color: $whiteButtonLight;
         }
 
         &:active {
-            background-color: $lightButtonDark;
+            background-color: $whiteButtonDark;
         }
     }
 

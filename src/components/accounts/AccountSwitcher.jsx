@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
 
-import { skins, SKIN_DARK, COLOR_LIGHT } from 'components/ui';
+import { skins, SKIN_DARK, COLOR_WHITE } from 'components/ui';
 import { Button } from 'components/ui/form';
 
 import styles from './accountSwitcher.scss';
@@ -114,7 +114,7 @@ export default class AccountSwitcher extends Component {
                 {allowAdd ? (
                     <div>
                         <Button
-                            color={COLOR_LIGHT}
+                            color={COLOR_WHITE}
                             block
                             small
                             className={styles.addAccount}
