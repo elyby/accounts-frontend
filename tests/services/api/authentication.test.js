@@ -21,7 +21,7 @@ describe('authentication api', () => {
             expect(authentication.validateToken(validTokens), 'to be fulfilled')
                 .then(() => {
                     expect(accounts.current, 'to have a call satisfying', [
-                        {token: 'foo', autoRefreshToken: false}
+                        {token: 'foo'}
                     ]);
                 })
         );

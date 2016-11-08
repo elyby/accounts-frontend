@@ -16,10 +16,12 @@ import { setLocale } from 'components/i18n/actions';
  * @param {Account|object} account
  * @param {string} account.token
  * @param {string} account.refreshToken
+ *
+ * @return {function}
  */
 export function authenticate({token, refreshToken}) {
-    return (dispatch) => {
-        return authentication.validateToken({token, refreshToken})
+    return (dispatch) =>
+        authentication.validateToken({token, refreshToken})
             .then(({token, refreshToken}) =>
                 accounts.current({token})
                     .then((user) => ({
@@ -44,11 +46,12 @@ export function authenticate({token, refreshToken}) {
                 return dispatch(setLocale(user.lang))
                     .then(() => account);
             });
-    };
 }
 
 /**
  * @param {Account} account
+ *
+ * @return {function}
  */
 export function revoke(account) {
     return (dispatch, getState) => {
@@ -56,9 +59,9 @@ export function revoke(account) {
 
         if (getState().accounts.length) {
             return dispatch(authenticate(getState().accounts[0]));
-        } else {
-            return dispatch(logout());
         }
+
+        return dispatch(logout());
     };
 }
 
@@ -67,6 +70,8 @@ export const ADD = 'accounts:add';
  * @api private
  *
  * @param {Account} account
+ *
+ * @return {object} - action definition
  */
 export function add(account) {
     return {
@@ -80,6 +85,8 @@ export const REMOVE = 'accounts:remove';
  * @api private
  *
  * @param {Account} account
+ *
+ * @return {object} - action definition
  */
 export function remove(account) {
     return {
@@ -93,6 +100,8 @@ export const ACTIVATE = 'accounts:activate';
  * @api private
  *
  * @param {Account} account
+ *
+ * @return {object} - action definition
  */
 export function activate(account) {
     return {
@@ -104,6 +113,8 @@ export function activate(account) {
 export const UPDATE_TOKEN = 'accounts:updateToken';
 /**
  * @param {string} token
+ *
+ * @return {object} - action definition
  */
 export function updateToken(token) {
     return {

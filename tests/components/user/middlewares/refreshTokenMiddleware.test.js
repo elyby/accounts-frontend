@@ -76,10 +76,10 @@ describe('refreshTokenMiddleware', () => {
                 expect(authentication.requestToken, 'was not called');
             });
 
-            it('should not apply if options.autoRefreshToken === false', () => {
+            it('should not auto refresh token if options.token specified', () => {
                 const data = {
                     url: 'foo',
-                    options: {autoRefreshToken: false}
+                    options: {token: 'foo'}
                 };
                 middleware.before(data);
 
@@ -257,10 +257,10 @@ describe('refreshTokenMiddleware', () => {
             )
         );
 
-        it('should pass the request through if options.autoRefreshToken === false', () => {
+        it('should pass the request through if options.token specified', () => {
             const promise = middleware.catch(expiredResponse, {
                 options: {
-                    autoRefreshToken: false
+                    token: 'foo'
                 }
             }, restart);
 

@@ -1,6 +1,7 @@
 import expect from 'unexpected';
 
 import accounts from 'services/api/accounts';
+import authentication from 'services/api/authentication';
 import { authenticate, revoke, add, activate, remove, ADD, REMOVE, ACTIVATE } from 'components/accounts/actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
@@ -36,11 +37,18 @@ describe('Accounts actions', () => {
             user: {}
         });
 
+        sinon.stub(authentication, 'validateToken').named('authentication.validateToken');
+        authentication.validateToken.returns(Promise.resolve({
+            token: account.token,
+            refreshToken: account.refreshToken
+        }));
+
         sinon.stub(accounts, 'current').named('accounts.current');
         accounts.current.returns(Promise.resolve(user));
     });
 
     afterEach(() => {
+        authentication.validateToken.restore();
         accounts.current.restore();
     });
 

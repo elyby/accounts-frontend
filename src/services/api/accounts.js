@@ -3,15 +3,14 @@ import request from 'services/request';
 export default {
     /**
      * @param {object} options
-     * @param {object} [options.token] - an optional token to overwrite headers in middleware
-     * @param {bool} [options.autoRefreshToken=true] - disable token auto refresh during request
+     * @param {object} [options.token] - an optional token to overwrite headers
+     *                                   in middleware and disable token auto-refresh
      *
      * @return {Promise<User>}
      */
     current(options = {}) {
         return request.get('/api/accounts/current', {}, {
-            token: options.token,
-            autoRefreshToken: options.autoRefreshToken
+            token: options.token
         });
     },
 

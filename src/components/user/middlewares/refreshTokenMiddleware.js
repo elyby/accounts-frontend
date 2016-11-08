@@ -29,7 +29,7 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
                 refreshToken = user.refreshToken;
             }
 
-            if (!token || isRefreshTokenRequest || req.options.autoRefreshToken === false) {
+            if (!token || req.options.token || isRefreshTokenRequest) {
                 return req;
             }
 
@@ -49,7 +49,7 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
         },
 
         catch(resp, req, restart) {
-            if (resp && resp.status === 401 && req.options.autoRefreshToken !== false) {
+            if (resp && resp.status === 401 && !req.options.token) {
                 const {user, accounts} = getState();
                 const {refreshToken} = accounts.active ? accounts.active : user;
 

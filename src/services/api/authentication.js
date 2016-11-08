@@ -59,7 +59,7 @@ const authentication = {
 
             resolve();
         })
-        .then(() => accounts.current({token, autoRefreshToken: false}))
+        .then(() => accounts.current({token}))
         .then(() => ({token, refreshToken}))
         .catch((resp) => {
             if (resp.message === 'Token expired') {
