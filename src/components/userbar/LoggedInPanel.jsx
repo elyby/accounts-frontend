@@ -37,7 +37,7 @@ export default class LoggedInPanel extends Component {
                 <div className={classNames(styles.activeAccount, {
                     [styles.activeAccountExpanded]: isAccountSwitcherActive
                 })}>
-                    <button className={buttons.green} onClick={this.onExpandAccountSwitcher}>
+                    <button className={styles.activeAccountButton} onClick={this.onExpandAccountSwitcher}>
                         <span className={styles.userIcon} />
                         <span className={styles.userName}>{user.username}</span>
                         <span className={styles.expandIcon} />

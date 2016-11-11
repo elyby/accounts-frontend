@@ -12,13 +12,21 @@
     border-right: $border;
 }
 
+.activeAccountButton {
+    composes: green from 'components/ui/buttons.scss';
+}
+
 .activeAccountExpanded {
+    .activeAccountButton {
+        background-color: darker($green);
+    }
+
     .accountSwitcherContainer {
         display: block;
     }
 
     .expandIcon {
-        transform: rotate(180deg);
+        transform: rotate(-180deg);
     }
 }
 
@@ -37,6 +45,7 @@
     margin-left: 4px;
     font-size: 6px;
     color: #CCC;
+    transition: .2s;
 }
 
 .userName {
