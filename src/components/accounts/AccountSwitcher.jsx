@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import classNames from 'classnames';
+import { Link } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { skins, SKIN_DARK, COLOR_WHITE } from 'components/ui';
@@ -112,7 +113,7 @@ export default class AccountSwitcher extends Component {
                     </div>
                 ))}
                 {allowAdd ? (
-                    <div>
+                    <Link to="/login">
                         <Button
                             color={COLOR_WHITE}
                             block
@@ -129,7 +130,7 @@ export default class AccountSwitcher extends Component {
                                 </Message>
                             }
                         />
-                    </div>
+                    </Link>
                 ) : null}
             </div>
         );

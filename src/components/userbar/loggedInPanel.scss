@@ -5,15 +5,20 @@
 
 .activeAccount {
     position: relative;
+    display: inline-block;
 
     $border: 1px solid rgba(#fff, .15);
     border-left: $border;
     border-right: $border;
+}
 
-    &:hover {
-        .accountSwitcherContainer {
-            display: block;
-        }
+.activeAccountExpanded {
+    .accountSwitcherContainer {
+        display: block;
+    }
+
+    .expandIcon {
+        transform: rotate(180deg);
     }
 }
 

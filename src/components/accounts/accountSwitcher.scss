@@ -5,7 +5,7 @@
 //@import '~components/ui/panel.scss';
 $bodyLeftRightPadding: 20px;
 
-$lightBorderColor: #EEE;
+$lightBorderColor: #eee;
 
 .accountSwitcher {
     text-align: left;
@@ -16,12 +16,9 @@ $lightBorderColor: #EEE;
 }
 
 .accountUsername {
-    line-height: normal; // button style override
 }
 
 .accountEmail {
-    line-height: normal; // button style override
-    font-family: $font-family-base; // button style override
 }
 
 .lightAccountSwitcher {
@@ -68,7 +65,6 @@ $lightBorderColor: #EEE;
 
     .activeAccountUsername {
         font-size: 20px;
-        line-height: normal; // button style override
         color: $green;
     }
 
@@ -80,8 +76,7 @@ $lightBorderColor: #EEE;
     }
 
     .link {
-        line-height: normal; // button style override
-        font-size: 12px; // button style override
+        font-size: 12px;
         margin-bottom: 3px;
 
         &:last-of-type {
