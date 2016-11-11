@@ -11,6 +11,8 @@ import ActivationState from './ActivationState';
 import CompleteState from './CompleteState';
 import ResendActivationState from './ResendActivationState';
 
+import dispatchBsod from 'components/ui/bsod/dispatchBsod';
+
 export default class AuthFlow {
     constructor(actions) {
         if (typeof actions !== 'object') {
