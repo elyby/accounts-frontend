@@ -64,6 +64,7 @@ $lightBorderColor: #eee;
     }
 
     .activeAccountUsername {
+        font-family: $font-family-title;
         font-size: 20px;
         color: $green;
     }
@@ -103,8 +104,9 @@ $lightBorderColor: #eee;
     }
 
     .accountUsername {
-        color: #666;
+        font-family: $font-family-title;
         font-size: 14px;
+        color: #666;
     }
 
     .accountEmail {
@@ -150,6 +152,7 @@ $lightBorderColor: #eee;
     }
 
     .accountUsername {
+        font-family: $font-family-title;
         color: #fff;
     }
 
