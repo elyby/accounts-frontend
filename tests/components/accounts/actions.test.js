@@ -22,7 +22,7 @@ const user = {
     lang: 'be'
 };
 
-describe('Accounts actions', () => {
+describe('components/accounts/actions', () => {
     let dispatch;
     let getState;
 
@@ -109,19 +109,15 @@ describe('Accounts actions', () => {
     });
 
     describe('#revoke()', () => {
-        it(`should dispatch ${REMOVE} action`, () => {
-            revoke(account)(dispatch, getState);
-
-            expect(dispatch, 'to have a call satisfying', [
-                remove(account)
-            ]);
-        });
-
         it('should switch next account if available', () => {
             const account2 = {...account, id: 2};
 
             getState.returns({
-                accounts: [account]
+                accounts: {
+                    active: account2,
+                    available: [account]
+                },
+                user
             });
 
             return revoke(account2)(dispatch, getState).then(() => {
@@ -143,10 +139,15 @@ describe('Accounts actions', () => {
         });
 
         it('should logout if no other accounts available', () => {
+            getState.returns({
+                accounts: {
+                    active: account,
+                    available: []
+                },
+                user
+            });
+
             revoke(account)(dispatch, getState).then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    remove(account)
-                ]);
                 expect(dispatch, 'to have a call satisfying', [
                     {payload: {isGuest: true}}
                     // updateUser({isGuest: true})

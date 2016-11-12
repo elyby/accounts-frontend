@@ -446,12 +446,28 @@ class PanelTransition extends Component {
     }
 }
 
-export default connect((state) => ({
-    user: state.user,
-    auth: state.auth,
-    resolve: authFlow.resolve.bind(authFlow),
-    reject: authFlow.reject.bind(authFlow)
-}), {
+export default connect((state) => {
+    const {login} = state.auth;
+    const user = {
+        ...state.user,
+        isGuest: true,
+        email: '',
+        username: ''
+    };
+
+    if (/[@.]/.test(login)) {
+        user.email = login;
+    } else {
+        user.username = login;
+    }
+
+    return {
+        user,
+        auth: state.auth,
+        resolve: authFlow.resolve.bind(authFlow),
+        reject: authFlow.reject.bind(authFlow)
+    };
+}, {
     clearErrors: actions.clearErrors,
     setErrors: actions.setErrors
 })(PanelTransition);

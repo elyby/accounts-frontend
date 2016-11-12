@@ -45,11 +45,23 @@ describe('Accounts reducer', () => {
             })
         );
 
-        it('should not add the same account twice', () =>
-            expect(accounts({...initial, available: [account]}, add(account)), 'to satisfy', {
-                available: [account]
-            })
-        );
+        it('should replace if account was added for the second time', () => {
+            const outdatedAccount = {
+                ...account,
+                someShit: true
+            };
+
+            const updatedAccount = {
+                ...account,
+                token: 'newToken'
+            };
+
+            return expect(
+                accounts({...initial, available: [outdatedAccount]}, add(updatedAccount)),
+                'to satisfy', {
+                    available: [updatedAccount]
+                });
+        });
 
         it('throws, when account is invalid', () => {
             expect(() => accounts(initial, add()),

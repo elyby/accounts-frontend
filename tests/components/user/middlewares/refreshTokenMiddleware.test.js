@@ -68,7 +68,7 @@ describe('refreshTokenMiddleware', () => {
             });
 
             it('should not apply to refresh-token request', () => {
-                const data = {url: '/refresh-token'};
+                const data = {url: '/refresh-token', options: {}};
                 const resp = middleware.before(data);
 
                 expect(resp, 'to satisfy', data);

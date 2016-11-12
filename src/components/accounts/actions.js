@@ -55,10 +55,11 @@ export function authenticate({token, refreshToken}) {
  */
 export function revoke(account) {
     return (dispatch, getState) => {
-        dispatch(remove(account));
+        const accountToReplace = getState().accounts.available.find(({id}) => id !== account.id);
 
-        if (getState().accounts.length) {
-            return dispatch(authenticate(getState().accounts[0]));
+        if (accountToReplace) {
+            return dispatch(authenticate(accountToReplace))
+                .then(() => dispatch(remove(account)));
         }
 
         return dispatch(logout());

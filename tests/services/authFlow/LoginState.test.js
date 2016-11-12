@@ -1,6 +1,5 @@
 import LoginState from 'services/authFlow/LoginState';
 import PasswordState from 'services/authFlow/PasswordState';
-import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
@@ -24,7 +23,8 @@ describe('LoginState', () => {
     describe('#enter', () => {
         it('should navigate to /login', () => {
             context.getState.returns({
-                user: {isGuest: true}
+                user: {isGuest: true},
+                auth: {login: null}
             });
 
             expectNavigate(mock, '/login');
@@ -32,22 +32,15 @@ describe('LoginState', () => {
             state.enter(context);
         });
 
-        const testTransitionToPassword = (user) => {
+        it('should transition to password if login was set', () => {
             context.getState.returns({
-                user: user
+                user: {isGuest: true},
+                auth: {login: 'foo'}
             });
 
             expectState(mock, PasswordState);
 
             state.enter(context);
-        };
-
-        it('should transition to password if has email', () => {
-            testTransitionToPassword({email: 'foo'});
-        });
-
-        it('should transition to password if has username', () => {
-            testTransitionToPassword({username: 'foo'});
         });
     });
 

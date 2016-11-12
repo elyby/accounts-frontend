@@ -20,19 +20,7 @@ export function login({login = '', password = '', rememberMe = false}) {
         .catch((resp) => {
             if (resp.errors) {
                 if (resp.errors.password === PASSWORD_REQUIRED) {
-                    let username = '';
-                    let email = '';
-
-                    if (/[@.]/.test(login)) {
-                        email = login;
-                    } else {
-                        username = login;
-                    }
-
-                    return dispatch(updateUser({
-                        username,
-                        email
-                    }));
+                    return dispatch(setLogin(login));
                 } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                     return dispatch(needActivation());
                 } else if (resp.errors.login === LOGIN_REQUIRED && password) {
@@ -126,7 +114,15 @@ export function resendActivation({email = '', captcha}) {
     );
 }
 
-export const ERROR = 'error';
+export const SET_LOGIN = 'auth:setLogin';
+export function setLogin(login) {
+    return {
+        type: SET_LOGIN,
+        payload: login
+    };
+}
+
+export const ERROR = 'auth:error';
 export function setErrors(errors) {
     return {
         type: ERROR,
@@ -309,7 +305,11 @@ function authHandler(dispatch) {
     return (resp) => dispatch(authenticate({
         token: resp.access_token,
         refreshToken: resp.refresh_token
-    }));
+    })).then((resp) => {
+        dispatch(setLogin(null));
+
+        return resp;
+    });
 }
 
 function validationErrorsHandler(dispatch, repeatUrl) {

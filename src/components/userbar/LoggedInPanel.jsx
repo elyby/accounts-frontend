@@ -44,18 +44,16 @@ export default class LoggedInPanel extends Component {
                     </button>
 
                     <div className={classNames(styles.accountSwitcherContainer)}>
-                        <AccountSwitcher skin="light" />
+                        <AccountSwitcher skin="light" onAfterAction={this.toggleAccountSwitcher} />
                     </div>
                 </div>
             </div>
         );
     }
 
-    toggleAccountSwitcher() {
-        this.setState({
-            isAccountSwitcherActive: !this.state.isAccountSwitcherActive
-        });
-    }
+    toggleAccountSwitcher = () => this.setState({
+        isAccountSwitcherActive: !this.state.isAccountSwitcherActive
+    });
 
     onExpandAccountSwitcher = (event) => {
         event.preventDefault();

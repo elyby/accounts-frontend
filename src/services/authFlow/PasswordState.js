@@ -5,9 +5,9 @@ import LoginState from './LoginState';
 
 export default class PasswordState extends AbstractState {
     enter(context) {
-        const {user} = context.getState();
+        const {auth} = context.getState();
 
-        if (user.isGuest) {
+        if (auth.login) {
             context.navigate('/password');
         } else {
             context.setState(new CompleteState());
@@ -15,12 +15,12 @@ export default class PasswordState extends AbstractState {
     }
 
     resolve(context, {password, rememberMe}) {
-        const {user} = context.getState();
+        const {auth: {login}} = context.getState();
 
         context.run('login', {
             password,
             rememberMe,
-            login: user.email || user.username
+            login
         })
         .then(() => context.setState(new CompleteState()));
     }
@@ -30,7 +30,7 @@ export default class PasswordState extends AbstractState {
     }
 
     goBack(context) {
-        context.run('logout');
+        context.run('setLogin', null);
         context.setState(new LoginState());
     }
 }

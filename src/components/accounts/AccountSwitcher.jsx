@@ -10,20 +10,13 @@ import { Button } from 'components/ui/form';
 import styles from './accountSwitcher.scss';
 import messages from './AccountSwitcher.intl.json';
 
-const accounts = {
-    active: {id: 7, username: 'SleepWalker', email: 'danilenkos@auroraglobal.com'},
-    available: [
-        {id: 7, username: 'SleepWalker', email: 'danilenkos@auroraglobal.com'},
-        {id: 8, username: 'ErickSkrauch', email: 'erickskrauch@yandex.ru'},
-        {id: 9, username: 'Ely-en', email: 'ely-en@ely.by'},
-        {id: 10, username: 'Ely-by', email: 'ely-pt@ely.by'},
-    ]
-};
-
-export default class AccountSwitcher extends Component {
+export class AccountSwitcher extends Component {
     static displayName = 'AccountSwitcher';
 
     static propTypes = {
+        switchAccount: PropTypes.func.isRequired,
+        removeAccount: PropTypes.func.isRequired,
+        onAfterAction: PropTypes.func, // called after each action performed
         accounts: PropTypes.shape({ // TODO: accounts shape
             active: PropTypes.shape({
                 id: PropTypes.number
@@ -43,7 +36,7 @@ export default class AccountSwitcher extends Component {
         highlightActiveAccount: true,
         allowLogout: true,
         allowAdd: true,
-        accounts
+        onAfterAction() {}
     };
 
     render() {
@@ -66,7 +59,7 @@ export default class AccountSwitcher extends Component {
                             styles.accountIcon,
                             styles.activeAccountIcon,
                             styles.accountIcon1
-                        )}></div>
+                        )} />
                         <div className={styles.activeAccountInfo}>
                             <div className={styles.activeAccountUsername}>
                                 {accounts.active.username}
@@ -81,7 +74,7 @@ export default class AccountSwitcher extends Component {
                                     </a>
                                 </div>
                                 <div className={styles.link}>
-                                    <a href="" className={styles.link}>
+                                    <a className={styles.link} onClick={this.onRemove(accounts.active)} href="#">
                                         <Message {...messages.logout} />
                                     </a>
                                 </div>
@@ -90,16 +83,19 @@ export default class AccountSwitcher extends Component {
                     </div>
                 ) : null}
                 {available.map((account, id) => (
-                    <div className={classNames(styles.item, styles.accountSwitchItem)} key={account.id}>
+                    <div className={classNames(styles.item, styles.accountSwitchItem)}
+                        key={account.id}
+                        onClick={this.onSwitch(account)}
+                    >
                         <div className={classNames(
                             styles.accountIcon,
                             styles[`accountIcon${id % 7 + (highlightActiveAccount ? 2 : 1)}`]
-                        )}></div>
+                        )} />
 
                         {allowLogout ? (
-                            <div className={styles.logoutIcon}></div>
+                            <div className={styles.logoutIcon} onClick={this.onRemove(account)} />
                         ) : (
-                            <div className={styles.nextIcon}></div>
+                            <div className={styles.nextIcon} />
                         )}
 
                         <div className={styles.accountInfo}>
@@ -113,7 +109,7 @@ export default class AccountSwitcher extends Component {
                     </div>
                 ))}
                 {allowAdd ? (
-                    <Link to="/login">
+                    <Link to="/login" onClick={this.props.onAfterAction}>
                         <Button
                             color={COLOR_WHITE}
                             block
@@ -135,5 +131,29 @@ export default class AccountSwitcher extends Component {
             </div>
         );
     }
+
+    onSwitch = (account) => (event) => {
+        event.preventDefault();
+
+        this.props.switchAccount(account)
+            .then(() => this.props.onAfterAction());
+    };
+
+    onRemove = (account) => (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.props.removeAccount(account)
+            .then(() => this.props.onAfterAction());
+    };
 }
 
+import { connect } from 'react-redux';
+import { authenticate, revoke } from 'components/accounts/actions';
+
+export default connect(({accounts}) => ({
+    accounts
+}), {
+    switchAccount: authenticate,
+    removeAccount: revoke
+})(AccountSwitcher);

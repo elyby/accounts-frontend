@@ -10,7 +10,9 @@ import {
     setOAuthRequest,
     setScopes,
     setOAuthCode,
-    requirePermissionsAccept
+    requirePermissionsAccept,
+    login,
+    setLogin
 } from 'components/auth/actions';
 
 const oauthData = {
@@ -22,8 +24,8 @@ const oauthData = {
 };
 
 describe('components/auth/actions', () => {
-    const dispatch = sinon.stub().named('dispatch');
-    const getState = sinon.stub().named('getState');
+    const dispatch = sinon.stub().named('store.dispatch');
+    const getState = sinon.stub().named('store.getState');
 
     function callThunk(fn, ...args) {
         const thunk = fn(...args);
@@ -67,21 +69,21 @@ describe('components/auth/actions', () => {
             request.get.returns(Promise.resolve(resp));
         });
 
-        it('should send get request to an api', () => {
-            return callThunk(oAuthValidate, oauthData).then(() => {
+        it('should send get request to an api', () =>
+            callThunk(oAuthValidate, oauthData).then(() => {
                 expect(request.get, 'to have a call satisfying', ['/api/oauth2/v1/validate', {}]);
-            });
-        });
+            })
+        );
 
-        it('should dispatch setClient, setOAuthRequest and setScopes', () => {
-            return callThunk(oAuthValidate, oauthData).then(() => {
+        it('should dispatch setClient, setOAuthRequest and setScopes', () =>
+            callThunk(oAuthValidate, oauthData).then(() => {
                 expectDispatchCalls([
                     [setClient(resp.client)],
                     [setOAuthRequest(resp.oAuth)],
                     [setScopes(resp.session.scopes)]
                 ]);
-            });
-        });
+            })
+        );
     });
 
     describe('#oAuthComplete()', () => {
@@ -158,6 +160,26 @@ describe('components/auth/actions', () => {
                     [requirePermissionsAccept()]
                 ]);
             });
+        });
+    });
+
+    describe('#login()', () => {
+        describe('when correct login was entered', () => {
+            beforeEach(() => {
+                request.post.returns(Promise.reject({
+                    errors: {
+                        password: 'error.password_required'
+                    }
+                }));
+            });
+
+            it('should set login', () =>
+                callThunk(login, {login: 'foo'}).then(() => {
+                    expectDispatchCalls([
+                        [setLogin('foo')]
+                    ]);
+                })
+            );
         });
     });
 });

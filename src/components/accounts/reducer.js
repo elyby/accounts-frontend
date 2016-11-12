@@ -26,9 +26,9 @@ export default function accounts(
                 throw new Error('Invalid or empty payload passed for accounts.add');
             }
 
-            if (!state.available.some((account) => account.id === payload.id)) {
-                state.available = state.available.concat(payload);
-            }
+            state.available = state.available
+                .filter((account) => account.id !== payload.id)
+                .concat(payload);
 
             return state;
 
