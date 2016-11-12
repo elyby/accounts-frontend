@@ -28,7 +28,7 @@ module.exports = function(loader) {
                         loader.exec(`
                             var __webpack_public_path__ = '${loader.options.output.publicPath}';
                             ${source}
-                        `) + urlPostfix(url)
+                        `, dirname) + urlPostfix(url)
                     )
                 ) : resolve(url)
             )

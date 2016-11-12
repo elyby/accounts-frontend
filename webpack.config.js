@@ -205,7 +205,7 @@ var webpackConfig = {
                                 // when @imported files may be processed mutiple times
                                 fileCache[filename] = new Promise((resolve, reject) =>
                                     this.loadModule(filename, (err, source) =>
-                                        err ? reject(err) : resolve(this.exec(source))
+                                        err ? reject(err) : resolve(this.exec(source, rootPath))
                                     )
                                 );
                             }
