@@ -22,6 +22,8 @@ logger.init({
 
 import dispatchBsod from 'components/ui/bsod/dispatchBsod'; // TODO: remove after tests
 
+import dispatchBsod from 'components/ui/bsod/dispatchBsod'; // TODO: remove after tests
+
 const store = storeFactory();
 
 bsodFactory(store, stopLoading);
