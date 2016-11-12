@@ -12,7 +12,7 @@ export default function dispatchBsod(store = injectedStore) {
     onBsod && onBsod();
 
     ReactDOM.render(
-        <BSoD />,
+        <BSoD store={store} />,
         document.getElementById('app')
     );
 }
