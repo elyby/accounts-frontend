@@ -15,10 +15,10 @@ $lightBorderColor: #eee;
 
 }
 
-.accountUsername {
-}
-
+.accountUsername,
 .accountEmail {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .lightAccountSwitcher {
