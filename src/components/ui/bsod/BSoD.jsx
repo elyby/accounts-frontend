@@ -5,6 +5,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import { IntlProvider } from 'components/i18n';
 import appInfo from 'components/auth/appInfo/AppInfo.intl.json';
 import messages from './BSoD.intl.json';
+import { rAF as requestAnimationFrame } from 'functions';
 
 import styles from './styles.scss';
 
@@ -14,7 +15,7 @@ export default function BSoD({store}) {
     return (
         <IntlProvider store={store}>
             <div className={styles.body}>
-                <canvas ref={(el) => createThatMagicEffect(el)} />
+                <canvas className={styles.canvas} ref={(el) => new BoxesField(el)} />
 
                 <div className={styles.wrapper}>
                     <div className={styles.title}>
@@ -38,176 +39,217 @@ export default function BSoD({store}) {
     );
 }
 
-/**
- * @param {Node} c - canvas DOM node
- * @see http://codepen.io/mladen___/pen/gbvqBo
- */
-function createThatMagicEffect(c) {
-    var ctx = c.getContext("2d");
+class Box {
 
-    function resize() {
-        var box = c.getBoundingClientRect();
-        c.width = box.width;
-        c.height = box.height;
+    constructor({size, startX, startY, startRotate, color, shadowColor}) {
+        this.color = color;
+        this.shadowColor = shadowColor;
+        this.setSize(size);
+        this.x = startX;
+        this.y = startY;
+        this.angle = startRotate;
+        this.shadowLength = 2000; // TODO: should be calculated
     }
 
-    var light = {
-        x: 160,
-        y: 200
+    get size() {
+        return this._initialSize;
     }
 
-    var colors = ["#f5c156", "#e6616b", "#5cd3ad"];
+    get dots() {
+        const full = (Math.PI * 2) / 4;
 
-    function drawLight() {
+        const p1 = {
+            x: this.x + this.halfSize * Math.sin(this.angle),
+            y: this.y + this.halfSize * Math.cos(this.angle)
+        };
+
+        const p2 = {
+            x: this.x + this.halfSize * Math.sin(this.angle + full),
+            y: this.y + this.halfSize * Math.cos(this.angle + full)
+        };
+
+        const p3 = {
+            x: this.x + this.halfSize * Math.sin(this.angle + full * 2),
+            y: this.y + this.halfSize * Math.cos(this.angle + full * 2)
+        };
+
+        const p4 = {
+            x: this.x + this.halfSize * Math.sin(this.angle + full * 3),
+            y: this.y + this.halfSize * Math.cos(this.angle + full * 3)
+        };
+
+        return { p1, p2, p3, p4 };
+    }
+
+    rotate() {
+        const speed = (60 - this.halfSize) / 20;
+        this.angle += speed * 0.002;
+        this.x += speed;
+        this.y += speed;
+    }
+
+    draw(ctx) {
+        const dots = this.dots;
         ctx.beginPath();
-        ctx.arc(light.x, light.y, 1000, 0, 2 * Math.PI);
-        var gradient = ctx.createRadialGradient(light.x, light.y, 0, light.x, light.y, 1000);
-        gradient.addColorStop(0, "#3b4654");
-        gradient.addColorStop(1, "#2c343f");
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(light.x, light.y, 20, 0, 2 * Math.PI);
-        gradient = ctx.createRadialGradient(light.x, light.y, 0, light.x, light.y, 5);
-        gradient.addColorStop(0, "#fff");
-        gradient.addColorStop(1, "#3b4654");
-        ctx.fillStyle = gradient;
+        ctx.moveTo(dots.p1.x, dots.p1.y);
+        ctx.lineTo(dots.p2.x, dots.p2.y);
+        ctx.lineTo(dots.p3.x, dots.p3.y);
+        ctx.lineTo(dots.p4.x, dots.p4.y);
+        ctx.fillStyle = this.color;
         ctx.fill();
     }
 
-    function Box() {
-        this.half_size = Math.floor((Math.random() * 50) + 1);
-        this.x = Math.floor((Math.random() * c.width) + 1);
-        this.y = Math.floor((Math.random() * c.height) + 1);
-        this.r = Math.random() * Math.PI;
-        this.shadow_length = 2000;
-        this.color = colors[Math.floor((Math.random() * colors.length))];
+    drawShadow(ctx, light) {
+        const dots = this.dots;
+        const angles = [];
+        const points = [];
 
-        this.getDots = function() {
-            var full = (Math.PI * 2) / 4;
-
-            var p1 = {
-                x: this.x + this.half_size * Math.sin(this.r),
-                y: this.y + this.half_size * Math.cos(this.r)
-            };
-            var p2 = {
-                x: this.x + this.half_size * Math.sin(this.r + full),
-                y: this.y + this.half_size * Math.cos(this.r + full)
-            };
-            var p3 = {
-                x: this.x + this.half_size * Math.sin(this.r + full * 2),
-                y: this.y + this.half_size * Math.cos(this.r + full * 2)
-            };
-            var p4 = {
-                x: this.x + this.half_size * Math.sin(this.r + full * 3),
-                y: this.y + this.half_size * Math.cos(this.r + full * 3)
-            };
-
-            return {
-                p1: p1,
-                p2: p2,
-                p3: p3,
-                p4: p4
-            };
+        for (const i in dots) {
+            const dot = dots[i];
+            const angle = Math.atan2(light.y - dot.y, light.x - dot.x);
+            const endX = dot.x + this.shadowLength * Math.sin(-angle - Math.PI / 2);
+            const endY = dot.y + this.shadowLength * Math.cos(-angle - Math.PI / 2);
+            angles.push(angle);
+            points.push({
+                endX,
+                endY,
+                startX: dot.x,
+                startY: dot.y
+            });
         }
-        this.rotate = function() {
-            var speed = (60 - this.half_size) / 20;
-            this.r += speed * 0.002;
-            this.x += speed;
-            this.y += speed;
-        }
-        this.draw = function() {
-            var dots = this.getDots();
+
+        for (let i = points.length - 1; i >= 0; i--) {
+            const n = i === 3 ? 0 : i + 1;
             ctx.beginPath();
-            ctx.moveTo(dots.p1.x, dots.p1.y);
-            ctx.lineTo(dots.p2.x, dots.p2.y);
-            ctx.lineTo(dots.p3.x, dots.p3.y);
-            ctx.lineTo(dots.p4.x, dots.p4.y);
-            ctx.fillStyle = this.color;
+            ctx.moveTo(points[i].startX, points[i].startY);
+            ctx.lineTo(points[n].startX, points[n].startY);
+            ctx.lineTo(points[n].endX, points[n].endY);
+            ctx.lineTo(points[i].endX, points[i].endY);
+            ctx.fillStyle = this.shadowColor;
             ctx.fill();
-
-
-            if (this.y - this.half_size > c.height) {
-                this.y -= c.height + 100;
-            }
-            if (this.x - this.half_size > c.width) {
-                this.x -= c.width + 100;
-            }
-        }
-        this.drawShadow = function() {
-            var dots = this.getDots();
-            var angles = [];
-            var points = [];
-
-            for (let dot in dots) {
-                var angle = Math.atan2(light.y - dots[dot].y, light.x - dots[dot].x);
-                var endX = dots[dot].x + this.shadow_length * Math.sin(-angle - Math.PI / 2);
-                var endY = dots[dot].y + this.shadow_length * Math.cos(-angle - Math.PI / 2);
-                angles.push(angle);
-                points.push({
-                    endX: endX,
-                    endY: endY,
-                    startX: dots[dot].x,
-                    startY: dots[dot].y
-                });
-            };
-
-            for (var i = points.length - 1; i >= 0; i--) {
-                var n = i == 3 ? 0 : i + 1;
-                ctx.beginPath();
-                ctx.moveTo(points[i].startX, points[i].startY);
-                ctx.lineTo(points[n].startX, points[n].startY);
-                ctx.lineTo(points[n].endX, points[n].endY);
-                ctx.lineTo(points[i].endX, points[i].endY);
-                ctx.fillStyle = "#2c343f";
-                ctx.fill();
-            };
         }
     }
 
-    var boxes = [];
+    setSize(size) {
+        this._initialSize = size;
+        this.halfSize = Math.floor(size / 2);
+    }
 
-    function draw() {
-        ctx.clearRect(0, 0, c.width, c.height);
-        drawLight();
+}
 
-        for (var i = 0; i < boxes.length; i++) {
-            boxes[i].rotate();
-            boxes[i].drawShadow();
+/**
+ * Основано на http://codepen.io/mladen___/pen/gbvqBo
+ */
+class BoxesField {
+
+    /**
+     * @param {Node} elem - canvas DOM node
+     * @param {object} params
+     */
+    constructor(elem, params = {
+        countBoxes: 14,
+        boxMinSize: 20,
+        boxMaxSize: 75,
+        backgroundColor: '#233d49',
+        lightColor: '#28555b',
+        shadowColor: '#274451',
+        boxColors: ['#207e5c', '#5b9aa9', '#e66c69', '#6b5b8c', '#8b5d79', '#dd8650']
+    }) {
+        this.elem = elem;
+        this.ctx = elem.getContext('2d');
+        this.params = params;
+
+        this.light = {
+            x: 160,
+            y: 200
         };
-        for (var i = 0; i < boxes.length; i++) {
-            collisionDetection(i)
-            boxes[i].draw();
-        };
-        requestAnimationFrame(draw);
-    }
 
-    resize();
-    draw();
+        this.resize();
+        this.drawLoop();
+        this.bindWindowListeners();
 
-    while (boxes.length < 14) {
-        boxes.push(new Box());
-    }
-
-    window.addEventListener('resize', resize);
-    c.onmousemove = function(e) {
-        light.x = e.offsetX == undefined ? e.layerX : e.offsetX;
-        light.y = e.offsetY == undefined ? e.layerY : e.offsetY;
-    }
-
-    function collisionDetection(b) {
-        for (var i = boxes.length - 1; i >= 0; i--) {
-            if(i != b) {
-                var dx = (boxes[b].x + boxes[b].half_size) - (boxes[i].x + boxes[i].half_size);
-                var dy = (boxes[b].y + boxes[b].half_size) - (boxes[i].y + boxes[i].half_size);
-                var d = Math.sqrt(dx * dx + dy * dy);
-
-                if (d < boxes[b].half_size + boxes[i].half_size) {
-                    boxes[b].half_size = boxes[b].half_size > 1 ? boxes[b].half_size-=1 : 1;
-                    boxes[i].half_size = boxes[i].half_size > 1 ? boxes[i].half_size-=1 : 1;
-                }
-            }
+        /**
+         * @type {Box[]}
+         */
+        this.boxes = [];
+        while (this.boxes.length < this.params.countBoxes) {
+            this.boxes.push(new Box({
+                size: Math.floor((Math.random() * (this.params.boxMaxSize - this.params.boxMinSize)) + this.params.boxMinSize),
+                startX: Math.floor((Math.random() * elem.width) + 1),
+                startY: Math.floor((Math.random() * elem.height) + 1),
+                startRotate: Math.random() * Math.PI,
+                color: this.getRandomColor(),
+                shadowColor: this.params.shadowColor
+            }));
         }
     }
+
+    resize() {
+        const { width, height } = this.elem.getBoundingClientRect();
+        this.elem.width = width;
+        this.elem.height = height;
+    }
+
+    drawLight(light) {
+        const greaterSize = window.screen.width > window.screen.height ? window.screen.width : window.screen.height;
+        // еее, теорема пифагора и описывание окружности вокруг квадрата, не зря в универ ходил!!!
+        const lightRadius = greaterSize * Math.sqrt(2);
+
+        this.ctx.beginPath();
+        this.ctx.arc(light.x, light.y, lightRadius, 0, 2 * Math.PI);
+        const gradient = this.ctx.createRadialGradient(light.x, light.y, 0, light.x, light.y, lightRadius);
+        gradient.addColorStop(0, this.params.lightColor);
+        gradient.addColorStop(1, this.params.backgroundColor);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+    }
+
+    drawLoop() {
+        this.ctx.clearRect(0, 0, this.elem.width, this.elem.height);
+        this.drawLight(this.light);
+
+        for (let i in this.boxes) {
+            const box = this.boxes[i];
+            box.rotate();
+            box.drawShadow(this.ctx, this.light);
+        }
+
+        for (let i in this.boxes) {
+            const box = this.boxes[i];
+            box.draw(this.ctx);
+
+            // Если квадратик вылетел за пределы экрана
+            if (box.y - box.halfSize > this.elem.height) {
+                box.y -= this.elem.height + 100;
+                this.updateBox(box);
+            }
+
+            if (box.x - box.halfSize > this.elem.width) {
+                box.x -= this.elem.width + 100;
+                this.updateBox(box);
+            }
+        }
+
+        requestAnimationFrame(this.drawLoop.bind(this));
+    }
+
+    bindWindowListeners() {
+        window.addEventListener('resize', this.resize.bind(this));
+        window.addEventListener('mousemove', (event) => {
+            this.light.x = event.clientX;
+            this.light.y = event.clientY;
+        });
+    }
+
+    /**
+     * @param {Box} box
+     */
+    updateBox(box) {
+        box.color = this.getRandomColor();
+    }
+
+    getRandomColor() {
+        return this.params.boxColors[Math.floor((Math.random() * this.params.boxColors.length))];
+    }
+
 }
