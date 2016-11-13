@@ -30,6 +30,14 @@ export default function accounts(
                 .filter((account) => account.id !== payload.id)
                 .concat(payload);
 
+            state.available.sort((account1, account2) => {
+                if (account1.username === account2.username) {
+                    return 0;
+                }
+
+                return account1.username > account2.username ? 1 : -1;
+            });
+
             return state;
 
         case ACTIVATE:

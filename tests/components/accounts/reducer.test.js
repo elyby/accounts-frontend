@@ -56,11 +56,24 @@ describe('Accounts reducer', () => {
                 token: 'newToken'
             };
 
-            return expect(
+            expect(
                 accounts({...initial, available: [outdatedAccount]}, add(updatedAccount)),
                 'to satisfy', {
                     available: [updatedAccount]
                 });
+        });
+
+        it('should sort accounts by username', () => {
+            const newAccount = {
+                ...account,
+                id: 2,
+                username: 'abc'
+            };
+
+            expect(accounts({...initial, available: [account]}, add(newAccount)),
+            'to satisfy', {
+                available: [newAccount, account]
+            });
         });
 
         it('throws, when account is invalid', () => {
