@@ -17,6 +17,7 @@ export class AccountSwitcher extends Component {
         switchAccount: PropTypes.func.isRequired,
         removeAccount: PropTypes.func.isRequired,
         onAfterAction: PropTypes.func, // called after each action performed
+        onSwitch: PropTypes.func, // called after switching an account. The active account will be passed as arg
         accounts: PropTypes.shape({ // TODO: accounts shape
             active: PropTypes.shape({
                 id: PropTypes.number
@@ -36,7 +37,8 @@ export class AccountSwitcher extends Component {
         highlightActiveAccount: true,
         allowLogout: true,
         allowAdd: true,
-        onAfterAction() {}
+        onAfterAction() {},
+        onSwitch() {}
     };
 
     render() {
@@ -136,7 +138,8 @@ export class AccountSwitcher extends Component {
         event.preventDefault();
 
         this.props.switchAccount(account)
-            .then(() => this.props.onAfterAction());
+            .then(() => this.props.onAfterAction())
+            .then(() => this.props.onSwitch(account));
     };
 
     onRemove = (account) => (event) => {

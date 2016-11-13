@@ -1,6 +1,7 @@
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import PermissionsState from './PermissionsState';
+import ChooseAccountState from './ChooseAccountState';
 import ActivationState from './ActivationState';
 import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
@@ -22,7 +23,9 @@ export default class CompleteState extends AbstractState {
         } else if (user.shouldAcceptRules) {
             context.setState(new AcceptRulesState());
         } else if (auth.oauth && auth.oauth.clientId) {
-            if (auth.oauth.code) {
+            if (auth.isSwitcherEnabled) {
+                context.setState(new ChooseAccountState());
+            } else if (auth.oauth.code) {
                 context.setState(new FinishState());
             } else {
                 const data = {};

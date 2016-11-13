@@ -8,13 +8,15 @@ import {
     SET_SCOPES,
     SET_LOADING_STATE,
     REQUIRE_PERMISSIONS_ACCEPT,
-    SET_LOGIN
+    SET_LOGIN,
+    SET_SWITCHER
 } from './actions';
 
 export default combineReducers({
     login,
     error,
     isLoading,
+    isSwitcherEnabled,
     client,
     oauth,
     scopes
@@ -54,6 +56,22 @@ function login(
     }
 }
 
+function isSwitcherEnabled(
+    state = true,
+    {type, payload = false}
+) {
+    switch (type) {
+        case SET_SWITCHER:
+            if (typeof payload !== 'boolean') {
+                throw new Error('Expected payload of boolean type');
+            }
+
+            return payload;
+
+        default:
+            return state;
+    }
+}
 
 function isLoading(
     state = false,

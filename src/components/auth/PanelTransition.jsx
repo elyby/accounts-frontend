@@ -64,10 +64,7 @@ class PanelTransition extends Component {
                 payload: PropTypes.object
             })]),
             isLoading: PropTypes.bool,
-            login: PropTypes.shape({
-                login: PropTypes.string,
-                password: PropTypes.string
-            })
+            login: PropTypes.string
         }).isRequired,
         user: userShape.isRequired,
         setErrors: PropTypes.func.isRequired,
@@ -89,10 +86,7 @@ class PanelTransition extends Component {
                 type: PropTypes.string,
                 payload: PropTypes.object
             })]),
-            login: PropTypes.shape({
-                login: PropTypes.string,
-                password: PropTypes.string
-            })
+            login: PropTypes.string
         }),
         user: userShape,
         requestRedraw: PropTypes.func,

@@ -152,14 +152,13 @@ export default class AuthFlow {
                 this.setState(new ResendActivationState());
                 break;
 
-            case '/oauth/choose-account':
-                break;
             case '/':
             case '/login':
             case '/password':
             case '/accept-rules':
             case '/oauth/permissions':
             case '/oauth/finish':
+            case '/oauth/choose-account':
                 this.setState(new LoginState());
                 break;
 

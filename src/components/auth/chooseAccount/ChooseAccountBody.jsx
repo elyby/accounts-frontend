@@ -13,8 +13,6 @@ export default class ChooseAccountBody extends BaseAuthBody {
     static panelId = 'chooseAccount';
 
     render() {
-        const {user} = this.context;
-        this.context.auth.client = {name: 'foo'}; // TODO: remove me
         const {client} = this.context.auth;
 
         return (
@@ -28,9 +26,18 @@ export default class ChooseAccountBody extends BaseAuthBody {
                 </div>
 
                 <div className={styles.accountSwitcherContainer}>
-                    <AccountSwitcher allowAdd={false} allowLogout={false} highlightActiveAccount={false} />
+                    <AccountSwitcher
+                        allowAdd={false}
+                        allowLogout={false}
+                        highlightActiveAccount={false}
+                        onSwitch={this.onSwitch}
+                    />
                 </div>
             </div>
         );
     }
+
+    onSwitch = (account) => {
+        this.context.resolve(account);
+    };
 }

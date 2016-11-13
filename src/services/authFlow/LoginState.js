@@ -13,6 +13,8 @@ export default class LoginState extends AbstractState {
             || /login|password/.test(context.getRequest().path) // TODO: improve me
         ) {
             context.navigate('/login');
+        } else {
+            context.setState(new PasswordState());
         }
     }
 

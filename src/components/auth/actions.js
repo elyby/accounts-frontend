@@ -122,6 +122,14 @@ export function setLogin(login) {
     };
 }
 
+export const SET_SWITCHER = 'auth:setAccountSwitcher';
+export function setAccountSwitcher(isOn) {
+    return {
+        type: SET_SWITCHER,
+        payload: isOn
+    };
+}
+
 export const ERROR = 'auth:error';
 export function setErrors(errors) {
     return {
