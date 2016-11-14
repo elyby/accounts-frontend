@@ -111,6 +111,16 @@ export function activate(account) {
     };
 }
 
+export const RESET = 'accounts:reset';
+/**
+ * @return {object} - action definition
+ */
+export function reset() {
+    return {
+        type: RESET
+    };
+}
+
 export const UPDATE_TOKEN = 'accounts:updateToken';
 /**
  * @param {string} token

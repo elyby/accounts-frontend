@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import accounts from 'services/api/accounts';
+import { reset as resetAccounts } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import { setLocale } from 'components/i18n/actions';
 
@@ -63,6 +64,8 @@ export function logout() {
                     lang: getState().user.lang,
                     isGuest: true
                 }));
+
+                dispatch(resetAccounts());
 
                 dispatch(routeActions.push('/login'));
 

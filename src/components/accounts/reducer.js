@@ -1,4 +1,4 @@
-import { ADD, REMOVE, ACTIVATE, UPDATE_TOKEN } from './actions';
+import { ADD, REMOVE, ACTIVATE, RESET, UPDATE_TOKEN } from './actions';
 
 /**
  * @typedef {AccountsState}
@@ -49,6 +49,9 @@ export default function accounts(
                 ...state,
                 active: payload
             };
+
+        case RESET:
+            return accounts(undefined, {});
 
         case REMOVE:
             if (!payload || !payload.id) {

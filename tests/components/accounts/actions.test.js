@@ -2,7 +2,14 @@ import expect from 'unexpected';
 
 import accounts from 'services/api/accounts';
 import authentication from 'services/api/authentication';
-import { authenticate, revoke, add, activate, remove, ADD, REMOVE, ACTIVATE } from 'components/accounts/actions';
+import {
+    authenticate,
+    revoke,
+    add, ADD,
+    activate, ACTIVATE,
+    remove,
+    reset
+} from 'components/accounts/actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
 import { updateUser } from 'components/user/actions';
@@ -151,6 +158,9 @@ describe('components/accounts/actions', () => {
                 expect(dispatch, 'to have a call satisfying', [
                     {payload: {isGuest: true}}
                     // updateUser({isGuest: true})
+                ]);
+                expect(dispatch, 'to have a call satisfying', [
+                    reset()
                 ]);
                 // expect(dispatch, 'to have calls satisfying', [
                 //     [remove(account)],

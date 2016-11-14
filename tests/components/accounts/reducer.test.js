@@ -2,8 +2,8 @@ import expect from 'unexpected';
 
 import accounts from 'components/accounts/reducer';
 import {
-    updateToken, add, remove, activate,
-    ADD, REMOVE, ACTIVATE, UPDATE_TOKEN
+    updateToken, add, remove, activate, reset,
+    ADD, REMOVE, ACTIVATE, UPDATE_TOKEN, RESET
 } from 'components/accounts/actions';
 
 const account = {
@@ -92,6 +92,13 @@ describe('Accounts reducer', () => {
             expect(() => accounts(initial, remove()),
                 'to throw', 'Invalid or empty payload passed for accounts.remove');
         });
+    });
+
+    describe(RESET, () => {
+        it('should reset accounts state', () =>
+            expect(accounts({...initial, available: [account]}, reset()),
+                'to equal', initial)
+        );
     });
 
     describe(UPDATE_TOKEN, () => {

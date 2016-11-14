@@ -3,6 +3,7 @@ import expect from 'unexpected';
 import { routeActions } from 'react-router-redux';
 
 import request from 'services/request';
+import { reset, RESET } from 'components/accounts/actions';
 
 import {
     logout,
@@ -70,6 +71,7 @@ describe('components/user/actions', () => {
             });
 
             testChangedToGuest();
+            testAccountsReset();
             testRedirectedToLogin();
         });
 
@@ -89,6 +91,7 @@ describe('components/user/actions', () => {
             );
 
             testChangedToGuest();
+            testAccountsReset();
             testRedirectedToLogin();
         });
 
@@ -110,6 +113,16 @@ describe('components/user/actions', () => {
                 callThunk(logout).then(() => {
                     expect(dispatch, 'to have a call satisfying', [
                         routeActions.push('/login')
+                    ]);
+                })
+            );
+        }
+
+        function testAccountsReset() {
+            it(`should dispatch ${RESET}`, () =>
+                callThunk(logout).then(() => {
+                    expect(dispatch, 'to have a call satisfying', [
+                        reset()
                     ]);
                 })
             );
