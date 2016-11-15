@@ -8,7 +8,8 @@ import {
     add, ADD,
     activate, ACTIVATE,
     remove,
-    reset
+    reset,
+    logoutAll
 } from 'components/accounts/actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
@@ -116,58 +117,129 @@ describe('components/accounts/actions', () => {
     });
 
     describe('#revoke()', () => {
-        it('should switch next account if available', () => {
+        beforeEach(() => {
+            sinon.stub(authentication, 'logout').named('authentication.logout');
+        });
+
+        afterEach(() => {
+            authentication.logout.restore();
+        });
+
+        describe('when one account available', () => {
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        active: account,
+                        available: [account]
+                    },
+                    user
+                });
+            });
+
+            it('should dispatch reset action', () =>
+                revoke(account)(dispatch, getState).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        reset()
+                    ])
+                )
+            );
+
+            it('should call logout api method in background', () =>
+                revoke(account)(dispatch, getState).then(() =>
+                    expect(authentication.logout, 'to have a call satisfying', [
+                        account
+                    ])
+                )
+            );
+
+            it('should update user state', () =>
+                revoke(account)(dispatch, getState).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        {payload: {isGuest: true}}
+                        // updateUser({isGuest: true})
+                    ])
+                    // expect(dispatch, 'to have calls satisfying', [
+                    //     [remove(account)],
+                    //     [expect.it('to be a function')]
+                    //     // [logout()] // TODO: this is not a plain action. How should we simplify its testing?
+                    // ])
+                )
+            );
+        });
+
+        describe('when multiple accounts available', () => {
             const account2 = {...account, id: 2};
 
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        active: account2,
+                        available: [account, account2]
+                    },
+                    user
+                });
+            });
+
+            it('should switch to the next account', () =>
+                revoke(account2)(dispatch, getState).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        activate(account)
+                    ])
+                )
+            );
+
+            it('should remove current account', () =>
+                revoke(account2)(dispatch, getState).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        remove(account2)
+                    ])
+                )
+            );
+
+            it('should call logout api method in background', () =>
+                revoke(account2)(dispatch, getState).then(() =>
+                    expect(authentication.logout, 'to have a call satisfying', [
+                        account2
+                    ])
+                )
+            );
+        });
+    });
+
+    describe('#logoutAll()', () => {
+        const account2 = {...account, id: 2};
+
+        beforeEach(() => {
             getState.returns({
                 accounts: {
                     active: account2,
-                    available: [account]
+                    available: [account, account2]
                 },
                 user
             });
 
-            return revoke(account2)(dispatch, getState).then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    remove(account2)
-                ]);
-                expect(dispatch, 'to have a call satisfying', [
-                    activate(account)
-                ]);
-                expect(dispatch, 'to have a call satisfying', [
-                    updateUser({...user, isGuest: false})
-                ]);
-                // expect(dispatch, 'to have calls satisfying', [
-                //     [remove(account2)],
-                //     [expect.it('to be a function')]
-                //     // [authenticate(account2)] // TODO: this is not a plain action. How should we simplify its testing?
-                // ])
-            });
+            sinon.stub(authentication, 'logout').named('authentication.logout');
         });
 
-        it('should logout if no other accounts available', () => {
-            getState.returns({
-                accounts: {
-                    active: account,
-                    available: []
-                },
-                user
-            });
+        afterEach(() => {
+            authentication.logout.restore();
+        });
 
-            revoke(account)(dispatch, getState).then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    {payload: {isGuest: true}}
-                    // updateUser({isGuest: true})
-                ]);
-                expect(dispatch, 'to have a call satisfying', [
-                    reset()
-                ]);
-                // expect(dispatch, 'to have calls satisfying', [
-                //     [remove(account)],
-                //     [expect.it('to be a function')]
-                //     // [logout()] // TODO: this is not a plain action. How should we simplify its testing?
-                // ])
-            });
+        it('should call logout api method for each account', () => {
+            logoutAll()(dispatch, getState);
+
+            expect(authentication.logout, 'to have calls satisfying', [
+                [account],
+                [account2]
+            ]);
+        });
+
+        it('should dispatch reset', () => {
+            logoutAll()(dispatch, getState);
+
+            expect(dispatch, 'to have a call satisfying', [
+                reset()
+            ]);
         });
     });
 });

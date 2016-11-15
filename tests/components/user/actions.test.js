@@ -42,11 +42,16 @@ describe('components/user/actions', () => {
         });
 
         describe('user with jwt', () => {
+            const token = 'iLoveRockNRoll';
+
             beforeEach(() => {
                 getState.returns({
                     user: {
-                        token: 'iLoveRockNRoll',
                         lang: 'foo'
+                    },
+                    accounts: {
+                        active: {token},
+                        available: [{token}]
                     }
                 });
             });
@@ -65,7 +70,7 @@ describe('components/user/actions', () => {
 
                 return callThunk(logout).then(() => {
                     expect(request.post, 'to have a call satisfying', [
-                        '/api/authentication/logout'
+                        '/api/authentication/logout', {}, {}
                     ]);
                 });
             });
@@ -75,11 +80,17 @@ describe('components/user/actions', () => {
             testRedirectedToLogin();
         });
 
-        describe('user without jwt', () => { // (a guest with partially filled user's state)
+        describe('user without jwt', () => {
+            // (a guest with partially filled user's state)
+            // DEPRECATED
             beforeEach(() => {
                 getState.returns({
                     user: {
                         lang: 'foo'
+                    },
+                    accounts: {
+                        active: null,
+                        available: []
                     }
                 });
             });

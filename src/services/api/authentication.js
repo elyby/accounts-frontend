@@ -13,8 +13,17 @@ const authentication = {
         );
     },
 
-    logout() {
-        return request.post('/api/authentication/logout');
+    /**
+     * @param {object} options
+     * @param {object} [options.token] - an optional token to overwrite headers
+     *                                   in middleware and disable token auto-refresh
+     *
+     * @return {Promise}
+     */
+    logout(options = {}) {
+        return request.post('/api/authentication/logout', {}, {
+            token: options.token
+        });
     },
 
     forgotPassword({

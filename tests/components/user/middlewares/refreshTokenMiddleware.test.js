@@ -17,6 +17,7 @@ describe('refreshTokenMiddleware', () => {
 
     beforeEach(() => {
         sinon.stub(authentication, 'requestToken').named('authentication.requestToken');
+        sinon.stub(authentication, 'logout').named('authentication.logout');
 
         getState = sinon.stub().named('store.getState');
         dispatch = sinon.spy((arg) =>
@@ -28,6 +29,7 @@ describe('refreshTokenMiddleware', () => {
 
     afterEach(() => {
         authentication.requestToken.restore();
+        authentication.logout.restore();
     });
 
     it('must be till 2100 to test with validToken', () =>
@@ -37,12 +39,14 @@ describe('refreshTokenMiddleware', () => {
     describe('#before', () => {
         describe('when token expired', () => {
             beforeEach(() => {
+                const account = {
+                    token: expiredToken,
+                    refreshToken
+                };
                 getState.returns({
                     accounts: {
-                        active: {
-                            token: expiredToken,
-                            refreshToken
-                        }
+                        active: account,
+                        available: [account]
                     },
                     user: {}
                 });
@@ -104,12 +108,14 @@ describe('refreshTokenMiddleware', () => {
             });
 
             it('should if token can not be parsed', () => {
+                const account = {
+                    token: 'realy bad token',
+                    refreshToken
+                };
                 getState.returns({
                     accounts: {
-                        active: {
-                            token: 'realy bad token',
-                            refreshToken
-                        }
+                        active: account,
+                        available: [account]
                     },
                     user: {}
                 });
@@ -140,7 +146,8 @@ describe('refreshTokenMiddleware', () => {
             beforeEach(() => {
                 getState.returns({
                     accounts: {
-                        active: null
+                        active: null,
+                        available: []
                     },
                     user: {
                         token: expiredToken,
@@ -216,7 +223,8 @@ describe('refreshTokenMiddleware', () => {
         beforeEach(() => {
             getState.returns({
                 accounts: {
-                    active: {refreshToken}
+                    active: {refreshToken},
+                    available: [{refreshToken}]
                 },
                 user: {}
             });

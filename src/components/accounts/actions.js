@@ -59,7 +59,10 @@ export function revoke(account) {
 
         if (accountToReplace) {
             return dispatch(authenticate(accountToReplace))
-                .then(() => dispatch(remove(account)));
+                .then(() => {
+                    authentication.logout(account);
+                    dispatch(remove(account));
+                });
         }
 
         return dispatch(logout());
@@ -111,8 +114,19 @@ export function activate(account) {
     };
 }
 
+export function logoutAll() {
+    return (dispatch, getState) => {
+        const {accounts: {available}} = getState();
+
+        available.forEach((account) => authentication.logout(account));
+
+        dispatch(reset());
+    };
+}
 export const RESET = 'accounts:reset';
 /**
+ * @api private
+ *
  * @return {object} - action definition
  */
 export function reset() {

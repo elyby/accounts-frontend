@@ -1,7 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import accounts from 'services/api/accounts';
-import { reset as resetAccounts } from 'components/accounts/actions';
+import { logoutAll } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import { setLocale } from 'components/i18n/actions';
 
@@ -54,24 +54,16 @@ export function setUser(payload) {
 
 export function logout() {
     return (dispatch, getState) => {
-        if (getState().user.token) {
-            authentication.logout();
-        }
+        dispatch(setUser({
+            lang: getState().user.lang,
+            isGuest: true
+        }));
 
-        return new Promise((resolve) => {
-            setTimeout(() => { // a tiny timeout to allow logout before user's token will be removed
-                dispatch(setUser({
-                    lang: getState().user.lang,
-                    isGuest: true
-                }));
+        dispatch(logoutAll());
 
-                dispatch(resetAccounts());
+        dispatch(routeActions.push('/login'));
 
-                dispatch(routeActions.push('/login'));
-
-                resolve();
-            }, 0);
-        });
+        return Promise.resolve();
     };
 }
 

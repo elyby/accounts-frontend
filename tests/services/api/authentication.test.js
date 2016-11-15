@@ -1,5 +1,6 @@
 import expect from 'unexpected';
 
+import request from 'services/request';
 import authentication from 'services/api/authentication';
 import accounts from 'services/api/accounts';
 
@@ -86,6 +87,40 @@ describe('authentication api', () => {
                     'to be rejected with', error
                 );
             });
+        });
+    });
+
+    describe('#logout', () => {
+        beforeEach(() => {
+            sinon.stub(request, 'post').named('request.post');
+        });
+
+        afterEach(() => {
+            request.post.restore();
+        });
+
+        it('should request logout api', () => {
+            authentication.logout();
+
+            expect(request.post, 'to have a call satisfying', [
+                '/api/authentication/logout', {}, {}
+            ]);
+        });
+
+        it('returns a promise', () => {
+            request.post.returns(Promise.resolve());
+
+            return expect(authentication.logout(), 'to be fulfilled');
+        });
+
+        it('overrides token if provided', () => {
+            const token = 'foo';
+
+            authentication.logout({token});
+
+            expect(request.post, 'to have a call satisfying', [
+                '/api/authentication/logout', {}, {token}
+            ]);
         });
     });
 });
