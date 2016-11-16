@@ -12,7 +12,7 @@
     "up": "npm update",
     "test": "karma start ./karma.conf.js",
     "lint": "eslint ./src",
-    "i18n": "cd ./scripts && ./node_modules/.bin/babel-node i18n-collect.js",
+    "i18n": "./node_modules/.bin/babel-node ./scripts/i18n-collect.js",
     "build": "rm -rf dist/ && webpack --progress --colors -p"
   },
   "dependencies": {
