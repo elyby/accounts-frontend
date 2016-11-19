@@ -158,8 +158,9 @@ export class AccountSwitcher extends Component {
 import { connect } from 'react-redux';
 import { authenticate, revoke } from 'components/accounts/actions';
 
-export default connect(({accounts}) => ({
-    accounts
+export default connect(({accounts, user}) => ({
+    accounts,
+    userLang: user.lang // this is to force re-render on lang change
 }), {
     switchAccount: authenticate,
     removeAccount: revoke
