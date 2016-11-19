@@ -14,7 +14,7 @@ export default class CompleteState extends AbstractState {
     }
 
     enter(context) {
-        const {auth = {}, user} = context.getState();
+        const {auth = {}, user, accounts} = context.getState();
 
         if (user.isGuest) {
             context.setState(new LoginState());
@@ -23,7 +23,7 @@ export default class CompleteState extends AbstractState {
         } else if (user.shouldAcceptRules) {
             context.setState(new AcceptRulesState());
         } else if (auth.oauth && auth.oauth.clientId) {
-            if (auth.isSwitcherEnabled) {
+            if (auth.isSwitcherEnabled && accounts.available.length > 1) {
                 context.setState(new ChooseAccountState());
             } else if (auth.oauth.code) {
                 context.setState(new FinishState());
