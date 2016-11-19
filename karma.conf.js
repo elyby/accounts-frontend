@@ -1,5 +1,4 @@
-// Karma configuration
-// Generated on Sat Jun 13 2015 12:22:02 GMT+0300 (EEST)
+/* eslint-env node */
 
 // https://docs.gitlab.com/ce/ci/variables/README.html
 // noinspection Eslint
@@ -69,9 +68,14 @@ module.exports = function(config) {
     };
 
     if (isCi) {
-        params.reporters = ['dots'];
-        params.autoWatch = false;
-        params.singleRun = true;
+        Object.assign(params, {
+            reporters: ['dots'],
+            autoWatch: false,
+            singleRun: true,
+            client: {
+                captureConsole: false
+            }
+        });
     }
 
     config.set(params);
