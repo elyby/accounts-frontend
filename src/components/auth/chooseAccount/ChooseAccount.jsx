@@ -7,5 +7,10 @@ export default factory({
     body: Body,
     footer: {
         label: messages.addAccount
-    }
+    },
+    links: [
+        {
+            label: messages.logoutAll
+        }
+    ]
 });

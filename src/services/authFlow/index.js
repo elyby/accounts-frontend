@@ -1,11 +1,9 @@
 import AuthFlow from './AuthFlow';
 
 import * as actions from 'components/auth/actions';
-import {updateUser} from 'components/user/actions';
 
 const availableActions = {
-    ...actions,
-    updateUser
+    ...actions
 };
 
 export default new AuthFlow(availableActions);

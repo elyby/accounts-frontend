@@ -1,6 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, acceptRules as userAcceptRules } from 'components/user/actions';
+import { updateUser, logout, acceptRules as userAcceptRules } from 'components/user/actions';
 import { authenticate } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
@@ -24,6 +24,7 @@ export function login({login = '', password = '', rememberMe = false}) {
                 } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                     return dispatch(needActivation());
                 } else if (resp.errors.login === LOGIN_REQUIRED && password) {
+                    // TODO: log this case to backend
                     // return to the first step
                     return dispatch(logout());
                 }
@@ -143,9 +144,7 @@ export function clearErrors() {
     return setErrors(null);
 }
 
-export function logout() {
-    return logoutUser();
-}
+export { logout, updateUser } from 'components/user/actions';
 
 /**
  * @param {object} oauthData

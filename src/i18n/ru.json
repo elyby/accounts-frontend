@@ -21,6 +21,7 @@
     "components.auth.chooseAccount.addAccount": "Войти в другой аккаунт",
     "components.auth.chooseAccount.chooseAccountTitle": "Выбор аккаунта",
     "components.auth.chooseAccount.description": "Вы выполнили вход в несколько аккаунтов. Укажите, какой вы хотите использовать для авторизации {appName}",
+    "components.auth.chooseAccount.logoutAll": "Выйти из всех аккаунтов",
     "components.auth.finish.authForAppFailed": "Авторизация для {appName} не удалась",
     "components.auth.finish.authForAppSuccessful": "Авторизация для {appName} успешно выполнена",
     "components.auth.finish.copy": "Скопировать",

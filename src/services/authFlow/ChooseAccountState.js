@@ -17,4 +17,8 @@ export default class ChooseAccountState extends AbstractState {
             context.setState(new LoginState());
         }
     }
+
+    reject(context) {
+        context.run('logout');
+    }
 }

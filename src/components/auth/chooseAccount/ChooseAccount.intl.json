@@ -1,5 +1,6 @@
 {
     "chooseAccountTitle": "Choose an account",
     "addAccount": "Log into another account",
+    "logoutAll": "Log out from all accounts",
     "description": "You have logged in into multiple accounts. Please choose the one, you want to use to authorize {appName}"
 }

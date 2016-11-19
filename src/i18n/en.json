@@ -21,6 +21,7 @@
     "components.auth.chooseAccount.addAccount": "Log into another account",
     "components.auth.chooseAccount.chooseAccountTitle": "Choose an account",
     "components.auth.chooseAccount.description": "You have logged in into multiple accounts. Please choose the one, you want to use to authorize {appName}",
+    "components.auth.chooseAccount.logoutAll": "Log out from all accounts",
     "components.auth.finish.authForAppFailed": "Authorization for {appName} was failed",
     "components.auth.finish.authForAppSuccessful": "Authorization for {appName} was successfully completed",
     "components.auth.finish.copy": "Copy",
