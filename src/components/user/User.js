@@ -33,6 +33,10 @@ export default class User {
             // frontend app specific attributes
             isGuest: true,
             goal: null, // the goal with wich user entered site
+
+            // TODO: remove me after migration to multy accs
+            token: '',
+            refreshToken: ''
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {

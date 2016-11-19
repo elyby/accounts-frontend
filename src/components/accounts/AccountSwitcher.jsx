@@ -44,11 +44,12 @@ export class AccountSwitcher extends Component {
 
     render() {
         const { accounts, skin, allowAdd, allowLogout, highlightActiveAccount } = this.props;
+        const activeAccount = accounts.active;
 
         let {available} = accounts;
 
         if (highlightActiveAccount) {
-            available = available.filter((account) => account.id !== accounts.active.id);
+            available = available.filter((account) => account.id !== activeAccount.id);
         }
 
         return (
@@ -65,19 +66,19 @@ export class AccountSwitcher extends Component {
                         )} />
                         <div className={styles.activeAccountInfo}>
                             <div className={styles.activeAccountUsername}>
-                                {accounts.active.username}
+                                {activeAccount.username}
                             </div>
                             <div className={classNames(styles.accountEmail, styles.activeAccountEmail)}>
-                                {accounts.active.email}
+                                {activeAccount.email}
                             </div>
                             <div className={styles.links}>
                                 <div className={styles.link}>
-                                    <a href={`http://ely.by/u${accounts.active.id}`} target="_blank">
+                                    <a href={`http://ely.by/u${activeAccount.id}`} target="_blank">
                                         <Message {...messages.goToEly} />
                                     </a>
                                 </div>
                                 <div className={styles.link}>
-                                    <a className={styles.link} onClick={this.onRemove(accounts.active)} href="#">
+                                    <a className={styles.link} onClick={this.onRemove(activeAccount)} href="#">
                                         <Message {...messages.logout} />
                                     </a>
                                 </div>
