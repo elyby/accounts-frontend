@@ -13,6 +13,7 @@ import { IntlProvider } from 'components/i18n';
 import routesFactory from 'routes';
 import storeFactory from 'storeFactory';
 import bsodFactory from 'components/ui/bsod/factory';
+import loader from 'services/loader';
 
 const store = storeFactory();
 
@@ -52,7 +53,7 @@ Promise.all([
 
 
 function stopLoading() {
-    document.getElementById('loader').classList.remove('is-active');
+    loader.hide();
 }
 
 import scrollTo from 'components/ui/scrollTo';

@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Link } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
 
+import loader from 'services/loader';
 import { skins, SKIN_DARK, COLOR_WHITE } from 'components/ui';
 import { Button } from 'components/ui/form';
 
@@ -137,9 +138,12 @@ export class AccountSwitcher extends Component {
     onSwitch = (account) => (event) => {
         event.preventDefault();
 
+        loader.show();
+
         this.props.switchAccount(account)
             .then(() => this.props.onAfterAction())
-            .then(() => this.props.onSwitch(account));
+            .then(() => this.props.onSwitch(account))
+            .finally(() => loader.hide());
     };
 
     onRemove = (account) => (event) => {
