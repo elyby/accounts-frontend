@@ -34,7 +34,11 @@ export function authenticate({token, refreshToken}) {
                             refreshToken
                         }
                     }))
-            )
+            , () => {
+                dispatch(logout());
+
+                return Promise.reject();
+            })
             .then(({user, account}) => {
                 dispatch(add(account));
                 dispatch(activate(account));
