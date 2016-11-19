@@ -1,5 +1,6 @@
 import authentication from 'services/api/authentication';
-import {updateUser, logout} from '../actions';
+import { updateToken } from 'components/accounts/actions';
+import { logout } from '../actions';
 
 /**
  * Ensures, that all user's requests have fresh access token
@@ -12,53 +13,52 @@ import {updateUser, logout} from '../actions';
  */
 export default function refreshTokenMiddleware({dispatch, getState}) {
     return {
-        before(data) {
-            const {refreshToken, token} = getState().user;
-            const isRefreshTokenRequest = data.url.includes('refresh-token');
+        before(req) {
+            const {user, accounts} = getState();
 
-            if (!token || isRefreshTokenRequest) {
-                return data;
+            let refreshToken;
+            let token;
+
+            const isRefreshTokenRequest = req.url.includes('refresh-token');
+
+            if (accounts.active) {
+                token = accounts.active.token;
+                refreshToken = accounts.active.refreshToken;
+            } else { // #legacy token
+                token = user.token;
+                refreshToken = user.refreshToken;
+            }
+
+            if (!token || req.options.token || isRefreshTokenRequest) {
+                return req;
             }
 
             try {
-                const SAFETY_FACTOR = 60; // ask new token earlier to overcome time dissynchronization problem
+                const SAFETY_FACTOR = 300; // ask new token earlier to overcome time dissynchronization problem
                 const jwt = getJWTPayload(token);
 
                 if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
-                    return requestAccessToken(refreshToken, dispatch).then(() => data);
+                    return requestAccessToken(refreshToken, dispatch).then(() => req);
                 }
             } catch (err) {
-                dispatch(logout());
+                // console.error('Bad token', err); // TODO: it would be cool to log such things to backend
+                return dispatch(logout()).then(() => req);
             }
 
-            return data;
+            return Promise.resolve(req);
         },
 
-        catch(resp, restart) {
-            /*
-                {
-                    "name": "Unauthorized",
-                    "message": "You are requesting with an invalid credential.",
-                    "code": 0,
-                    "status": 401,
-                    "type": "yii\\web\\UnauthorizedHttpException"
-                }
-                {
-                    "name": "Unauthorized",
-                    "message": "Token expired",
-                    "code": 0,
-                    "status": 401,
-                    "type": "yii\\web\\UnauthorizedHttpException"
-                }
-            */
-            if (resp && resp.status === 401) {
-                const {refreshToken} = getState().user;
+        catch(resp, req, restart) {
+            if (resp && resp.status === 401 && !req.options.token) {
+                const {user, accounts} = getState();
+                const {refreshToken} = accounts.active ? accounts.active : user;
+
                 if (resp.message === 'Token expired' && refreshToken) {
                     // request token and retry
                     return requestAccessToken(refreshToken, dispatch).then(restart);
                 }
 
-                dispatch(logout());
+                return dispatch(logout()).then(() => Promise.reject(resp));
             }
 
             return Promise.reject(resp);
@@ -75,9 +75,7 @@ function requestAccessToken(refreshToken, dispatch) {
     }
 
     return promise
-        .then(({token}) => dispatch(updateUser({
-            token
-        })))
+        .then(({token}) => dispatch(updateToken(token)))
         .catch(() => dispatch(logout()));
 }
 

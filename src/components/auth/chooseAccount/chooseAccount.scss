@@ -1,0 +1,23 @@
+//@import '~components/ui/panel.scss';
+// TODO: эту константу можно заимпортить из panel.scss, но это приводит к странным ошибкам
+$bodyLeftRightPadding: 20px;
+
+//@import '~components/ui/fonts.scss';
+// TODO: эту константу можно заимпортить из fonts.scss, но это приводит к странным ошибкам
+$font-family-title: 'Roboto Condensed', Arial, sans-serif;
+
+.accountSwitcherContainer {
+    margin-left: -$bodyLeftRightPadding;
+    margin-right: -$bodyLeftRightPadding;
+}
+
+.description {
+    font-family: $font-family-title;
+    margin: 5px 0 19px;
+    line-height: 1.4;
+    font-size: 16px;
+}
+
+.appName {
+    color: #fff;
+}

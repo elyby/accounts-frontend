@@ -1,10 +1,22 @@
 import { combineReducers } from 'redux';
 
-import { ERROR, SET_CLIENT, SET_OAUTH, SET_OAUTH_RESULT, SET_SCOPES, SET_LOADING_STATE, REQUIRE_PERMISSIONS_ACCEPT } from './actions';
+import {
+    ERROR,
+    SET_CLIENT,
+    SET_OAUTH,
+    SET_OAUTH_RESULT,
+    SET_SCOPES,
+    SET_LOADING_STATE,
+    REQUIRE_PERMISSIONS_ACCEPT,
+    SET_LOGIN,
+    SET_SWITCHER
+} from './actions';
 
 export default combineReducers({
+    login,
     error,
     isLoading,
+    isSwitcherEnabled,
     client,
     oauth,
     scopes
@@ -19,6 +31,7 @@ function error(
             if (!error) {
                 throw new Error('Expected payload with error');
             }
+
             return payload;
 
         default:
@@ -26,6 +39,39 @@ function error(
     }
 }
 
+function login(
+    state = null,
+    {type, payload = null}
+) {
+    switch (type) {
+        case SET_LOGIN:
+            if (payload !== null && typeof payload !== 'string') {
+                throw new Error('Expected payload with login string or null');
+            }
+
+            return payload;
+
+        default:
+            return state;
+    }
+}
+
+function isSwitcherEnabled(
+    state = true,
+    {type, payload = false}
+) {
+    switch (type) {
+        case SET_SWITCHER:
+            if (typeof payload !== 'boolean') {
+                throw new Error('Expected payload of boolean type');
+            }
+
+            return payload;
+
+        default:
+            return state;
+    }
+}
 
 function isLoading(
     state = false,
@@ -68,6 +114,8 @@ function oauth(
                 redirectUrl: payload.redirectUrl,
                 responseType: payload.responseType,
                 scope: payload.scope,
+                prompt: payload.prompt,
+                loginHint: payload.loginHint,
                 state: payload.state
             };
 

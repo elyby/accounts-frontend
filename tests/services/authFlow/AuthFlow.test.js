@@ -267,6 +267,7 @@ describe('AuthFlow', () => {
             '/password': LoginState,
             '/accept-rules': LoginState,
             '/oauth/permissions': LoginState,
+            '/oauth/choose-account': LoginState,
             '/oauth/finish': LoginState,
             '/oauth2/v1/foo': OAuthState,
             '/oauth2/v1': OAuthState,

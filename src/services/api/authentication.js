@@ -1,6 +1,7 @@
 import request from 'services/request';
+import accounts from 'services/api/accounts';
 
-export default {
+const authentication = {
     login({
         login = '',
         password = '',
@@ -12,8 +13,17 @@ export default {
         );
     },
 
-    logout() {
-        return request.post('/api/authentication/logout');
+    /**
+     * @param {object} options
+     * @param {object} [options.token] - an optional token to overwrite headers
+     *                                   in middleware and disable token auto-refresh
+     *
+     * @return {Promise}
+     */
+    logout(options = {}) {
+        return request.post('/api/authentication/logout', {}, {
+            token: options.token
+        });
     },
 
     forgotPassword({
@@ -37,6 +47,40 @@ export default {
     },
 
     /**
+     * Resolves if token is valid
+     *
+     * @param {object} options
+     * @param {string} options.token
+     * @param {string} options.refreshToken
+     *
+     * @return {Promise} - resolves with options.token or with a new token
+     *                     if it was refreshed
+     */
+    validateToken({token, refreshToken}) {
+        return new Promise((resolve) => {
+            if (typeof token !== 'string') {
+                throw new Error('token must be a string');
+            }
+
+            if (typeof refreshToken !== 'string') {
+                throw new Error('refreshToken must be a string');
+            }
+
+            resolve();
+        })
+        .then(() => accounts.current({token}))
+        .then(() => ({token, refreshToken}))
+        .catch((resp) => {
+            if (resp.message === 'Token expired') {
+                return authentication.requestToken(refreshToken)
+                    .then(({token}) => ({token, refreshToken}));
+            }
+
+            return Promise.reject(resp);
+        });
+    },
+
+    /**
      * Request new access token using a refreshToken
      *
      * @param {string} refreshToken
@@ -52,3 +96,5 @@ export default {
         }));
     }
 };
+
+export default authentication;

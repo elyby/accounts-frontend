@@ -4,7 +4,7 @@ const KEY_USER = 'user';
 
 export default class User {
     /**
-     * @param  {object|string|undefined} data plain object or jwt token or empty to load from storage
+     * @param {object} [data] - plain object or jwt token or empty to load from storage
      *
      * @return {User}
      */
@@ -18,8 +18,6 @@ export default class User {
         const defaults = {
             id: null,
             uuid: null,
-            token: '',
-            refreshToken: '',
             username: '',
             email: '',
             // will contain user's email or masked email
@@ -27,12 +25,14 @@ export default class User {
             maskedEmail: '',
             avatar: '',
             lang: '',
-            goal: null, // the goal with wich user entered site
-            isGuest: true,
             isActive: false,
             shouldAcceptRules: false, // whether user need to review updated rules
             passwordChangedAt: null,
             hasMojangUsernameCollision: false,
+
+            // frontend app specific attributes
+            isGuest: true,
+            goal: null, // the goal with wich user entered site
         };
 
         const user = Object.keys(defaults).reduce((user, key) => {

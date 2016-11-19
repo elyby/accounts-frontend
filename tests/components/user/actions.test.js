@@ -3,6 +3,7 @@ import expect from 'unexpected';
 import { routeActions } from 'react-router-redux';
 
 import request from 'services/request';
+import { reset, RESET } from 'components/accounts/actions';
 
 import {
     logout,
@@ -11,8 +12,10 @@ import {
 
 
 describe('components/user/actions', () => {
-    const dispatch = sinon.stub().named('dispatch');
-    const getState = sinon.stub().named('getState');
+    const getState = sinon.stub().named('store.getState');
+    const dispatch = sinon.spy((arg) =>
+        typeof arg === 'function' ? arg(dispatch, getState) : arg
+    ).named('store.dispatch');
 
     const callThunk = function(fn, ...args) {
         const thunk = fn(...args);
@@ -39,11 +42,16 @@ describe('components/user/actions', () => {
         });
 
         describe('user with jwt', () => {
+            const token = 'iLoveRockNRoll';
+
             beforeEach(() => {
                 getState.returns({
                     user: {
-                        token: 'iLoveRockNRoll',
                         lang: 'foo'
+                    },
+                    accounts: {
+                        active: {token},
+                        available: [{token}]
                     }
                 });
             });
@@ -62,20 +70,27 @@ describe('components/user/actions', () => {
 
                 return callThunk(logout).then(() => {
                     expect(request.post, 'to have a call satisfying', [
-                        '/api/authentication/logout'
+                        '/api/authentication/logout', {}, {}
                     ]);
                 });
             });
 
             testChangedToGuest();
+            testAccountsReset();
             testRedirectedToLogin();
         });
 
-        describe('user without jwt', () => { // (a guest with partially filled user's state)
+        describe('user without jwt', () => {
+            // (a guest with partially filled user's state)
+            // DEPRECATED
             beforeEach(() => {
                 getState.returns({
                     user: {
                         lang: 'foo'
+                    },
+                    accounts: {
+                        active: null,
+                        available: []
                     }
                 });
             });
@@ -87,6 +102,7 @@ describe('components/user/actions', () => {
             );
 
             testChangedToGuest();
+            testAccountsReset();
             testRedirectedToLogin();
         });
 
@@ -108,6 +124,16 @@ describe('components/user/actions', () => {
                 callThunk(logout).then(() => {
                     expect(dispatch, 'to have a call satisfying', [
                         routeActions.push('/login')
+                    ]);
+                })
+            );
+        }
+
+        function testAccountsReset() {
+            it(`should dispatch ${RESET}`, () =>
+                callThunk(logout).then(() => {
+                    expect(dispatch, 'to have a call satisfying', [
+                        reset()
                     ]);
                 })
             );

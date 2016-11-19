@@ -47,6 +47,9 @@ describe('AuthFlow.functional', () => {
             state.user = {
                 isGuest: true
             };
+            state.auth = {
+                login: null
+            };
         });
 
         it('should redirect guest / -> /login', () => {
@@ -81,7 +84,8 @@ describe('AuthFlow.functional', () => {
 
                 auth: {
                     oauth: {
-                        clientId: 123
+                        clientId: 123,
+                        prompt: []
                     }
                 }
             });

@@ -12,7 +12,7 @@
     "up": "npm update",
     "test": "karma start ./karma.conf.js",
     "lint": "eslint ./src",
-    "i18n": "cd ./scripts && ./node_modules/.bin/babel-node i18n-collect.js",
+    "i18n": "babel-node ./scripts/i18n-collect.js",
     "build": "rm -rf dist/ && webpack --progress --colors -p"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "react-router": "^2.0.0",
     "react-router-redux": "^3.0.0",
     "redux": "^3.0.4",
+    "redux-localstorage": "^0.4.1",
     "redux-thunk": "^2.0.0",
     "webfontloader": "^1.6.26",
     "whatwg-fetch": "^1.0.0"
@@ -50,6 +51,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-runtime": "^6.0.0",
     "bundle-loader": "^0.5.4",
+    "circular-dependency-plugin": "^2.0.0",
     "css-loader": "^0.23.0",
     "enzyme": "^2.2.0",
     "eslint": "^3.1.1",

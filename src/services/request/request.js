@@ -5,33 +5,36 @@ const middlewareLayer = new PromiseMiddlewareLayer();
 export default {
     /**
      * @param {string} url
-     * @param {object} data
+     * @param {object} data - request data
+     * @param {object} options - additional options for fetch or middlewares
      *
      * @return {Promise}
      */
-    post(url, data) {
+    post(url, data, options = {}) {
         return doFetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
-            body: buildQuery(data)
+            body: buildQuery(data),
+            ...options
         });
     },
 
     /**
      * @param {string} url
-     * @param {object} data
+     * @param {object} data - request data
+     * @param {object} options - additional options for fetch or middlewares
      *
      * @return {Promise}
      */
-    get(url, data) {
-        if (typeof data === 'object') {
+    get(url, data, options = {}) {
+        if (typeof data === 'object' && Object.keys(data).length) {
             const separator = url.indexOf('?') === -1 ? '?' : '&';
             url += separator + buildQuery(data);
         }
 
-        return doFetch(url);
+        return doFetch(url, options);
     },
 
     /**
@@ -82,8 +85,8 @@ function doFetch(url, options = {}) {
         .then(checkStatus)
         .then(toJSON, rejectWithJSON)
         .then(handleResponseSuccess)
-        .then((resp) => middlewareLayer.run('then', resp))
-        .catch((resp) => middlewareLayer.run('catch', resp, () => doFetch(url, options)))
+        .then((resp) => middlewareLayer.run('then', resp, {url, options}))
+        .catch((resp) => middlewareLayer.run('catch', resp, {url, options}, () => doFetch(url, options)))
         ;
 }
 

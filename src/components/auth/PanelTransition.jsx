@@ -33,7 +33,7 @@ const contexts = [
     ['login', 'password', 'forgotPassword', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
     ['acceptRules'],
-    ['permissions']
+    ['chooseAccount', 'permissions']
 ];
 
 if (process.env.NODE_ENV !== 'production') {
@@ -64,10 +64,7 @@ class PanelTransition extends Component {
                 payload: PropTypes.object
             })]),
             isLoading: PropTypes.bool,
-            login: PropTypes.shape({
-                login: PropTypes.string,
-                password: PropTypes.string
-            })
+            login: PropTypes.string
         }).isRequired,
         user: userShape.isRequired,
         setErrors: PropTypes.func.isRequired,
@@ -89,12 +86,12 @@ class PanelTransition extends Component {
                 type: PropTypes.string,
                 payload: PropTypes.object
             })]),
-            login: PropTypes.shape({
-                login: PropTypes.string,
-                password: PropTypes.string
-            })
+            login: PropTypes.string
         }),
         user: userShape,
+        accounts: PropTypes.shape({
+            available: PropTypes.array
+        }),
         requestRedraw: PropTypes.func,
         clearErrors: PropTypes.func,
         resolve: PropTypes.func,
@@ -314,7 +311,12 @@ class PanelTransition extends Component {
     }
 
     shouldMeasureHeight() {
-        return [this.props.auth.error, this.state.isHeightDirty, this.props.user.lang].join('');
+        return [
+            this.props.auth.error,
+            this.state.isHeightDirty,
+            this.props.user.lang,
+            this.props.accounts.available.length
+        ].join('');
     }
 
     getHeader({key, style, data}) {
@@ -446,12 +448,35 @@ class PanelTransition extends Component {
     }
 }
 
-export default connect((state) => ({
-    user: state.user,
-    auth: state.auth,
-    resolve: authFlow.resolve.bind(authFlow),
-    reject: authFlow.reject.bind(authFlow)
-}), {
+export default connect((state) => {
+    const {login} = state.auth;
+    let user = {
+        ...state.user
+    };
+
+    if (login) {
+        user = {
+            ...user,
+            isGuest: true,
+            email: '',
+            username: ''
+        };
+
+        if (/[@.]/.test(login)) {
+            user.email = login;
+        } else {
+            user.username = login;
+        }
+    }
+
+    return {
+        user,
+        accounts: state.accounts, // need this, to re-render height
+        auth: state.auth,
+        resolve: authFlow.resolve.bind(authFlow),
+        reject: authFlow.reject.bind(authFlow)
+    };
+}, {
     clearErrors: actions.clearErrors,
     setErrors: actions.setErrors
 })(PanelTransition);

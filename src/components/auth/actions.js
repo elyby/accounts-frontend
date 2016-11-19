@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout as logoutUser, acceptRules as userAcceptRules, authenticate } from 'components/user/actions';
+import { updateUser, logout, acceptRules as userAcceptRules } from 'components/user/actions';
+import { authenticate } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
@@ -19,24 +20,13 @@ export function login({login = '', password = '', rememberMe = false}) {
         .catch((resp) => {
             if (resp.errors) {
                 if (resp.errors.password === PASSWORD_REQUIRED) {
-                    let username = '';
-                    let email = '';
-
-                    if (/[@.]/.test(login)) {
-                        email = login;
-                    } else {
-                        username = login;
-                    }
-
-                    return dispatch(updateUser({
-                        username,
-                        email
-                    }));
+                    return dispatch(setLogin(login));
                 } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                     return dispatch(needActivation());
                 } else if (resp.errors.login === LOGIN_REQUIRED && password) {
+                    // TODO: log this case to backend
                     // return to the first step
-                    dispatch(logout());
+                    return dispatch(logout());
                 }
             }
 
@@ -125,7 +115,23 @@ export function resendActivation({email = '', captcha}) {
     );
 }
 
-export const ERROR = 'error';
+export const SET_LOGIN = 'auth:setLogin';
+export function setLogin(login) {
+    return {
+        type: SET_LOGIN,
+        payload: login
+    };
+}
+
+export const SET_SWITCHER = 'auth:setAccountSwitcher';
+export function setAccountSwitcher(isOn) {
+    return {
+        type: SET_SWITCHER,
+        payload: isOn
+    };
+}
+
+export const ERROR = 'auth:error';
 export function setErrors(errors) {
     return {
         type: ERROR,
@@ -138,9 +144,8 @@ export function clearErrors() {
     return setErrors(null);
 }
 
-export function logout() {
-    return logoutUser();
-}
+export { logout, updateUser } from 'components/user/actions';
+export { authenticate } from 'components/accounts/actions';
 
 /**
  * @param {object} oauthData
@@ -149,6 +154,13 @@ export function logout() {
  * @param {string} oauthData.responseType
  * @param {string} oauthData.description
  * @param {string} oauthData.scope
+ * @param {string} [oauthData.prompt='none'] - comma-separated list of values to adjust auth flow
+ *                 Posible values:
+ *                  * none - default behaviour
+ *                  * consent - forcibly prompt user for rules acceptance
+ *                  * select_account - force account choosage, even if user has only one
+ * @param {string} oauthData.loginHint - allows to choose the account, which will be used for auth
+ *                        The possible values: account id, email, username
  * @param {string} oauthData.state
  *
  * @return {Promise}
@@ -159,8 +171,17 @@ export function oAuthValidate(oauthData) {
     return wrapInLoader((dispatch) =>
         oauth.validate(oauthData)
             .then((resp) => {
+                let prompt = (oauthData.prompt || 'none').split(',').map((item) => item.trim);
+                if (prompt.includes('none')) {
+                    prompt = ['none'];
+                }
+
                 dispatch(setClient(resp.client));
-                dispatch(setOAuthRequest(resp.oAuth));
+                dispatch(setOAuthRequest({
+                    ...resp.oAuth,
+                    prompt: oauthData.prompt || 'none',
+                    loginHint: oauthData.loginHint
+                }));
                 dispatch(setScopes(resp.session.scopes));
                 localStorage.setItem('oauthData', JSON.stringify({ // @see services/authFlow/AuthFlow
                     timestamp: Date.now(),
@@ -226,6 +247,13 @@ export function setClient({id, name, description}) {
     };
 }
 
+export function resetOAuth() {
+    return (dispatch) => {
+        localStorage.removeItem('oauthData');
+        dispatch(setOAuthRequest({}));
+    };
+}
+
 export const SET_OAUTH = 'set_oauth';
 export function setOAuthRequest(oauth) {
     return {
@@ -235,6 +263,8 @@ export function setOAuthRequest(oauth) {
             redirectUrl: oauth.redirect_uri,
             responseType: oauth.response_type,
             scope: oauth.scope,
+            prompt: oauth.prompt,
+            loginHint: oauth.loginHint,
             state: oauth.state
         }
     };
@@ -305,7 +335,14 @@ function needActivation() {
 }
 
 function authHandler(dispatch) {
-    return (resp) => dispatch(authenticate(resp.access_token, resp.refresh_token));
+    return (resp) => dispatch(authenticate({
+        token: resp.access_token,
+        refreshToken: resp.refresh_token
+    })).then((resp) => {
+        dispatch(setLogin(null));
+
+        return resp;
+    });
 }
 
 function validationErrorsHandler(dispatch, repeatUrl) {

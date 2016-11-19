@@ -11,6 +11,8 @@ export default class OAuthState extends AbstractState {
             responseType: query.response_type,
             description: query.description,
             scope: query.scope,
+            prompt: query.prompt,
+            loginHint: query.login_hint,
             state: query.state
         }).then(() => context.setState(new CompleteState()));
     }

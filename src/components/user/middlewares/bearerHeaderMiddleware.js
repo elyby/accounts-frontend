@@ -8,14 +8,20 @@
  */
 export default function bearerHeaderMiddleware({getState}) {
     return {
-        before(data) {
-            const {token} = getState().user;
+        before(req) {
+            const {user, accounts} = getState();
 
-            if (token) {
-                data.options.headers.Authorization = `Bearer ${token}`;
+            let {token} = accounts.active ? accounts.active : user;
+
+            if (req.options.token) {
+                token = req.options.token;
             }
 
-            return data;
+            if (token) {
+                req.options.headers.Authorization = `Bearer ${token}`;
+            }
+
+            return req;
         }
     };
 }

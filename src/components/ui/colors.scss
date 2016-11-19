@@ -5,13 +5,13 @@ $violet: #6b5b8c;
 $dark_blue: #28555b;
 $light_violet: #8b5d79;
 $orange: #dd8650;
-$light: #ebe8e1;
+$white: #ebe8e1;
 
 $black: #232323;
 
 $defaultButtonTextColor : #fff;
-$black-button-light: #392f2c;
-$black-button-dark: #1e0b11;
+$whiteButtonLight: #f5f5f5;
+$whiteButtonDark: #f5f5f5; // TODO: найти оптимальный цвет для прожатого состояния
 
 @function darker($color) {
     $elyColorsMap : (

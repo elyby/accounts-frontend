@@ -1,14 +1,16 @@
 import { routeActions } from 'react-router-redux';
 
-import captcha from 'services/captcha';
 import accounts from 'services/api/accounts';
+import { logoutAll } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';
 /**
- * @param  {string|object} payload jwt token or user object
- * @return {object} action definition
+ * Merge data into user's state
+ *
+ * @param {object} payload
+ * @return {object} - action definition
  */
 export function updateUser(payload) {
     return {
@@ -23,23 +25,26 @@ export function changeLang(lang) {
         .then((lang) => {
             const {user: {isGuest, lang: oldLang}} = getState();
 
-            if (!isGuest && oldLang !== lang) {
-                accounts.changeLang(lang);
+            if (oldLang !== lang) {
+                !isGuest && accounts.changeLang(lang);
+
+                dispatch({
+                    type: CHANGE_LANG,
+                    payload: {
+                        lang
+                    }
+                });
             }
-
-            // TODO: probably should be moved from here, because it is side effect
-            captcha.setLang(lang);
-
-            dispatch({
-                type: CHANGE_LANG,
-                payload: {
-                    lang
-                }
-            });
         });
 }
 
 export const SET = 'USER_SET';
+/**
+ * Replace current user's state with a new one
+ *
+ * @param {User} payload
+ * @return {object} - action definition
+ */
 export function setUser(payload) {
     return {
         type: SET,
@@ -49,22 +54,16 @@ export function setUser(payload) {
 
 export function logout() {
     return (dispatch, getState) => {
-        if (getState().user.token) {
-            authentication.logout();
-        }
+        dispatch(setUser({
+            lang: getState().user.lang,
+            isGuest: true
+        }));
 
-        return new Promise((resolve) => {
-            setTimeout(() => { // a tiny timeout to allow logout before user's token will be removed
-                dispatch(setUser({
-                    lang: getState().user.lang,
-                    isGuest: true
-                }));
+        dispatch(logoutAll());
 
-                dispatch(routeActions.push('/login'));
+        dispatch(routeActions.push('/login'));
 
-                resolve();
-            }, 0);
-        });
+        return Promise.resolve();
     };
 }
 
@@ -72,7 +71,10 @@ export function fetchUserData() {
     return (dispatch) =>
         accounts.current()
             .then((resp) => {
-                dispatch(updateUser(resp));
+                dispatch(updateUser({
+                    isGuest: false,
+                    ...resp
+                }));
 
                 return dispatch(changeLang(resp.lang));
             });
@@ -80,31 +82,11 @@ export function fetchUserData() {
 
 export function acceptRules() {
     return (dispatch) =>
-        accounts.acceptRules()
-        .then((resp) => {
+        accounts.acceptRules().then((resp) => {
             dispatch(updateUser({
                 shouldAcceptRules: false
             }));
 
             return resp;
-        })
-        ;
-}
-
-export function authenticate(token, refreshToken) { // TODO: this action, probably, belongs to components/auth
-    return (dispatch, getState) => {
-        refreshToken = refreshToken || getState().user.refreshToken;
-        dispatch(updateUser({
-            token,
-            refreshToken
-        }));
-
-        return dispatch(fetchUserData()).then((resp) => {
-            dispatch(updateUser({
-                isGuest: false
-            }));
-            return resp;
         });
-    };
 }
-

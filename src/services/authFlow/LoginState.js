@@ -3,12 +3,18 @@ import PasswordState from './PasswordState';
 
 export default class LoginState extends AbstractState {
     enter(context) {
-        const {user} = context.getState();
+        const {auth, user} = context.getState();
 
-        if (user.email || user.username) {
+        // TODO: it may not allow user to leave password state till he click back or enters password
+        if (auth.login) {
             context.setState(new PasswordState());
-        } else {
+        } else if (user.isGuest
+            // for the case, when user is logged in and wants to add a new aacount
+            || /login|password/.test(context.getRequest().path) // TODO: improve me
+        ) {
             context.navigate('/login');
+        } else {
+            context.setState(new PasswordState());
         }
     }
 
