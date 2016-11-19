@@ -10,8 +10,7 @@ const account = {
     id: 1,
     username: 'username',
     email: 'email@test.com',
-    token: 'foo',
-    refreshToken: 'foo'
+    token: 'foo'
 };
 
 describe('Accounts reducer', () => {

@@ -22,7 +22,7 @@ export default function accounts(
 ) {
     switch (type) {
         case ADD:
-            if (!payload || !payload.id || !payload.token || !payload.refreshToken) {
+            if (!payload || !payload.id || !payload.token) {
                 throw new Error('Invalid or empty payload passed for accounts.add');
             }
 
@@ -41,7 +41,7 @@ export default function accounts(
             return state;
 
         case ACTIVATE:
-            if (!payload || !payload.id || !payload.token || !payload.refreshToken) {
+            if (!payload || !payload.id || !payload.token) {
                 throw new Error('Invalid or empty payload passed for accounts.add');
             }
 

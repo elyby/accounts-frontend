@@ -62,10 +62,6 @@ const authentication = {
                 throw new Error('token must be a string');
             }
 
-            if (typeof refreshToken !== 'string') {
-                throw new Error('refreshToken must be a string');
-            }
-
             resolve();
         })
         .then(() => accounts.current({token}))

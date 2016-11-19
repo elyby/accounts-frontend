@@ -37,10 +37,8 @@ describe('authentication api', () => {
             )
         );
 
-        it('rejects if refreshToken has a bad type', () =>
-            expect(authentication.validateToken({token: 'foo', refreshToken: {}}),
-                'to be rejected with', 'refreshToken must be a string'
-            )
+        it('should allow empty refreshToken', () =>
+            expect(authentication.validateToken({token: 'foo', refreshToken: null}), 'to be fulfilled')
         );
 
         it('rejects if accounts.current request is unexpectedly failed', () => {
