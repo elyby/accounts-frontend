@@ -89,6 +89,9 @@ class PanelTransition extends Component {
             login: PropTypes.string
         }),
         user: userShape,
+        accounts: PropTypes.shape({
+            available: PropTypes.array
+        }),
         requestRedraw: PropTypes.func,
         clearErrors: PropTypes.func,
         resolve: PropTypes.func,
@@ -308,7 +311,12 @@ class PanelTransition extends Component {
     }
 
     shouldMeasureHeight() {
-        return [this.props.auth.error, this.state.isHeightDirty, this.props.user.lang].join('');
+        return [
+            this.props.auth.error,
+            this.state.isHeightDirty,
+            this.props.user.lang,
+            this.props.accounts.available.length
+        ].join('');
     }
 
     getHeader({key, style, data}) {
@@ -457,6 +465,7 @@ export default connect((state) => {
 
     return {
         user,
+        accounts: state.accounts, // need this, to re-render height
         auth: state.auth,
         resolve: authFlow.resolve.bind(authFlow),
         reject: authFlow.reject.bind(authFlow)
