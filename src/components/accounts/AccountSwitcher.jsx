@@ -72,7 +72,7 @@ export class AccountSwitcher extends Component {
                             </div>
                             <div className={styles.links}>
                                 <div className={styles.link}>
-                                    <a href="">
+                                    <a href={`http://ely.by/u${accounts.active.id}`} target="_blank">
                                         <Message {...messages.goToEly} />
                                     </a>
                                 </div>
