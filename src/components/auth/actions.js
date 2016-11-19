@@ -231,6 +231,13 @@ export function setClient({id, name, description}) {
     };
 }
 
+export function resetOAuth() {
+    return (dispatch) => {
+        localStorage.removeItem('oauthData');
+        dispatch(setOAuthRequest({}));
+    };
+}
+
 export const SET_OAUTH = 'set_oauth';
 export function setOAuthRequest(oauth) {
     return {

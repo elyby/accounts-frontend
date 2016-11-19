@@ -31,7 +31,7 @@ function RootPage(props) {
             })}>
                 <div className={styles.header}>
                     <div className={styles.headerContent}>
-                        <Link to="/" className={styles.logo}>
+                        <Link to="/" className={styles.logo} onClick={props.resetOAuth}>
                             <Message {...messages.siteName} />
                         </Link>
                         <div className={styles.userbar}>
@@ -57,12 +57,16 @@ RootPage.propTypes = {
         pathname: PropTypes.string
     }).isRequired,
     children: PropTypes.element,
+    resetOAuth: PropTypes.func.isRequired,
     isPopupActive: PropTypes.bool.isRequired
 };
 
 import { connect } from 'react-redux';
+import { resetOAuth } from 'components/auth/actions';
 
 export default connect((state) => ({
     user: state.user,
     isPopupActive: state.popup.popups.length > 0
-}))(RootPage);
+}), {
+    resetOAuth
+})(RootPage);
