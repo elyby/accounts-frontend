@@ -144,7 +144,8 @@ describe('CompleteState', () => {
                 },
                 auth: {
                     oauth: {
-                        clientId: 'ely.by'
+                        clientId: 'ely.by',
+                        prompt: []
                     }
                 }
             });
@@ -166,7 +167,8 @@ describe('CompleteState', () => {
                 },
                 auth: {
                     oauth: {
-                        clientId: 'ely.by'
+                        clientId: 'ely.by',
+                        prompt: []
                     }
                 }
             });
@@ -194,7 +196,8 @@ describe('CompleteState', () => {
                 },
                 auth: {
                     oauth: {
-                        clientId: 'ely.by'
+                        clientId: 'ely.by',
+                        prompt: []
                     }
                 }
             });
@@ -225,7 +228,8 @@ describe('CompleteState', () => {
                 },
                 auth: {
                     oauth: {
-                        clientId: 'ely.by'
+                        clientId: 'ely.by',
+                        prompt: []
                     }
                 }
             });
@@ -242,21 +246,21 @@ describe('CompleteState', () => {
             return promise.catch(mock.verify.bind(mock));
         };
 
-        it('should transition to finish state if rejected with static_page', () => {
-            return testOAuth('resolve', {redirectUri: 'static_page'}, FinishState);
-        });
+        it('should transition to finish state if rejected with static_page', () =>
+            testOAuth('resolve', {redirectUri: 'static_page'}, FinishState)
+        );
 
-        it('should transition to finish state if rejected with static_page_with_code', () => {
-            return testOAuth('resolve', {redirectUri: 'static_page_with_code'}, FinishState);
-        });
+        it('should transition to finish state if rejected with static_page_with_code', () =>
+            testOAuth('resolve', {redirectUri: 'static_page_with_code'}, FinishState)
+        );
 
-        it('should transition to login state if rejected with unauthorized', () => {
-            return testOAuth('reject', {unauthorized: true}, LoginState);
-        });
+        it('should transition to login state if rejected with unauthorized', () =>
+            testOAuth('reject', {unauthorized: true}, LoginState)
+        );
 
-        it('should transition to permissions state if rejected with acceptRequired', () => {
-            return testOAuth('reject', {acceptRequired: true}, PermissionsState);
-        });
+        it('should transition to permissions state if rejected with acceptRequired', () =>
+            testOAuth('reject', {acceptRequired: true}, PermissionsState)
+        );
     });
 
     describe('permissions accept', () => {
@@ -285,7 +289,8 @@ describe('CompleteState', () => {
                 },
                 auth: {
                     oauth: {
-                        clientId: 'ely.by'
+                        clientId: 'ely.by',
+                        prompt: []
                     }
                 }
             });
@@ -309,7 +314,8 @@ describe('CompleteState', () => {
                 },
                 auth: {
                     oauth: {
-                        clientId: 'ely.by'
+                        clientId: 'ely.by',
+                        prompt: []
                     }
                 }
             });
@@ -337,6 +343,7 @@ describe('CompleteState', () => {
                 auth: {
                     oauth: {
                         clientId: 'ely.by',
+                        prompt: [],
                         acceptRequired: true
                     }
                 }
@@ -365,6 +372,7 @@ describe('CompleteState', () => {
                 auth: {
                     oauth: {
                         clientId: 'ely.by',
+                        prompt: [],
                         acceptRequired: true
                     }
                 }

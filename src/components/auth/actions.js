@@ -145,6 +145,7 @@ export function clearErrors() {
 }
 
 export { logout, updateUser } from 'components/user/actions';
+export { authenticate } from 'components/accounts/actions';
 
 /**
  * @param {object} oauthData
@@ -153,6 +154,13 @@ export { logout, updateUser } from 'components/user/actions';
  * @param {string} oauthData.responseType
  * @param {string} oauthData.description
  * @param {string} oauthData.scope
+ * @param {string} [oauthData.prompt='none'] - comma-separated list of values to adjust auth flow
+ *                 Posible values:
+ *                  * none - default behaviour
+ *                  * consent - forcibly prompt user for rules acceptance
+ *                  * select_account - force account choosage, even if user has only one
+ * @param {string} oauthData.loginHint - allows to choose the account, which will be used for auth
+ *                        The possible values: account id, email, username
  * @param {string} oauthData.state
  *
  * @return {Promise}
@@ -163,8 +171,17 @@ export function oAuthValidate(oauthData) {
     return wrapInLoader((dispatch) =>
         oauth.validate(oauthData)
             .then((resp) => {
+                let prompt = (oauthData.prompt || 'none').split(',').map((item) => item.trim);
+                if (prompt.includes('none')) {
+                    prompt = ['none'];
+                }
+
                 dispatch(setClient(resp.client));
-                dispatch(setOAuthRequest(resp.oAuth));
+                dispatch(setOAuthRequest({
+                    ...resp.oAuth,
+                    prompt: oauthData.prompt || 'none',
+                    loginHint: oauthData.loginHint
+                }));
                 dispatch(setScopes(resp.session.scopes));
                 localStorage.setItem('oauthData', JSON.stringify({ // @see services/authFlow/AuthFlow
                     timestamp: Date.now(),
@@ -246,6 +263,8 @@ export function setOAuthRequest(oauth) {
             redirectUrl: oauth.redirect_uri,
             responseType: oauth.response_type,
             scope: oauth.scope,
+            prompt: oauth.prompt,
+            loginHint: oauth.loginHint,
             state: oauth.state
         }
     };

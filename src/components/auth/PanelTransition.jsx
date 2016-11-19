@@ -450,17 +450,23 @@ class PanelTransition extends Component {
 
 export default connect((state) => {
     const {login} = state.auth;
-    const user = {
-        ...state.user,
-        isGuest: true,
-        email: '',
-        username: ''
+    let user = {
+        ...state.user
     };
 
-    if (/[@.]/.test(login)) {
-        user.email = login;
-    } else {
-        user.username = login;
+    if (login) {
+        user = {
+            ...user,
+            isGuest: true,
+            email: '',
+            username: ''
+        };
+
+        if (/[@.]/.test(login)) {
+            user.email = login;
+        } else {
+            user.username = login;
+        }
     }
 
     return {

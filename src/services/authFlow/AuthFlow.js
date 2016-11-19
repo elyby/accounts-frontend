@@ -192,8 +192,8 @@ export default class AuthFlow {
      * @return {bool} - whether oauth state is being restored
      */
     restoreOAuthState() {
-        if (this.getRequest().path.indexOf('/register') === 0) {
-            // allow register
+        if (/^\/(register|oauth2)/.test(this.getRequest().path)) {
+            // allow register or the new oauth requests
             return;
         }
 

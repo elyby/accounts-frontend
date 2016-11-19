@@ -6,6 +6,9 @@ import ActivationState from './ActivationState';
 import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
 
+const PROMPT_ACCOUNT_CHOOSE = 'select_account';
+const PROMPT_PERMISSIONS = 'consent';
+
 export default class CompleteState extends AbstractState {
     constructor(options = {}) {
         super(options);
@@ -23,7 +26,33 @@ export default class CompleteState extends AbstractState {
         } else if (user.shouldAcceptRules) {
             context.setState(new AcceptRulesState());
         } else if (auth.oauth && auth.oauth.clientId) {
-            if (auth.isSwitcherEnabled && accounts.available.length > 1) {
+            let isSwitcherEnabled = auth.isSwitcherEnabled;
+
+            if (auth.oauth.loginHint) {
+                const account = accounts.available.filter((account) =>
+                    account.id === auth.oauth.loginHint * 1
+                    || account.email === auth.oauth.loginHint
+                    || account.username === auth.oauth.loginHint
+                )[0];
+
+                if (account) {
+                    // disable switching, because we are know the account, user must be authorized with
+                    context.run('setAccountSwitcher', false);
+                    isSwitcherEnabled = false;
+
+                    if (account.id !== accounts.active.id) {
+                        // lets switch user to an account, that is needed for auth
+                        return context.run('authenticate', account)
+                            .then(() => context.setState(new CompleteState()));
+                    }
+                }
+            }
+
+            if (isSwitcherEnabled
+                && (accounts.available.length > 1
+                    || auth.oauth.prompt.includes(PROMPT_ACCOUNT_CHOOSE)
+                )
+            ) {
                 context.setState(new ChooseAccountState());
             } else if (auth.oauth.code) {
                 context.setState(new FinishState());
@@ -31,7 +60,7 @@ export default class CompleteState extends AbstractState {
                 const data = {};
                 if (typeof this.isPermissionsAccepted !== 'undefined') {
                     data.accept = this.isPermissionsAccepted;
-                } else if (auth.oauth.acceptRequired) {
+                } else if (auth.oauth.acceptRequired || auth.oauth.prompt.includes(PROMPT_PERMISSIONS)) {
                     context.setState(new PermissionsState());
                     return;
                 }

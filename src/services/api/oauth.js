@@ -57,6 +57,8 @@ function getOAuthRequest(oauthData) {
         response_type: oauthData.responseType,
         description: oauthData.description,
         scope: oauthData.scope,
+        prompt: oauthData.prompt,
+        login_hint: oauthData.loginHint,
         state: oauthData.state
     };
 }

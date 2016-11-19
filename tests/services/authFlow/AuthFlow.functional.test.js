@@ -84,7 +84,8 @@ describe('AuthFlow.functional', () => {
 
                 auth: {
                     oauth: {
-                        clientId: 123
+                        clientId: 123,
+                        prompt: []
                     }
                 }
             });

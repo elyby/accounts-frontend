@@ -114,6 +114,8 @@ function oauth(
                 redirectUrl: payload.redirectUrl,
                 responseType: payload.responseType,
                 scope: payload.scope,
+                prompt: payload.prompt,
+                loginHint: payload.loginHint,
                 state: payload.state
             };
 

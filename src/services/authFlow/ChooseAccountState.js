@@ -8,6 +8,7 @@ export default class ChooseAccountState extends AbstractState {
     }
 
     resolve(context, payload) {
+        // do not ask again after user adds account, or chooses an existed one
         context.run('setAccountSwitcher', false);
 
         if (payload.id) {
