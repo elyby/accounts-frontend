@@ -34,7 +34,7 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
             }
 
             try {
-                const SAFETY_FACTOR = 60; // ask new token earlier to overcome time dissynchronization problem
+                const SAFETY_FACTOR = 300; // ask new token earlier to overcome time dissynchronization problem
                 const jwt = getJWTPayload(token);
 
                 if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
