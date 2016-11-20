@@ -22,16 +22,21 @@ export function factory(store) {
     request.addMiddleware(refreshTokenMiddleware(store));
     request.addMiddleware(bearerHeaderMiddleware(store));
 
-    promise = new Promise((resolve, reject) => {
+    promise = Promise.resolve().then(() => {
         const {user, accounts} = store.getState();
 
         if (accounts.active || user.token) {
             // authorizing user if it is possible
-            return store.dispatch(authenticate(accounts.active || user)).then(resolve, reject);
+            return store.dispatch(authenticate(accounts.active || user));
         }
 
-        // auto-detect guests language
-        store.dispatch(changeLang(user.lang)).then(resolve, reject);
+        return Promise.reject();
+    }).catch(() => {
+        // the user is guest or user authentication failed
+        const {user} = store.getState();
+
+        // auto-detect guest language
+        return store.dispatch(changeLang(user.lang));
     });
 
     return promise;

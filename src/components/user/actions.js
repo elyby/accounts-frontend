@@ -2,7 +2,6 @@ import { routeActions } from 'react-router-redux';
 
 import accounts from 'services/api/accounts';
 import { logoutAll } from 'components/accounts/actions';
-import authentication from 'services/api/authentication';
 import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';

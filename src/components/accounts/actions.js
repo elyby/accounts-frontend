@@ -22,6 +22,12 @@ import { setLocale } from 'components/i18n/actions';
 export function authenticate({token, refreshToken}) {
     return (dispatch) =>
         authentication.validateToken({token, refreshToken})
+            .catch(() => {
+                // TODO: log this case
+                dispatch(logout());
+
+                return Promise.reject();
+            })
             .then(({token, refreshToken}) =>
                 accounts.current({token})
                     .then((user) => ({
@@ -34,11 +40,7 @@ export function authenticate({token, refreshToken}) {
                             refreshToken
                         }
                     }))
-            , () => {
-                dispatch(logout());
-
-                return Promise.reject();
-            })
+            )
             .then(({user, account}) => {
                 dispatch(add(account));
                 dispatch(activate(account));
