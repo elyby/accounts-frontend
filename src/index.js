@@ -87,6 +87,19 @@ function restoreScroll() {
     }, 200);
 }
 
+browserHistory.listen(trackPageView);
+
+function trackPageView(location) {
+    const ga = window.ga;
+
+    if (!ga) {
+        return;
+    }
+
+    ga('set', 'page', location.pathname + location.search);
+    ga('send', 'pageview');
+}
+
 /* global process: false */
 if (process.env.NODE_ENV !== 'production') {
     // some shortcuts for testing on localhost
