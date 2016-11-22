@@ -7,6 +7,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import loader from 'services/loader';
 import { skins, SKIN_DARK, COLOR_WHITE } from 'components/ui';
 import { Button } from 'components/ui/form';
+import { userShape } from 'components/user/User';
 
 import styles from './accountSwitcher.scss';
 import messages from './AccountSwitcher.intl.json';
@@ -27,6 +28,7 @@ export class AccountSwitcher extends Component {
                 id: PropTypes.number
             }))
         }),
+        user: userShape, // TODO: remove me, when we will be sure, that accounts.active is always set for user
         skin: PropTypes.oneOf(skins),
         highlightActiveAccount: PropTypes.bool, // whether active account should be expanded and shown on the top
         allowLogout: PropTypes.bool, // whether to show logout icon near each account
@@ -44,7 +46,7 @@ export class AccountSwitcher extends Component {
 
     render() {
         const { accounts, skin, allowAdd, allowLogout, highlightActiveAccount } = this.props;
-        const activeAccount = accounts.active;
+        const activeAccount = accounts.active || this.props.user;
 
         let {available} = accounts;
 
@@ -161,6 +163,7 @@ import { authenticate, revoke } from 'components/accounts/actions';
 
 export default connect(({accounts, user}) => ({
     accounts,
+    user,
     userLang: user.lang // this is to force re-render on lang change
 }), {
     switchAccount: authenticate,

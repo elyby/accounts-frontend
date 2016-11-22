@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 
 import classNames from 'classnames';
 
-import buttons from 'components/ui/buttons.scss';
 import { AccountSwitcher } from 'components/accounts';
 
 import styles from './loggedInPanel.scss';
@@ -22,10 +21,12 @@ export default class LoggedInPanel extends Component {
 
     componentDidMount() {
         document.addEventListener('click', this.onBodyClick);
+        this._isMounted = true;
     }
 
     componentWillUnmount() {
         document.removeEventListener('click', this.onBodyClick);
+        this._isMounted = false;
     }
 
     render() {
@@ -51,7 +52,7 @@ export default class LoggedInPanel extends Component {
         );
     }
 
-    toggleAccountSwitcher = () => this.setState({
+    toggleAccountSwitcher = () => this._isMounted && this.setState({
         isAccountSwitcherActive: !this.state.isAccountSwitcherActive
     });
 
