@@ -5,14 +5,8 @@ import RecoverPasswordState from './RecoverPasswordState';
 
 export default class ForgotPasswordState extends AbstractState {
     enter(context) {
-        const {user} = context.getState();
-
-        if (user.isGuest) {
-            if (this.getLogin(context)) {
-                context.navigate('/forgot-password');
-            } else {
-                context.setState(new LoginState());
-            }
+        if (this.getLogin(context)) {
+            context.navigate('/forgot-password');
         } else {
             context.setState(new CompleteState());
         }
@@ -32,8 +26,8 @@ export default class ForgotPasswordState extends AbstractState {
     }
 
     getLogin(context) {
-        const {user} = context.getState();
+        const {auth} = context.getState();
 
-        return user.email || user.username;
+        return auth.login;
     }
 }

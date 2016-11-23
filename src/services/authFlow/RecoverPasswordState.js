@@ -4,9 +4,9 @@ import CompleteState from './CompleteState';
 
 export default class RecoverPasswordState extends AbstractState {
     enter(context) {
-        const {user} = context.getState();
+        const {auth} = context.getState();
 
-        if (user.isGuest) {
+        if (auth.login) {
             const url = context.getRequest().path.includes('/recover-password')
                 ? context.getRequest().path
                 : '/recover-password';

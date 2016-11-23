@@ -23,9 +23,9 @@ describe('ForgotPasswordState', () => {
     });
 
     describe('#enter', () => {
-        it('should navigate to /forgot-password if email set', () => {
+        it('should navigate to /forgot-password if login set', () => {
             context.getState.returns({
-                user: {isGuest: true, email: 'foo@bar.com'}
+                auth: {login: 'foo@bar.com'}
             });
 
             expectNavigate(mock, '/forgot-password');
@@ -33,43 +33,23 @@ describe('ForgotPasswordState', () => {
             state.enter(context);
         });
 
-        it('should navigate to /forgot-password if username set', () => {
+        it('should transition to complete if no login', () => {
             context.getState.returns({
-                user: {isGuest: true, username: 'foobar'}
-            });
-
-            expectNavigate(mock, '/forgot-password');
-
-            state.enter(context);
-        });
-
-        it('should transition to complete if not guest', () => {
-            context.getState.returns({
-                user: {isGuest: false}
+                auth: {}
             });
 
             expectState(mock, CompleteState);
 
             state.enter(context);
         });
-
-        it('should transition to login if no identity', () => {
-            context.getState.returns({
-                user: {isGuest: true}
-            });
-
-            expectState(mock, LoginState);
-
-            state.enter(context);
-        });
     });
 
     describe('#resolve', () => {
-        it('should call forgotPassword with email', () => {
+        it('should call forgotPassword with login', () => {
             const expectedLogin = 'foo@bar.com';
             context.getState.returns({
-                user: {
-                    email: expectedLogin
+                auth: {
+                    login: expectedLogin
                 }
             });
 
@@ -87,8 +67,8 @@ describe('ForgotPasswordState', () => {
         it('should call forgotPassword with email from payload if any', () => {
             const expectedLogin = 'foo@bar.com';
             context.getState.returns({
-                user: {
-                    email: 'should.not@be.used'
+                auth: {
+                    login: 'should.not@be.used'
                 }
             });
 
@@ -103,31 +83,12 @@ describe('ForgotPasswordState', () => {
             state.resolve(context, {email: expectedLogin});
         });
 
-        it('should call forgotPassword with username', () => {
-            const expectedLogin = 'foobar';
-            context.getState.returns({
-                user: {
-                    username: expectedLogin
-                }
-            });
-
-            expectRun(
-                mock,
-                'forgotPassword',
-                sinon.match({
-                    login: expectedLogin
-                })
-            ).returns({then() {}});
-
-            state.resolve(context, {});
-        });
-
         it('should transition to recoverPassword state on success', () => {
             const promise = Promise.resolve();
             const expectedLogin = 'foo@bar.com';
             context.getState.returns({
-                user: {
-                    email: expectedLogin
+                auth: {
+                    login: expectedLogin
                 }
             });
 

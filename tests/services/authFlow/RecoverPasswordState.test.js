@@ -25,7 +25,7 @@ describe('RecoverPasswordState', () => {
         it('should navigate to /recover-password', () => {
             const expectedPath = '/recover-password';
             context.getState.returns({
-                user: {isGuest: true}
+                auth: {login: 'foo'}
             });
 
             context.getRequest.returns({path: expectedPath});
@@ -38,7 +38,7 @@ describe('RecoverPasswordState', () => {
         it('should navigate to /recover-password/key', () => {
             const expectedPath = '/recover-password/sasx5AS4d61';
             context.getState.returns({
-                user: {isGuest: true}
+                auth: {login: 'foo'}
             });
 
             context.getRequest.returns({path: expectedPath});
@@ -50,7 +50,7 @@ describe('RecoverPasswordState', () => {
 
         it('should transition to complete if not guest', () => {
             context.getState.returns({
-                user: {isGuest: false}
+                auth: {}
             });
 
             expectState(mock, CompleteState);
