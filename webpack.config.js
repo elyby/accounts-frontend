@@ -10,8 +10,6 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
 const cssImport = require('postcss-import');
 
-const vendor = Object.keys(require('./package.json').dependencies);
-
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
 
@@ -78,8 +76,7 @@ const webpackConfig = {
     cache: true,
 
     entry: {
-        app: path.join(__dirname, 'src'),
-        vendor: vendor
+        app: path.join(__dirname, 'src')
     },
 
     output: {
@@ -116,6 +113,7 @@ const webpackConfig = {
         new HtmlWebpackPlugin({
             template: 'src/index.ejs',
             favicon: 'src/favicon.ico',
+            scripts: ['dll/vendor.dll.js'],
             hash: false, // webpack does this for all our assets automagically
             filename: 'index.html',
             inject: false,
@@ -123,13 +121,11 @@ const webpackConfig = {
                 collapseWhitespace: isProduction
             },
             ga: config.ga
+        }),
+        new webpack.ProvidePlugin({
+            React: 'react'
         })
-    ].concat(isTest ? [] : [
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]')
-    ]).concat(isProduction ? [
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin()
-    ] : []),
+    ],
 
     module: {
         loaders: [
@@ -237,11 +233,26 @@ if (isProduction) {
         }
     });
 
-    webpackConfig.plugins.push(new ExtractTextPlugin('styles.css', {
-        allChunks: true
-    }));
+    webpackConfig.plugins.push(
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]'),
+        new webpack.optimize.OccurenceOrderPlugin(true),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin(),
+        new ExtractTextPlugin('styles.css', {
+            allChunks: true
+        })
+    );
 
     webpackConfig.devtool = false;
+
+    webpackConfig.entry.vendor = Object.keys(require('./package.json').dependencies);
+} else {
+    webpackConfig.plugins.push(
+        new webpack.DllReferencePlugin({
+            context: __dirname,
+            manifest: require('./dll/vendor.json')
+        })
+    );
 }
 
 if (!isProduction && !isTest) {

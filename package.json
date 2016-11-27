@@ -13,7 +13,8 @@
     "test": "karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "i18n": "babel-node ./scripts/i18n-collect.js",
-    "build": "rm -rf dist/ && webpack --progress --colors -p"
+    "build": "rm -rf dist/ && webpack --progress --colors -p",
+    "build:dll": "webpack --progress --colors --config webpack.dll.config.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.3.14",
