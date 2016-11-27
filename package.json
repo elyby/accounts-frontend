@@ -6,7 +6,7 @@
   "author": "ErickSkrauch <erickskrauch@ely.by>",
   "public": false,
   "license": "UNLICENSED",
-  "repository": "git@bitbucket.org:ErickSkrauch/ely.by-account.git",
+  "repository": "git@gitlab.ely.by:elyby/accounts.git",
   "scripts": {
     "start": "rm -rf dist/ && webpack-dev-server --progress --colors",
     "up": "npm update",
