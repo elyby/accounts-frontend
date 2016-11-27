@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'whatwg-fetch';
 import 'promise.prototype.finally';
 
 // allow :active styles in mobile Safary

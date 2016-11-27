@@ -13,6 +13,7 @@ const cssImport = require('postcss-import');
 const vendor = Object.keys(require('./package.json').dependencies);
 
 const rootPath = path.resolve('./src');
+const outputPath = path.join(__dirname, 'dist');
 
 var config = {};
 try {
@@ -73,14 +74,16 @@ const cssLoaderQuery = {
     }
 };
 
-var webpackConfig = {
+const webpackConfig = {
+    cache: true,
+
     entry: {
         app: path.join(__dirname, 'src'),
         vendor: vendor
     },
 
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: outputPath,
         publicPath: '/',
         filename: '[name].js?[hash]'
     },
@@ -120,10 +123,6 @@ var webpackConfig = {
                 collapseWhitespace: isProduction
             },
             ga: config.ga
-        }),
-        new webpack.ProvidePlugin({
-            // window.fetch polyfill
-            fetch: 'imports?this=>self!exports?self.fetch!whatwg-fetch'
         })
     ].concat(isTest ? [] : [
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]')
@@ -142,7 +141,7 @@ var webpackConfig = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel'
+                loader: 'babel?cacheDirectory=true'
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
