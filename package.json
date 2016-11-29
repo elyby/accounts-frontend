@@ -10,7 +10,7 @@
   "scripts": {
     "start": "rm -rf dist/ && npm run build:dll && webpack-dev-server --progress --colors",
     "up": "npm update",
-    "test": "karma start ./karma.conf.js",
+    "test": "npm run build:dll && karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "i18n": "babel-node ./scripts/i18n-collect.js",
     "build": "rm -rf dist/ && webpack --progress --colors -p",
