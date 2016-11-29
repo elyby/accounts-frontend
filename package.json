@@ -8,13 +8,13 @@
   "license": "UNLICENSED",
   "repository": "git@gitlab.ely.by:elyby/accounts.git",
   "scripts": {
-    "start": "rm -rf dist/ && webpack-dev-server --progress --colors",
+    "start": "rm -rf dist/ && npm run build:dll && webpack-dev-server --progress --colors",
     "up": "npm update",
     "test": "karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "i18n": "babel-node ./scripts/i18n-collect.js",
     "build": "rm -rf dist/ && webpack --progress --colors -p",
-    "build:dll": "webpack --progress --colors --config webpack.dll.config.js"
+    "build:dll": "node ./scripts/build-dll.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.3.14",
