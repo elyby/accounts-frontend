@@ -30,8 +30,8 @@ describe('AuthFlow', () => {
     });
 
     it('should not allow to mutate actions', () => {
-        expect(() => flow.actions.foo = 'bar', 'to throw', /readonly/);
-        expect(() => flow.actions.test = 'hacked', 'to throw', /readonly/);
+        expect(() => flow.actions.foo = 'bar', 'to throw', /readonly|not extensible/);
+        expect(() => flow.actions.test = 'hacked', 'to throw', /read ?only/);
     });
 
     describe('#setStore', () => {
