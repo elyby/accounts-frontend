@@ -8,12 +8,15 @@
   "license": "UNLICENSED",
   "repository": "git@gitlab.ely.by:elyby/accounts.git",
   "scripts": {
-    "start": "rm -rf dist/ && npm run build:dll && webpack-dev-server --progress --colors",
+    "start": "npm run clean && npm run build:dll && webpack-dev-server --progress --colors",
+    "clean": "rm -rf dist/",
     "up": "npm update",
     "test": "npm run build:dll && karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "i18n": "babel-node ./scripts/i18n-collect.js",
-    "build": "rm -rf dist/ && webpack --progress --colors -p",
+    "build": "npm run clean && npm run build:webpack -- --progress",
+    "build:webpack": "webpack --colors -p",
+    "build:quite": "npm run clean && npm run build:webpack -- --quite",
     "build:dll": "node ./scripts/build-dll.js"
   },
   "dependencies": {

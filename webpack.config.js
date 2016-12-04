@@ -38,6 +38,8 @@ const isProduction = process.argv.some((arg) => arg === '-p');
 const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
 
 const isDockerized = !!process.env.DOCKERIZED;
+const isCI = !!process.env.CI;
+const isSilent = isCI || process.argv.some((arg) => /quite/.test(arg));
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
 if (isTest) {
@@ -286,6 +288,24 @@ if (isDockerized) {
         poll: 2000
     };
     webpackConfig.devServer.host = '0.0.0.0';
+}
+
+if (isSilent) {
+    webpackConfig.stats = {
+        hash: false,
+        version: false,
+        timings: true,
+        assets: false,
+        chunks: false,
+        modules: false,
+        reasons: false,
+        children: false,
+        source: false,
+        errors: true,
+        errorDetails: true,
+        warnings: false,
+        publicPath: false
+    };
 }
 
 module.exports = webpackConfig;
