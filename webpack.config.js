@@ -184,7 +184,6 @@ const webpackConfig = {
         return [
             cssImport({
                 path: rootPath,
-                addDependencyTo: webpack,
 
                 resolve: ((defaultResolve) =>
                     (url, basedir, importOptions) =>
