@@ -2906,9 +2906,9 @@
       "dev": true
     },
     "history": {
-      "version": "2.1.2",
-      "from": "history@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/history/-/history-2.1.2.tgz"
+      "version": "3.2.1",
+      "from": "history@>=3.0.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/history/-/history-3.2.1.tgz"
     },
     "hoek": {
       "version": "2.16.3",
@@ -5069,9 +5069,9 @@
       "dev": true
     },
     "query-string": {
-      "version": "3.0.3",
-      "from": "query-string@>=3.0.0 <4.0.0",
-      "resolved": "https://registry.npmjs.org/query-string/-/query-string-3.0.3.tgz"
+      "version": "4.2.3",
+      "from": "query-string@>=4.2.2 <5.0.0",
+      "resolved": "https://registry.npmjs.org/query-string/-/query-string-4.2.3.tgz"
     },
     "querystring": {
       "version": "0.2.0",
@@ -5211,16 +5211,9 @@
       "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.6.tgz"
     },
     "react-router": {
-      "version": "2.8.1",
-      "from": "react-router@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/react-router/-/react-router-2.8.1.tgz",
-      "dependencies": {
-        "warning": {
-          "version": "3.0.0",
-          "from": "warning@>=3.0.0 <4.0.0",
-          "resolved": "https://registry.npmjs.org/warning/-/warning-3.0.0.tgz"
-        }
-      }
+      "version": "3.0.0",
+      "from": "react-router@3.0.0",
+      "resolved": "https://registry.npmjs.org/react-router/-/react-router-3.0.0.tgz"
     },
     "react-router-redux": {
       "version": "3.0.0",
@@ -6720,9 +6713,9 @@
       "dev": true
     },
     "warning": {
-      "version": "2.1.0",
-      "from": "warning@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/warning/-/warning-2.1.0.tgz"
+      "version": "3.0.0",
+      "from": "warning@>=3.0.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/warning/-/warning-3.0.0.tgz"
     },
     "watchpack": {
       "version": "0.2.9",
