@@ -23,7 +23,7 @@ $headerHeight: 60px;
 }
 
 .headerControl {
-    composes: black from './buttons.scss';
+    composes: black from 'components/ui/buttons.scss';
 
     float: left;
     overflow: hidden;
@@ -121,7 +121,7 @@ $bodyTopBottomPadding: 15px;
 }
 
 .close {
-    composes: close from './icons.scss';
+    composes: close from 'components/ui/icons.scss';
 
     position: absolute;
     right: 5px;
