@@ -3,10 +3,5 @@
         "browser": true,
         "es6": true,
         "mocha": true
-    },
-
-    "globals": {
-        "sinon": true,
-        "expect": true
     }
 }
