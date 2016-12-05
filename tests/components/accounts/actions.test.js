@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import accounts from 'services/api/accounts';
 import authentication from 'services/api/authentication';
@@ -9,7 +10,8 @@ import {
     activate, ACTIVATE,
     remove,
     reset,
-    logoutAll
+    logoutAll,
+    logoutStrangers
 } from 'components/accounts/actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
@@ -113,6 +115,20 @@ describe('components/accounts/actions', () => {
             return expect(authenticate(account)(dispatch), 'to be rejected').then(() =>
                 expect(dispatch, 'was not called')
             );
+        });
+
+        it('marks user as stranger, if there is no refreshToken', () => {
+            const expectedKey = `stranger${account.id}`;
+            authentication.validateToken.returns(Promise.resolve({
+                token: account.token
+            }));
+
+            sessionStorage.removeItem(expectedKey);
+
+            return authenticate(account)(dispatch).then(() => {
+                expect(sessionStorage.getItem(expectedKey), 'not to be null')
+                sessionStorage.removeItem(expectedKey);
+            });
         });
     });
 
@@ -240,6 +256,112 @@ describe('components/accounts/actions', () => {
             expect(dispatch, 'to have a call satisfying', [
                 reset()
             ]);
+        });
+    });
+
+    describe('#logoutStrangers', () => {
+        const foreignAccount = {
+            ...account,
+            id: 2,
+            refreshToken: undefined
+        };
+
+        const foreignAccount2 = {
+            ...foreignAccount,
+            id: 3
+        };
+
+        beforeEach(() => {
+            getState.returns({
+                accounts: {
+                    active: account,
+                    available: [account, foreignAccount, foreignAccount2]
+                },
+                user
+            });
+
+            sinon.stub(authentication, 'logout').named('authentication.logout');
+        });
+
+        afterEach(() => {
+            authentication.logout.restore();
+        });
+
+        it('should remove stranger accounts', () => {
+            logoutStrangers()(dispatch, getState);
+
+            expect(dispatch, 'to have a call satisfying', [
+                remove(foreignAccount)
+            ]);
+            expect(dispatch, 'to have a call satisfying', [
+                remove(foreignAccount2)
+            ]);
+        });
+
+        it('should logout stranger accounts', () => {
+            logoutStrangers()(dispatch, getState);
+
+            expect(authentication.logout, 'to have calls satisfying', [
+                [foreignAccount],
+                [foreignAccount2]
+            ]);
+        });
+
+        it('should activate another account if available', () =>
+            logoutStrangers()(dispatch, getState)
+                .then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        activate(account)
+                    ])
+                )
+        );
+
+        describe('when all accounts are strangers', () => {
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        active: foreignAccount,
+                        available: [foreignAccount, foreignAccount2]
+                    },
+                    user
+                });
+
+                logoutStrangers()(dispatch, getState);
+            });
+
+            it('logouts all accounts', () => {
+                expect(dispatch, 'to have a call satisfying', [
+                    {payload: {isGuest: true}}
+                    // updateUser({isGuest: true})
+                ]);
+
+                expect(dispatch, 'to have a call satisfying', [
+                    reset()
+                ]);
+            });
+        });
+
+        describe('when an stranger has a mark in sessionStorage', () => {
+            const key = `stranger${foreignAccount.id}`;
+
+            beforeEach(() => {
+                sessionStorage.setItem(key, 1);
+
+                logoutStrangers()(dispatch, getState);
+            });
+
+            afterEach(() => {
+                sessionStorage.removeItem(key);
+            });
+
+            it('should not log out', () =>
+                expect(dispatch, 'to have calls satisfying', [
+                    [expect.it('not to equal', {payload: foreignAccount})],
+                    // for some reason it says, that dispatch(authenticate(...))
+                    // must be removed if only one args assertion is listed :(
+                    [expect.it('not to equal', {payload: foreignAccount})]
+                ])
+            );
         });
     });
 });

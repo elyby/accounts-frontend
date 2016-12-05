@@ -49,6 +49,11 @@ export function authenticate({token, refreshToken}) {
                     ...user
                 }));
 
+                if (!account.refreshToken) {
+                    // mark user as stranger (user does not want us to remember his account)
+                    sessionStorage.setItem(`stranger${account.id}`, 1);
+                }
+
                 return dispatch(setLocale(user.lang))
                     .then(() => account);
             });
@@ -72,6 +77,48 @@ export function revoke(account) {
         }
 
         return dispatch(logout());
+    };
+}
+
+export function logoutAll() {
+    return (dispatch, getState) => {
+        const {accounts: {available}} = getState();
+
+        available.forEach((account) => authentication.logout(account));
+
+        dispatch(reset());
+    };
+}
+
+/**
+ * Logouts accounts, that was marked as "do not remember me"
+ *
+ * We detecting foreign accounts by the absence of refreshToken. The account
+ * won't be removed, until key `stranger${account.id}` is present in sessionStorage
+ *
+ * @return {function}
+ */
+export function logoutStrangers() {
+    return (dispatch, getState) => {
+        const {accounts: {available}} = getState();
+
+        const isStranger = ({refreshToken, id}) => !refreshToken && !sessionStorage.getItem(`stranger${id}`);
+
+        const accountToReplace = available.filter((account) => !isStranger(account))[0];
+
+        if (accountToReplace) {
+            available.filter(isStranger)
+                .forEach((account) => {
+                    dispatch(remove(account));
+                    authentication.logout(account);
+                });
+
+            return dispatch(authenticate(accountToReplace));
+        }
+
+        dispatch(logout());
+
+        return Promise.resolve();
     };
 }
 
@@ -120,15 +167,6 @@ export function activate(account) {
     };
 }
 
-export function logoutAll() {
-    return (dispatch, getState) => {
-        const {accounts: {available}} = getState();
-
-        available.forEach((account) => authentication.logout(account));
-
-        dispatch(reset());
-    };
-}
 export const RESET = 'accounts:reset';
 /**
  * @api private

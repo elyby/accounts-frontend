@@ -1,5 +1,5 @@
 import { changeLang } from 'components/user/actions';
-import { authenticate } from 'components/accounts/actions';
+import { authenticate, logoutStrangers } from 'components/accounts/actions';
 
 import request from 'services/request';
 import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';
@@ -22,22 +22,25 @@ export function factory(store) {
     request.addMiddleware(refreshTokenMiddleware(store));
     request.addMiddleware(bearerHeaderMiddleware(store));
 
-    promise = Promise.resolve().then(() => {
-        const {user, accounts} = store.getState();
+    promise = Promise.resolve()
+        .then(() => store.dispatch(logoutStrangers()))
+        .then(() => {
+            const {user, accounts} = store.getState();
 
-        if (accounts.active || user.token) {
-            // authorizing user if it is possible
-            return store.dispatch(authenticate(accounts.active || user));
-        }
+            if (accounts.active || user.token) {
+                // authorizing user if it is possible
+                return store.dispatch(authenticate(accounts.active || user));
+            }
 
-        return Promise.reject();
-    }).catch(() => {
-        // the user is guest or user authentication failed
-        const {user} = store.getState();
+            return Promise.reject();
+        })
+        .catch(() => {
+            // the user is guest or user authentication failed
+            const {user} = store.getState();
 
-        // auto-detect guest language
-        return store.dispatch(changeLang(user.lang));
-    });
+            // auto-detect guest language
+            return store.dispatch(changeLang(user.lang));
+        });
 
     return promise;
 }
