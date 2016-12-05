@@ -1,6 +1,8 @@
 import 'babel-polyfill';
 import 'whatwg-fetch';
-import 'promise.prototype.finally';
+import { shim as shimPromiseFinaly } from 'promise.prototype.finally';
+
+shimPromiseFinaly();
 
 // allow :active styles in mobile Safary
 document.addEventListener('touchstart', () => {}, true);
