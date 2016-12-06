@@ -14,6 +14,11 @@ import routesFactory from 'routes';
 import storeFactory from 'storeFactory';
 import bsodFactory from 'components/ui/bsod/factory';
 import loader from 'services/loader';
+import logger from 'services/logger';
+
+logger.init({
+    sentryCdn: window.sentryCdn
+});
 
 const store = storeFactory();
 

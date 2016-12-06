@@ -13,6 +13,8 @@ const cssImport = require('postcss-import');
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
 
+const packageJson = require('./package.json');
+
 var config = {};
 try {
     config = require('./config/env.js');
@@ -105,12 +107,14 @@ const webpackConfig = {
 
     plugins: [
         new webpack.DefinePlugin({
+            'window.sentryCdn': config.sentryCdn ? JSON.stringify(config.sentryCdn) : undefined,
             'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-            },
-            __DEV__: !isProduction,
-            __TEST__: isTest,
-            __PROD__: isProduction
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+                __VERSION__: JSON.stringify(packageJson.version),
+                __DEV__: !isProduction,
+                __TEST__: isTest,
+                __PROD__: isProduction
+            }
         }),
         new HtmlWebpackPlugin({
             template: 'src/index.ejs',
@@ -246,7 +250,7 @@ if (isProduction) {
 
     webpackConfig.devtool = false;
 
-    webpackConfig.entry.vendor = Object.keys(require('./package.json').dependencies);
+    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies);
 } else {
     webpackConfig.plugins.push(
         new webpack.DllReferencePlugin({

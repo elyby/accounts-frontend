@@ -2,6 +2,7 @@ import authentication from 'services/api/authentication';
 import accounts from 'services/api/accounts';
 import { updateUser, logout } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
+import logger from 'services/logger';
 
 /**
  * @typedef {object} Account
@@ -31,7 +32,10 @@ export function authenticate({token, refreshToken}) {
             .then(({token, refreshToken}) =>
                 accounts.current({token})
                     .then((user) => ({
-                        user,
+                        user: {
+                            isGuest: false,
+                            ...user
+                        },
                         account: {
                             id: user.id,
                             username: user.username,
@@ -44,10 +48,10 @@ export function authenticate({token, refreshToken}) {
             .then(({user, account}) => {
                 dispatch(add(account));
                 dispatch(activate(account));
-                dispatch(updateUser({
-                    isGuest: false,
-                    ...user
-                }));
+                dispatch(updateUser(user));
+
+                // TODO: probably should be moved from here, because it is a side effect
+                logger.setUser(user);
 
                 if (!account.refreshToken) {
                     // mark user as stranger (user does not want us to remember his account)
