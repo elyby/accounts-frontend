@@ -8,7 +8,7 @@ const logger = {
             Raven.config(sentryCdn, {
                 logger: 'accounts-js-app',
                 level: 'info',
-                environment: process.env.NODE_ENV, // eslint-disable-line
+                environment: process.env.APP_ENV, // eslint-disable-line
                 release: process.env.__VERSION__, // eslint-disable-line
                 shouldSendCallback: () => !isTest,
                 dataCallback: (data) => {

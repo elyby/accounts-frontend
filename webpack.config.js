@@ -110,6 +110,7 @@ const webpackConfig = {
             'window.sentryCdn': config.sentryCdn ? JSON.stringify(config.sentryCdn) : undefined,
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+                APP_ENV: JSON.stringify(config.environment || process.env.NODE_ENV),
                 __VERSION__: JSON.stringify(packageJson.version),
                 __DEV__: !isProduction,
                 __TEST__: isTest,
