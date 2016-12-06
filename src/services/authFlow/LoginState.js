@@ -1,3 +1,5 @@
+import logger from 'services/logger';
+
 import AbstractState from './AbstractState';
 import PasswordState from './PasswordState';
 
@@ -20,6 +22,7 @@ export default class LoginState extends AbstractState {
 
     resolve(context, payload) {
         context.run('login', payload)
-            .then(() => context.setState(new PasswordState()));
+            .then(() => context.setState(new PasswordState()))
+            .catch((err = {}) => err.errors || logger.warn(err));
     }
 }

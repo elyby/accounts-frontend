@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import CompleteState from 'services/authFlow/CompleteState';
 
@@ -50,7 +52,8 @@ describe('AcceptRulesState', () => {
 
     describe('#resolve', () => {
         it('should call acceptRules', () => {
-            expectRun(mock, 'acceptRules').returns({then() {}});
+            expectRun(mock, 'acceptRules')
+                .returns(Promise.resolve());
 
             state.resolve(context);
         });

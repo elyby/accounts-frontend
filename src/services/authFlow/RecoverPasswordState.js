@@ -1,3 +1,5 @@
+import logger from 'services/logger';
+
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import CompleteState from './CompleteState';
@@ -18,7 +20,8 @@ export default class RecoverPasswordState extends AbstractState {
 
     resolve(context, payload) {
         context.run('recoverPassword', payload)
-            .then(() => context.setState(new CompleteState()));
+            .then(() => context.setState(new CompleteState()))
+            .catch((err = {}) => err.errors || logger.warn(err));
     }
 
     goBack(context) {

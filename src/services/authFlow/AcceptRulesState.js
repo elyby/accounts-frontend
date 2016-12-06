@@ -1,3 +1,5 @@
+import logger from 'services/logger';
+
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
 
@@ -14,7 +16,8 @@ export default class AcceptRulesState extends AbstractState {
 
     resolve(context) {
         context.run('acceptRules')
-            .then(() => context.setState(new CompleteState()));
+            .then(() => context.setState(new CompleteState()))
+            .catch((err = {}) => err.errors || logger.warn(err));
     }
 
     reject(context) {

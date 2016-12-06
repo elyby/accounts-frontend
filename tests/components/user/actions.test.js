@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import { routeActions } from 'react-router-redux';
 
@@ -56,24 +57,15 @@ describe('components/user/actions', () => {
                 });
             });
 
-            it('should post to /api/authentication/logout with user jwt', () => {
-                // TODO: need an integration test with a middleware, because this
-                // test is not reliable to check, whether logout request will have token inside
-                request.post.returns(new Promise((resolve) => {
-                    setTimeout(() => {
-                        // we must not overwrite user's token till request starts
-                        expect(dispatch, 'was not called');
-
-                        resolve();
-                    }, 0);
-                }));
-
-                return callThunk(logout).then(() => {
+            it('should post to /api/authentication/logout with user jwt', () =>
+                callThunk(logout).then(() => {
                     expect(request.post, 'to have a call satisfying', [
-                        '/api/authentication/logout', {}, {}
+                        '/api/authentication/logout', {}, {
+                            token: expect.it('not to be empty')
+                        }
                     ]);
-                });
-            });
+                })
+            );
 
             testChangedToGuest();
             testAccountsReset();

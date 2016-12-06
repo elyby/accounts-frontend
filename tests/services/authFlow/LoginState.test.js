@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import LoginState from 'services/authFlow/LoginState';
 import PasswordState from 'services/authFlow/PasswordState';
 
@@ -52,7 +54,7 @@ describe('LoginState', () => {
                 mock,
                 'login',
                 sinon.match.same(payload)
-            ).returns({then() {}});
+            ).returns(Promise.resolve());
 
             state.resolve(context, payload);
         });

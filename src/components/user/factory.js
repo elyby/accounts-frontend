@@ -12,7 +12,7 @@ let promise;
  *
  * @param {object} store - redux store
  *
- * @return {Promise} - a promise, that resolves in User state
+ * @return {Promise<User>} - a promise, that resolves in User state
  */
 export function factory(store) {
     if (promise) {

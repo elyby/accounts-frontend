@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
@@ -67,7 +69,7 @@ describe('RecoverPasswordState', () => {
                 mock,
                 'recoverPassword',
                 sinon.match(expectedPayload)
-            ).returns({then() {}});
+            ).returns(Promise.resolve());
 
             state.resolve(context, expectedPayload);
         });

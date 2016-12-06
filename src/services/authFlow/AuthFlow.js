@@ -1,5 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
+import logger from 'services/logger';
+
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
 import OAuthState from './OAuthState';
@@ -88,7 +90,7 @@ export default class AuthFlow {
             if (this.onReady) {
                 const callback = this.onReady;
                 this.onReady = () => {};
-                return resp.then(callback);
+                return resp.then(callback, (err) => err || logger.warn(err));
             }
 
             return resp;
@@ -119,7 +121,7 @@ export default class AuthFlow {
      *                                                (state's enter function's promise resolved)
      */
     handleRequest(request, replace, callback = function() {}) {
-        const {path, params = {}, query = {}} = request;
+        const {path} = request;
         this.replace = replace;
         this.onReady = callback;
 
@@ -175,7 +177,6 @@ export default class AuthFlow {
                         break;
 
                     default:
-                        console.log('Unsupported request', {path, query, params});
                         replace('/404');
                         break;
                 }

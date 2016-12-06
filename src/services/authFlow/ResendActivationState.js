@@ -1,3 +1,5 @@
+import logger from 'services/logger';
+
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
 import ActivationState from './ActivationState';
@@ -16,7 +18,8 @@ export default class ResendActivationState extends AbstractState {
 
     resolve(context, payload) {
         context.run('resendActivation', payload)
-            .then(() => context.setState(new ActivationState()));
+            .then(() => context.setState(new ActivationState()))
+            .catch((err = {}) => err.errors || logger.warn(err));
     }
 
     reject(context) {

@@ -126,7 +126,7 @@ describe('components/accounts/actions', () => {
             sessionStorage.removeItem(expectedKey);
 
             return authenticate(account)(dispatch).then(() => {
-                expect(sessionStorage.getItem(expectedKey), 'not to be null')
+                expect(sessionStorage.getItem(expectedKey), 'not to be null');
                 sessionStorage.removeItem(expectedKey);
             });
         });
