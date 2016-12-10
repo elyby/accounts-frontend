@@ -1,3 +1,5 @@
+import logger from 'services/logger';
+
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
 import ForgotPasswordState from './ForgotPasswordState';
@@ -22,7 +24,8 @@ export default class PasswordState extends AbstractState {
             rememberMe,
             login
         })
-        .then(() => context.setState(new CompleteState()));
+        .then(() => context.setState(new CompleteState()))
+        .catch((err = {}) => err.errors || logger.warn(err));
     }
 
     reject(context) {

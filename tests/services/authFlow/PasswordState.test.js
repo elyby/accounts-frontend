@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import PasswordState from 'services/authFlow/PasswordState';
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
@@ -66,7 +68,7 @@ describe('PasswordState', () => {
                     password: expectedPassword,
                     rememberMe: expectedRememberMe,
                 })
-            ).returns({then() {}});
+            ).returns(Promise.resolve());
 
             state.resolve(context, {password: expectedPassword, rememberMe: expectedRememberMe});
         });

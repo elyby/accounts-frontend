@@ -7,6 +7,7 @@ import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'components/u
 import feedback from 'services/api/feedback';
 import icons from 'components/ui/icons.scss';
 import popupStyles from 'components/ui/popup/popup.scss';
+import logger from 'services/logger';
 
 import styles from './contactForm.scss';
 import messages from './contactForm.intl.json';
@@ -20,20 +21,29 @@ const CONTACT_CATEGORIES = [
     <Message {...messages.other} />
 ];
 
-class ContactForm extends Component {
+export class ContactForm extends Component {
     static displayName = 'ContactForm';
 
     static propTypes = {
-        onClose: PropTypes.func.isRequired,
+        onClose: PropTypes.func,
         user: PropTypes.shape({
             email: PropTypes.string
         }).isRequired
     };
 
+    static defaultProps = {
+        onClose() {}
+    };
+
+    state = {
+        isLoading: false,
+        isSuccessfullySent: false
+    };
+
     form = new FormModel();
 
     render() {
-        const {isSuccessfullySent = false} = this.state || {};
+        const {isSuccessfullySent} = this.state || {};
         const {onClose} = this.props;
 
         return (
@@ -55,9 +65,13 @@ class ContactForm extends Component {
     renderForm() {
         const {form} = this;
         const {user} = this.props;
+        const {isLoading} = this.state;
 
         return (
-            <Form form={form} onSubmit={this.onSubmit}>
+            <Form form={form}
+                onSubmit={this.onSubmit}
+                isLoading={isLoading}
+            >
                 <div className={popupStyles.body}>
                     <div className={styles.philosophicalThought}>
                         <Message {...messages.philosophicalThought} />
@@ -107,15 +121,14 @@ class ContactForm extends Component {
                 </div>
 
                 <div className={styles.footer}>
-                    <Button label={messages.send} block />
+                    <Button label={messages.send} block type="submit" />
                 </div>
             </Form>
         );
     }
 
     renderSuccess() {
-        const {form} = this;
-        const email = form.value('email');
+        const {lastEmail: email} = this.state;
         const {onClose} = this.props;
 
         return (
@@ -136,15 +149,25 @@ class ContactForm extends Component {
     }
 
     onSubmit = () => {
-        feedback(this.form.serialize())
-            .then(() => this.setState({isSuccessfullySent: true}))
+        if (this.state.isLoading) {
+            return;
+        }
+
+        this.setState({isLoading: true});
+        return feedback.send(this.form.serialize())
+            .then(() => this.setState({
+                isSuccessfullySent: true,
+                lastEmail: this.form.value('email')
+            }))
             .catch((resp) => {
                 if (resp.errors) {
                     this.form.setErrors(resp.errors);
+                    return;
                 }
 
-                return Promise.reject(resp);
+                logger.warn('Error sending feedback', resp);
             })
+            .finally(() => this.setState({isLoading: false}))
             ;
     };
 }
