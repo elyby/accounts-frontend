@@ -278,7 +278,8 @@ if (!isProduction && !isTest) {
             proxy: {
                 '/api': {
                     target: config.apiHost,
-                    changeOrigin: true // add host http-header, based on target
+                    changeOrigin: true, // add host http-header, based on target
+                    secure: false // allow self-signed certs
                 }
             },
             hot: true,
