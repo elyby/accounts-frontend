@@ -86,7 +86,8 @@ const authentication = {
     requestToken(refreshToken) {
         return request.post(
             '/api/authentication/refresh-token',
-            {refresh_token: refreshToken}
+            {refresh_token: refreshToken}, // eslint-disable-line
+            {token: null}
         ).then((resp) => ({
             token: resp.access_token
         }));

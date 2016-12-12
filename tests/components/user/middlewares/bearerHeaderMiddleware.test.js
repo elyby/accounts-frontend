@@ -22,29 +22,43 @@ describe('bearerHeaderMiddleware', () => {
         });
 
         it('should set Authorization header', () => {
-            const data = {
+            let data = {
                 options: {
                     headers: {}
                 }
             };
 
-            middleware.before(data);
+            data = middleware.before(data);
 
             expectBearerHeader(data, token);
         });
 
         it('overrides user.token with options.token if available', () => {
             const tokenOverride = 'tokenOverride';
-            const data = {
+            let data = {
                 options: {
                     headers: {},
                     token: tokenOverride
                 }
             };
 
-            middleware.before(data);
+            data = middleware.before(data);
 
             expectBearerHeader(data, tokenOverride);
+        });
+
+        it('disables token if options.token is null', () => {
+            const tokenOverride = null;
+            let data = {
+                options: {
+                    headers: {},
+                    token: tokenOverride
+                }
+            };
+
+            data = middleware.before(data);
+
+            expect(data.options.headers.Authorization, 'to be undefined');
         });
     });
 
@@ -58,13 +72,13 @@ describe('bearerHeaderMiddleware', () => {
         });
 
         it('should set Authorization header', () => {
-            const data = {
+            let data = {
                 options: {
                     headers: {}
                 }
             };
 
-            middleware.before(data);
+            data = middleware.before(data);
 
             expectBearerHeader(data, token);
         });
@@ -77,13 +91,13 @@ describe('bearerHeaderMiddleware', () => {
             })
         });
 
-        const data = {
+        let data = {
             options: {
                 headers: {}
             }
         };
 
-        middleware.before(data);
+        data = middleware.before(data);
 
         expect(data.options.headers.Authorization, 'to be undefined');
     });

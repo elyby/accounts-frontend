@@ -1,6 +1,9 @@
 /**
  * Applies Bearer header for all requests
  *
+ * req.options.token is used to override current token.
+ * Pass null to disable bearer header at all
+ *
  * @param {object} store - redux store
  * @param {function} store.getState
  *
@@ -13,7 +16,7 @@ export default function bearerHeaderMiddleware({getState}) {
 
             let {token} = accounts.active ? accounts.active : user;
 
-            if (req.options.token) {
+            if (req.options.token || req.options.token === null) {
                 token = req.options.token;
             }
 

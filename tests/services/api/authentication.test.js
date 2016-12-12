@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import request from 'services/request';
 import authentication from 'services/api/authentication';
@@ -119,6 +120,54 @@ describe('authentication api', () => {
             expect(request.post, 'to have a call satisfying', [
                 '/api/authentication/logout', {}, {token}
             ]);
+        });
+    });
+
+    describe('#requestToken', () => {
+        const refreshToken = 'refresh-token';
+
+        beforeEach(() => {
+            sinon.stub(request, 'post').named('request.post');
+        });
+
+        afterEach(() => {
+            request.post.restore();
+        });
+
+        it('should request refresh-token api', () => {
+            request.post.returns(Promise.resolve({}));
+
+            authentication.requestToken(refreshToken);
+
+            expect(request.post, 'to have a call satisfying', [
+                '/api/authentication/refresh-token', {
+                    refresh_token: refreshToken // eslint-disable-line
+                }, {}
+            ]);
+        });
+
+        it('should disable bearer auth for request', () => {
+            request.post.returns(Promise.resolve({}));
+
+            authentication.requestToken(refreshToken);
+
+            expect(request.post, 'to have a call satisfying', [
+                '/api/authentication/refresh-token', {
+                    refresh_token: refreshToken // eslint-disable-line
+                }, {token: null}
+            ]);
+        });
+
+        it('should resolve with token', () => {
+            const token = 'token';
+
+            request.post.returns(Promise.resolve({
+                access_token: token // eslint-disable-line
+            }));
+
+            return expect(authentication.requestToken(refreshToken),
+                'to be fulfilled with', {token}
+            );
         });
     });
 });
