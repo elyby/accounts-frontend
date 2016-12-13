@@ -120,7 +120,7 @@ const webpackConfig = {
         new HtmlWebpackPlugin({
             template: 'src/index.ejs',
             favicon: 'src/favicon.ico',
-            scripts: ['dll/vendor.dll.js'],
+            scripts: isProduction ? [] : ['dll/vendor.dll.js'],
             hash: false, // webpack does this for all our assets automagically
             filename: 'index.html',
             inject: false,
