@@ -11,6 +11,7 @@ const LANGS = {
     be: 'Беларускі',
     en: 'English',
     ru: 'Русский',
+    pt: 'Português (Br)',
     uk: 'Українська',
 };
 

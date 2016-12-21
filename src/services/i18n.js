@@ -2,15 +2,17 @@ import { addLocaleData } from 'react-intl';
 import enLocaleData from 'react-intl/locale-data/en';
 import ruLocaleData from 'react-intl/locale-data/ru';
 import beLocaleData from 'react-intl/locale-data/be';
+import ptLocaleData from 'react-intl/locale-data/pt';
 import ukLocaleData from 'react-intl/locale-data/uk';
 
 // till we have not so many locales, we can require their data at once
 addLocaleData(enLocaleData);
 addLocaleData(ruLocaleData);
 addLocaleData(beLocaleData);
+addLocaleData(ptLocaleData);
 addLocaleData(ukLocaleData);
 
-const SUPPORTED_LANGUAGES = ['ru', 'en', 'be', 'uk'];
+const SUPPORTED_LANGUAGES = ['ru', 'en', 'be', 'pt', 'uk'];
 const DEFAULT_LANGUAGE = 'en';
 
 const needPolyfill = !window.Intl;

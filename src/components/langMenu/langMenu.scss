@@ -99,6 +99,12 @@
     background-image: url('~icons/flag_be.svg');
 }
 
+.langPt {
+    composes: langIco;
+
+    background-image: url('~icons/flag_pt.svg');
+}
+
 .langUk {
     composes: langIco;
 
