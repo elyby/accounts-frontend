@@ -6,6 +6,38 @@ import authentication from 'services/api/authentication';
 import accounts from 'services/api/accounts';
 
 describe('authentication api', () => {
+    describe('#login', () => {
+        const params = {
+            login: 'foo',
+            password: 'secret',
+            rememberMe: false
+        };
+
+        beforeEach(() => {
+            sinon.stub(request, 'post').named('request.post');
+        });
+
+        afterEach(() => {
+            request.post.restore();
+        });
+
+        it('should post to login api', () => {
+            authentication.login(params);
+
+            expect(request.post, 'to have a call satisfying', [
+                '/api/authentication/login', params, {}
+            ]);
+        });
+
+        it('should disable any token', () => {
+            authentication.login(params);
+
+            expect(request.post, 'to have a call satisfying', [
+                '/api/authentication/login', params, {token: null}
+            ]);
+        });
+    });
+
     describe('#validateToken()', () => {
         const validTokens = {token: 'foo', refreshToken: 'bar'};
 

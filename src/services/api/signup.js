@@ -12,14 +12,16 @@ export default {
     }) {
         return request.post(
             '/api/signup',
-            {email, username, password, rePassword, rulesAgreement, lang, captcha}
+            {email, username, password, rePassword, rulesAgreement, lang, captcha},
+            {token: null}
         );
     },
 
     activate({key = ''}) {
         return request.post(
             '/api/signup/confirm',
-            {key}
+            {key},
+            {token: null}
         );
     },
 

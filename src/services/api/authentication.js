@@ -9,7 +9,8 @@ const authentication = {
     }) {
         return request.post(
             '/api/authentication/login',
-            {login, password, rememberMe}
+            {login, password, rememberMe},
+            {token: null}
         );
     },
 
