@@ -73,7 +73,7 @@ function restoreScroll() {
     setTimeout(() => {
         const id = hash.replace('#', '');
         const el = id ? document.getElementById(id) : null;
-        const viewPort = document.getElementById('view-port');
+        const viewPort = document.body;
 
         if (!viewPort) {
             console.log('Can not find viewPort element');
