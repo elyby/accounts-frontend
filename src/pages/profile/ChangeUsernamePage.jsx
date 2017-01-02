@@ -53,6 +53,7 @@ class ChangeUsernamePage extends Component {
             sendData: () => accounts.changeUsername(form.serialize())
         }).then(() => {
             this.actualUsername = form.value('username');
+
             this.context.goToProfile();
         });
     };
@@ -64,7 +65,5 @@ import { updateUser } from 'components/user/actions';
 export default connect((state) => ({
     username: state.user.username
 }), {
-    updateUsername: (username) => {
-        return updateUser({username});
-    }
+    updateUsername: (username) => updateUser({username})
 })(ChangeUsernamePage);

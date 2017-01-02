@@ -21,9 +21,14 @@ const logger = {
                 }
             }).install();
 
-            window.addEventListener('unhandledrejection',
-                (event) => Raven.captureException(event.reason)
-            );
+            window.addEventListener('unhandledrejection', (event) => {
+                const error = event.reason || {};
+                const message = error.message ? `: ${error.message}` : '';
+
+                logger.info(`Unhandled rejection${message}`, {
+                    error
+                });
+            });
         }
     },
 
@@ -50,7 +55,7 @@ const logger = {
             return;
         }
 
-        console[method](message, context);
+        console[method](message, context); // eslint-disable-line
 
         Raven.captureException(message, {
             level,

@@ -121,7 +121,9 @@ export default class Profile extends Component {
             range.selectNodeContents(this.UUID);
             selection.removeAllRanges();
             selection.addRange(range);
-        } catch (err) {}
+        } catch (err) {
+            // the browser does not support an API
+        }
     }
 
     setUUID(el) {

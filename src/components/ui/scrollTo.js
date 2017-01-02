@@ -33,11 +33,6 @@ export default function scrollTo(y, viewPort) {
 
             const newScrollTop = y + delta;
             viewPort.scrollTop = newScrollTop;
-
-            if (viewPort.scrollTop === 0) {
-                scrollWasTouched = true;
-                console.warn('The viewPort is not scrollable', viewPort);
-            }
         }());
     });
 
