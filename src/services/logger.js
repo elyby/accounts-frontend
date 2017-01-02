@@ -23,7 +23,13 @@ const logger = {
 
             window.addEventListener('unhandledrejection', (event) => {
                 const error = event.reason || {};
-                const message = error.message ? `: ${error.message}` : '';
+
+                let message = error.message || error;
+                if (typeof message === 'string') {
+                    message = `: ${message}`;
+                } else {
+                    message = '';
+                }
 
                 logger.info(`Unhandled rejection${message}`, {
                     error

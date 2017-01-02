@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import logger from 'services/logger';
+
 import { FooterMenu } from 'components/footerMenu';
 
 import styles from './profile.scss';
@@ -79,6 +81,13 @@ export default connect(null, {
                 }
             })
             .then((resp) => !resp.requirePassword || requestPassword(form))
+            .catch((resp) => {
+                if (!resp || !resp.errors) {
+                    logger.warn('Unexpected profile editing error', {
+                        resp
+                    });
+                }
+            })
             .finally(() => form.endLoading());
 
         function requestPassword(form) {
@@ -88,15 +97,15 @@ export default connect(null, {
                         const onSubmit = () => {
                             form.beginLoading();
                             sendData()
+                                .then(resolve)
+                                .then(props.onClose)
                                 .catch((resp) => {
                                     if (resp.errors) {
                                         form.setErrors(resp.errors);
+                                    } else {
+                                        return Promise.reject(resp);
                                     }
-
-                                    return Promise.reject(resp);
                                 })
-                                .then(resolve)
-                                .then(props.onClose)
                                 .finally(() => form.endLoading());
                         };
 

@@ -76,7 +76,7 @@ function restoreScroll() {
         const viewPort = document.body;
 
         if (!viewPort) {
-            console.log('Can not find viewPort element');
+            console.log('Can not find viewPort element'); // eslint-disable-line
             return;
         }
 
