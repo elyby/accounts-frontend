@@ -43,19 +43,19 @@ const logger = {
     'info',
     'debug'
 ].forEach((level) => {
-    level = level === 'warning' ? 'warn' : level;
+    const method = level === 'warning' ? 'warn' : level;
 
-    logger[level] = (message, context) => {
+    logger[method] = (message, context) => {
         if (isTest) {
             return;
         }
 
-        console[level](message, context);
+        console[method](message, context);
 
         Raven.captureException(message, {
             level,
             extra: context
-        })
+        });
     };
 });
 
