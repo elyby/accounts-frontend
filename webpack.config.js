@@ -244,7 +244,7 @@ if (isProduction) {
         new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin('styles.css', {
+        new ExtractTextPlugin('styles.css?[hash]', {
             allChunks: true
         })
     );
