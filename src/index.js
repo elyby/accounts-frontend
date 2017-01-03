@@ -17,7 +17,7 @@ import loader from 'services/loader';
 import logger from 'services/logger';
 
 logger.init({
-    sentryCdn: window.sentryCdn
+    sentryCdn: window.SENTRY_CDN
 });
 
 const store = storeFactory();
@@ -54,6 +54,8 @@ Promise.all([
         </ReduxProvider>,
         document.getElementById('app')
     );
+
+    initAnalytics();
 });
 
 
@@ -92,14 +94,30 @@ function restoreScroll() {
     }, 200);
 }
 
-browserHistory.listen(trackPageView);
+import { loadScript, debounce } from 'functions';
+const trackPageView = debounce(_trackPageView);
+function initAnalytics() {
+    if (!window.ga) {
+        const ga = window.ga = function() {
+            (ga.q = ga.q || []).push(arguments); // eslint-disable-line
+        };
+        ga.l = Date.now(); // eslint-disable-line
 
-function trackPageView(location) {
-    const ga = window.ga;
+        if (window.GA_ID) {
+            // when GA is not available, we will continue to push into array
+            // for debug purposes
+            loadScript('https://www.google-analytics.com/analytics.js');
+        }
 
-    if (!ga) {
-        return;
+        ga('create', window.GA_ID, 'auto');
+        trackPageView(location);
+
+        browserHistory.listen(trackPageView);
     }
+}
+
+function _trackPageView(location) {
+    const ga = window.ga;
 
     ga('set', 'page', location.pathname + location.search);
     ga('send', 'pageview');

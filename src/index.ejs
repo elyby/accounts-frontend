@@ -31,19 +31,5 @@
 <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
     <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
 <% } %>
-
-<% if (htmlWebpackPlugin.options.ga) {
-    if (!htmlWebpackPlugin.options.ga.id) {
-        throw new Error('ga.id is required to enable google analytics');
-    }
-%>
-<!-- Google Analytics -->
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', '<%- htmlWebpackPlugin.options.ga.id %>', 'auto');
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-<!-- End Google Analytics -->
-<% } %>
 </body>
 </html>

@@ -107,7 +107,8 @@ const webpackConfig = {
 
     plugins: [
         new webpack.DefinePlugin({
-            'window.sentryCdn': config.sentryCdn ? JSON.stringify(config.sentryCdn) : undefined,
+            'window.SENTRY_CDN': config.sentryCdn ? JSON.stringify(config.sentryCdn) : undefined,
+            'window.GA_ID': config.ga && config.ga.id ? JSON.stringify(config.ga.id) : undefined,
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV),
                 APP_ENV: JSON.stringify(config.environment || process.env.NODE_ENV),
@@ -126,8 +127,7 @@ const webpackConfig = {
             inject: false,
             minify: {
                 collapseWhitespace: isProduction
-            },
-            ga: config.ga
+            }
         }),
         new webpack.ProvidePlugin({
             React: 'react'
