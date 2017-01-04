@@ -1,6 +1,6 @@
 import authentication from 'services/api/authentication';
-import { updateToken } from 'components/accounts/actions';
-import { logout } from '../actions';
+import logger from 'services/logger';
+import { updateToken, logoutAll } from 'components/accounts/actions';
 
 /**
  * Ensures, that all user's requests have fresh access token
@@ -41,8 +41,11 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
                     return requestAccessToken(refreshToken, dispatch).then(() => req);
                 }
             } catch (err) {
-                // console.error('Bad token', err); // TODO: it would be cool to log such things to backend
-                return dispatch(logout()).then(() => req);
+                logger.warn('Refresh token error: bad token', {
+                    token
+                });
+
+                return dispatch(logoutAll()).then(() => req);
             }
 
             return Promise.resolve(req);
@@ -58,7 +61,7 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
                     return requestAccessToken(refreshToken, dispatch).then(restart);
                 }
 
-                return dispatch(logout()).then(() => Promise.reject(resp));
+                return dispatch(logoutAll()).then(() => Promise.reject(resp));
             }
 
             return Promise.reject(resp);
@@ -76,7 +79,7 @@ function requestAccessToken(refreshToken, dispatch) {
 
     return promise
         .then(({token}) => dispatch(updateToken(token)))
-        .catch(() => dispatch(logout()));
+        .catch(() => dispatch(logoutAll()));
 }
 
 

@@ -1,6 +1,8 @@
 import expect from 'unexpected';
 import sinon from 'sinon';
 
+import { routeActions } from 'react-router-redux';
+
 import accounts from 'services/api/accounts';
 import authentication from 'services/api/authentication';
 import {
@@ -15,7 +17,7 @@ import {
 } from 'components/accounts/actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
-import { updateUser } from 'components/user/actions';
+import { updateUser, setUser } from 'components/user/actions';
 
 const account = {
     id: 1,
@@ -257,6 +259,25 @@ describe('components/accounts/actions', () => {
                 reset()
             ]);
         });
+
+        it('should redirect to /login', () =>
+            logoutAll()(dispatch, getState).then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    routeActions.push('/login')
+                ]);
+            })
+        );
+
+        it('should change user to guest', () =>
+            logoutAll()(dispatch, getState).then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    setUser({
+                        lang: user.lang,
+                        isGuest: true
+                    })
+                ]);
+            })
+        );
     });
 
     describe('#logoutStrangers', () => {

@@ -1,6 +1,8 @@
+import { routeActions } from 'react-router-redux';
+
 import authentication from 'services/api/authentication';
 import accounts from 'services/api/accounts';
-import { updateUser, logout } from 'components/user/actions';
+import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import logger from 'services/logger';
 
@@ -25,7 +27,7 @@ export function authenticate({token, refreshToken}) {
         authentication.validateToken({token, refreshToken})
             .catch(() => {
                 // TODO: log this case
-                dispatch(logout());
+                dispatch(logoutAll());
 
                 return Promise.reject();
             })
@@ -80,17 +82,23 @@ export function revoke(account) {
                 });
         }
 
-        return dispatch(logout());
+        return dispatch(logoutAll());
     };
 }
 
 export function logoutAll() {
     return (dispatch, getState) => {
+        dispatch(setGuest());
+
         const {accounts: {available}} = getState();
 
         available.forEach((account) => authentication.logout(account));
 
         dispatch(reset());
+
+        dispatch(routeActions.push('/login'));
+
+        return Promise.resolve();
     };
 }
 
@@ -120,7 +128,7 @@ export function logoutStrangers() {
             return dispatch(authenticate(accountToReplace));
         }
 
-        dispatch(logout());
+        dispatch(logoutAll());
 
         return Promise.resolve();
     };

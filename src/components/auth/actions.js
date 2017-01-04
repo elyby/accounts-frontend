@@ -1,11 +1,15 @@
 import { routeActions } from 'react-router-redux';
 
-import { updateUser, logout, acceptRules as userAcceptRules } from 'components/user/actions';
-import { authenticate } from 'components/accounts/actions';
+import logger from 'services/logger';
+import { updateUser, acceptRules as userAcceptRules } from 'components/user/actions';
+import { authenticate, logoutAll } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
 import dispatchBsod from 'components/ui/bsod/dispatchBsod';
+
+export { updateUser } from 'components/user/actions';
+export { authenticate, logoutAll as logout } from 'components/accounts/actions';
 
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';
@@ -24,9 +28,9 @@ export function login({login = '', password = '', rememberMe = false}) {
                 } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                     return dispatch(needActivation());
                 } else if (resp.errors.login === LOGIN_REQUIRED && password) {
-                    // TODO: log this case to backend
-                    // return to the first step
-                    return dispatch(logout());
+                    logger.warn('No login on password panel');
+
+                    return dispatch(logoutAll());
                 }
             }
 
@@ -143,9 +147,6 @@ export function setErrors(errors) {
 export function clearErrors() {
     return setErrors(null);
 }
-
-export { logout, updateUser } from 'components/user/actions';
-export { authenticate } from 'components/accounts/actions';
 
 /**
  * @param {object} oauthData
