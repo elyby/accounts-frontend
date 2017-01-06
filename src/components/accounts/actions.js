@@ -25,28 +25,27 @@ import logger from 'services/logger';
 export function authenticate({token, refreshToken}) {
     return (dispatch) =>
         authentication.validateToken({token, refreshToken})
-            .catch(() => {
-                // TODO: log this case
-                dispatch(logoutAll());
+            .catch((resp) => {
+                logger.warn('Error validating token during auth', {
+                    resp
+                });
 
-                return Promise.reject();
+                return dispatch(logoutAll())
+                    .then(() => Promise.reject());
             })
-            .then(({token, refreshToken}) =>
-                accounts.current({token})
-                    .then((user) => ({
-                        user: {
-                            isGuest: false,
-                            ...user
-                        },
-                        account: {
-                            id: user.id,
-                            username: user.username,
-                            email: user.email,
-                            token,
-                            refreshToken
-                        }
-                    }))
-            )
+            .then(({token, refreshToken, user}) => ({
+                user: {
+                    isGuest: false,
+                    ...user
+                },
+                account: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    token,
+                    refreshToken
+                }
+            }))
             .then(({user, account}) => {
                 dispatch(add(account));
                 dispatch(activate(account));

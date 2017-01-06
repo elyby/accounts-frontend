@@ -45,30 +45,30 @@ describe('components/accounts/actions', () => {
         getState = sinon.stub().named('store.getState');
 
         getState.returns({
-            accounts: [],
+            accounts: {
+                available: [],
+                active: null
+            },
             user: {}
         });
 
         sinon.stub(authentication, 'validateToken').named('authentication.validateToken');
         authentication.validateToken.returns(Promise.resolve({
             token: account.token,
-            refreshToken: account.refreshToken
+            refreshToken: account.refreshToken,
+            user
         }));
-
-        sinon.stub(accounts, 'current').named('accounts.current');
-        accounts.current.returns(Promise.resolve(user));
     });
 
     afterEach(() => {
         authentication.validateToken.restore();
-        accounts.current.restore();
     });
 
     describe('#authenticate()', () => {
         it('should request user state using token', () =>
             authenticate(account)(dispatch).then(() =>
-                expect(accounts.current, 'to have a call satisfying', [
-                    {token: account.token}
+                expect(authentication.validateToken, 'to have a call satisfying', [
+                    {token: account.token, refreshToken: account.refreshToken}
                 ])
             )
         );
@@ -112,17 +112,23 @@ describe('components/accounts/actions', () => {
         );
 
         it('rejects when bad auth data', () => {
-            accounts.current.returns(Promise.reject({}));
+            authentication.validateToken.returns(Promise.reject({}));
 
-            return expect(authenticate(account)(dispatch), 'to be rejected').then(() =>
-                expect(dispatch, 'was not called')
-            );
+            return expect(authenticate(account)(dispatch), 'to be rejected').then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    {payload: {isGuest: true}},
+                ]);
+                expect(dispatch, 'to have a call satisfying', [
+                    reset()
+                ]);
+            });
         });
 
         it('marks user as stranger, if there is no refreshToken', () => {
             const expectedKey = `stranger${account.id}`;
             authentication.validateToken.returns(Promise.resolve({
-                token: account.token
+                token: account.token,
+                user
             }));
 
             sessionStorage.removeItem(expectedKey);

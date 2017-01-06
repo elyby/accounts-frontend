@@ -40,11 +40,12 @@ describe('authentication api', () => {
 
     describe('#validateToken()', () => {
         const validTokens = {token: 'foo', refreshToken: 'bar'};
+        const user = {id: 1};
 
         beforeEach(() => {
             sinon.stub(accounts, 'current');
 
-            accounts.current.returns(Promise.resolve());
+            accounts.current.returns(Promise.resolve(user));
         });
 
         afterEach(() => {
@@ -60,8 +61,11 @@ describe('authentication api', () => {
                 })
         );
 
-        it('should resolve with both tokens', () =>
-            expect(authentication.validateToken(validTokens), 'to be fulfilled with', validTokens)
+        it('should resolve with both tokens and user object', () =>
+            expect(authentication.validateToken(validTokens), 'to be fulfilled with', {
+                ...validTokens,
+                user
+            })
         );
 
         it('rejects if token has a bad type', () =>
@@ -96,7 +100,7 @@ describe('authentication api', () => {
             beforeEach(() => {
                 sinon.stub(authentication, 'requestToken');
 
-                accounts.current.returns(Promise.reject(expiredResponse));
+                accounts.current.onCall(0).returns(Promise.reject(expiredResponse));
                 authentication.requestToken.returns(Promise.resolve({token: newToken}));
             });
 
@@ -104,9 +108,9 @@ describe('authentication api', () => {
                 authentication.requestToken.restore();
             });
 
-            it('resolves with new token', () =>
+            it('resolves with new token and user object', () =>
                 expect(authentication.validateToken(validTokens),
-                    'to be fulfilled with', {...validTokens, token: newToken}
+                    'to be fulfilled with', {...validTokens, token: newToken, user}
                 )
             );
 
