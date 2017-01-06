@@ -1,3 +1,4 @@
+import { getJwtPayload } from 'functions';
 import authentication from 'services/api/authentication';
 import logger from 'services/logger';
 import { updateToken, logoutAll } from 'components/accounts/actions';
@@ -14,7 +15,7 @@ import { updateToken, logoutAll } from 'components/accounts/actions';
 export default function refreshTokenMiddleware({dispatch, getState}) {
     return {
         before(req) {
-            const {user, accounts} = getState();
+            const {accounts} = getState();
 
             let refreshToken;
             let token;
@@ -24,18 +25,15 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
             if (accounts.active) {
                 token = accounts.active.token;
                 refreshToken = accounts.active.refreshToken;
-            } else { // #legacy token
-                token = user.token;
-                refreshToken = user.refreshToken;
             }
 
             if (!token || req.options.token || isRefreshTokenRequest) {
-                return req;
+                return Promise.resolve(req);
             }
 
             try {
                 const SAFETY_FACTOR = 300; // ask new token earlier to overcome time dissynchronization problem
-                const jwt = getJWTPayload(token);
+                const jwt = getJwtPayload(token);
 
                 if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
                     return requestAccessToken(refreshToken, dispatch).then(() => req);
@@ -53,8 +51,8 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
 
         catch(resp, req, restart) {
             if (resp && resp.status === 401 && !req.options.token) {
-                const {user, accounts} = getState();
-                const {refreshToken} = accounts.active ? accounts.active : user;
+                const {accounts} = getState();
+                const {refreshToken} = accounts.active || {};
 
                 if (resp.message === 'Token expired' && refreshToken) {
                     // request token and retry
@@ -83,16 +81,3 @@ function requestAccessToken(refreshToken, dispatch) {
 }
 
 
-function getJWTPayload(jwt) {
-    const parts = (jwt || '').split('.');
-
-    if (parts.length !== 3) {
-        throw new Error('Invalid jwt token');
-    }
-
-    try {
-        return JSON.parse(atob(parts[1]));
-    } catch (err) {
-        throw new Error('Can not decode jwt token');
-    }
-}
