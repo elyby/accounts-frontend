@@ -9,7 +9,7 @@ import prompt from 'prompt';
 const MESSAGES_PATTERN = `${__dirname}/../dist/messages/**/*.json`;
 const LANG_DIR = `${__dirname}/../src/i18n`;
 const DEFAULT_LOCALE = 'en';
-const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be', 'uk');
+const SUPPORTED_LANGS = [DEFAULT_LOCALE].concat('ru', 'be', 'pt', 'uk');
 
 /**
  * Aggregates the default messages that were extracted from the app's

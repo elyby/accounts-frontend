@@ -62,6 +62,11 @@ class LangMenu extends Component {
                                 {this.renderLangLabel(lang)}
                             </li>
                         ))}
+                        <li className={styles.improveTranslatesLink}>
+                            <a href="https://ely-translates.oneskyapp.com/collaboration/project?id=201323" target="_blank">
+                                <Message {...messages.improveTranslations} />
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

@@ -111,6 +111,24 @@
     background-image: url('~icons/flag_uk.svg');
 }
 
+.improveTranslatesLink {
+    font-size: 11px;
+    text-align: center;
+    padding: 5px 10px;
+
+    a {
+        color: #9a9a9a;
+        border-bottom: 1px dotted #9a9a9a;
+        text-decoration: none;
+        transition: .25s;
+
+        &:hover {
+            border-bottom-color: #777;
+            color: #777;
+        }
+    }
+}
+
 .trigger {
     color: #666;
     border-bottom: 1px dotted #666;
