@@ -301,7 +301,7 @@ describe('components/accounts/actions', () => {
         beforeEach(() => {
             getState.returns({
                 accounts: {
-                    active: account,
+                    active: foreignAccount,
                     available: [account, foreignAccount, foreignAccount2]
                 },
                 user
@@ -343,6 +343,37 @@ describe('components/accounts/actions', () => {
                 )
         );
 
+        it('should not activate another account if active account is already not a stranger', () => {
+            getState.returns({
+                accounts: {
+                    active: account,
+                    available: [account, foreignAccount]
+                },
+                user
+            });
+
+            return logoutStrangers()(dispatch, getState)
+                .then(() =>
+                    expect(dispatch, 'was always called with',
+                        expect.it('not to satisfy', activate(account)))
+                );
+        });
+
+        it('should not dispatch if no strangers', () => {
+            getState.returns({
+                accounts: {
+                    active: account,
+                    available: [account]
+                },
+                user
+            });
+
+            return logoutStrangers()(dispatch, getState)
+                .then(() =>
+                    expect(dispatch, 'was not called')
+                );
+        });
+
         describe('when all accounts are strangers', () => {
             beforeEach(() => {
                 getState.returns({
@@ -368,7 +399,7 @@ describe('components/accounts/actions', () => {
             });
         });
 
-        describe('when an stranger has a mark in sessionStorage', () => {
+        describe('when a stranger has a mark in sessionStorage', () => {
             const key = `stranger${foreignAccount.id}`;
 
             beforeEach(() => {
@@ -382,12 +413,9 @@ describe('components/accounts/actions', () => {
             });
 
             it('should not log out', () =>
-                expect(dispatch, 'to have calls satisfying', [
-                    [expect.it('not to equal', {payload: foreignAccount})],
-                    // for some reason it says, that dispatch(authenticate(...))
-                    // must be removed if only one args assertion is listed :(
-                    [expect.it('not to equal', {payload: foreignAccount})]
-                ])
+                expect(dispatch, 'was always called with',
+                    expect.it('not to equal', {payload: foreignAccount})
+                )
             );
         });
     });

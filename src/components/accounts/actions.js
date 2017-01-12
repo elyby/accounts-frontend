@@ -111,23 +111,27 @@ export function logoutAll() {
  */
 export function logoutStrangers() {
     return (dispatch, getState) => {
-        const {accounts: {available}} = getState();
+        const {accounts: {available, active}} = getState();
 
         const isStranger = ({refreshToken, id}) => !refreshToken && !sessionStorage.getItem(`stranger${id}`);
 
-        const accountToReplace = available.filter((account) => !isStranger(account))[0];
+        if (available.some(isStranger)) {
+            const accountToReplace = available.filter((account) => !isStranger(account))[0];
 
-        if (accountToReplace) {
-            available.filter(isStranger)
-                .forEach((account) => {
-                    dispatch(remove(account));
-                    authentication.logout(account);
-                });
+            if (accountToReplace) {
+                available.filter(isStranger)
+                    .forEach((account) => {
+                        dispatch(remove(account));
+                        authentication.logout(account);
+                    });
 
-            return dispatch(authenticate(accountToReplace));
+                if (isStranger(active)) {
+                    return dispatch(authenticate(accountToReplace));
+                }
+            } else {
+                return dispatch(logoutAll());
+            }
         }
-
-        dispatch(logoutAll());
 
         return Promise.resolve();
     };
