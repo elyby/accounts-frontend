@@ -1,6 +1,8 @@
 import expect from 'unexpected';
 import sinon from 'sinon';
 
+import { routeActions } from 'react-router-redux';
+
 import accounts from 'services/api/accounts';
 import authentication from 'services/api/authentication';
 import {
@@ -15,7 +17,7 @@ import {
 } from 'components/accounts/actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
-import { updateUser } from 'components/user/actions';
+import { updateUser, setUser } from 'components/user/actions';
 
 const account = {
     id: 1,
@@ -43,30 +45,30 @@ describe('components/accounts/actions', () => {
         getState = sinon.stub().named('store.getState');
 
         getState.returns({
-            accounts: [],
+            accounts: {
+                available: [],
+                active: null
+            },
             user: {}
         });
 
         sinon.stub(authentication, 'validateToken').named('authentication.validateToken');
         authentication.validateToken.returns(Promise.resolve({
             token: account.token,
-            refreshToken: account.refreshToken
+            refreshToken: account.refreshToken,
+            user
         }));
-
-        sinon.stub(accounts, 'current').named('accounts.current');
-        accounts.current.returns(Promise.resolve(user));
     });
 
     afterEach(() => {
         authentication.validateToken.restore();
-        accounts.current.restore();
     });
 
     describe('#authenticate()', () => {
         it('should request user state using token', () =>
             authenticate(account)(dispatch).then(() =>
-                expect(accounts.current, 'to have a call satisfying', [
-                    {token: account.token}
+                expect(authentication.validateToken, 'to have a call satisfying', [
+                    {token: account.token, refreshToken: account.refreshToken}
                 ])
             )
         );
@@ -110,17 +112,23 @@ describe('components/accounts/actions', () => {
         );
 
         it('rejects when bad auth data', () => {
-            accounts.current.returns(Promise.reject({}));
+            authentication.validateToken.returns(Promise.reject({}));
 
-            return expect(authenticate(account)(dispatch), 'to be rejected').then(() =>
-                expect(dispatch, 'was not called')
-            );
+            return expect(authenticate(account)(dispatch), 'to be rejected').then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    {payload: {isGuest: true}},
+                ]);
+                expect(dispatch, 'to have a call satisfying', [
+                    reset()
+                ]);
+            });
         });
 
         it('marks user as stranger, if there is no refreshToken', () => {
             const expectedKey = `stranger${account.id}`;
             authentication.validateToken.returns(Promise.resolve({
-                token: account.token
+                token: account.token,
+                user
             }));
 
             sessionStorage.removeItem(expectedKey);
@@ -257,6 +265,25 @@ describe('components/accounts/actions', () => {
                 reset()
             ]);
         });
+
+        it('should redirect to /login', () =>
+            logoutAll()(dispatch, getState).then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    routeActions.push('/login')
+                ]);
+            })
+        );
+
+        it('should change user to guest', () =>
+            logoutAll()(dispatch, getState).then(() => {
+                expect(dispatch, 'to have a call satisfying', [
+                    setUser({
+                        lang: user.lang,
+                        isGuest: true
+                    })
+                ]);
+            })
+        );
     });
 
     describe('#logoutStrangers', () => {
@@ -274,7 +301,7 @@ describe('components/accounts/actions', () => {
         beforeEach(() => {
             getState.returns({
                 accounts: {
-                    active: account,
+                    active: foreignAccount,
                     available: [account, foreignAccount, foreignAccount2]
                 },
                 user
@@ -316,6 +343,37 @@ describe('components/accounts/actions', () => {
                 )
         );
 
+        it('should not activate another account if active account is already not a stranger', () => {
+            getState.returns({
+                accounts: {
+                    active: account,
+                    available: [account, foreignAccount]
+                },
+                user
+            });
+
+            return logoutStrangers()(dispatch, getState)
+                .then(() =>
+                    expect(dispatch, 'was always called with',
+                        expect.it('not to satisfy', activate(account)))
+                );
+        });
+
+        it('should not dispatch if no strangers', () => {
+            getState.returns({
+                accounts: {
+                    active: account,
+                    available: [account]
+                },
+                user
+            });
+
+            return logoutStrangers()(dispatch, getState)
+                .then(() =>
+                    expect(dispatch, 'was not called')
+                );
+        });
+
         describe('when all accounts are strangers', () => {
             beforeEach(() => {
                 getState.returns({
@@ -341,7 +399,7 @@ describe('components/accounts/actions', () => {
             });
         });
 
-        describe('when an stranger has a mark in sessionStorage', () => {
+        describe('when a stranger has a mark in sessionStorage', () => {
             const key = `stranger${foreignAccount.id}`;
 
             beforeEach(() => {
@@ -355,12 +413,9 @@ describe('components/accounts/actions', () => {
             });
 
             it('should not log out', () =>
-                expect(dispatch, 'to have calls satisfying', [
-                    [expect.it('not to equal', {payload: foreignAccount})],
-                    // for some reason it says, that dispatch(authenticate(...))
-                    // must be removed if only one args assertion is listed :(
-                    [expect.it('not to equal', {payload: foreignAccount})]
-                ])
+                expect(dispatch, 'was always called with',
+                    expect.it('not to equal', {payload: foreignAccount})
+                )
             );
         });
     });

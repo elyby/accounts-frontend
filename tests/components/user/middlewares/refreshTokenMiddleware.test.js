@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import refreshTokenMiddleware from 'components/user/middlewares/refreshTokenMiddleware';
 
@@ -75,9 +76,11 @@ describe('refreshTokenMiddleware', () => {
                 const data = {url: '/refresh-token', options: {}};
                 const resp = middleware.before(data);
 
-                expect(resp, 'to satisfy', data);
 
-                expect(authentication.requestToken, 'was not called');
+                return expect(resp, 'to be fulfilled with', data)
+                    .then(() =>
+                        expect(authentication.requestToken, 'was not called')
+                    );
             });
 
             it('should not auto refresh token if options.token specified', () => {
@@ -142,40 +145,6 @@ describe('refreshTokenMiddleware', () => {
             });
         });
 
-        describe('when token expired legacy user', () => {
-            beforeEach(() => {
-                getState.returns({
-                    accounts: {
-                        active: null,
-                        available: []
-                    },
-                    user: {
-                        token: expiredToken,
-                        refreshToken
-                    }
-                });
-            });
-
-            it('should request new token', () => {
-                const data = {
-                    url: 'foo',
-                    options: {
-                        headers: {}
-                    }
-                };
-
-                authentication.requestToken.returns(Promise.resolve({token: validToken}));
-
-                return middleware.before(data).then((resp) => {
-                    expect(resp, 'to satisfy', data);
-
-                    expect(authentication.requestToken, 'to have a call satisfying', [
-                        refreshToken
-                    ]);
-                });
-            });
-        });
-
         it('should not be applied if no token', () => {
             getState.returns({
                 accounts: {
@@ -187,9 +156,10 @@ describe('refreshTokenMiddleware', () => {
             const data = {url: 'foo'};
             const resp = middleware.before(data);
 
-            expect(resp, 'to satisfy', data);
-
-            expect(authentication.requestToken, 'was not called');
+            return expect(resp, 'to be fulfilled with', data)
+                .then(() =>
+                    expect(authentication.requestToken, 'was not called')
+                );
         });
     });
 
@@ -289,26 +259,6 @@ describe('refreshTokenMiddleware', () => {
                 expect(restart, 'was not called');
                 expect(authentication.requestToken, 'was not called');
             });
-        });
-
-        describe('legacy user.refreshToken', () => {
-            beforeEach(() => {
-                getState.returns({
-                    accounts: {
-                        active: null
-                    },
-                    user: {refreshToken}
-                });
-            });
-
-            it('should request new token if expired', () =>
-                middleware.catch(expiredResponse, {options: {}}, restart).then(() => {
-                    expect(authentication.requestToken, 'to have a call satisfying', [
-                        refreshToken
-                    ]);
-                    expect(restart, 'was called');
-                })
-            );
         });
     });
 });

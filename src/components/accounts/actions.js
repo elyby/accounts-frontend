@@ -1,16 +1,17 @@
+import { routeActions } from 'react-router-redux';
+
 import authentication from 'services/api/authentication';
-import accounts from 'services/api/accounts';
-import { updateUser, logout } from 'components/user/actions';
+import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import logger from 'services/logger';
 
 /**
  * @typedef {object} Account
- * @property {string} account.id
- * @property {string} account.username
- * @property {string} account.email
- * @property {string} account.token
- * @property {string} account.refreshToken
+ * @property {string} id
+ * @property {string} username
+ * @property {string} email
+ * @property {string} token
+ * @property {string} refreshToken
  */
 
 /**
@@ -23,28 +24,27 @@ import logger from 'services/logger';
 export function authenticate({token, refreshToken}) {
     return (dispatch) =>
         authentication.validateToken({token, refreshToken})
-            .catch(() => {
-                // TODO: log this case
-                dispatch(logout());
+            .catch((resp) => {
+                logger.warn('Error validating token during auth', {
+                    resp
+                });
 
-                return Promise.reject();
+                return dispatch(logoutAll())
+                    .then(() => Promise.reject());
             })
-            .then(({token, refreshToken}) =>
-                accounts.current({token})
-                    .then((user) => ({
-                        user: {
-                            isGuest: false,
-                            ...user
-                        },
-                        account: {
-                            id: user.id,
-                            username: user.username,
-                            email: user.email,
-                            token,
-                            refreshToken
-                        }
-                    }))
-            )
+            .then(({token, refreshToken, user}) => ({
+                user: {
+                    isGuest: false,
+                    ...user
+                },
+                account: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    token,
+                    refreshToken
+                }
+            }))
             .then(({user, account}) => {
                 dispatch(add(account));
                 dispatch(activate(account));
@@ -80,17 +80,23 @@ export function revoke(account) {
                 });
         }
 
-        return dispatch(logout());
+        return dispatch(logoutAll());
     };
 }
 
 export function logoutAll() {
     return (dispatch, getState) => {
+        dispatch(setGuest());
+
         const {accounts: {available}} = getState();
 
         available.forEach((account) => authentication.logout(account));
 
         dispatch(reset());
+
+        dispatch(routeActions.push('/login'));
+
+        return Promise.resolve();
     };
 }
 
@@ -104,23 +110,27 @@ export function logoutAll() {
  */
 export function logoutStrangers() {
     return (dispatch, getState) => {
-        const {accounts: {available}} = getState();
+        const {accounts: {available, active}} = getState();
 
         const isStranger = ({refreshToken, id}) => !refreshToken && !sessionStorage.getItem(`stranger${id}`);
 
-        const accountToReplace = available.filter((account) => !isStranger(account))[0];
+        if (available.some(isStranger)) {
+            const accountToReplace = available.filter((account) => !isStranger(account))[0];
 
-        if (accountToReplace) {
-            available.filter(isStranger)
-                .forEach((account) => {
-                    dispatch(remove(account));
-                    authentication.logout(account);
-                });
+            if (accountToReplace) {
+                available.filter(isStranger)
+                    .forEach((account) => {
+                        dispatch(remove(account));
+                        authentication.logout(account);
+                    });
 
-            return dispatch(authenticate(accountToReplace));
+                if (isStranger(active)) {
+                    return dispatch(authenticate(accountToReplace));
+                }
+            } else {
+                return dispatch(logoutAll());
+            }
         }
-
-        dispatch(logout());
 
         return Promise.resolve();
     };

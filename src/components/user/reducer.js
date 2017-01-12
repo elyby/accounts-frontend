@@ -1,10 +1,28 @@
 import { UPDATE, SET, CHANGE_LANG } from './actions';
 
-import User from './User';
 
-// TODO: возможно есть смысл инитить обьект User снаружи, так как редусер не должен столько знать
+const defaults = {
+    id: null,
+    uuid: null,
+    username: '',
+    email: '',
+    // will contain user's email or masked email
+    // (e.g. ex**ple@em*il.c**) depending on what information user have already provided
+    maskedEmail: '',
+    avatar: '',
+    lang: '',
+    isActive: false,
+    shouldAcceptRules: false, // whether user need to review updated rules
+    passwordChangedAt: null,
+    hasMojangUsernameCollision: false,
+
+    // frontend specific attributes
+    isGuest: true,
+    goal: null // the goal with wich user entered site
+};
+
 export default function user(
-    state = new User(),
+    state = null,
     {type, payload = null}
 ) {
     switch (type) {
@@ -13,25 +31,32 @@ export default function user(
                 throw new Error('payload.lang is required for user reducer');
             }
 
-            return new User({
+            return {
                 ...state,
                 lang: payload.lang
-            });
+            };
 
         case UPDATE:
             if (!payload) {
                 throw new Error('payload is required for user reducer');
             }
 
-            return new User({
+            return {
                 ...state,
                 ...payload
-            });
+            };
 
         case SET:
-            return new User(payload || {});
+            payload = payload || {};
+
+            return {
+                ...defaults,
+                ...payload
+            };
 
         default:
-            return state;
+            return state || {
+                ...defaults
+            };
     }
 }

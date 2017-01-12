@@ -1,7 +1,4 @@
-import { routeActions } from 'react-router-redux';
-
 import accounts from 'services/api/accounts';
-import { logoutAll } from 'components/accounts/actions';
 import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';
@@ -14,6 +11,20 @@ export const UPDATE = 'USER_UPDATE';
 export function updateUser(payload) {
     return {
         type: UPDATE,
+        payload
+    };
+}
+
+export const SET = 'USER_SET';
+/**
+ * Replace current user's state with a new one
+ *
+ * @param {User} payload
+ * @return {object} - action definition
+ */
+export function setUser(payload) {
+    return {
+        type: SET,
         payload
     };
 }
@@ -37,32 +48,12 @@ export function changeLang(lang) {
         });
 }
 
-export const SET = 'USER_SET';
-/**
- * Replace current user's state with a new one
- *
- * @param {User} payload
- * @return {object} - action definition
- */
-export function setUser(payload) {
-    return {
-        type: SET,
-        payload
-    };
-}
-
-export function logout() {
+export function setGuest() {
     return (dispatch, getState) => {
         dispatch(setUser({
             lang: getState().user.lang,
             isGuest: true
         }));
-
-        dispatch(logoutAll());
-
-        dispatch(routeActions.push('/login'));
-
-        return Promise.resolve();
     };
 }
 

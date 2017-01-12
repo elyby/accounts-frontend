@@ -55,7 +55,8 @@ const authentication = {
      * @param {string} options.refreshToken
      *
      * @return {Promise} - resolves with options.token or with a new token
-     *                     if it was refreshed
+     *                     if it was refreshed. As a side effect the response
+     *                     will have a `user` field with current user data
      */
     validateToken({token, refreshToken}) {
         return new Promise((resolve) => {
@@ -66,11 +67,14 @@ const authentication = {
             resolve();
         })
         .then(() => accounts.current({token}))
-        .then(() => ({token, refreshToken}))
+        .then((user) => ({token, refreshToken, user}))
         .catch((resp) => {
             if (resp.message === 'Token expired') {
                 return authentication.requestToken(refreshToken)
-                    .then(({token}) => ({token, refreshToken}));
+                    .then(({token}) =>
+                        accounts.current({token})
+                            .then((user) => ({token, refreshToken, user}))
+                    );
             }
 
             return Promise.reject(resp);

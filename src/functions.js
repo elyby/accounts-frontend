@@ -61,3 +61,24 @@ export const rAF = window.requestAnimationFrame
  * @param {bool} [immediate=false] - whether to execute at the beginning
  */
 export debounce from 'debounce';
+
+/**
+ * @param {string} jwt
+ *
+ * @throws {Error} If can not decode token
+ *
+ * @return {object} - decoded jwt payload
+ */
+export function getJwtPayload(jwt) {
+    const parts = (jwt || '').split('.');
+
+    if (parts.length !== 3) {
+        throw new Error('Invalid jwt token');
+    }
+
+    try {
+        return JSON.parse(atob(parts[1]));
+    } catch (err) {
+        throw new Error('Can not decode jwt token');
+    }
+}
