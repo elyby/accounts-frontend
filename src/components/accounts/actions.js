@@ -1,18 +1,17 @@
 import { routeActions } from 'react-router-redux';
 
 import authentication from 'services/api/authentication';
-import accounts from 'services/api/accounts';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import logger from 'services/logger';
 
 /**
  * @typedef {object} Account
- * @property {string} account.id
- * @property {string} account.username
- * @property {string} account.email
- * @property {string} account.token
- * @property {string} account.refreshToken
+ * @property {string} id
+ * @property {string} username
+ * @property {string} email
+ * @property {string} token
+ * @property {string} refreshToken
  */
 
 /**
