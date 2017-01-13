@@ -84,9 +84,7 @@
 
     a {
         color: #444;
-        border-bottom: 1px dotted #aaa;
-        text-decoration: none;
-        transition: .25s;
+        border-bottom-color: #aaa;
 
         &:hover {
             border-bottom-color: #444

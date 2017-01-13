@@ -6,7 +6,7 @@
         composes: button;
 
         @if ($textColor != $defaultButtonTextColor) {
-            color: $textColor;
+            color: $textColor!important;
         }
 
         background-color: $backgroundColor;
@@ -29,7 +29,7 @@
     border: none;
 
     font-family: $font-family-title;
-    color: $defaultButtonTextColor;
+    color: $defaultButtonTextColor!important;
     font-size: 18px;
     line-height: 50px;
     text-decoration: none;

@@ -118,14 +118,7 @@
 
     a {
         color: #9a9a9a;
-        border-bottom: 1px dotted #9a9a9a;
-        text-decoration: none;
-        transition: .25s;
-
-        &:hover {
-            border-bottom-color: #777;
-            color: #777;
-        }
+        border-bottom-color: #9a9a9a;
     }
 }
 

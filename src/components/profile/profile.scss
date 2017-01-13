@@ -76,6 +76,7 @@ $formColumnWidth: 416px;
 .paramAction {
     text-align: center;
     cursor: pointer;
+    border-bottom: none;
 }
 
 .paramEditIcon {
@@ -97,9 +98,9 @@ $formColumnWidth: 416px;
     line-height: 1.2;
 
     a {
-        color: $red;
-        border-bottom: 1px dashed transparent;
-        transition: .25s;
+        color: $red!important;
+        border-bottom-color: transparent;
+        border-bottom-style: dashed;
 
         &:hover {
             border-bottom-color: lighter($red);

@@ -83,19 +83,6 @@ $lightBorderColor: #eee;
         &:last-of-type {
             margin-bottom: 0;
         }
-
-        a {
-            color: #666;
-            font-size: 12px;
-            border-bottom: 1px dotted #666;
-            text-decoration: none;
-            transition: .25s;
-
-            &:hover {
-                border-bottom-color: #aaa;
-                color: #777;
-            }
-        }
     }
 
     .accountInfo {

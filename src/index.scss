@@ -21,7 +21,15 @@ b {
 }
 
 a {
+    color: #444;
+    border-bottom: 1px dotted #444;
     text-decoration: none;
+    transition: .25s;
+
+    &:hover {
+        border-bottom-color: #777;
+        color: #777;
+    }
 }
 
 ul,

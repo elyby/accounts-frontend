@@ -45,12 +45,9 @@
 
     a {
         color: lighten($font-color, 10%);
-        border-bottom: 1px dotted #666;
-        text-decoration: none;
-        transition: .25s;
+        border-bottom-color: #666;
 
         &:hover {
-            border-bottom-color: #777;
             color: $font-color;
         }
     }
