@@ -461,6 +461,26 @@
         }
       }
     },
+    "babel-cli": {
+      "version": "6.18.0",
+      "from": "babel-cli@latest",
+      "resolved": "https://registry.npmjs.org/babel-cli/-/babel-cli-6.18.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "fs-readdir-recursive": {
+          "version": "1.0.0",
+          "from": "fs-readdir-recursive@>=1.0.0 <2.0.0",
+          "resolved": "https://registry.npmjs.org/fs-readdir-recursive/-/fs-readdir-recursive-1.0.0.tgz",
+          "dev": true
+        },
+        "glob": {
+          "version": "5.0.15",
+          "from": "glob@>=5.0.5 <6.0.0",
+          "resolved": "https://registry.npmjs.org/glob/-/glob-5.0.15.tgz",
+          "dev": true
+        }
+      }
+    },
     "babel-code-frame": {
       "version": "6.16.0",
       "from": "babel-code-frame@>=6.16.0 <7.0.0",
@@ -889,7 +909,7 @@
     },
     "babel-plugin-transform-function-bind": {
       "version": "6.8.0",
-      "from": "babel-plugin-transform-function-bind@>=6.3.13 <7.0.0",
+      "from": "https://registry.npmjs.org/babel-plugin-transform-function-bind/-/babel-plugin-transform-function-bind-6.8.0.tgz",
       "resolved": "https://registry.npmjs.org/babel-plugin-transform-function-bind/-/babel-plugin-transform-function-bind-6.8.0.tgz",
       "dev": true
     },
@@ -968,6 +988,12 @@
       "version": "0.0.4",
       "from": "babel-preset-es2015-without-strict@>=0.0.4 <0.0.5",
       "resolved": "https://registry.npmjs.org/babel-preset-es2015-without-strict/-/babel-preset-es2015-without-strict-0.0.4.tgz",
+      "dev": true
+    },
+    "babel-preset-es2017": {
+      "version": "6.16.0",
+      "from": "babel-preset-es2017@latest",
+      "resolved": "https://registry.npmjs.org/babel-preset-es2017/-/babel-preset-es2017-6.16.0.tgz",
       "dev": true
     },
     "babel-preset-react": {
@@ -6671,6 +6697,20 @@
       "from": "uuid@>=2.0.3 <3.0.0",
       "resolved": "https://registry.npmjs.org/uuid/-/uuid-2.0.3.tgz",
       "dev": true
+    },
+    "v8flags": {
+      "version": "2.0.11",
+      "from": "v8flags@>=2.0.10 <3.0.0",
+      "resolved": "https://registry.npmjs.org/v8flags/-/v8flags-2.0.11.tgz",
+      "dev": true,
+      "dependencies": {
+        "user-home": {
+          "version": "1.1.1",
+          "from": "user-home@>=1.1.1 <2.0.0",
+          "resolved": "https://registry.npmjs.org/user-home/-/user-home-1.1.1.tgz",
+          "dev": true
+        }
+      }
     },
     "validate-npm-package-license": {
       "version": "3.0.1",
