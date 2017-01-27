@@ -67,6 +67,9 @@ class PanelTransition extends Component {
             login: PropTypes.string
         }).isRequired,
         user: userShape.isRequired,
+        accounts: PropTypes.shape({
+            available: PropTypes.array
+        }),
         setErrors: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired,
         resolve: PropTypes.func.isRequired,
