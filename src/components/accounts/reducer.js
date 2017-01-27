@@ -1,4 +1,4 @@
-import { ADD, REMOVE, ACTIVATE, RESET, UPDATE_TOKEN } from './actions';
+import { ADD, REMOVE, ACTIVATE, RESET, UPDATE_TOKEN } from './actions/pure-actions';
 
 /**
  * @typedef {AccountsState}

@@ -3,18 +3,19 @@ import sinon from 'sinon';
 
 import { routeActions } from 'react-router-redux';
 
-import accounts from 'services/api/accounts';
 import authentication from 'services/api/authentication';
 import {
     authenticate,
     revoke,
-    add, ADD,
-    activate, ACTIVATE,
-    remove,
-    reset,
     logoutAll,
     logoutStrangers
 } from 'components/accounts/actions';
+import {
+    add, ADD,
+    activate, ACTIVATE,
+    remove,
+    reset
+} from 'components/accounts/actions/pure-actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
 import { updateUser, setUser } from 'components/user/actions';

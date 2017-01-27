@@ -2,9 +2,12 @@ import expect from 'unexpected';
 
 import accounts from 'components/accounts/reducer';
 import {
-    updateToken, add, remove, activate, reset,
-    ADD, REMOVE, ACTIVATE, UPDATE_TOKEN, RESET
+    updateToken
 } from 'components/accounts/actions';
+import {
+    add, remove, activate, reset,
+    ADD, REMOVE, ACTIVATE, UPDATE_TOKEN, RESET
+} from 'components/accounts/actions/pure-actions';
 
 const account = {
     id: 1,
