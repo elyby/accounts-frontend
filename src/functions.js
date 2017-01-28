@@ -82,3 +82,13 @@ export function getJwtPayload(jwt) {
         throw new Error('Can not decode jwt token');
     }
 }
+
+/**
+ * http://stackoverflow.com/a/3464890/5184751
+ *
+ * @return {number}
+ */
+export function getScrollTop() {
+    const doc = document.documentElement;
+    return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+}

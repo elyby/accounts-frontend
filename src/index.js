@@ -50,16 +50,20 @@ function stopLoading() {
     loader.hide();
 }
 
-import scrollTo from 'components/ui/scrollTo';
+import { scrollTo } from 'components/ui/scrollTo';
+import { getScrollTop } from 'functions';
 const SCROLL_ANCHOR_OFFSET = 80; // 50 + 30 (header height + some spacing)
+// Первый скролл выполняется сразу после загрузки страницы, так что чтобы снизить
+// нагрузку на рендеринг мы откладываем первый скрол на 200ms
+let isFirstScroll = true;
 /**
  * Scrolls to page's top or #anchor link, if any
  */
 function restoreScroll() {
     const {hash} = location;
 
-    // Push onto callback queue so it runs after the DOM is updated
     setTimeout(() => {
+        isFirstScroll = false;
         const id = hash.replace('#', '');
         const el = id ? document.getElementById(id) : null;
         const viewPort = document.body;
@@ -71,14 +75,13 @@ function restoreScroll() {
 
         let y = 0;
         if (el) {
-            const {scrollTop} = viewPort;
             const {top} = el.getBoundingClientRect();
 
-            y = scrollTop + top - SCROLL_ANCHOR_OFFSET;
+            y = getScrollTop() + top - SCROLL_ANCHOR_OFFSET;
         }
 
         scrollTo(y, viewPort);
-    }, 200);
+    }, isFirstScroll ? 200 : 0);
 }
 
 import { loadScript, debounce } from 'functions';

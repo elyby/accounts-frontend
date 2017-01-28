@@ -4,15 +4,20 @@
  * @see http://ariya.ofilabs.com/2013/11/javascript-kinetic-scrolling-part-2.html
  */
 
-import { rAF } from 'functions';
+import { rAF, getScrollTop } from 'functions';
 
-const TIME_CONSTANT = 100; // heigher numbers - slower animation
-export default function scrollTo(y, viewPort) {
+const TIME_CONSTANT = 100; // higher numbers - slower animation
+export function scrollTo(y) {
     const start = Date.now();
     let scrollWasTouched = false;
     rAF(() => { // wrap in rAF to optimize initial reading of scrollTop
-        const {scrollTop} = viewPort;
-        const amplitude = y - scrollTop;
+        const contentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        if (contentHeight < y + windowHeight) {
+            y = contentHeight - windowHeight;
+        }
+
+        const amplitude = y - getScrollTop();
 
         (function animateScroll() {
             const elapsed = Date.now() - start;
@@ -32,7 +37,7 @@ export default function scrollTo(y, viewPort) {
             }
 
             const newScrollTop = y + delta;
-            viewPort.scrollTop = newScrollTop;
+            window.scrollTo(0, newScrollTop);
         }());
     });
 
@@ -42,4 +47,3 @@ export default function scrollTo(y, viewPort) {
         scrollWasTouched = true;
     }
 }
-
