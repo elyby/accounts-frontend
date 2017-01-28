@@ -6,8 +6,6 @@ import ReactDOM from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 
-import webFont from 'webfontloader';
-
 import { factory as userFactory } from 'components/user/factory';
 import { IntlProvider } from 'components/i18n';
 import routesFactory from 'routes';
@@ -15,6 +13,7 @@ import storeFactory from 'storeFactory';
 import bsodFactory from 'components/ui/bsod/factory';
 import loader from 'services/loader';
 import logger from 'services/logger';
+import font from 'services/font';
 
 logger.init({
     sentryCdn: window.SENTRY_CDN
@@ -24,21 +23,9 @@ const store = storeFactory();
 
 bsodFactory(store, stopLoading);
 
-const fontLoadingPromise = new Promise((resolve) =>
-    webFont.load({
-        classes: false,
-        active: resolve,
-        inactive: resolve, // TODO: may be we should track such cases
-        timeout: 2000,
-        custom: {
-            families: ['Roboto', 'Roboto Condensed']
-        }
-    })
-);
-
 Promise.all([
     userFactory(store),
-    fontLoadingPromise
+    font.load(['Roboto', 'Roboto Condensed'])
 ])
 .then(() => {
     ReactDOM.render(
