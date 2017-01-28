@@ -1,13 +1,9 @@
 @import './colors.scss';
 @import './fonts.scss';
 
-@mixin button-theme($themeName, $backgroundColor, $textColor : $defaultButtonTextColor) {
+@mixin button-theme($themeName, $backgroundColor) {
     .#{$themeName} {
         composes: button;
-
-        @if ($textColor != $defaultButtonTextColor) {
-            color: $textColor!important;
-        }
 
         background-color: $backgroundColor;
 
@@ -29,7 +25,7 @@
     border: none;
 
     font-family: $font-family-title;
-    color: $defaultButtonTextColor!important;
+    color: $defaultButtonTextColor;
     font-size: 18px;
     line-height: 50px;
     text-decoration: none;
