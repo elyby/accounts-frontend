@@ -1,16 +1,6 @@
 @import '~components/ui/colors.scss';
 
-$font-family-monospaced: 'Consolas', monospace;
-
-@font-face {
-    font-family: 'Consolas';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Consolas'),
-        url('~fonts/consolas/consolas-regular.woff2') format('woff2'), /* Super Modern Browsers */
-        url('~fonts/consolas/consolas-regular.woff') format('woff'), /* Modern Browsers */
-        url('~fonts/consolas/consolas-regular.ttf') format('truetype'); /* Safari, Android, iOS */
-}
+$font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 
 .body {
     height: 100%;
