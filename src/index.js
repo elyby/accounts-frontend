@@ -19,8 +19,6 @@ logger.init({
     sentryCdn: window.SENTRY_CDN
 });
 
-import dispatchBsod from 'components/ui/bsod/dispatchBsod'; // TODO: remove after tests
-
 const store = storeFactory();
 
 bsodFactory(store, stopLoading);
@@ -36,7 +34,6 @@ Promise.all([
                 <Router history={browserHistory} onUpdate={() => {
                     restoreScroll();
                     stopLoading();
-                    setTimeout(dispatchBsod, 0);  // TODO: remove after tests
                 }}>
                     {routesFactory(store)}
                 </Router>
