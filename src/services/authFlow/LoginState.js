@@ -7,15 +7,16 @@ export default class LoginState extends AbstractState {
     enter(context) {
         const {auth, user} = context.getState();
 
+        const isUserAddsSecondAccount = !user.isGuest
+            && /login|password/.test(context.getRequest().path); // TODO: improve me
+
         // TODO: it may not allow user to leave password state till he click back or enters password
         if (auth.login) {
             context.setState(new PasswordState());
-        } else if (user.isGuest
-            // for the case, when user is logged in and wants to add a new aacount
-            || /login|password/.test(context.getRequest().path) // TODO: improve me
-        ) {
+        } else if (user.isGuest || isUserAddsSecondAccount) {
             context.navigate('/login');
         } else {
+            // can not detect needed state. Delegating decision to the next state
             context.setState(new PasswordState());
         }
     }
@@ -24,5 +25,9 @@ export default class LoginState extends AbstractState {
         context.run('login', payload)
             .then(() => context.setState(new PasswordState()))
             .catch((err = {}) => err.errors || logger.warn(err));
+    }
+
+    goBack(context) {
+        context.run('goBack', '/');
     }
 }

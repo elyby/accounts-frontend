@@ -323,8 +323,14 @@ class PanelTransition extends Component {
     }
 
     getHeader({key, style, data}) {
-        const {Title, hasBackButton} = data;
+        const {Title} = data;
         const {transformSpring} = style;
+
+        let {hasBackButton} = data;
+
+        if (typeof hasBackButton === 'function') {
+            hasBackButton = hasBackButton(this.props);
+        }
 
         style = {
             ...this.getDefaultTransitionStyles(key, style),

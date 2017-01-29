@@ -81,4 +81,12 @@ describe('LoginState', () => {
             return promise.catch(mock.verify.bind(mock));
         });
     });
+
+    describe('#goBack', () => {
+        it('should return to previous page', () => {
+            expectRun(mock, 'goBack', '/');
+
+            state.goBack(context);
+        });
+    });
 });
