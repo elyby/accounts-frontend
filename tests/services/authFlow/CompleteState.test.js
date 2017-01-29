@@ -7,6 +7,7 @@ import ActivationState from 'services/authFlow/ActivationState';
 import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import FinishState from 'services/authFlow/FinishState';
 import PermissionsState from 'services/authFlow/PermissionsState';
+import ChooseAccountState from 'services/authFlow/ChooseAccountState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
@@ -150,6 +151,122 @@ describe('CompleteState', () => {
             });
 
             expectState(mock, PermissionsState);
+
+            state.enter(context);
+        });
+
+        it('should transition to ChooseAccountState if user has multiple accs and switcher enabled', () => {
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                accounts: {
+                    available: [
+                        {id: 1},
+                        {id: 2}
+                    ],
+                    active: {
+                        id: 1
+                    }
+                },
+                auth: {
+                    isSwitcherEnabled: true,
+                    oauth: {
+                        clientId: 'ely.by',
+                        prompt: []
+                    }
+                }
+            });
+
+            expectState(mock, ChooseAccountState);
+
+            state.enter(context);
+        });
+
+        it('should NOT transition to ChooseAccountState if user has multiple accs and switcher disabled', () => {
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                accounts: {
+                    available: [
+                        {id: 1},
+                        {id: 2}
+                    ],
+                    active: {
+                        id: 1
+                    }
+                },
+                auth: {
+                    isSwitcherEnabled: false,
+                    oauth: {
+                        clientId: 'ely.by',
+                        prompt: []
+                    }
+                }
+            });
+
+            expectRun(mock, 'oAuthComplete', {})
+                .returns({then() {}});
+
+            state.enter(context);
+        });
+
+        it('should transition to ChooseAccountState if prompt=select_account and switcher enabled', () => {
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                accounts: {
+                    available: [
+                        {id: 1}
+                    ],
+                    active: {
+                        id: 1
+                    }
+                },
+                auth: {
+                    isSwitcherEnabled: true,
+                    oauth: {
+                        clientId: 'ely.by',
+                        prompt: ['select_account']
+                    }
+                }
+            });
+
+            expectState(mock, ChooseAccountState);
+
+            state.enter(context);
+        });
+
+        it('should NOT transition to ChooseAccountState if prompt=select_account and switcher disabled', () => {
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                accounts: {
+                    available: [
+                        {id: 1}
+                    ],
+                    active: {
+                        id: 1
+                    }
+                },
+                auth: {
+                    isSwitcherEnabled: false,
+                    oauth: {
+                        clientId: 'ely.by',
+                        prompt: ['select_account']
+                    }
+                }
+            });
+
+            expectRun(mock, 'oAuthComplete', {})
+                .returns({then() {}});
 
             state.enter(context);
         });
