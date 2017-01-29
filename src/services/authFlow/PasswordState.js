@@ -19,12 +19,16 @@ export default class PasswordState extends AbstractState {
     resolve(context, {password, rememberMe}) {
         const {auth: {login}} = context.getState();
 
-        context.run('login', {
+        return context.run('login', {
             password,
             rememberMe,
             login
         })
-        .then(() => context.setState(new CompleteState()))
+        .then(() => {
+            context.run('setAccountSwitcher', false);
+
+            context.setState(new CompleteState());
+        })
         .catch((err = {}) => err.errors || logger.warn(err));
     }
 
