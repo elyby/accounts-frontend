@@ -134,6 +134,25 @@ describe('CompleteState', () => {
 
             state.enter(context);
         });
+
+        it('should transition to permissions state if prompt=consent', () => {
+            context.getState.returns({
+                user: {
+                    isActive: true,
+                    isGuest: false
+                },
+                auth: {
+                    oauth: {
+                        clientId: 'ely.by',
+                        prompt: ['consent']
+                    }
+                }
+            });
+
+            expectState(mock, PermissionsState);
+
+            state.enter(context);
+        });
     });
 
     describe('when user completes oauth', () => {
