@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
@@ -135,7 +136,7 @@ describe('CompleteState', () => {
         });
     });
 
-    describe('oAuthComplete', () => {
+    describe('when user completes oauth', () => {
         it('should run oAuthComplete', () => {
             context.getState.returns({
                 user: {
@@ -185,7 +186,7 @@ describe('CompleteState', () => {
             state.enter(context);
         });
 
-        it('should transition run redirect by default', () => {
+        it('should run redirect by default', () => {
             const expectedUrl = 'foo/bar';
             const promise = Promise.resolve({redirectUri: expectedUrl});
 
@@ -261,6 +262,122 @@ describe('CompleteState', () => {
         it('should transition to permissions state if rejected with acceptRequired', () =>
             testOAuth('reject', {acceptRequired: true}, PermissionsState)
         );
+
+        describe('when loginHint is set', () => {
+            const testSuccessLoginHint = (field) => {
+                const account = {
+                    id: 9,
+                    email: 'some@email.com',
+                    username: 'thatUsername'
+                };
+
+                context.getState.returns({
+                    user: {
+                        isActive: true,
+                        isGuest: false
+                    },
+                    accounts: {
+                        available: [
+                            account
+                        ],
+                        active: {
+                            id: 100
+                        }
+                    },
+                    auth: {
+                        oauth: {
+                            clientId: 'ely.by',
+                            loginHint: account[field],
+                            prompt: []
+                        }
+                    }
+                });
+
+                expectRun(mock, 'setAccountSwitcher', false);
+                expectRun(mock, 'authenticate', account)
+                    .returns(Promise.resolve());
+                expectState(mock, CompleteState);
+
+                return expect(state.enter(context), 'to be fulfilled');
+            };
+
+            it('should authenticate account if id matches', () =>
+                testSuccessLoginHint('id')
+            );
+
+            it('should authenticate account if email matches', () =>
+                testSuccessLoginHint('email')
+            );
+
+            it('should authenticate account if username matches', () =>
+                testSuccessLoginHint('username')
+            );
+
+            it('should not authenticate if account is already authenticated', () => {
+                const account = {
+                    id: 9,
+                    email: 'some@email.com',
+                    username: 'thatUsername'
+                };
+
+                context.getState.returns({
+                    user: {
+                        isActive: true,
+                        isGuest: false
+                    },
+                    accounts: {
+                        available: [
+                            account
+                        ],
+                        active: account
+                    },
+                    auth: {
+                        oauth: {
+                            clientId: 'ely.by',
+                            loginHint: account.id,
+                            prompt: []
+                        }
+                    }
+                });
+
+                expectRun(mock, 'setAccountSwitcher', false);
+                expectRun(mock, 'oAuthComplete', {})
+                    .returns({then: () => Promise.resolve()});
+
+                return expect(state.enter(context), 'to be fulfilled');
+            });
+
+            it('should not authenticate if account was not found and continue auth', () => {
+                const account = {
+                    id: 9,
+                    email: 'some@email.com',
+                    username: 'thatUsername'
+                };
+
+                context.getState.returns({
+                    user: {
+                        isActive: true,
+                        isGuest: false
+                    },
+                    accounts: {
+                        available: [{id: 1}],
+                        active: {id: 1}
+                    },
+                    auth: {
+                        oauth: {
+                            clientId: 'ely.by',
+                            loginHint: account.id,
+                            prompt: []
+                        }
+                    }
+                });
+
+                expectRun(mock, 'oAuthComplete', {})
+                    .returns({then: () => Promise.resolve()});
+
+                return expect(state.enter(context), 'to be fulfilled');
+            });
+        });
     });
 
     describe('permissions accept', () => {

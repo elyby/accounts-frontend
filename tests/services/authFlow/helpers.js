@@ -2,6 +2,8 @@
  * A helpers for testing states in isolation from AuthFlow
  */
 
+import sinon from 'sinon';
+
 export function bootstrap() {
     const context = {
         getState: sinon.stub(),
@@ -28,9 +30,9 @@ export function expectState(mock, state) {
 export function expectNavigate(mock, route, options) {
     if (options) {
         return mock.expects('navigate').once().withExactArgs(route, sinon.match(options));
-    } else {
-        return mock.expects('navigate').once().withExactArgs(route);
     }
+
+    return mock.expects('navigate').once().withExactArgs(route);
 }
 
 export function expectRun(mock, ...args) {
