@@ -14,6 +14,9 @@ import bsodFactory from 'components/ui/bsod/factory';
 import loader from 'services/loader';
 import logger from 'services/logger';
 import font from 'services/font';
+import history from 'services/history';
+
+history.init();
 
 logger.init({
     sentryCdn: window.SENTRY_CDN

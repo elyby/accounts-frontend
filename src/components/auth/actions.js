@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import logger from 'services/logger';
+import history from 'services/history';
 import { updateUser, acceptRules as userAcceptRules } from 'components/user/actions';
 import { authenticate, logoutAll } from 'components/accounts/actions';
 import authentication from 'services/api/authentication';
@@ -10,6 +11,25 @@ import dispatchBsod from 'components/ui/bsod/dispatchBsod';
 
 export { updateUser } from 'components/user/actions';
 export { authenticate, logoutAll as logout } from 'components/accounts/actions';
+
+/**
+ * Reoutes user to the previous page if it is possible
+ *
+ * @param {string} fallbackUrl - an url to route user to if goBack is not possible
+ *
+ * @return {object} - action definition
+ */
+export function goBack(fallbackUrl = null) {
+    if (history.canGoBack()) {
+        return routeActions.goBack();
+    } else if (fallbackUrl) {
+        return routeActions.push(fallbackUrl);
+    }
+
+    return {
+        type: 'noop'
+    };
+}
 
 export function login({login = '', password = '', rememberMe = false}) {
     const PASSWORD_REQUIRED = 'error.password_required';

@@ -3,7 +3,18 @@ import { routeActions } from 'react-router-redux';
 import authentication from 'services/api/authentication';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
+import { setAccountSwitcher } from 'components/auth/actions';
 import logger from 'services/logger';
+
+import {
+    add,
+    remove,
+    activate,
+    reset,
+    updateToken
+} from 'components/accounts/actions/pure-actions';
+
+export { updateToken };
 
 /**
  * @typedef {object} Account
@@ -22,7 +33,7 @@ import logger from 'services/logger';
  * @return {function}
  */
 export function authenticate({token, refreshToken}) {
-    return (dispatch) =>
+    return (dispatch, getState) =>
         authentication.validateToken({token, refreshToken})
             .catch((resp) => {
                 logger.warn('Error validating token during auth', {
@@ -46,6 +57,8 @@ export function authenticate({token, refreshToken}) {
                 }
             }))
             .then(({user, account}) => {
+                const {auth} = getState();
+
                 dispatch(add(account));
                 dispatch(activate(account));
                 dispatch(updateUser(user));
@@ -58,12 +71,22 @@ export function authenticate({token, refreshToken}) {
                     sessionStorage.setItem(`stranger${account.id}`, 1);
                 }
 
+                if (auth && auth.oauth && auth.oauth.clientId) {
+                    // if we authenticating during oauth, we disable account chooser
+                    // because user probably has made his choise now
+                    // this may happen, when user registers, logs in or uses account
+                    // chooser panel during oauth
+                    dispatch(setAccountSwitcher(false));
+                }
+
                 return dispatch(setLocale(user.lang))
                     .then(() => account);
             });
 }
 
 /**
+ * Remove one account from current user's account list
+ *
  * @param {Account} account
  *
  * @return {function}
@@ -133,75 +156,5 @@ export function logoutStrangers() {
         }
 
         return Promise.resolve();
-    };
-}
-
-export const ADD = 'accounts:add';
-/**
- * @api private
- *
- * @param {Account} account
- *
- * @return {object} - action definition
- */
-export function add(account) {
-    return {
-        type: ADD,
-        payload: account
-    };
-}
-
-export const REMOVE = 'accounts:remove';
-/**
- * @api private
- *
- * @param {Account} account
- *
- * @return {object} - action definition
- */
-export function remove(account) {
-    return {
-        type: REMOVE,
-        payload: account
-    };
-}
-
-export const ACTIVATE = 'accounts:activate';
-/**
- * @api private
- *
- * @param {Account} account
- *
- * @return {object} - action definition
- */
-export function activate(account) {
-    return {
-        type: ACTIVATE,
-        payload: account
-    };
-}
-
-export const RESET = 'accounts:reset';
-/**
- * @api private
- *
- * @return {object} - action definition
- */
-export function reset() {
-    return {
-        type: RESET
-    };
-}
-
-export const UPDATE_TOKEN = 'accounts:updateToken';
-/**
- * @param {string} token
- *
- * @return {object} - action definition
- */
-export function updateToken(token) {
-    return {
-        type: UPDATE_TOKEN,
-        payload: token
     };
 }

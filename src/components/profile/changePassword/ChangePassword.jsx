@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
-import { Link } from 'react-router';
 import Helmet from 'react-helmet';
 
 import { Input, Button, Checkbox, Form, FormModel } from 'components/ui/form';

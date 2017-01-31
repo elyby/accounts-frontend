@@ -1,3 +1,4 @@
+import expect from 'unexpected';
 import sinon from 'sinon';
 
 import PasswordState from 'services/authFlow/PasswordState';
@@ -69,27 +70,11 @@ describe('PasswordState', () => {
                     rememberMe: expectedRememberMe,
                 })
             ).returns(Promise.resolve());
-
-            state.resolve(context, {password: expectedPassword, rememberMe: expectedRememberMe});
-        });
-
-        it('should transition to complete state on successfull login', () => {
-            const promise = Promise.resolve();
-            const expectedLogin = 'login';
-            const expectedPassword = 'password';
-
-            context.getState.returns({
-                auth: {
-                    login: expectedLogin
-                }
-            });
-
-            mock.expects('run').returns(promise);
             expectState(mock, CompleteState);
 
-            state.resolve(context, {password: expectedPassword});
+            const payload = {password: expectedPassword, rememberMe: expectedRememberMe};
 
-            return promise;
+            return expect(state.resolve(context, payload), 'to be fulfilled');
         });
     });
 

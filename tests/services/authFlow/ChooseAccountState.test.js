@@ -1,6 +1,7 @@
 import ChooseAccountState from 'services/authFlow/ChooseAccountState';
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
+import RegisterState from 'services/authFlow/RegisterState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
@@ -31,14 +32,12 @@ describe('ChooseAccountState', () => {
 
     describe('#resolve', () => {
         it('should transition to complete if existed account was choosen', () => {
-            expectRun(mock, 'setAccountSwitcher', false);
             expectState(mock, CompleteState);
 
             state.resolve(context, {id: 123});
         });
 
         it('should transition to login if user wants to add new account', () => {
-            expectRun(mock, 'setAccountSwitcher', false);
             expectNavigate(mock, '/login');
             expectState(mock, LoginState);
 
@@ -47,10 +46,16 @@ describe('ChooseAccountState', () => {
     });
 
     describe('#reject', () => {
+        it('should transition to register', () => {
+            expectState(mock, RegisterState);
+
+            state.reject(context);
+        });
+
         it('should logout', () => {
             expectRun(mock, 'logout');
 
-            state.reject(context);
+            state.reject(context, {logout: true});
         });
     });
 });

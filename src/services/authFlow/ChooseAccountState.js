@@ -1,6 +1,7 @@
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import CompleteState from './CompleteState';
+import RegisterState from './RegisterState';
 
 export default class ChooseAccountState extends AbstractState {
     enter(context) {
@@ -8,9 +9,6 @@ export default class ChooseAccountState extends AbstractState {
     }
 
     resolve(context, payload) {
-        // do not ask again after user adds account, or chooses an existed one
-        context.run('setAccountSwitcher', false);
-
         if (payload.id) {
             context.setState(new CompleteState());
         } else {
@@ -19,7 +17,16 @@ export default class ChooseAccountState extends AbstractState {
         }
     }
 
-    reject(context) {
-        context.run('logout');
+    /**
+     * @param {object} context
+     * @param {object} payload
+     * @param {bool} [payload.logout=false]
+     */
+    reject(context, payload = {}) {
+        if (payload.logout) {
+            context.run('logout');
+        } else {
+            context.setState(new RegisterState());
+        }
     }
 }

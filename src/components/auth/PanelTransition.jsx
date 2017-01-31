@@ -67,6 +67,9 @@ class PanelTransition extends Component {
             login: PropTypes.string
         }).isRequired,
         user: userShape.isRequired,
+        accounts: PropTypes.shape({
+            available: PropTypes.array
+        }),
         setErrors: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired,
         resolve: PropTypes.func.isRequired,
@@ -320,8 +323,14 @@ class PanelTransition extends Component {
     }
 
     getHeader({key, style, data}) {
-        const {Title, hasBackButton} = data;
+        const {Title} = data;
         const {transformSpring} = style;
+
+        let {hasBackButton} = data;
+
+        if (typeof hasBackButton === 'function') {
+            hasBackButton = hasBackButton(this.props);
+        }
 
         style = {
             ...this.getDefaultTransitionStyles(key, style),
