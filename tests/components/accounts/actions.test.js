@@ -19,6 +19,7 @@ import {
 import { SET_LOCALE } from 'components/i18n/actions';
 
 import { updateUser, setUser } from 'components/user/actions';
+import { setAccountSwitcher } from 'components/auth/actions';
 
 const account = {
     id: 1,
@@ -67,7 +68,7 @@ describe('components/accounts/actions', () => {
 
     describe('#authenticate()', () => {
         it('should request user state using token', () =>
-            authenticate(account)(dispatch).then(() =>
+            authenticate(account)(dispatch, getState).then(() =>
                 expect(authentication.validateToken, 'to have a call satisfying', [
                     {token: account.token, refreshToken: account.refreshToken}
                 ])
@@ -75,7 +76,7 @@ describe('components/accounts/actions', () => {
         );
 
         it(`dispatches ${ADD} action`, () =>
-            authenticate(account)(dispatch).then(() =>
+            authenticate(account)(dispatch, getState).then(() =>
                 expect(dispatch, 'to have a call satisfying', [
                     add(account)
                 ])
@@ -83,7 +84,7 @@ describe('components/accounts/actions', () => {
         );
 
         it(`dispatches ${ACTIVATE} action`, () =>
-            authenticate(account)(dispatch).then(() =>
+            authenticate(account)(dispatch, getState).then(() =>
                 expect(dispatch, 'to have a call satisfying', [
                     activate(account)
                 ])
@@ -91,7 +92,7 @@ describe('components/accounts/actions', () => {
         );
 
         it(`dispatches ${SET_LOCALE} action`, () =>
-            authenticate(account)(dispatch).then(() =>
+            authenticate(account)(dispatch, getState).then(() =>
                 expect(dispatch, 'to have a call satisfying', [
                     {type: SET_LOCALE, payload: {locale: 'be'}}
                 ])
@@ -99,7 +100,7 @@ describe('components/accounts/actions', () => {
         );
 
         it('should update user state', () =>
-            authenticate(account)(dispatch).then(() =>
+            authenticate(account)(dispatch, getState).then(() =>
                 expect(dispatch, 'to have a call satisfying', [
                     updateUser({...user, isGuest: false})
                 ])
@@ -107,7 +108,7 @@ describe('components/accounts/actions', () => {
         );
 
         it('resolves with account', () =>
-            authenticate(account)(dispatch).then((resp) =>
+            authenticate(account)(dispatch, getState).then((resp) =>
                 expect(resp, 'to equal', account)
             )
         );
@@ -115,7 +116,7 @@ describe('components/accounts/actions', () => {
         it('rejects when bad auth data', () => {
             authentication.validateToken.returns(Promise.reject({}));
 
-            return expect(authenticate(account)(dispatch), 'to be rejected').then(() => {
+            return expect(authenticate(account)(dispatch, getState), 'to be rejected').then(() => {
                 expect(dispatch, 'to have a call satisfying', [
                     {payload: {isGuest: true}},
                 ]);
@@ -134,10 +135,36 @@ describe('components/accounts/actions', () => {
 
             sessionStorage.removeItem(expectedKey);
 
-            return authenticate(account)(dispatch).then(() => {
+            return authenticate(account)(dispatch, getState).then(() => {
                 expect(sessionStorage.getItem(expectedKey), 'not to be null');
                 sessionStorage.removeItem(expectedKey);
             });
+        });
+
+        describe('when user authenticated during oauth', () => {
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        available: [],
+                        active: null
+                    },
+                    user: {},
+                    auth: {
+                        oauth: {
+                            clientId: 'ely.by',
+                            prompt: []
+                        }
+                    }
+                });
+            });
+
+            it('should dispatch setAccountSwitcher', () =>
+                authenticate(account)(dispatch, getState).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        setAccountSwitcher(false)
+                    ])
+                )
+            );
         });
     });
 

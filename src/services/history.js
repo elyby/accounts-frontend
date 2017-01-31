@@ -14,4 +14,4 @@ export default {
         return document.referrer.includes(`${location.protocol}//${location.host}`)
             || this.initialLength < window.history.length;
     }
-}
+};

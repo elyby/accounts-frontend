@@ -61,7 +61,6 @@ describe('PasswordState', () => {
                 }
             });
 
-            expectRun(mock, 'setAccountSwitcher', false);
             expectRun(
                 mock,
                 'login',

@@ -34,16 +34,6 @@ describe('RegisterState', () => {
 
             state.enter(context);
         });
-
-        it('should transition to complete if not guest', () => {
-            context.getState.returns({
-                user: {isGuest: false}
-            });
-
-            expectState(mock, CompleteState);
-
-            state.enter(context);
-        });
     });
 
     describe('#resolve', () => {

@@ -3,6 +3,7 @@ import { routeActions } from 'react-router-redux';
 import authentication from 'services/api/authentication';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
+import { setAccountSwitcher } from 'components/auth/actions';
 import logger from 'services/logger';
 
 import {
@@ -32,7 +33,7 @@ export { updateToken };
  * @return {function}
  */
 export function authenticate({token, refreshToken}) {
-    return (dispatch) =>
+    return (dispatch, getState) =>
         authentication.validateToken({token, refreshToken})
             .catch((resp) => {
                 logger.warn('Error validating token during auth', {
@@ -56,6 +57,8 @@ export function authenticate({token, refreshToken}) {
                 }
             }))
             .then(({user, account}) => {
+                const {auth} = getState();
+
                 dispatch(add(account));
                 dispatch(activate(account));
                 dispatch(updateUser(user));
@@ -66,6 +69,14 @@ export function authenticate({token, refreshToken}) {
                 if (!account.refreshToken) {
                     // mark user as stranger (user does not want us to remember his account)
                     sessionStorage.setItem(`stranger${account.id}`, 1);
+                }
+
+                if (auth && auth.oauth && auth.oauth.clientId) {
+                    // if we authenticating during oauth, we disable account chooser
+                    // because user probably has made his choise now
+                    // this may happen, when user registers, logs in or uses account
+                    // chooser panel during oauth
+                    dispatch(setAccountSwitcher(false));
                 }
 
                 return dispatch(setLocale(user.lang))

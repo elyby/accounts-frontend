@@ -7,13 +7,7 @@ import ResendActivationState from './ResendActivationState';
 
 export default class RegisterState extends AbstractState {
     enter(context) {
-        const {user} = context.getState();
-
-        if (user.isGuest) {
-            context.navigate('/register');
-        } else {
-            context.setState(new CompleteState());
-        }
+        context.navigate('/register');
     }
 
     resolve(context, payload) {
