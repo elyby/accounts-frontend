@@ -82,11 +82,7 @@ export default class CompleteState extends AbstractState {
                 if (resp.redirectUri.indexOf('static_page') === 0) {
                     context.setState(new FinishState());
                 } else {
-                    return new Promise(() => {
-                        // do not resolve promise to make loader visible and
-                        // overcome app rendering
-                        context.run('redirect', resp.redirectUri);
-                    });
+                    return context.run('redirect', resp.redirectUri);
                 }
             }, (resp) => {
                 if (resp.unauthorized) {

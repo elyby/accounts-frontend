@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import logger from 'services/logger';
+import loader from 'services/loader';
 
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
@@ -63,8 +64,13 @@ export default class AuthFlow {
 
     run(actionId, payload) {
         if (actionId === 'redirect') {
-            location.href = payload;
-            return;
+            loader.show();
+
+            return new Promise(() => {
+                // do not resolve promise to make loader visible and
+                // overcome app rendering
+                location.href = payload;
+            });
         }
 
         if (!this.actions[actionId]) {
