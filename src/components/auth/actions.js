@@ -286,6 +286,18 @@ export function resetOAuth() {
     };
 }
 
+/**
+ * Resets all temporary state related to auth
+ *
+ * @return {function}
+ */
+export function resetAuth() {
+    return (dispatch) => {
+        dispatch(setLogin(null));
+        dispatch(resetOAuth({}));
+    };
+}
+
 export const SET_OAUTH = 'set_oauth';
 export function setOAuthRequest(oauth) {
     return {
