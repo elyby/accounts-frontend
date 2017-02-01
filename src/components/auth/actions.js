@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import logger from 'services/logger';
+import loader from 'services/loader';
 import history from 'services/history';
 import { updateUser, acceptRules as userAcceptRules } from 'components/user/actions';
 import { authenticate, logoutAll } from 'components/accounts/actions';
@@ -29,6 +30,16 @@ export function goBack(fallbackUrl = null) {
     return {
         type: 'noop'
     };
+}
+
+export function redirect(url) {
+    loader.show();
+
+    return () => new Promise(() => {
+        // do not resolve promise to make loader visible and
+        // overcome app rendering
+        location.href = url;
+    });
 }
 
 export function login({login = '', password = '', rememberMe = false}) {
