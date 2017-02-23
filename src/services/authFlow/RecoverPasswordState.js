@@ -29,6 +29,6 @@ export default class RecoverPasswordState extends AbstractState {
     }
 
     reject(context) {
-        context.navigate('/send-message');
+        context.run('contactUs');
     }
 }

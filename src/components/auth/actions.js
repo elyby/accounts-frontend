@@ -9,6 +9,8 @@ import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
 import dispatchBsod from 'components/ui/bsod/dispatchBsod';
+import { create as createPopup } from 'components/ui/popup/actions';
+import ContactForm from 'components/contact/ContactForm';
 
 export { updateUser } from 'components/user/actions';
 export { authenticate, logoutAll as logout } from 'components/accounts/actions';
@@ -148,6 +150,10 @@ export function resendActivation({email = '', captcha}) {
             })
             .catch(validationErrorsHandler(dispatch))
     );
+}
+
+export function contactUs() {
+    return createPopup(ContactForm);
 }
 
 export const SET_LOGIN = 'auth:setLogin';
