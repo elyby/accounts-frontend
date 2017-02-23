@@ -32,7 +32,8 @@ const authentication = {
     }) {
         return request.post(
             '/api/authentication/forgot-password',
-            {login}
+            {login},
+            {token: null}
         );
     },
 
@@ -43,7 +44,8 @@ const authentication = {
     }) {
         return request.post(
             '/api/authentication/recover-password',
-            {key, newPassword, newRePassword}
+            {key, newPassword, newRePassword},
+            {token: null}
         );
     },
 
