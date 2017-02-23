@@ -98,8 +98,8 @@ describe('RecoverPasswordState', () => {
     });
 
     describe('#reject', () => {
-        it('should navigate to /send-message', () => {
-            expectNavigate(mock, '/send-message');
+        it('should run contactUs popup', () => {
+            expectRun(mock, 'contactUs');
 
             state.reject(context);
         });
