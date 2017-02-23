@@ -31,7 +31,11 @@
     text-decoration: none;
     cursor: pointer;
 
-    transition: background-color 0.25s;
+    transition: 0.25s;
+
+    &:hover {
+        color: $defaultButtonTextColor;
+    }
 
     &:focus {
         outline: none;
