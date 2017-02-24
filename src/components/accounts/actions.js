@@ -35,13 +35,18 @@ export { updateToken };
 export function authenticate({token, refreshToken}) {
     return (dispatch, getState) =>
         authentication.validateToken({token, refreshToken})
-            .catch((resp) => {
+            .catch((resp = {}) => {
+                if (resp.originalResponse && resp.originalResponse.status >= 500) {
+                    // delegate error recovering to the later logic
+                    return Promise.reject(resp);
+                }
+
                 logger.warn('Error validating token during auth', {
                     resp
                 });
 
                 return dispatch(logoutAll())
-                    .then(() => Promise.reject());
+                    .then(() => Promise.reject(resp));
             })
             .then(({token, refreshToken, user}) => ({
                 user: {
