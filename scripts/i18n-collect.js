@@ -38,7 +38,7 @@ if (duplicateIds.length) {
     console.log('\nFound duplicated ids:');
     duplicateIds.forEach((id) => console.log(`${chalk.yellow(id)}:\n - ${idToFileMap[id].join('\n - ')}\n`));
     console.log(chalk.red('Please correct the errors above to proceed further!'));
-    return;
+    process.exit();
 }
 
 duplicateIds = null;
@@ -84,7 +84,8 @@ keysToUpdate = Object.entries(prevMessages).reduce((acc, [key, message]) =>
 });
 
 if (!keysToAdd.length && !keysToRemove.length && !keysToUpdate.length && !keysToRename.length) {
-    return console.log(chalk.green('Everything is up to date!'));
+    console.log(chalk.green('Everything is up to date!'));
+    process.exit();
 }
 
 console.log(chalk.magenta(`The diff relative to default locale (${DEFAULT_LOCALE}) is:`));
