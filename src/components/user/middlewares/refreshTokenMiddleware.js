@@ -1,6 +1,7 @@
 import { getJwtPayload } from 'functions';
 import authentication from 'services/api/authentication';
 import logger from 'services/logger';
+import { InternalServerError } from 'services/request';
 import { updateToken, logoutAll } from 'components/accounts/actions';
 
 /**
@@ -72,7 +73,7 @@ function requestAccessToken(refreshToken, dispatch) {
         return authentication.requestToken(refreshToken)
             .then(({token}) => dispatch(updateToken(token)))
             .catch((resp = {}) => {
-                if (resp.originalResponse && resp.originalResponse.status >= 500) {
+                if (resp instanceof InternalServerError) {
                     return Promise.reject(resp);
                 }
 

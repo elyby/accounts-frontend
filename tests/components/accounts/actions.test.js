@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import { routeActions } from 'react-router-redux';
 
 import logger from 'services/logger';
+import { InternalServerError } from 'services/request';
 import authentication from 'services/api/authentication';
 import {
     authenticate,
@@ -133,9 +134,7 @@ describe('components/accounts/actions', () => {
         });
 
         it('rejects when 5xx without logouting', () => {
-            const resp = {
-                originalResponse: {status: 500}
-            };
+            const resp = new InternalServerError(null, {status: 500});
 
             authentication.validateToken.returns(Promise.reject(resp));
 

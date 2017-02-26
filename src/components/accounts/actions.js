@@ -5,6 +5,7 @@ import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import { setAccountSwitcher } from 'components/auth/actions';
 import logger from 'services/logger';
+import { InternalServerError } from 'services/request';
 
 import {
     add,
@@ -36,7 +37,7 @@ export function authenticate({token, refreshToken}) {
     return (dispatch, getState) =>
         authentication.validateToken({token, refreshToken})
             .catch((resp = {}) => {
-                if (resp.originalResponse && resp.originalResponse.status >= 500) {
+                if (resp instanceof InternalServerError) {
                     // delegate error recovering to the later logic
                     return Promise.reject(resp);
                 }

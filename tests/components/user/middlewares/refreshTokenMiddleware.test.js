@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import refreshTokenMiddleware from 'components/user/middlewares/refreshTokenMiddleware';
 
 import authentication from 'services/api/authentication';
+import { InternalServerError } from 'services/request';
 import { updateToken } from 'components/accounts/actions';
 
 const refreshToken = 'foo';
@@ -145,11 +146,7 @@ describe('refreshTokenMiddleware', () => {
             });
 
             it('should not logout if request failed with 5xx', () => {
-                const resp = {
-                    originalResponse: {
-                        status: 500
-                    }
-                };
+                const resp = new InternalServerError(null, {status: 500});
 
                 authentication.requestToken.returns(Promise.reject(resp));
 

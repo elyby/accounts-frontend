@@ -1,4 +1,5 @@
 import PromiseMiddlewareLayer from './PromiseMiddlewareLayer';
+import InternalServerError from './InternalServerError';
 
 const middlewareLayer = new PromiseMiddlewareLayer();
 
@@ -65,12 +66,27 @@ export default {
 
 
 const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
-const toJSON = (resp) => resp.json().then((json) => {
-    json.originalResponse = resp;
+const toJSON = (resp = {}) => {
+    if (!resp.json) {
+        // e.g. 'TypeError: Failed to fetch' due to CORS
+        throw new InternalServerError(resp);
+    }
 
-    return json;
+    return resp.json().then((json) => {
+        json.originalResponse = resp;
+
+        return json;
+    }, (error) => Promise.reject(
+        new InternalServerError(error, resp)
+    ));
+};
+const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {
+    if (resp.originalResponse.status >= 500) {
+        throw new InternalServerError(resp, resp.originalResponse);
+    }
+
+    throw resp;
 });
-const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {throw resp;});
 const handleResponseSuccess = (resp) => Promise[resp.success || typeof resp.success === 'undefined' ? 'resolve' : 'reject'](resp);
 
 function doFetch(url, options = {}) {
