@@ -110,7 +110,7 @@ describe('refreshTokenMiddleware', () => {
                 );
             });
 
-            it('should if token can not be parsed', () => {
+            it('should logout if token can not be parsed', () => {
                 const account = {
                     token: 'realy bad token',
                     refreshToken
@@ -139,6 +139,22 @@ describe('refreshTokenMiddleware', () => {
 
                 return expect(middleware.before({url: 'foo', options: {}}), 'to be fulfilled').then(() =>
                     expect(dispatch, 'to have a call satisfying', [
+                        {payload: {isGuest: true}}
+                    ])
+                );
+            });
+
+            it('should not logout if request failed with 5xx', () => {
+                const resp = {
+                    originalResponse: {
+                        status: 500
+                    }
+                };
+
+                authentication.requestToken.returns(Promise.reject(resp));
+
+                return expect(middleware.before({url: 'foo', options: {}}), 'to be rejected with', resp).then(() =>
+                    expect(dispatch, 'to have no calls satisfying', [
                         {payload: {isGuest: true}}
                     ])
                 );

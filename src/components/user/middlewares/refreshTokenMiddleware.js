@@ -68,16 +68,19 @@ export default function refreshTokenMiddleware({dispatch, getState}) {
 }
 
 function requestAccessToken(refreshToken, dispatch) {
-    let promise;
     if (refreshToken) {
-        promise = authentication.requestToken(refreshToken);
-    } else {
-        promise = Promise.reject();
+        return authentication.requestToken(refreshToken)
+            .then(({token}) => dispatch(updateToken(token)))
+            .catch((resp = {}) => {
+                if (resp.originalResponse && resp.originalResponse.status >= 500) {
+                    return Promise.reject(resp);
+                }
+
+                return dispatch(logoutAll());
+            });
     }
 
-    return promise
-        .then(({token}) => dispatch(updateToken(token)))
-        .catch(() => dispatch(logoutAll()));
+    return dispatch(logoutAll());
 }
 
 
