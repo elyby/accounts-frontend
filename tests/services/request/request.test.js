@@ -36,7 +36,7 @@ describe('services/request', () => {
                 .then((error) => {
                     expect(error, 'to be an', InternalServerError);
                     expect(error.originalResponse, 'to be', resp);
-                    expect(error.message, 'to contain', 'JSON');
+                    expect(error.message, 'to contain', 'Unexpected token');
                 });
         });
 
