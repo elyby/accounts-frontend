@@ -45,10 +45,10 @@ class ChangeUsernamePage extends Component {
         const {form} = this;
         if (this.actualUsername === this.props.username) {
             this.context.goToProfile();
-            return;
+            return Promise.resolve();
         }
 
-        this.context.onSubmit({
+        return this.context.onSubmit({
             form,
             sendData: () => accounts.changeUsername(form.serialize())
         }).then(() => {

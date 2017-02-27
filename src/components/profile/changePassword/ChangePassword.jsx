@@ -95,6 +95,15 @@ export default class ChangePassword extends Component {
     }
 
     onFormSubmit = () => {
-        this.props.onSubmit(this.props.form);
+        const {form} = this.props;
+
+        this.props.onSubmit(form)
+            .catch((resp) => {
+                if (resp.errors) {
+                    form.setErrors(resp.errors);
+                } else {
+                    return Promise.reject(resp);
+                }
+            });
     };
 }

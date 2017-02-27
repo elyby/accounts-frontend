@@ -25,7 +25,13 @@ export default class Input extends FormInputComponent {
             }),
             PropTypes.string
         ]),
-        error: PropTypes.string,
+        error: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.shape({
+                type: PropTypes.string.isRequired,
+                payload: PropTypes.object.isRequired
+            })
+        ]),
         icon: PropTypes.string,
         skin: PropTypes.oneOf(skins),
         color: PropTypes.oneOf(colors),

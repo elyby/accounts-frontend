@@ -323,12 +323,20 @@ export default class ChangeEmail extends Component {
 
     onFormSubmit = () => {
         const {activeStep} = this.state;
-        const promise = this.props.onSubmit(activeStep, this.props.stepForms[activeStep]);
+        const form = this.props.stepForms[activeStep];
+        const promise = this.props.onSubmit(activeStep, form);
 
         if (!promise || !promise.then) {
             throw new Error('Expecting promise from onSubmit');
         }
 
-        promise.then(() => this.nextStep(), () => this.forceUpdate());
+        promise.then(() => this.nextStep(), (resp) => {
+            if (resp.errors) {
+                form.setErrors(resp.errors);
+                this.forceUpdate();
+            } else {
+                return Promise.reject(resp);
+            }
+        });
     };
 }

@@ -13,5 +13,11 @@ export default function FormError({error}) {
 }
 
 FormError.propTypes = {
-    error: PropTypes.string
+    error: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({
+            type: PropTypes.string.isRequired,
+            payload: PropTypes.object.isRequired
+        })
+    ])
 };

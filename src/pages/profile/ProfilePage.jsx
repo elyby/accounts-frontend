@@ -86,6 +86,8 @@ export default connect(null, {
                     logger.warn('Unexpected profile editing error', {
                         resp
                     });
+                } else {
+                    return Promise.reject(resp);
                 }
             })
             .finally(() => form.endLoading());

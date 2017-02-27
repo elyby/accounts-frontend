@@ -26,7 +26,7 @@ class ChangePasswordPage extends Component {
 
     onSubmit = () => {
         const {form} = this;
-        this.context.onSubmit({
+        return this.context.onSubmit({
             form,
             sendData: () => accounts.changePassword(form.serialize())
         }).then(() => {
