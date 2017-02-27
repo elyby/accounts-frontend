@@ -12,6 +12,7 @@
   "dependencies": {
     "chalk": "^1.1.3",
     "node-babel": "^0.1.2",
+    "onesky-utils": "erickskrauch/nodejs-onesky-utils#locales_list",
     "prompt": "^1.0.0"
   }
 }
