@@ -250,7 +250,7 @@ export default class ChangeEmail extends Component {
     }
 
     renderStep2({form, code, isCodeSpecified, isActiveStep}) {
-        const newEmail = this.props.stepForms[1].value('email');
+        const {newEmail} = this.state;
 
         return (
             <div className={styles.formBody}>
@@ -293,10 +293,16 @@ export default class ChangeEmail extends Component {
     nextStep() {
         const {activeStep} = this.state;
         const nextStep = activeStep + 1;
+        let newEmail = null;
+
+        if (activeStep === 1) {
+            newEmail = this.props.stepForms[1].value('email');
+        }
 
         if (nextStep < STEPS_TOTAL) {
             this.setState({
-                activeStep: nextStep
+                activeStep: nextStep,
+                newEmail
             });
 
             this.props.onChangeStep(nextStep);
