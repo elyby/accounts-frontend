@@ -1,6 +1,7 @@
 import Raven from 'raven-js';
 
 const isTest = process.env.__TEST__; // eslint-disable-line
+const isProduction = process.env.__PROD__; // eslint-disable-line
 
 const logger = {
     init({sentryCdn}) {
@@ -18,7 +19,10 @@ const logger = {
                     }
 
                     return data;
-                }
+                },
+                whitelistUrls: isProduction ? [
+                    /ely\.by/
+                ] : []
             }).install();
 
             window.addEventListener('unhandledrejection', (event) => {
