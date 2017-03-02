@@ -19,7 +19,9 @@ export default class ResendActivationState extends AbstractState {
     resolve(context, payload) {
         context.run('resendActivation', payload)
             .then(() => context.setState(new ActivationState()))
-            .catch((err = {}) => err.errors || logger.warn(err));
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error resending activation', err)
+            );
     }
 
     reject(context) {

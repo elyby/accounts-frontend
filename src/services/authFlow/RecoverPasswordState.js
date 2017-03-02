@@ -21,7 +21,9 @@ export default class RecoverPasswordState extends AbstractState {
     resolve(context, payload) {
         context.run('recoverPassword', payload)
             .then(() => context.setState(new CompleteState()))
-            .catch((err = {}) => err.errors || logger.warn(err));
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error recovering password', err)
+            );
     }
 
     goBack(context) {

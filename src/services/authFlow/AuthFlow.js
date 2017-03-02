@@ -85,7 +85,7 @@ export default class AuthFlow {
             if (this.onReady) {
                 const callback = this.onReady;
                 this.onReady = () => {};
-                return resp.then(callback, (err) => err || logger.warn(err));
+                return resp.then(callback, (err) => err || logger.warn('State transition error', err));
             }
 
             return resp;

@@ -24,7 +24,9 @@ export default class LoginState extends AbstractState {
     resolve(context, payload) {
         context.run('login', payload)
             .then(() => context.setState(new PasswordState()))
-            .catch((err = {}) => err.errors || logger.warn(err));
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error validating login', err)
+            );
     }
 
     goBack(context) {

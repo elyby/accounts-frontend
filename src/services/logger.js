@@ -65,6 +65,13 @@ const logger = {
             return;
         }
 
+        if (typeof context !== 'object') {
+            // it would better to always have an object here
+            context = {
+                message: context
+            };
+        }
+
         console[method](message, context); // eslint-disable-line
 
         Raven.captureException(message, {

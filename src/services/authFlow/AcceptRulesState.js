@@ -17,7 +17,9 @@ export default class AcceptRulesState extends AbstractState {
     resolve(context) {
         context.run('acceptRules')
             .then(() => context.setState(new CompleteState()))
-            .catch((err = {}) => err.errors || logger.warn(err));
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error accepting rules', err)
+            );
     }
 
     reject(context) {

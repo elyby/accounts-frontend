@@ -14,7 +14,7 @@ describe('<ChangePassword />', () => {
 
 
     it('should call onSubmit if passwords entered', () => {
-        const onSubmit = sinon.spy().named('onSubmit');
+        const onSubmit = sinon.spy(() => ({catch: () => {}})).named('onSubmit');
         const component = shallow(<ChangePassword onSubmit={onSubmit} />);
 
         component.find('Form').simulate('submit');

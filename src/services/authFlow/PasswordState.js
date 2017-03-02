@@ -25,7 +25,9 @@ export default class PasswordState extends AbstractState {
             login
         })
         .then(() => context.setState(new CompleteState()))
-        .catch((err = {}) => err.errors || logger.warn(err));
+        .catch((err = {}) =>
+            err.errors || logger.warn('Error logging in', err)
+        );
     }
 
     reject(context) {

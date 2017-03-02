@@ -21,7 +21,9 @@ export default class ActivationState extends AbstractState {
     resolve(context, payload) {
         context.run('activate', payload)
             .then(() => context.setState(new CompleteState()))
-            .catch((err = {}) => err.errors || logger.warn(err));
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error activating account', err)
+            );
     }
 
     reject(context) {
