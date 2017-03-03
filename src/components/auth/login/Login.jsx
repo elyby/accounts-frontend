@@ -9,6 +9,10 @@ export default factory({
     footer: {
         color: 'green',
         label: messages.next
+    },
+    links: {
+        isAvailable: (context) => !context.user.isGuest,
+        label: messages.createNewAccount
     }
 });
 

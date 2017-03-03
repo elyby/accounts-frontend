@@ -2,6 +2,7 @@ import sinon from 'sinon';
 
 import LoginState from 'services/authFlow/LoginState';
 import PasswordState from 'services/authFlow/PasswordState';
+import RegisterState from 'services/authFlow/RegisterState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
@@ -79,6 +80,14 @@ describe('LoginState', () => {
             state.resolve(context);
 
             return promise.catch(mock.verify.bind(mock));
+        });
+    });
+
+    describe('#reject', () => {
+        it('should transition to register state', () => {
+            expectState(mock, RegisterState);
+
+            state.reject(context);
         });
     });
 

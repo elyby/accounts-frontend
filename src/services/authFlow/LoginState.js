@@ -2,6 +2,7 @@ import logger from 'services/logger';
 
 import AbstractState from './AbstractState';
 import PasswordState from './PasswordState';
+import RegisterState from './RegisterState';
 
 export default class LoginState extends AbstractState {
     enter(context) {
@@ -27,6 +28,10 @@ export default class LoginState extends AbstractState {
             .catch((err = {}) =>
                 err.errors || logger.warn('Error validating login', err)
             );
+    }
+
+    reject(context) {
+        context.setState(new RegisterState());
     }
 
     goBack(context) {
