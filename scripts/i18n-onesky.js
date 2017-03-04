@@ -111,7 +111,7 @@ async function publish() {
         language: locale2code(SOURCE_LANG),
         fileName: SOURCE_FILE_NAME,
     });
-    console.log('Success');
+    console.log(chalk.green('Success'));
 }
 
 try {
