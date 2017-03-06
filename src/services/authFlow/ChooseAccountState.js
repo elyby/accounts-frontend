@@ -1,7 +1,6 @@
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import CompleteState from './CompleteState';
-import RegisterState from './RegisterState';
 
 export default class ChooseAccountState extends AbstractState {
     enter(context) {
@@ -17,16 +16,7 @@ export default class ChooseAccountState extends AbstractState {
         }
     }
 
-    /**
-     * @param {object} context
-     * @param {object} payload
-     * @param {bool} [payload.logout=false]
-     */
-    reject(context, payload = {}) {
-        if (payload.logout) {
-            context.run('logout');
-        } else {
-            context.setState(new RegisterState());
-        }
+    reject(context) {
+        context.run('logout');
     }
 }

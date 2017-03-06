@@ -20,7 +20,6 @@
     "components.auth.appInfo.useItYourself": "Посетите нашу {link}, чтобы узнать, как использовать этот сервис в своих проектах.",
     "components.auth.chooseAccount.addAccount": "Войти в другой аккаунт",
     "components.auth.chooseAccount.chooseAccountTitle": "Выбор аккаунта",
-    "components.auth.chooseAccount.createNewAccount": "Создать новый аккаунт",
     "components.auth.chooseAccount.description": "Вы выполнили вход в несколько аккаунтов. Укажите, какой вы хотите использовать для авторизации {appName}",
     "components.auth.chooseAccount.logoutAll": "Выйти из всех аккаунтов",
     "components.auth.finish.authForAppFailed": "Авторизация для {appName} не удалась",

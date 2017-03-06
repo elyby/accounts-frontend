@@ -10,11 +10,7 @@ export default factory({
     },
     links: [
         {
-            label: messages.createNewAccount
-        },
-        {
-            label: messages.logoutAll,
-            payload: {logout: true}
+            label: messages.logoutAll
         }
     ]
 });

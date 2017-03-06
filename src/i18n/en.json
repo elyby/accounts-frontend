@@ -20,7 +20,6 @@
     "components.auth.appInfo.useItYourself": "Visit our {link}, to learn how to use this service in you projects.",
     "components.auth.chooseAccount.addAccount": "Log into another account",
     "components.auth.chooseAccount.chooseAccountTitle": "Choose an account",
-    "components.auth.chooseAccount.createNewAccount": "Create new account",
     "components.auth.chooseAccount.description": "You have logged in into multiple accounts. Please choose the one, you want to use to authorize {appName}",
     "components.auth.chooseAccount.logoutAll": "Log out from all accounts",
     "components.auth.finish.authForAppFailed": "Authorization for {appName} was failed",

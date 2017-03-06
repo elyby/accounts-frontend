@@ -20,7 +20,6 @@
     "components.auth.appInfo.useItYourself": "Visite nossa {link} para aprender a como usar esse serviço nos seus projetos.",
     "components.auth.chooseAccount.addAccount": "Entrar em outra conta",
     "components.auth.chooseAccount.chooseAccountTitle": "Escolha uma conta",
-    "components.auth.chooseAccount.createNewAccount": "Criar uma nova conta",
     "components.auth.chooseAccount.description": "Você entrou em múltiplas contas. Por favor selecione a que você quer usar para autorizar {appName}",
     "components.auth.chooseAccount.logoutAll": "Desconectar de todas as contas",
     "components.auth.finish.authForAppFailed": "Autorização para {appName} falhou.",

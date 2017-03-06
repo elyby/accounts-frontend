@@ -1,7 +1,6 @@
 import ChooseAccountState from 'services/authFlow/ChooseAccountState';
 import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
-import RegisterState from 'services/authFlow/RegisterState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
@@ -46,16 +45,10 @@ describe('ChooseAccountState', () => {
     });
 
     describe('#reject', () => {
-        it('should transition to register', () => {
-            expectState(mock, RegisterState);
-
-            state.reject(context);
-        });
-
         it('should logout', () => {
             expectRun(mock, 'logout');
 
-            state.reject(context, {logout: true});
+            state.reject(context);
         });
     });
 });
