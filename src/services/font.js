@@ -1,4 +1,5 @@
 import webFont from 'webfontloader';
+import logger from 'services/logger';
 
 export default {
     /**
@@ -23,7 +24,12 @@ export default {
             webFont.load({
                 classes: false,
                 active: resolve,
-                inactive: resolve, // TODO: may be we should track such cases
+                inactive() {
+                    logger.warn('Failed loading the font', {
+                        families
+                    });
+                    resolve();
+                },
                 timeout: 2000,
                 ...config
             })
