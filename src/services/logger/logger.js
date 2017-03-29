@@ -1,5 +1,7 @@
 import Raven from 'raven-js';
 
+import abbreviate from './abbreviate';
+
 const isTest = process.env.__TEST__; // eslint-disable-line
 const isProduction = process.env.__PROD__; // eslint-disable-line
 
@@ -71,6 +73,8 @@ const logger = {
                 message: context
             };
         }
+
+        context = abbreviate(context); // prepare data for JSON.stringify
 
         console[method](message, context); // eslint-disable-line
 
