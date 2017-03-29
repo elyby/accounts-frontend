@@ -19,7 +19,7 @@ describe('BsodMiddleware', () => {
                 .then(() => {
                     expect(dispatch, 'was called');
                     expect(logger.warn, 'to have a call satisfying', [
-                        'Unexpected response',
+                        'Unexpected response (BSoD)',
                         {resp}
                     ]);
                 });

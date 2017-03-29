@@ -10,7 +10,7 @@ export default function BsodMiddleware(dispatchBsod, logger) {
             ) {
                 dispatchBsod();
 
-                logger.warn('Unexpected response', {resp});
+                logger.warn('Unexpected response (BSoD)', {resp});
             }
 
             return Promise.reject(resp);
