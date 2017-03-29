@@ -62,28 +62,6 @@ describe('bearerHeaderMiddleware', () => {
         });
     });
 
-    describe('when legacy token available', () => {
-        const token = 'foo';
-        const middleware = bearerHeaderMiddleware({
-            getState: () => ({
-                ...emptyState,
-                user: {token}
-            })
-        });
-
-        it('should set Authorization header', () => {
-            let data = {
-                options: {
-                    headers: {}
-                }
-            };
-
-            data = middleware.before(data);
-
-            expectBearerHeader(data, token);
-        });
-    });
-
     it('should not set Authorization header if no token', () => {
         const middleware = bearerHeaderMiddleware({
             getState: () => ({

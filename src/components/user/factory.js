@@ -25,11 +25,11 @@ export function factory(store) {
     promise = Promise.resolve()
         .then(() => store.dispatch(logoutStrangers()))
         .then(() => {
-            const {user, accounts} = store.getState();
+            const {accounts} = store.getState();
 
-            if (accounts.active || user.token) {
+            if (accounts.active) {
                 // authorizing user if it is possible
-                return store.dispatch(authenticate(accounts.active || user));
+                return store.dispatch(authenticate(accounts.active));
             }
 
             return Promise.reject();
