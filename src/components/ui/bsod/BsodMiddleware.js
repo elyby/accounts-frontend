@@ -10,7 +10,15 @@ export default function BsodMiddleware(dispatchBsod, logger) {
             ) {
                 dispatchBsod();
 
-                logger.warn('Unexpected response (BSoD)', {resp});
+                if (!resp.message || !/NetworkError/.test(resp.message)) {
+                    let message = 'Unexpected response (BSoD)';
+
+                    if (resp.message) {
+                        message = `BSoD: ${resp.message}`;
+                    }
+
+                    logger.warn(message, {resp});
+                }
             }
 
             return Promise.reject(resp);
