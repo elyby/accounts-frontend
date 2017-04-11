@@ -57,7 +57,7 @@
         // best practice
         "block-scoped-var": "error",
         "curly": "error",
-        "default-case": "error",
+        "default-case": "warn",
         "dot-location": ["error", "property"],
         "dot-notation": "error",
         "eqeqeq": ["error", "smart"],
@@ -162,7 +162,7 @@
         "space-before-blocks": "error",
         "space-before-function-paren": ["error", "never"],
         "space-in-parens": "warn",
-        "space-infix-ops": "error",
+        "space-infix-ops": "warn",
         "space-unary-ops": "error",
         "spaced-comment": "warn",
 

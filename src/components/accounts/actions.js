@@ -1,5 +1,6 @@
 import { routeActions } from 'react-router-redux';
 
+import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';

@@ -14,12 +14,10 @@ const STRING_MAX_LENGTH = 128*1024;
  *
  * @see https://github.com/ftlabs/js-abbreviate
  */
-function abbreviate(obj, options) {
-    if (!options) options = {};
-
-    var filter = options.filter || function(k,v){return v;};
+function abbreviate(obj, options = {}) {
+    var filter = options.filter || function(key, value) {return value;};
     var maxDepth = options.depth || 10;
-    var maxSize = options.maxSize || 1*1024*1024;
+    var maxSize = options.maxSize || 1 * 1024 * 1024;
 
     return abbreviateRecursive(undefined, obj, filter, {sizeLeft: maxSize}, maxDepth);
 }
@@ -41,7 +39,7 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
     obj = filter(key, obj);
 
     try {
-        switch(typeof obj) {
+        switch (typeof obj) {
             case 'object':
                 if (null === obj) {
                     return null;
@@ -52,9 +50,11 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
                 }
 
                 var newobj = Array.isArray(obj) ? [] : {};
-                for(var i in obj) {
+                for (var i in obj) {
                     newobj[i] = abbreviateRecursive(i, obj[i], filter, state, maxDepth-1);
-                    if (state.sizeLeft < 0) break;
+                    if (state.sizeLeft < 0) {
+                        break;
+                    }
                 }
                 return newobj;
 
@@ -68,36 +68,38 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
             case 'undefined':
                 return obj;
         }
-    } catch(e) {/* fall back to inspect*/}
+    } catch (err) {/* fall back to inspect*/}
 
     try {
         obj = limitStringLength('' + obj);
         state.sizeLeft -= obj.length;
         return obj;
-    } catch(e) {
-        return "**non-serializable**";
+    } catch (err) {
+        return '**non-serializable**';
     }
 }
 
 function commonFilter(key, val) {
-    if ('function' === typeof val) {
+    if (typeof val === 'function') {
         return undefined;
     }
 
     if (val instanceof Date) {
-        return "**Date** " + val;
+        return '**Date** ' + val;
     }
 
     if (val instanceof Error) {
-        var err = {
+        const err = {
             // These properties are implemented as magical getters and don't show up in for in
             stack: val.stack,
             message: val.message,
             name: val.name,
         };
-        for(var i in val) {
+
+        for (let i in val) {
             err[i] = val[i];
         }
+
         return err;
     }
 
@@ -150,5 +152,5 @@ export {
 export default function(obj) {
     return abbreviate(obj, {
         filter: browserFilter
-    })
-};
+    });
+}
