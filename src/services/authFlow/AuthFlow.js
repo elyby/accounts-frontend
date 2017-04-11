@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import logger from 'services/logger';
+import localStorage from 'services/localStorage';
 
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';

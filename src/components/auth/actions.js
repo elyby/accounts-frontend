@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 
 import logger from 'services/logger';
+import localStorage from 'services/localStorage';
 import loader from 'services/loader';
 import history from 'services/history';
 import { updateUser, acceptRules as userAcceptRules } from 'components/user/actions';

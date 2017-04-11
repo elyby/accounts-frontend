@@ -113,6 +113,10 @@
         "no-undef-init": "error",
         "no-undef": "error",
         "no-use-before-define": ["warn", "nofunc"],
+        "no-restricted-globals": ["error",
+            "localStorage", "sessionStorage", // we have our own localStorage module
+            "event"
+        ],
 
         // CommonJS
         "no-mixed-requires": "warn",
