@@ -8,10 +8,12 @@ if (isEdge) {
     // https://github.com/aurelia/fetch-client/issues/81
     // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/9370062/
     // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7773267/
-    window.fetch = undefined;
+    Reflect.deleteProperty(window, 'fetch');
 }
 
-import 'whatwg-fetch';
+// using require instead of import, because import is hoisting to the top
+// so that our fetch hack for Edge won't work
+require('whatwg-fetch');
 
 shimPromiseFinaly();
 
