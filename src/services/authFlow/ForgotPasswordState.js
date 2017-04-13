@@ -1,3 +1,5 @@
+import logger from 'services/logger';
+
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import CompleteState from './CompleteState';
@@ -14,7 +16,10 @@ export default class ForgotPasswordState extends AbstractState {
 
     resolve(context, payload = {}) {
         context.run('forgotPassword', {login: payload.email || this.getLogin(context)})
-            .then(() => context.setState(new RecoverPasswordState()));
+            .then(() => context.setState(new RecoverPasswordState()))
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error requesting password recoverage', err)
+            );
     }
 
     goBack(context) {
