@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
 import CompleteState from 'services/authFlow/CompleteState';
@@ -59,7 +61,7 @@ describe('ForgotPasswordState', () => {
                 sinon.match({
                     login: expectedLogin
                 })
-            ).returns({then() {}});
+            ).returns(Promise.resolve());
 
             state.resolve(context, {});
         });
@@ -78,7 +80,7 @@ describe('ForgotPasswordState', () => {
                 sinon.match({
                     login: expectedLogin
                 })
-            ).returns({then() {}});
+            ).returns(Promise.resolve());
 
             state.resolve(context, {email: expectedLogin});
         });
