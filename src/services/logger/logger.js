@@ -74,15 +74,49 @@ const logger = {
             };
         }
 
-        context = abbreviate(context); // prepare data for JSON.stringify
+        prepareContext(context).then((context) => {
+            console[method](message, context); // eslint-disable-line
 
-        console[method](message, context); // eslint-disable-line
-
-        Raven.captureException(message, {
-            level,
-            extra: context
+            Raven.captureException(message, {
+                level,
+                extra: context
+            });
         });
     };
 });
+
+/**
+ * prepare data for JSON.stringify
+ *
+ * @param  {object} context
+ *
+ * @return {Promise}
+ */
+function prepareContext(context) {
+    if (context instanceof Response) {
+        // TODO: rewrite abbreviate to use promises and recursively find Response
+        return context.json()
+            .catch(() => context.text())
+            .then((body) =>
+                abbreviate({
+                    type: context.type,
+                    url: context.url,
+                    status: context.status,
+                    statusText: context.statusText,
+                    body
+                })
+            );
+    } else if (context.originalResponse instanceof Response) {
+        return prepareContext(context.originalResponse)
+            .then((originalResponse) =>
+                abbreviate({
+                    ...context,
+                    originalResponse
+                })
+            );
+    }
+
+    return Promise.resolve(abbreviate(context));
+}
 
 export default logger;
