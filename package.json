@@ -1,6 +1,6 @@
 {
   "name": "ely-by-account",
-  "version": "1.1.12-dev",
+  "version": "1.1.12",
   "description": "",
   "main": "index.js",
   "author": "ErickSkrauch <erickskrauch@ely.by>",
