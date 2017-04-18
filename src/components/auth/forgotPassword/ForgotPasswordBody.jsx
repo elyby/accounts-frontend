@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
-import { Input } from 'components/ui/form';
+import { Input, Captcha } from 'components/ui/form';
 import icons from 'components/ui/icons.scss';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 
@@ -57,6 +57,8 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                         </p>
                     </div>
                 )}
+
+                <Captcha {...this.bindField('captcha')} delay={600} />
             </div>
         );
     }

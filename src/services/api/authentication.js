@@ -28,11 +28,12 @@ const authentication = {
     },
 
     forgotPassword({
-        login = ''
+        login = '',
+        captcha = ''
     }) {
         return request.post(
             '/api/authentication/forgot-password',
-            {login},
+            {login, captcha},
             {token: null}
         );
     },

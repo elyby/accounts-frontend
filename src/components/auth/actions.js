@@ -81,10 +81,11 @@ export function acceptRules() {
 }
 
 export function forgotPassword({
-    login = ''
+    login = '',
+    captcha = ''
 }) {
     return wrapInLoader((dispatch, getState) =>
-        authentication.forgotPassword({login})
+        authentication.forgotPassword({login, captcha})
             .then(({data = {}}) => dispatch(updateUser({
                 maskedEmail: data.emailMask || getState().user.email
             })))
