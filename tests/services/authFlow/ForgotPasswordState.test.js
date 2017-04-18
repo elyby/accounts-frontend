@@ -2,7 +2,6 @@ import sinon from 'sinon';
 
 import ForgotPasswordState from 'services/authFlow/ForgotPasswordState';
 import RecoverPasswordState from 'services/authFlow/RecoverPasswordState';
-import CompleteState from 'services/authFlow/CompleteState';
 import LoginState from 'services/authFlow/LoginState';
 
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
@@ -26,21 +25,7 @@ describe('ForgotPasswordState', () => {
 
     describe('#enter', () => {
         it('should navigate to /forgot-password if login set', () => {
-            context.getState.returns({
-                auth: {login: 'foo@bar.com'}
-            });
-
             expectNavigate(mock, '/forgot-password');
-
-            state.enter(context);
-        });
-
-        it('should transition to complete if no login', () => {
-            context.getState.returns({
-                auth: {}
-            });
-
-            expectState(mock, CompleteState);
 
             state.enter(context);
         });

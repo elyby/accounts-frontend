@@ -2,16 +2,11 @@ import logger from 'services/logger';
 
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
-import CompleteState from './CompleteState';
 import RecoverPasswordState from './RecoverPasswordState';
 
 export default class ForgotPasswordState extends AbstractState {
     enter(context) {
-        if (this.getLogin(context)) {
-            context.navigate('/forgot-password');
-        } else {
-            context.setState(new CompleteState());
-        }
+        context.navigate('/forgot-password');
     }
 
     resolve(context, payload = {}) {
