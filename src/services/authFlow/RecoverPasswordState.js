@@ -6,16 +6,10 @@ import CompleteState from './CompleteState';
 
 export default class RecoverPasswordState extends AbstractState {
     enter(context) {
-        const {auth} = context.getState();
-
-        if (auth.login) {
-            const url = context.getRequest().path.includes('/recover-password')
-                ? context.getRequest().path
-                : '/recover-password';
-            context.navigate(url);
-        } else {
-            context.setState(new CompleteState());
-        }
+        const url = context.getRequest().path.includes('/recover-password')
+            ? context.getRequest().path
+            : '/recover-password';
+        context.navigate(url);
     }
 
     resolve(context, payload) {

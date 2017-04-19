@@ -79,8 +79,26 @@ describe('ForgotPasswordState', () => {
                 }
             });
 
-            mock.expects('run').returns(promise);
+            mock.expects('run').twice().returns(promise);
             expectState(mock, RecoverPasswordState);
+
+            state.resolve(context, {});
+
+            return promise;
+        });
+
+        it('should run setLogin on success', () => {
+            const promise = Promise.resolve();
+            const expectedLogin = 'foo@bar.com';
+            context.getState.returns({
+                auth: {
+                    login: expectedLogin
+                }
+            });
+
+            mock.expects('run').withArgs('forgotPassword').returns(promise);
+            expectState(mock, RecoverPasswordState);
+            mock.expects('run').withArgs('setLogin', expectedLogin);
 
             state.resolve(context, {});
 
