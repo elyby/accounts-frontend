@@ -64,7 +64,7 @@ export default class LoggedInPanel extends Component {
 
     onBodyClick = createOnOutsideComponentClickHandler(
         () => ReactDOM.findDOMNode(this),
-        () => this.state.isAccountSwitcherActive,
+        () => this.state.isAccountSwitcherActive && this._isMounted,
         () => this.toggleAccountSwitcher()
     );
 }
@@ -78,6 +78,7 @@ export default class LoggedInPanel extends Component {
  * @param  {function} getEl - the function, that returns reference to container el
  * @param  {function} isActive - whether the component is active and callback may be called
  * @param  {function} callback - the callback to call, when there was a click outside el
+ *
  * @return {function}
  */
 function createOnOutsideComponentClickHandler(getEl, isActive, callback) {
