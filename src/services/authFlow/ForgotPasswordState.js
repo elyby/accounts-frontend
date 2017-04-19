@@ -10,7 +10,7 @@ export default class ForgotPasswordState extends AbstractState {
     }
 
     resolve(context, payload = {}) {
-        const login = payload.email || this.getLogin(context);
+        const login = payload.email;
 
         context.run('forgotPassword', {login})
             .then(() => {
@@ -28,11 +28,5 @@ export default class ForgotPasswordState extends AbstractState {
 
     reject(context) {
         context.setState(new RecoverPasswordState());
-    }
-
-    getLogin(context) {
-        const {auth} = context.getState();
-
-        return auth.login;
     }
 }

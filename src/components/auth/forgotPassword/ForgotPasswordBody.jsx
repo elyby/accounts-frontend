@@ -15,14 +15,13 @@ export default class ForgotPasswordBody extends BaseAuthBody {
     static hasGoBack = true;
 
     state = {
-        isLoginEdit: !(this.context.user.email || this.context.user.username)
+        isLoginEdit: !this.getLogin()
     };
 
     autoFocusField = this.state.isLoginEdit ? 'email' : null;
 
     render() {
-        const { user } = this.context;
-        const login = user.email || user.username || '';
+        const login = this.getLogin();
         const isLoginEditShown = this.state.isLoginEdit;
 
         return (
@@ -59,6 +58,22 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                 )}
             </div>
         );
+    }
+
+    serialize() {
+        const data = super.serialize();
+
+        if (!data.email) {
+            data.email = this.getLogin();
+        }
+
+        return data;
+    }
+
+    getLogin() {
+        const { user, auth } = this.context;
+
+        return auth.login || user.username || user.email || '';
     }
 
     onClickEdit = () => {

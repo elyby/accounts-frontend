@@ -32,32 +32,8 @@ describe('ForgotPasswordState', () => {
     });
 
     describe('#resolve', () => {
-        it('should call forgotPassword with login', () => {
+        it('should call forgotPassword with email from payload', () => {
             const expectedLogin = 'foo@bar.com';
-            context.getState.returns({
-                auth: {
-                    login: expectedLogin
-                }
-            });
-
-            expectRun(
-                mock,
-                'forgotPassword',
-                sinon.match({
-                    login: expectedLogin
-                })
-            ).returns(Promise.resolve());
-
-            state.resolve(context, {});
-        });
-
-        it('should call forgotPassword with email from payload if any', () => {
-            const expectedLogin = 'foo@bar.com';
-            context.getState.returns({
-                auth: {
-                    login: 'should.not@be.used'
-                }
-            });
 
             expectRun(
                 mock,
@@ -73,16 +49,11 @@ describe('ForgotPasswordState', () => {
         it('should transition to recoverPassword state on success', () => {
             const promise = Promise.resolve();
             const expectedLogin = 'foo@bar.com';
-            context.getState.returns({
-                auth: {
-                    login: expectedLogin
-                }
-            });
 
             mock.expects('run').twice().returns(promise);
             expectState(mock, RecoverPasswordState);
 
-            state.resolve(context, {});
+            state.resolve(context, {email: expectedLogin});
 
             return promise;
         });
@@ -90,17 +61,12 @@ describe('ForgotPasswordState', () => {
         it('should run setLogin on success', () => {
             const promise = Promise.resolve();
             const expectedLogin = 'foo@bar.com';
-            context.getState.returns({
-                auth: {
-                    login: expectedLogin
-                }
-            });
 
             mock.expects('run').withArgs('forgotPassword').returns(promise);
             expectState(mock, RecoverPasswordState);
             mock.expects('run').withArgs('setLogin', expectedLogin);
 
-            state.resolve(context, {});
+            state.resolve(context, {email: expectedLogin});
 
             return promise;
         });
