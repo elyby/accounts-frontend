@@ -43,7 +43,7 @@ describe('ForgotPasswordState', () => {
                 })
             ).returns(Promise.resolve());
 
-            state.resolve(context, {email: expectedLogin});
+            state.resolve(context, {login: expectedLogin});
         });
 
         it('should transition to recoverPassword state on success', () => {
@@ -53,7 +53,7 @@ describe('ForgotPasswordState', () => {
             mock.expects('run').twice().returns(promise);
             expectState(mock, RecoverPasswordState);
 
-            state.resolve(context, {email: expectedLogin});
+            state.resolve(context, {login: expectedLogin});
 
             return promise;
         });
@@ -66,7 +66,7 @@ describe('ForgotPasswordState', () => {
             expectState(mock, RecoverPasswordState);
             mock.expects('run').withArgs('setLogin', expectedLogin);
 
-            state.resolve(context, {email: expectedLogin});
+            state.resolve(context, {login: expectedLogin});
 
             return promise;
         });

@@ -18,7 +18,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         isLoginEdit: !this.getLogin()
     };
 
-    autoFocusField = this.state.isLoginEdit ? 'email' : null;
+    autoFocusField = this.state.isLoginEdit ? 'login' : null;
 
     render() {
         const login = this.getLogin();
@@ -37,7 +37,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                         <p className={styles.descriptionText}>
                             <Message {...messages.specifyEmail} />
                         </p>
-                        <Input {...this.bindField('email')}
+                        <Input {...this.bindField('login')}
                             icon="envelope"
                             color="lightViolet"
                             required
@@ -63,8 +63,8 @@ export default class ForgotPasswordBody extends BaseAuthBody {
     serialize() {
         const data = super.serialize();
 
-        if (!data.email) {
-            data.email = this.getLogin();
+        if (!data.login) {
+            data.login = this.getLogin();
         }
 
         return data;
@@ -83,6 +83,6 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         this.context.requestRedraw();
         // TODO: requestRedraw должен возвращать promise, по которому нужно ставить фокус на поле
         // иначе же, если фокус ставить сразу, то форма скачет
-        setTimeout(() => {this.form.focus('email');}, 300);
+        setTimeout(() => {this.form.focus('login');}, 300);
     };
 }
