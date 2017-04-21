@@ -38,7 +38,8 @@ const logger = {
                 }
 
                 logger.info(`Unhandled rejection${message}`, {
-                    error
+                    error,
+                    event
                 });
             });
         }
