@@ -10,8 +10,11 @@ export default class ForgotPasswordState extends AbstractState {
     }
 
     resolve(context, payload = {}) {
-        context.run('forgotPassword', {login: payload.email || this.getLogin(context)})
-            .then(() => context.setState(new RecoverPasswordState()))
+        context.run('forgotPassword', payload)
+            .then(() => {
+                context.run('setLogin', payload.login);
+                context.setState(new RecoverPasswordState());
+            })
             .catch((err = {}) =>
                 err.errors || logger.warn('Error requesting password recoverage', err)
             );
@@ -23,11 +26,5 @@ export default class ForgotPasswordState extends AbstractState {
 
     reject(context) {
         context.setState(new RecoverPasswordState());
-    }
-
-    getLogin(context) {
-        const {auth} = context.getState();
-
-        return auth.login;
     }
 }

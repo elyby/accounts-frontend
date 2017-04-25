@@ -15,14 +15,13 @@ export default class ForgotPasswordBody extends BaseAuthBody {
     static hasGoBack = true;
 
     state = {
-        isLoginEdit: !(this.context.user.email || this.context.user.username)
+        isLoginEdit: !this.getLogin()
     };
 
-    autoFocusField = this.state.isLoginEdit ? 'email' : null;
+    autoFocusField = this.state.isLoginEdit ? 'login' : null;
 
     render() {
-        const { user } = this.context;
-        const login = user.email || user.username || '';
+        const login = this.getLogin();
         const isLoginEditShown = this.state.isLoginEdit;
 
         return (
@@ -38,7 +37,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                         <p className={styles.descriptionText}>
                             <Message {...messages.specifyEmail} />
                         </p>
-                        <Input {...this.bindField('email')}
+                        <Input {...this.bindField('login')}
                             icon="envelope"
                             color="lightViolet"
                             required
@@ -63,6 +62,22 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         );
     }
 
+    serialize() {
+        const data = super.serialize();
+
+        if (!data.login) {
+            data.login = this.getLogin();
+        }
+
+        return data;
+    }
+
+    getLogin() {
+        const { user, auth } = this.context;
+
+        return auth.login || user.username || user.email || '';
+    }
+
     onClickEdit = () => {
         this.setState({
             isLoginEdit: true
@@ -70,6 +85,6 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         this.context.requestRedraw();
         // TODO: requestRedraw должен возвращать promise, по которому нужно ставить фокус на поле
         // иначе же, если фокус ставить сразу, то форма скачет
-        setTimeout(() => {this.form.focus('email');}, 300);
+        setTimeout(() => {this.form.focus('login');}, 300);
     };
 }

@@ -5,6 +5,6 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "loader-utils": "^0.2.12"
+    "loader-utils": "^1.0.0"
   }
 }

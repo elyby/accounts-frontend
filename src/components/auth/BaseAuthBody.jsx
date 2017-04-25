@@ -46,7 +46,10 @@ export default class BaseAuthBody extends Component {
     });
 
     bindField = this.form.bindField.bind(this.form);
-    serialize = this.form.serialize.bind(this.form);
+
+    serialize() {
+        return this.form.serialize();
+    }
 
     autoFocus() {
         const fieldId = this.autoFocusField;
