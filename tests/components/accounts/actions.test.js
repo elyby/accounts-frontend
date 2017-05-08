@@ -1,7 +1,7 @@
 import expect from 'unexpected';
 import sinon from 'sinon';
 
-import { routeActions } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 
 import logger from 'services/logger';
 import { InternalServerError } from 'services/request';
@@ -292,10 +292,12 @@ describe('components/accounts/actions', () => {
             });
 
             sinon.stub(authentication, 'logout').named('authentication.logout');
+            sinon.stub(browserHistory, 'push').named('browserHistory.push');
         });
 
         afterEach(() => {
             authentication.logout.restore();
+            browserHistory.push.restore();
         });
 
         it('should call logout api method for each account', () => {
@@ -317,8 +319,8 @@ describe('components/accounts/actions', () => {
 
         it('should redirect to /login', () =>
             logoutAll()(dispatch, getState).then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    routeActions.push('/login')
+                expect(browserHistory.push, 'to have a call satisfying', [
+                    '/login'
                 ]);
             })
         );

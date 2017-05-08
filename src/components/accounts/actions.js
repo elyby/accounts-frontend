@@ -1,4 +1,4 @@
-import { routeActions } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 
 import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';
@@ -124,7 +124,7 @@ export function logoutAll() {
 
         dispatch(reset());
 
-        dispatch(routeActions.push('/login'));
+        browserHistory.push('/login');
 
         return Promise.resolve();
     };

@@ -5,15 +5,11 @@ import { createStore, applyMiddleware, compose } from 'redux';
 // или даже вообще его не запускать в зависимости от условий
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
-import { syncHistory } from 'react-router-redux';
-import { browserHistory } from 'react-router';
 
 import reducers from 'reducers';
 
 export default function storeFactory() {
-    const reduxRouterMiddleware = syncHistory(browserHistory);
     const middlewares = applyMiddleware(
-        reduxRouterMiddleware,
         thunk
     );
     const persistStateEnhancer = persistState([

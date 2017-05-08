@@ -1,4 +1,4 @@
-import { routeActions } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 
 import logger from 'services/logger';
 import localStorage from 'services/localStorage';
@@ -40,7 +40,8 @@ export default class AuthFlow {
                 if (this.replace) {
                     this.replace(route);
                 }
-                store.dispatch(routeActions[options.replace ? 'replace' : 'push'](route));
+
+                browserHistory[options.replace ? 'replace' : 'push'](route);
             }
 
             this.replace = null;

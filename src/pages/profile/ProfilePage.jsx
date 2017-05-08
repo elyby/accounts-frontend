@@ -42,14 +42,14 @@ class ProfilePage extends Component {
 }
 
 import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 import { fetchUserData } from 'components/user/actions';
 import { create as createPopup } from 'components/ui/popup/actions';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
 export default connect(null, {
     goToProfile() {
-        return routeActions.push('/');
+        return browserHistory.push('/');
     },
     fetchUserData,
     onSubmit: ({form, sendData}) => (dispatch) => {

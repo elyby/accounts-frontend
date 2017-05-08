@@ -1,4 +1,4 @@
-import { routeActions } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 
 import logger from 'services/logger';
 import localStorage from 'services/localStorage';
@@ -25,9 +25,9 @@ export { authenticate, logoutAll as logout } from 'components/accounts/actions';
  */
 export function goBack(fallbackUrl = null) {
     if (history.canGoBack()) {
-        return routeActions.goBack();
+        browserHistory.goBack();
     } else if (fallbackUrl) {
-        return routeActions.push(fallbackUrl);
+        browserHistory.push(fallbackUrl);
     }
 
     return {
@@ -125,8 +125,10 @@ export function register({
                 username,
                 email
             }));
+
             dispatch(needActivation());
-            dispatch(routeActions.push('/activation'));
+
+            browserHistory.push('/activation');
         })
         .catch(validationErrorsHandler(dispatch))
     );

@@ -1,7 +1,5 @@
 import { combineReducers } from 'redux';
 
-import { routeReducer } from 'react-router-redux';
-
 import auth from 'components/auth/reducer';
 import user from 'components/user/reducer';
 import accounts from 'components/accounts/reducer';
@@ -15,6 +13,5 @@ export default combineReducers({
     user,
     accounts,
     i18n,
-    popup,
-    routing: routeReducer
+    popup
 });

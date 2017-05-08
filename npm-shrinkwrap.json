@@ -6172,11 +6172,6 @@
       "from": "react-router@3.0.5",
       "resolved": "https://registry.npmjs.org/react-router/-/react-router-3.0.5.tgz"
     },
-    "react-router-redux": {
-      "version": "3.0.0",
-      "from": "react-router-redux@>=3.0.0 <4.0.0",
-      "resolved": "https://registry.npmjs.org/react-router-redux/-/react-router-redux-3.0.0.tgz"
-    },
     "react-side-effect": {
       "version": "1.1.0",
       "from": "react-side-effect@>=1.1.0 <2.0.0",
