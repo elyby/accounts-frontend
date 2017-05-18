@@ -1,3 +1,5 @@
+import locales from 'i18n/index.json';
+
 import { addLocaleData } from 'react-intl';
 import beLocaleData from 'react-intl/locale-data/be';
 import enLocaleData from 'react-intl/locale-data/en';
@@ -22,7 +24,7 @@ addLocaleData(ptLocaleData);
 addLocaleData(ukLocaleData);
 addLocaleData(viLocaleData);
 
-const SUPPORTED_LANGUAGES = ['be', 'en', 'id', 'pl', 'ro', 'ru', 'sl', 'pt', 'uk', 'vi'];
+const SUPPORTED_LANGUAGES = Object.keys(locales);
 const DEFAULT_LANGUAGE = 'en';
 
 const needPolyfill = !window.Intl;

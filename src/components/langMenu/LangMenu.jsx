@@ -7,18 +7,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import styles from './langMenu.scss';
 import messages from './langMenu.intl.json';
 
-const LANGS = {
-    be: 'Беларуская',
-    en: 'English',
-    id: 'Bahasa Indonesia',
-    pl: 'Polski',
-    ro: 'Română',
-    ru: 'Русский',
-    sl: 'Slovenščina',
-    pt: 'Português (Br)',
-    uk: 'Українська',
-    vi: 'Tiếng Việt',
-};
+import LANGS from 'i18n/index.json';
 
 class LangMenu extends Component {
     static displayName = 'LangMenu';
@@ -59,12 +48,12 @@ class LangMenu extends Component {
                     <ul className={classNames(styles.menu, {
                         [styles.menuActive]: isActive
                     })}>
-                        {Object.keys(LANGS).map((lang) => (
+                        {Object.keys(LANGS).map((locale) => (
                             <li className={classNames(styles.menuItem, {
-                                [styles.activeMenuItem]: lang === userLang
-                            })} onClick={this.onChangeLang(lang)} key={lang}
+                                [styles.activeMenuItem]: locale === userLang
+                            })} onClick={this.onChangeLang(locale)} key={locale}
                             >
-                                {this.renderLangLabel(lang)}
+                                {this.renderLangLabel(locale)}
                             </li>
                         ))}
                         <li className={styles.improveTranslatesLink}>
@@ -93,12 +82,12 @@ class LangMenu extends Component {
         );
     }
 
-    renderLangLabel(lang) {
-        const langLabel = LANGS[lang];
+    renderLangLabel(locale) {
+        const langLabel = LANGS[locale].name;
 
         return (
             <span>
-                <span className={styles[`lang${lang[0].toUpperCase() + lang.slice(1)}`]} />
+                <span className={styles[`lang${locale[0].toUpperCase() + locale.slice(1)}`]} />
                 {langLabel}
             </span>
         );

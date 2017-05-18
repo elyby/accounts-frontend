@@ -8,6 +8,7 @@ import ch from 'chalk';
 const LANG_DIR = `${__dirname}/../src/i18n`;
 const SOURCE_LANG = 'en'; // Базовый язык, относительно которого будут формироваться все остальные переводы
 const SOURCE_FILE_NAME = 'i18n.json'; // Название файла с исходными строками внутри OneSky
+const INDEX_FILE_NAME = 'index.json'; // Название файла с информацией о переводах
 const MIN_RELEASE_PROGRESS = 80; // Какой процент локали перевода должен быть выполнен, чтобы локаль была опубликована
 
 /**
@@ -84,8 +85,7 @@ function sortByKeys(object) {
 async function pullReadyLanguages() {
     const languages = JSON.parse(await onesky.getLanguages({...defaultOptions}));
     return languages.data
-        .filter((elem) => elem.is_ready_to_publish || parseFloat(elem.translation_progress) > MIN_RELEASE_PROGRESS)
-        .map((elem) => elem.custom_locale || elem.code);
+        .filter((elem) => elem.is_ready_to_publish || parseFloat(elem.translation_progress) > MIN_RELEASE_PROGRESS);
 }
 
 async function pullTranslate(language) {
@@ -97,14 +97,26 @@ async function pullTranslate(language) {
 async function pull() {
     console.log('Pulling locales list...');
     const langs = await pullReadyLanguages();
+    const langsList = langs.map((elem) => elem.custom_locale || elem.code);
 
-    console.log(ch.green('Pulled locales: ') + langs.map((lang) => code2locale(lang)).join(', '));
+    console.log(ch.green('Pulled locales: ') + langsList.map((lang) => code2locale(lang)).join(', '));
 
     console.log('Pulling translates...');
-    await Promise.all(langs.map(async (lang) => {
+    await Promise.all(langsList.map(async (lang) => {
         await pullTranslate(lang);
         console.log(ch.green('Locale ') + ch.white.bold(code2locale(lang)) + ch.green(' successfully pulled'));
     }));
+
+    console.log('Writing an index file...');
+    const mapFileContent = {};
+    langs.map((elem) => {
+        mapFileContent[elem.locale] = {
+            name: elem.local_name.match(/^([^\(]+)/)[0].trim(), // Обрезаем значения в скобках
+            progress: parseFloat(elem.translation_progress),
+        };
+    });
+    fs.writeFileSync(`${LANG_DIR}/${INDEX_FILE_NAME}`, formatTranslates(mapFileContent));
+    console.log(ch.green('The index file was successfully written'));
 }
 
 async function publish() {

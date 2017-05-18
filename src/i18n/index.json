@@ -1,0 +1,42 @@
+{
+    "be": {
+        "name": "Беларуская",
+        "progress": 100
+    },
+    "en": {
+        "name": "English",
+        "progress": 100
+    },
+    "id": {
+        "name": "Bahasa Indonesia",
+        "progress": 99.5
+    },
+    "pl": {
+        "name": "Polski",
+        "progress": 100
+    },
+    "pt": {
+        "name": "Português",
+        "progress": 100
+    },
+    "ro": {
+        "name": "Română",
+        "progress": 95.4
+    },
+    "ru": {
+        "name": "Русский",
+        "progress": 100
+    },
+    "sl": {
+        "name": "Slovenščina",
+        "progress": 100
+    },
+    "uk": {
+        "name": "Українська",
+        "progress": 100
+    },
+    "vi": {
+        "name": "Tiếng Việt",
+        "progress": 100
+    }
+}
