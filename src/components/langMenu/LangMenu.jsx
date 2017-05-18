@@ -8,11 +8,16 @@ import styles from './langMenu.scss';
 import messages from './langMenu.intl.json';
 
 const LANGS = {
-    be: 'Беларускі',
+    be: 'Беларуская',
     en: 'English',
+    id: 'Bahasa Indonesia',
+    pl: 'Polski',
+    ro: 'Română',
     ru: 'Русский',
+    sl: 'Slovenščina',
     pt: 'Português (Br)',
     uk: 'Українська',
+    vi: 'Tiếng Việt',
 };
 
 class LangMenu extends Component {
