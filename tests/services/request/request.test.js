@@ -52,4 +52,19 @@ describe('services/request', () => {
                 });
         });
     });
+
+    describe('#buildQuery', () => {
+        it('should build query', () => {
+            const data = {
+                notSet: undefined,
+                numeric: 1,
+                complexString: 'sdfgs sdfg ',
+                positive: true,
+                negative: false
+            };
+            const expectedQs = 'notSet=&numeric=1&complexString=sdfgs%20sdfg%20&positive=1&negative=0';
+
+            expect(request.buildQuery(data), 'to equal', expectedQs);
+        });
+    });
 });

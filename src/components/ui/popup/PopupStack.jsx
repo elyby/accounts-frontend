@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { browserHistory } from 'react-router';
+import { browserHistory } from 'services/history';
 
 import styles from './popup.scss';
 
@@ -18,7 +18,7 @@ export class PopupStack extends Component {
 
     componentWillMount() {
         document.addEventListener('keyup', this.onKeyPress);
-        this.unlistenTransition = browserHistory.listenBefore(this.onRouteLeave);
+        this.unlistenTransition = browserHistory.listen(this.onRouteLeave);
     }
 
     componentWillUnmount() {

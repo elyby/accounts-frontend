@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import AuthFlow from 'services/authFlow/AuthFlow';
 
@@ -33,7 +34,7 @@ describe('AuthFlow.functional', () => {
         navigate = function navigate(path, extra = {}) { // emulates router behaviour
             if (navigate.lastUrl !== path) {
                 navigate.lastUrl = path;
-                flow.handleRequest({path, query: {}, params: {}, ...extra}, navigate);
+                flow.handleRequest({path, query: new URLSearchParams(), params: {}, ...extra}, navigate);
             }
         };
 

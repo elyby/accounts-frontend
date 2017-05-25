@@ -16,16 +16,18 @@ export default class RecoverPasswordBody extends BaseAuthBody {
     static hasGoBack = true;
 
     static propTypes = {
-        params: PropTypes.shape({
-            key: PropTypes.string
+        match: PropTypes.shape({
+            params: PropTypes.shape({
+                key: PropTypes.string
+            })
         })
     };
 
-    autoFocusField = this.props.params && this.props.params.key ? 'newPassword' : 'key';
+    autoFocusField = this.props.match.params && this.props.match.params.key ? 'newPassword' : 'key';
 
     render() {
         const {user} = this.context;
-        const {key} = this.props.params;
+        const {key} = this.props.match.params;
 
         return (
             <div>

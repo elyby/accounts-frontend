@@ -103,7 +103,7 @@ const webpackConfig = {
         'react/addons': true
     } : {},
 
-    devtool: isTest ? 'inline-source-map' : 'eval',
+    devtool: 'cheap-module-eval-source-map',
 
     plugins: [
         new webpack.DefinePlugin({

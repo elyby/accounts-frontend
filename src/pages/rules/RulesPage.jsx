@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
@@ -61,19 +61,18 @@ const rules = [
 export default class RulesPage extends Component {
     static propTypes = {
         location: PropTypes.shape({
+            pathname: PropTypes.string,
+            search: PropTypes.string,
             hash: PropTypes.string
-        })
-    };
-
-    static contextTypes = {
-        router: PropTypes.shape({
-            createLocation: PropTypes.func.required,
-            replace: PropTypes.func.required
+        }).isRequired,
+        history: PropTypes.shape({
+            replace: PropTypes.func
         }).isRequired
     };
 
     render() {
         let {hash} = this.props.location;
+
         if (hash) {
             hash = hash.substring(1);
         }
@@ -136,9 +135,9 @@ export default class RulesPage extends Component {
         }
 
         const {id} = event.currentTarget;
-        const {router} = this.context;
-        const newLocation = router.createLocation({...location, hash: `#${id}`});
-        router.replace(newLocation);
+        const newPath = `${this.props.location.pathname}${this.props.location.search}#${id}`;
+
+        this.props.history.replace(newPath);
     }
 
     static getTitleHash(sectionIndex) {

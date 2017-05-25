@@ -1,7 +1,7 @@
 import expect from 'unexpected';
 import sinon from 'sinon';
 
-import { browserHistory } from 'react-router';
+import { browserHistory } from 'services/history';
 
 import logger from 'services/logger';
 import { InternalServerError } from 'services/request';

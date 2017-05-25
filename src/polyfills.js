@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'url-search-params-polyfill';
 import 'whatwg-fetch';
 import { shim as shimPromiseFinaly } from 'promise.prototype.finally';
 

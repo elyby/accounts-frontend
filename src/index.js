@@ -4,17 +4,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider as ReduxProvider } from 'react-redux';
-import { Router, browserHistory } from 'react-router';
+import { Router, Route, Switch } from 'react-router-dom';
 
 import { factory as userFactory } from 'components/user/factory';
 import { IntlProvider } from 'components/i18n';
-import routesFactory from 'routes';
+import authFlow from 'services/authFlow';
 import storeFactory from 'storeFactory';
 import bsodFactory from 'components/ui/bsod/factory';
 import loader from 'services/loader';
 import logger from 'services/logger';
 import font from 'services/font';
-import history from 'services/history';
+import history, { browserHistory } from 'services/history';
+import RootPage from 'pages/root/RootPage';
+import AuthFlowRoute from 'containers/AuthFlowRoute';
 
 history.init();
 
@@ -24,7 +26,8 @@ logger.init({
 
 const store = storeFactory();
 
-bsodFactory(store, stopLoading);
+bsodFactory(store, () => loader.hide());
+authFlow.setStore(store);
 
 Promise.all([
     userFactory(store),
@@ -34,11 +37,11 @@ Promise.all([
     ReactDOM.render(
         <ReduxProvider store={store}>
             <IntlProvider>
-                <Router history={browserHistory} onUpdate={() => {
-                    restoreScroll();
-                    stopLoading();
-                }}>
-                    {routesFactory(store)}
+                <Router history={browserHistory}>
+                    <Switch>
+                        <AuthFlowRoute path="/oauth2/:version/:clientId?" component={() => null} />
+                        <Route path="/" component={RootPage} />
+                    </Switch>
                 </Router>
             </IntlProvider>
         </ReduxProvider>,
@@ -47,45 +50,6 @@ Promise.all([
 
     initAnalytics();
 });
-
-
-function stopLoading() {
-    loader.hide();
-}
-
-import { scrollTo } from 'components/ui/scrollTo';
-import { getScrollTop } from 'functions';
-const SCROLL_ANCHOR_OFFSET = 80; // 50 + 30 (header height + some spacing)
-// Первый скролл выполняется сразу после загрузки страницы, так что чтобы снизить
-// нагрузку на рендеринг мы откладываем первый скрол на 200ms
-let isFirstScroll = true;
-/**
- * Scrolls to page's top or #anchor link, if any
- */
-function restoreScroll() {
-    const {hash} = location;
-
-    setTimeout(() => {
-        isFirstScroll = false;
-        const id = hash.replace('#', '');
-        const el = id ? document.getElementById(id) : null;
-        const viewPort = document.body;
-
-        if (!viewPort) {
-            console.log('Can not find viewPort element'); // eslint-disable-line
-            return;
-        }
-
-        let y = 0;
-        if (el) {
-            const {top} = el.getBoundingClientRect();
-
-            y = getScrollTop() + top - SCROLL_ANCHOR_OFFSET;
-        }
-
-        scrollTo(y, viewPort);
-    }, isFirstScroll ? 200 : 0);
-}
 
 import { loadScript, debounce } from 'functions';
 const trackPageView = debounce(_trackPageView);

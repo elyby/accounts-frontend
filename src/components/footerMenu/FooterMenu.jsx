@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { LangMenu } from 'components/langMenu';

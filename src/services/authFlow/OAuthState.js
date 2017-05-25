@@ -6,14 +6,14 @@ export default class OAuthState extends AbstractState {
         const {query, params} = context.getRequest();
 
         return context.run('oAuthValidate', {
-            clientId: query.client_id || params.clientId,
-            redirectUrl: query.redirect_uri,
-            responseType: query.response_type,
-            description: query.description,
-            scope: query.scope,
-            prompt: query.prompt,
-            loginHint: query.login_hint,
-            state: query.state
+            clientId: query.get('client_id') || params.clientId,
+            redirectUrl: query.get('redirect_uri'),
+            responseType: query.get('response_type'),
+            description: query.get('description'),
+            scope: query.get('scope'),
+            prompt: query.get('prompt'),
+            loginHint: query.get('login_hint'),
+            state: query.get('state')
         }).then(() => context.setState(new CompleteState()));
     }
 }

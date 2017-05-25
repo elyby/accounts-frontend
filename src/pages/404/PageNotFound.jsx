@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FooterMenu } from 'components/footerMenu';
 
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 

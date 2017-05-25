@@ -1,4 +1,4 @@
-import { browserHistory } from 'react-router';
+import { browserHistory } from 'services/history';
 
 import logger from 'services/logger';
 import localStorage from 'services/localStorage';
@@ -100,7 +100,7 @@ export default class AuthFlow {
     getRequest() {
         return {
             path: '',
-            query: {},
+            query: new URLSearchParams(),
             params: {},
             ...this.currentRequest
         };

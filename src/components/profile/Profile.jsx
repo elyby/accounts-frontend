@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message, FormattedRelative as Relative, FormattedHTMLMessage as HTMLMessage } from 'react-intl';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
 import { userShape } from 'components/user/User';
@@ -15,7 +15,7 @@ import messages from './Profile.intl.json';
 
 import RulesPage from 'pages/rules/RulesPage';
 
-export default class Profile extends Component {
+class Profile extends Component {
     static displayName = 'Profile';
     static propTypes = {
         user: userShape
@@ -130,3 +130,9 @@ export default class Profile extends Component {
         this.UUID = el;
     }
 }
+
+import { connect } from 'react-redux';
+
+export default connect((state) => ({
+    user: state.user
+}))(Profile);

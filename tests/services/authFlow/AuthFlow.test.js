@@ -1,4 +1,5 @@
 import expect from 'unexpected';
+import sinon from 'sinon';
 
 import AuthFlow from 'services/authFlow/AuthFlow';
 import AbstractState from 'services/authFlow/AbstractState';
@@ -352,7 +353,7 @@ describe('AuthFlow', () => {
 
             expect(flow.getRequest(), 'to equal', {
                 ...request,
-                query: {},
+                query: new URLSearchParams(),
                 params: {}
             });
         });

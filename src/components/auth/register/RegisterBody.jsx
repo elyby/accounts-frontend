@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { Input, Checkbox, Captcha } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';

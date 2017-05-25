@@ -13,15 +13,17 @@ export default class ActivationBody extends BaseAuthBody {
     static panelId = 'activation';
 
     static propTypes = {
-        params: PropTypes.shape({
-            key: PropTypes.string
+        match: PropTypes.shape({
+            params: PropTypes.shape({
+                key: PropTypes.string
+            })
         })
     };
 
-    autoFocusField = this.props.params && this.props.params.key ? null : 'key';
+    autoFocusField = this.props.match.params && this.props.match.params.key ? null : 'key';
 
     render() {
-        const {key} = this.props.params;
+        const {key} = this.props.match.params;
         const email = this.context.user.email;
 
         return (

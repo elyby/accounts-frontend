@@ -1,6 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 
+import { Route, Switch, Redirect } from 'react-router-dom';
+
 import logger from 'services/logger';
+
+import Profile from 'components/profile/Profile';
+import ChangePasswordPage from 'pages/profile/ChangePasswordPage';
+import ChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
+import ChangeEmailPage from 'pages/profile/ChangeEmailPage';
 
 import { FooterMenu } from 'components/footerMenu';
 
@@ -31,7 +38,13 @@ class ProfilePage extends Component {
     render() {
         return (
             <div className={styles.container}>
-                {this.props.children}
+                <Switch>
+                    <Route path="/profile/change-password" component={ChangePasswordPage} />
+                    <Route path="/profile/change-username" component={ChangeUsernamePage} />
+                    <Route path="/profile/change-email/:step?/:code?" component={ChangeEmailPage} />
+                    <Route path="/" exact component={Profile} />
+                    <Redirect to="/404" />
+                </Switch>
 
                 <div className={styles.footer}>
                     <FooterMenu />
@@ -42,7 +55,7 @@ class ProfilePage extends Component {
 }
 
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+import { browserHistory } from 'services/history';
 import { fetchUserData } from 'components/user/actions';
 import { create as createPopup } from 'components/ui/popup/actions';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';

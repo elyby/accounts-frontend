@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import OAuthState from 'services/authFlow/OAuthState';
 import CompleteState from 'services/authFlow/CompleteState';
 
@@ -29,11 +31,14 @@ describe('OAuthState', () => {
                 description: 'description',
                 scope: 'scope',
                 prompt: 'none',
-                login_hint: 1,
+                login_hint: '1',
                 state: 'state'
             };
 
-            context.getRequest.returns({query, params: {}});
+            context.getRequest.returns({
+                query: new URLSearchParams(query),
+                params: {}
+            });
 
             expectRun(
                 mock,
@@ -63,7 +68,7 @@ describe('OAuthState', () => {
             };
 
             context.getRequest.returns({
-                query,
+                query: new URLSearchParams(query),
                 params: {clientId}
             });
 
@@ -93,7 +98,7 @@ describe('OAuthState', () => {
             };
 
             context.getRequest.returns({
-                query,
+                query: new URLSearchParams(query),
                 params: {clientId}
             });
 
@@ -115,7 +120,7 @@ describe('OAuthState', () => {
         it('should transition to complete state on success', () => {
             const promise = Promise.resolve();
 
-            context.getRequest.returns({query: {}, params: {}});
+            context.getRequest.returns({query: new URLSearchParams(), params: {}});
 
             mock.expects('run').returns(promise);
             expectState(mock, CompleteState);

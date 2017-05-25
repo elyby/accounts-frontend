@@ -1,4 +1,4 @@
-import { browserHistory } from 'react-router';
+import { browserHistory } from 'services/history';
 
 import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';

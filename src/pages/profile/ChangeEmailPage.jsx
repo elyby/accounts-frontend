@@ -10,32 +10,33 @@ class ChangeEmailPage extends Component {
     static propTypes = {
         email: PropTypes.string.isRequired,
         lang: PropTypes.string.isRequired,
-        params: PropTypes.shape({
-            step: PropTypes.oneOf(['step1', 'step2', 'step3']),
-            code: PropTypes.string
+        history: PropTypes.shape({
+            push: PropTypes.func
+        }).isRequired,
+        match: PropTypes.shape({
+            params: PropTypes.shape({
+                step: PropTypes.oneOf(['step1', 'step2', 'step3']),
+                code: PropTypes.string
+            })
         })
     };
 
     static contextTypes = {
-        router: PropTypes.shape({
-            push: PropTypes.func
-        }).isRequired,
         onSubmit: PropTypes.func.isRequired,
         goToProfile: PropTypes.func.isRequired
     };
 
     componentWillMount() {
-        const step = this.props.params.step;
+        const step = this.props.match.params.step;
 
-        if (step && !/^step\d$/.test(step)) {
+        if (step && !/^step[123]$/.test(step)) {
             // wrong param value
-            // TODO: probably we should decide with something better here
-            this.context.router.push('/');
+            this.props.history.push('/404');
         }
     }
 
     render() {
-        const {params: {step = 'step1', code}} = this.props;
+        const {step = 'step1', code} = this.props.match.params;
 
         return (
             <ChangeEmail
@@ -50,7 +51,7 @@ class ChangeEmailPage extends Component {
     }
 
     onChangeStep = (step) => {
-        this.context.router.push(`/profile/change-email/step${++step}`);
+        this.props.history.push(`/profile/change-email/step${++step}`);
     };
 
     onSubmit = (step, form) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import messages from './errorsDict.intl.json';
 
