@@ -6,6 +6,7 @@
     "components.auth.acceptRules.declineAndLogout": "Decline and logout",
     "components.auth.acceptRules.description1": "We have updated our {link}.",
     "components.auth.acceptRules.description2": "In order to continue using {name} service, you need to accept them.",
+    "components.auth.acceptRules.termsOfService": "terms of service",
     "components.auth.acceptRules.title": "User Agreement",
     "components.auth.activation.accountActivationTitle": "Account activation",
     "components.auth.activation.activationMailWasSent": "Please check {email} for the message with further instructions",
