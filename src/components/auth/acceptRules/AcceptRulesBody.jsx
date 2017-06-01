@@ -5,7 +5,6 @@ import { Link } from 'react-router';
 
 import icons from 'components/ui/icons.scss';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
-import registerMessages from 'components/auth/register/Register.intl.json';
 import appInfo from 'components/auth/appInfo/AppInfo.intl.json';
 
 import styles from './acceptRules.scss';
@@ -28,7 +27,7 @@ export default class AcceptRulesBody extends BaseAuthBody {
                     <Message {...messages.description1} values={{
                         link: (
                             <Link to="/rules" target="_blank">
-                                <Message {...registerMessages.termsOfService} />
+                                <Message {...messages.termsOfService} />
                             </Link>
                         )
                     }} />
