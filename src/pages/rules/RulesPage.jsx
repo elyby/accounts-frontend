@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
@@ -19,12 +20,12 @@ const rules = [
     {
         title: <Message {...messages.mainProvisions} />,
         items: [
-            <Message {...messages.mainProvision1} values={{
+            <Message key="0" {...messages.mainProvision1} values={{
                 name: (<b>{projectName}</b>)
             }} />,
-            <Message {...messages.mainProvision2} />,
-            <Message {...messages.mainProvision3} />,
-            <Message {...messages.mainProvision4} values={{
+            <Message key="1" {...messages.mainProvision2} />,
+            <Message key="2" {...messages.mainProvision3} />,
+            <Message key="3" {...messages.mainProvision4} values={{
                 link: (<Link to="/register">https://account.ely.by/register</Link>)
             }} />
         ]
@@ -32,13 +33,13 @@ const rules = [
     {
         title: <Message {...messages.emailAndNickname} />,
         items: [
-            <Message {...messages.emailAndNickname1} />,
-            <Message {...messages.emailAndNickname2} />,
-            <Message {...messages.emailAndNickname3} />,
-            <Message {...messages.emailAndNickname4} />,
-            <Message {...messages.emailAndNickname5} />,
-            <Message {...messages.emailAndNickname6} />,
-            <Message {...messages.emailAndNickname7} />
+            <Message key="0" {...messages.emailAndNickname1} />,
+            <Message key="1" {...messages.emailAndNickname2} />,
+            <Message key="2" {...messages.emailAndNickname3} />,
+            <Message key="3" {...messages.emailAndNickname4} />,
+            <Message key="4" {...messages.emailAndNickname5} />,
+            <Message key="5" {...messages.emailAndNickname6} />,
+            <Message key="6" {...messages.emailAndNickname7} />
         ]
     },
     {
@@ -52,22 +53,23 @@ const rules = [
             <p><Message {...messages.elyAccountsAsServiceDesc2} /></p>
         </div>),
         items: [
-            <Message {...messages.elyAccountsAsService1} />,
-            <Message {...messages.elyAccountsAsService2} />
+            <Message key="0" {...messages.elyAccountsAsService1} />,
+            <Message key="1" {...messages.elyAccountsAsService2} />
         ]
     }
 ];
 
 export default class RulesPage extends Component {
-    static propTypes = {
-        location: PropTypes.shape({
-            pathname: PropTypes.string,
-            search: PropTypes.string,
-            hash: PropTypes.string
-        }).isRequired,
-        history: PropTypes.shape({
-            replace: PropTypes.func
-        }).isRequired
+    props: {
+        location: {
+            pathname: string,
+            search: string,
+            hash: string
+        },
+
+        history: {
+            replace: Function
+        }
     };
 
     render() {
@@ -128,8 +130,11 @@ export default class RulesPage extends Component {
         );
     }
 
-    onRuleClick(event) {
-        if (event.defaultPrevented || event.target.tagName.toLowerCase() === 'a') {
+    onRuleClick(event: MouseEvent & {target: HTMLElement, currentTarget: HTMLElement}) {
+        if (event.defaultPrevented
+            || !event.currentTarget.id
+            || event.target.tagName.toLowerCase() === 'a'
+        ) {
             // some-one have already processed this event or it is a link
             return;
         }
@@ -148,5 +153,3 @@ export default class RulesPage extends Component {
         return `${RulesPage.getTitleHash(sectionIndex)}-${ruleIndex + 1}`;
     }
 }
-
-RulesPage.displayName = 'RulesPage';

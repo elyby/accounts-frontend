@@ -35,10 +35,6 @@
         "es6": true
     },
 
-    "globals": {
-        "sinon": false // needed for tests. Apply it globaly till eslint/selint#3611
-    },
-
     "extends": "eslint:recommended",
 
     // @see: http://eslint.org/docs/rules/
@@ -191,7 +187,8 @@
         "require-yield": "error",
 
         // react
-        "react/display-name": "warn",
+        "react/display-name": "off",
+        "react/react-in-jsx-scope": "warn",
         "react/forbid-prop-types": "warn",
         "react/jsx-boolean-value": "warn",
         "react/jsx-closing-bracket-location": "off", // can not configure for our code style
@@ -202,7 +199,7 @@
         "react/jsx-max-props-per-line": ["warn", {"maximum": 3}],
         "react/jsx-no-bind": "off",
         "react/jsx-no-duplicate-props": "warn",
-        "react/jsx-no-literals": "warn",
+        "react/jsx-no-literals": "off",
         "react/jsx-no-undef": "error",
         "react/jsx-pascal-case": "warn",
         "react/jsx-uses-react": "warn",
@@ -221,6 +218,6 @@
         "react/prefer-es6-class": "warn",
         "react/prop-types": "warn",
         "react/self-closing-comp": "warn",
-        "react/sort-comp": ["warn", {"order": ["lifecycle", "render", "everything-else"]}]
+        "react/sort-comp": ["off", {"order": ["lifecycle", "render", "everything-else"]}]
     }
 }
