@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { CSSTransitionGroup } from 'react-transition-group';
 import { browserHistory } from 'services/history';
 
 import styles from './popup.scss';
@@ -30,7 +30,7 @@ export class PopupStack extends Component {
         const {popups} = this.props;
 
         return (
-            <ReactCSSTransitionGroup
+            <CSSTransitionGroup
                 transitionName={{
                     enter: styles.trEnter,
                     enterActive: styles.trEnterActive,
@@ -51,7 +51,7 @@ export class PopupStack extends Component {
                         </div>
                     );
                 })}
-            </ReactCSSTransitionGroup>
+            </CSSTransitionGroup>
         );
     }
 
