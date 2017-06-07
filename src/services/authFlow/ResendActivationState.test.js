@@ -49,18 +49,6 @@ describe('ResendActivationState', () => {
 
             state.enter(context);
         });
-
-        it('should transition to complete state if account activated', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true
-                }
-            });
-
-            expectState(mock, CompleteState);
-
-            state.enter(context);
-        });
     });
 
     describe('#resolve', () => {

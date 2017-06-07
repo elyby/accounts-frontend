@@ -1,4 +1,5 @@
 import AuthFlow from './AuthFlow';
+export type {AuthContext} from './AuthFlow';
 
 import * as actions from 'components/auth/actions';
 

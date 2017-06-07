@@ -1,22 +1,17 @@
+// @flow
 import logger from 'services/logger';
 
 import AbstractState from './AbstractState';
-import CompleteState from './CompleteState';
 import ActivationState from './ActivationState';
 import RegisterState from './RegisterState';
+import type { AuthContext } from 'services/authFlow';
 
 export default class ResendActivationState extends AbstractState {
-    enter(context) {
-        const {user} = context.getState();
-
-        if (user.isActive) {
-            context.setState(new CompleteState());
-        } else {
-            context.navigate('/resend-activation');
-        }
+    enter(context: AuthContext) {
+        context.navigate('/resend-activation');
     }
 
-    resolve(context, payload) {
+    resolve(context: AuthContext, payload: Object) {
         context.run('resendActivation', payload)
             .then(() => context.setState(new ActivationState()))
             .catch((err = {}) =>
@@ -24,11 +19,11 @@ export default class ResendActivationState extends AbstractState {
             );
     }
 
-    reject(context) {
+    reject(context: AuthContext) {
         context.setState(new ActivationState());
     }
 
-    goBack(context) {
+    goBack(context: AuthContext) {
         if (context.prevState instanceof RegisterState) {
             context.setState(new RegisterState());
         } else {

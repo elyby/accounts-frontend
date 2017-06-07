@@ -11,6 +11,17 @@ import RecoverPasswordState from './RecoverPasswordState';
 import ActivationState from './ActivationState';
 import CompleteState from './CompleteState';
 import ResendActivationState from './ResendActivationState';
+import type AbstractState from './AbstractState';
+
+export type AuthContext = {
+    run: (actionId: string, payload: Object) => any,
+    setState: (newState: AbstractState) => void,
+    getRequest: () => {
+        path: string,
+        query: URLSearchParams,
+        params: Object
+    }
+};
 
 export default class AuthFlow {
     constructor(actions) {
