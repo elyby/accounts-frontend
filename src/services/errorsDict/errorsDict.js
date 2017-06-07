@@ -69,10 +69,12 @@ const errorsMap = {
     'error.account_not_activated': () => <Message {...messages.accountNotActivated} />,
     'error.account_banned': () => <Message {...messages.accountBanned} />,
 
-    'error.recently_sent_message': (props) => <Message {...messages.emailFrequency} values={{
-        // for msLeft @see AuthError.jsx
-        time: <Relative value={props.msLeft} updateInterval={1000} />
-    }} />,
+    'error.recently_sent_message': (props) => (
+        <Message {...messages.emailFrequency} values={{
+            // for msLeft @see AuthError.jsx
+            time: <Relative value={props.msLeft} updateInterval={1000} />
+        }} />
+    ),
 
     'error.email_not_found': () => <Message {...messages.emailNotFound} />,
     'error.account_already_activated': () => <Message {...messages.accountAlreadyActivated} />,

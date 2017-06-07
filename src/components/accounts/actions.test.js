@@ -5,6 +5,7 @@ import { browserHistory } from 'services/history';
 
 import logger from 'services/logger';
 import { InternalServerError } from 'services/request';
+import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';
 import {
     authenticate,

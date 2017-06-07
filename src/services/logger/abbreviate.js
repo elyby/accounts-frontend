@@ -1,4 +1,4 @@
-const STRING_MAX_LENGTH = 128*1024;
+const STRING_MAX_LENGTH = 128 * 1024;
 
 /**
  * Create a copy of any object without non-serializable elements to make result safe for JSON.stringify().
@@ -13,19 +13,22 @@ const STRING_MAX_LENGTH = 128*1024;
  *        that it won't exceed the limit)
  *
  * @see https://github.com/ftlabs/js-abbreviate
+ *
+ * @return {object}
  */
 function abbreviate(obj, options = {}) {
-    var filter = options.filter || function(key, value) {return value;};
-    var maxDepth = options.depth || 10;
-    var maxSize = options.maxSize || 1 * 1024 * 1024;
+    const filter = options.filter || function(key, value) {return value;};
+    const maxDepth = options.depth || 10;
+    const maxSize = options.maxSize || 1 * 1024 * 1024;
 
     return abbreviateRecursive(undefined, obj, filter, {sizeLeft: maxSize}, maxDepth);
 }
 
 function limitStringLength(str) {
     if (str.length > STRING_MAX_LENGTH) {
-        return str.substring(0, STRING_MAX_LENGTH/2) + ' … ' + str.substring(str.length - STRING_MAX_LENGTH/2);
+        return `${str.substring(0, STRING_MAX_LENGTH / 2)} … ${str.substring(str.length - STRING_MAX_LENGTH / 2)}`;
     }
+
     return str;
 }
 
@@ -40,8 +43,8 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
 
     try {
         switch (typeof obj) {
-            case 'object':
-                if (null === obj) {
+            case 'object': {
+                if (obj === null) {
                     return null;
                 }
 
@@ -49,14 +52,18 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
                     break; // fall back to stringification
                 }
 
-                var newobj = Array.isArray(obj) ? [] : {};
-                for (var i in obj) {
-                    newobj[i] = abbreviateRecursive(i, obj[i], filter, state, maxDepth-1);
+                const newobj = Array.isArray(obj) ? [] : {};
+
+                for (const i in obj) {
+                    newobj[i] = abbreviateRecursive(i, obj[i], filter, state, maxDepth - 1);
+
                     if (state.sizeLeft < 0) {
                         break;
                     }
                 }
+
                 return newobj;
+            }
 
             case 'string':
                 obj = limitStringLength(obj);
@@ -66,12 +73,13 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
             case 'number':
             case 'boolean':
             case 'undefined':
+            default:
                 return obj;
         }
     } catch (err) {/* fall back to inspect*/}
 
     try {
-        obj = limitStringLength('' + obj);
+        obj = limitStringLength(`${obj}`);
         state.sizeLeft -= obj.length;
         return obj;
     } catch (err) {
@@ -85,7 +93,7 @@ function commonFilter(key, val) {
     }
 
     if (val instanceof Date) {
-        return '**Date** ' + val;
+        return `**Date** ${val}`;
     }
 
     if (val instanceof Error) {
@@ -96,7 +104,7 @@ function commonFilter(key, val) {
             name: val.name,
         };
 
-        for (let i in val) {
+        for (const i in val) {
             err[i] = val[i];
         }
 
@@ -107,17 +115,16 @@ function commonFilter(key, val) {
 }
 
 function nodeFilter(key, val) {
-
     // domain objects are huge and have circular references
-    if (key === 'domain' && 'object' === typeof val && val._events) {
-        return "**domain ignored**";
+    if (key === 'domain' && typeof val === 'object' && val._events) {
+        return '**domain ignored**';
     }
     if (key === 'domainEmitter') {
-        return "**domainEmitter ignored**";
+        return '**domainEmitter ignored**';
     }
 
     if (val === global) {
-        return "**global**";
+        return '**global**';
     }
 
     return commonFilter(key, val);
@@ -125,17 +132,18 @@ function nodeFilter(key, val) {
 
 function browserFilter(key, val) {
     if (val === window) {
-        return "**window**";
+        return '**window**';
     }
 
     if (val === document) {
-        return "**document**";
+        return '**document**';
     }
 
     if (val instanceof HTMLElement) {
-        var outerHTML = val.outerHTML;
-        if ('undefined' != typeof outerHTML) {
-            return "**HTMLElement** " + outerHTML;
+        const outerHTML = val.outerHTML;
+
+        if (typeof outerHTML != 'undefined') {
+            return `**HTMLElement** ${outerHTML}`;
         }
     }
 

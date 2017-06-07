@@ -1,3 +1,4 @@
+/* eslint camelcase: off */
 import sinon from 'sinon';
 
 import OAuthState from 'services/authFlow/OAuthState';

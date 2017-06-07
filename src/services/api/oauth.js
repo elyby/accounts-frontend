@@ -1,3 +1,4 @@
+/* eslint camelcase: off */
 import request from 'services/request';
 
 export default {

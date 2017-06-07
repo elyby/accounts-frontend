@@ -1,5 +1,3 @@
-import sinon from 'sinon';
-
 import AcceptRulesState from 'services/authFlow/AcceptRulesState';
 import CompleteState from 'services/authFlow/CompleteState';
 

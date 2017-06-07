@@ -29,9 +29,14 @@
     },
 
     "env": {
+        "mocha": true, // needed for tests. Apply it globaly till eslint/selint#3611
         "browser": true,
         "commonjs": true,
         "es6": true
+    },
+
+    "globals": {
+        "sinon": false // needed for tests. Apply it globaly till eslint/selint#3611
     },
 
     "extends": "eslint:recommended",
@@ -180,7 +185,7 @@
         "object-shorthand": "warn",
         "prefer-arrow-callback": "warn",
         "prefer-const": "warn",
-        "prefer-reflect": "warn",
+        "prefer-reflect": ["warn", {"exceptions": ["delete"]}],
         "prefer-spread": "warn",
         "prefer-template": "warn",
         "require-yield": "error",
@@ -189,7 +194,7 @@
         "react/display-name": "warn",
         "react/forbid-prop-types": "warn",
         "react/jsx-boolean-value": "warn",
-        "react/jsx-closing-bracket-location": "warn",
+        "react/jsx-closing-bracket-location": "off", // can not configure for our code style
         "react/jsx-curly-spacing": "warn",
         "react/jsx-handler-names": ["warn", {"eventHandlerPrefix": "on", "eventHandlerPropPrefix": "on"}],
         "react/jsx-indent-props": "warn",

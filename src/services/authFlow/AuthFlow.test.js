@@ -3,6 +3,7 @@ import sinon from 'sinon';
 
 import AuthFlow from 'services/authFlow/AuthFlow';
 import AbstractState from 'services/authFlow/AbstractState';
+import localStorage from 'services/localStorage';
 
 import OAuthState from 'services/authFlow/OAuthState';
 import RegisterState from 'services/authFlow/RegisterState';
