@@ -1626,7 +1626,7 @@
     },
     "babel-preset-flow": {
       "version": "6.23.0",
-      "from": "babel-preset-flow@>=6.23.0 <7.0.0",
+      "from": "https://registry.npmjs.org/babel-preset-flow/-/babel-preset-flow-6.23.0.tgz",
       "resolved": "https://registry.npmjs.org/babel-preset-flow/-/babel-preset-flow-6.23.0.tgz",
       "dev": true
     },
@@ -3429,6 +3429,12 @@
       "version": "1.0.2",
       "from": "flatten@>=1.0.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/flatten/-/flatten-1.0.2.tgz",
+      "dev": true
+    },
+    "flow-bin": {
+      "version": "0.47.0",
+      "from": "flow-bin@latest",
+      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.47.0.tgz",
       "dev": true
     },
     "fontgen-loader": {
