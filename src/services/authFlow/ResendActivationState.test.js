@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 
 import ResendActivationState from 'services/authFlow/ResendActivationState';
-import CompleteState from 'services/authFlow/CompleteState';
 import ActivationState from 'services/authFlow/ActivationState';
 import RegisterState from 'services/authFlow/RegisterState';
 

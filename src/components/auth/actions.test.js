@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import expect from 'unexpected';
 
 import request from 'services/request';

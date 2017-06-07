@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 import PermissionsState from 'services/authFlow/PermissionsState';
 import CompleteState from 'services/authFlow/CompleteState';
 
