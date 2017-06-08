@@ -1,5 +1,18 @@
 import { UPDATE, SET, CHANGE_LANG } from './actions';
 
+export type User = {
+    id: number,
+    uuid: string,
+    token: string,
+    username: string,
+    email: string,
+    avatar: string,
+    isGuest: boolean,
+    isActive: boolean,
+    passwordChangedAt: number,
+    hasMojangUsernameCollision: bool,
+};
+
 
 const defaults = {
     id: null,

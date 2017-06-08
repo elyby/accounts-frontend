@@ -1,7 +1,8 @@
-import { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
+import Helmet from 'react-helmet';
 import classNames from 'classnames';
 
 import AuthPage from 'pages/auth/AuthPage';
@@ -9,12 +10,14 @@ import ProfilePage from 'pages/profile/ProfilePage';
 import RulesPage from 'pages/rules/RulesPage';
 import PageNotFound from 'pages/404/PageNotFound';
 
+// @flow
 import { restoreScroll } from 'functions';
 import PrivateRoute from 'containers/PrivateRoute';
 import AuthFlowRoute from 'containers/AuthFlowRoute';
 import Userbar from 'components/userbar/Userbar';
 import PopupStack from 'components/ui/popup/PopupStack';
 import loader from 'services/loader';
+import type { User } from 'components/user';
 
 import styles from './root.scss';
 import messages from './RootPage.intl.json';
@@ -28,6 +31,15 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 class RootPage extends Component {
+    props: {
+        user: User,
+        isPopupActive: boolean,
+        onLogoClick: Function,
+        location: {
+            pathname: string
+        }
+    };
+
     componentDidMount() {
         this.onPageUpdate();
     }
@@ -43,12 +55,18 @@ class RootPage extends Component {
 
     render() {
         const props = this.props;
+        const {user} = this.props;
         const isRegisterPage = props.location.pathname === '/register';
 
-        document.body.style.overflow = props.isPopupActive ? 'hidden' : '';
+        if (document && document.body) {
+            document.body.style.overflow = props.isPopupActive ? 'hidden' : '';
+        }
 
         return (
             <div className={styles.root}>
+                <Helmet>
+                    <html lang={user.lang} />
+                </Helmet>
                 <div id="view-port" className={classNames(styles.viewPort, {
                     [styles.isPopupActive]: props.isPopupActive
                 })}>
@@ -81,19 +99,6 @@ class RootPage extends Component {
         );
     }
 }
-
-RootPage.displayName = 'RootPage';
-RootPage.propTypes = {
-    location: PropTypes.shape({
-        pathname: PropTypes.string
-    }).isRequired,
-    user: PropTypes.shape({
-        isGuest: PropTypes.boolean
-    }),
-    children: PropTypes.element,
-    onLogoClick: PropTypes.func.isRequired,
-    isPopupActive: PropTypes.bool.isRequired
-};
 
 import { connect } from 'react-redux';
 import { resetAuth } from 'components/auth/actions';
