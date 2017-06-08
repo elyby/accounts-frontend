@@ -11,7 +11,8 @@
     left: 0;
     right: 0;
 
-    width: 150px;
+    display: inline-flex;
+    justify-content: center;
     margin: 0 auto 10px;
 
     perspective: 600px;
@@ -25,11 +26,12 @@
     border-left: 0;
     border-right: 0;
     text-align: left;
+    box-shadow: 0 0 1px rgba(#000, .2);
 
     visibility: hidden;
     opacity: 0;
     transition: .3s cubic-bezier(0.075, 0.82, 0.165, 1); // easeOutCirc
-    transform: translateY(10px) rotateX(-22deg);
+    transform: translateY(10px) rotateX(-17deg);
 }
 
 .menuActive {
@@ -44,11 +46,12 @@
     }
 
     .menuContainer {
-        margin-left: 0;
+        justify-content: flex-start;
     }
 }
 
 .menuItem {
+    position: relative;
     padding: 10px;
     font-size: 13px;
     border-bottom: 1px solid #eee;
@@ -72,13 +75,41 @@
 }
 
 .langIco {
+    position: relative;
     display: inline-block;
     margin-right: 5px;
     width: 20px;
     height: 10px;
+    box-shadow: 0 0 1px rgba(#000, .2);
 
     background: no-repeat;
     background-size: cover;
+}
+
+.langTranslateProgress {
+    font-size: 9px;
+    position: relative;
+    font-family: $font-family-base;
+    color: #ccc;
+}
+
+.langTranslateUnfinished {
+    composes: langTranslateProgress;
+
+    top: -1px;
+    padding-left: 3px;
+}
+
+.langTranslateUnreviewed {
+    composes: langTranslateProgress;
+
+    top: -4px;
+}
+
+.langBe {
+    composes: langIco;
+
+    background-image: url('~icons/flag_be.svg');
 }
 
 .langEn {
@@ -87,16 +118,34 @@
     background-image: url('~icons/flag_en.svg');
 }
 
+.langId {
+    composes: langIco;
+
+    background-image: url('~icons/flag_id.svg');
+}
+
+.langPl {
+    composes: langIco;
+
+    background-image: url('~icons/flag_pl.svg');
+}
+
+.langRo {
+    composes: langIco;
+
+    background-image: url('~icons/flag_ro.svg');
+}
+
 .langRu {
     composes: langIco;
 
     background-image: url('~icons/flag_ru.svg');
 }
 
-.langBe {
+.langSl {
     composes: langIco;
 
-    background-image: url('~icons/flag_be.svg');
+    background-image: url('~icons/flag_sl.svg');
 }
 
 .langPt {
@@ -109,6 +158,12 @@
     composes: langIco;
 
     background-image: url('~icons/flag_uk.svg');
+}
+
+.langVi {
+    composes: langIco;
+
+    background-image: url('~icons/flag_vi.svg');
 }
 
 .improveTranslatesLink {

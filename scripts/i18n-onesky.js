@@ -3,11 +3,13 @@
 
 import onesky from 'onesky-utils';
 import fs from 'fs';
-import chalk from 'chalk';
+import ch from 'chalk';
 
 const LANG_DIR = `${__dirname}/../src/i18n`;
 const SOURCE_LANG = 'en'; // Базовый язык, относительно которого будут формироваться все остальные переводы
 const SOURCE_FILE_NAME = 'i18n.json'; // Название файла с исходными строками внутри OneSky
+const INDEX_FILE_NAME = 'index.json'; // Название файла с информацией о переводах
+const MIN_RELEASE_PROGRESS = 80; // Какой процент локали перевода должен быть выполнен, чтобы локаль была опубликована
 
 /**
  * Массив локалей для соответствия каноничному виду в OneSky и нашему представлению
@@ -16,6 +18,11 @@ const SOURCE_FILE_NAME = 'i18n.json'; // Название файла с исхо
 const LOCALES_MAP = {
     ru: 'ru-RU',
     en: 'en-GB',
+    sl: 'sl-SI',
+    fr: 'fr-FR',
+    el: 'el-GR',
+    de: 'de-DE',
+    sr: 'sr-RS',
 };
 
 // https://ely-translates.oneskyapp.com/admin/site/settings
@@ -78,8 +85,7 @@ function sortByKeys(object) {
 async function pullReadyLanguages() {
     const languages = JSON.parse(await onesky.getLanguages({...defaultOptions}));
     return languages.data
-        .filter((elem) => elem.is_ready_to_publish)
-        .map((elem) => elem.custom_locale || elem.code);
+        .filter((elem) => elem.is_ready_to_publish || parseFloat(elem.translation_progress) > MIN_RELEASE_PROGRESS);
 }
 
 async function pullTranslate(language) {
@@ -91,18 +97,31 @@ async function pullTranslate(language) {
 async function pull() {
     console.log('Pulling locales list...');
     const langs = await pullReadyLanguages();
+    const langsList = langs.map((elem) => elem.custom_locale || elem.code);
 
-    console.log(chalk.green('Pulled locales: ') + langs.map((lang) => code2locale(lang)).join(', '));
+    console.log(ch.green('Pulled locales: ') + langsList.map((lang) => code2locale(lang)).join(', '));
 
     console.log('Pulling translates...');
-    await Promise.all(langs.map(async (lang) => {
+    await Promise.all(langsList.map(async (lang) => {
         await pullTranslate(lang);
-        console.log(chalk.green('Locale ') + chalk.white.bold(code2locale(lang)) + chalk.green(' successfully pulled'));
+        console.log(ch.green('Locale ') + ch.white.bold(code2locale(lang)) + ch.green(' successfully pulled'));
     }));
+
+    console.log('Writing an index file...');
+    const mapFileContent = {};
+    langs.map((elem) => {
+        mapFileContent[elem.locale] = {
+            name: elem.local_name.match(/^([^\(]+)/)[0].trim(), // Обрезаем значения в скобках
+            progress: parseFloat(elem.translation_progress),
+            isReleased: elem.is_ready_to_publish,
+        };
+    });
+    fs.writeFileSync(`${LANG_DIR}/${INDEX_FILE_NAME}`, formatTranslates(mapFileContent));
+    console.log(ch.green('The index file was successfully written'));
 }
 
 async function publish() {
-    console.log(`Publishing ${chalk.bold(SOURCE_LANG)} translates file...`);
+    console.log(`Publishing ${ch.bold(SOURCE_LANG)} translates file...`);
     await onesky.postFile({
         ...defaultOptions,
         format: 'HIERARCHICAL_JSON',
@@ -111,7 +130,7 @@ async function publish() {
         language: locale2code(SOURCE_LANG),
         fileName: SOURCE_FILE_NAME,
     });
-    console.log(chalk.green('Success'));
+    console.log(ch.green('Success'));
 }
 
 try {

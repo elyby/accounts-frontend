@@ -6,6 +6,7 @@
     "components.auth.acceptRules.declineAndLogout": "Відмовитись і вийти",
     "components.auth.acceptRules.description1": "Ми оновили наші {link}.",
     "components.auth.acceptRules.description2": "Для того, щоб продовжити використання сервісу {name}, ви повинні прийняти нові умови.",
+    "components.auth.acceptRules.termsOfService": "правила сервісу",
     "components.auth.acceptRules.title": "Угода користувача",
     "components.auth.activation.accountActivationTitle": "Активація акаунту",
     "components.auth.activation.activationMailWasSent": "На {email} відправлено повідомлення з інструкціями по завершенню реєстрації",
