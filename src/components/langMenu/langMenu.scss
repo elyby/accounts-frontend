@@ -11,7 +11,8 @@
     left: 0;
     right: 0;
 
-    width: 150px;
+    display: inline-flex;
+    justify-content: center;
     margin: 0 auto 10px;
 
     perspective: 600px;
