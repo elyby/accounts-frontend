@@ -10,6 +10,7 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
 const cssImport = require('postcss-import');
 
+const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
 
@@ -131,7 +132,12 @@ const webpackConfig = {
         }),
         new webpack.ProvidePlugin({
             React: 'react'
-        })
+        }),
+        // restrict webpack import context, to create chunks only for supported locales
+        // @see services/i18n.js
+        new webpack.ContextReplacementPlugin(
+            /locale-data/, new RegExp('/(' + SUPPORTED_LANGUAGES.join('|') + ')\\.js')
+        )
     ],
 
     module: {

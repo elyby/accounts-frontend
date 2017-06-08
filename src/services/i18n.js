@@ -1,28 +1,6 @@
 import locales from 'i18n/index.json';
 
 import { addLocaleData } from 'react-intl';
-import beLocaleData from 'react-intl/locale-data/be';
-import enLocaleData from 'react-intl/locale-data/en';
-import idLocaleData from 'react-intl/locale-data/id';
-import plLocaleData from 'react-intl/locale-data/pl';
-import roLocaleData from 'react-intl/locale-data/ro';
-import ruLocaleData from 'react-intl/locale-data/ru';
-import slLocaleData from 'react-intl/locale-data/sl';
-import ptLocaleData from 'react-intl/locale-data/pt';
-import ukLocaleData from 'react-intl/locale-data/uk';
-import viLocaleData from 'react-intl/locale-data/vi';
-
-// till we have not so many locales, we can require their data at once
-addLocaleData(beLocaleData);
-addLocaleData(enLocaleData);
-addLocaleData(idLocaleData);
-addLocaleData(plLocaleData);
-addLocaleData(roLocaleData);
-addLocaleData(ruLocaleData);
-addLocaleData(slLocaleData);
-addLocaleData(ptLocaleData);
-addLocaleData(ukLocaleData);
-addLocaleData(viLocaleData);
 
 const SUPPORTED_LANGUAGES = Object.keys(locales);
 const DEFAULT_LANGUAGE = 'en';
@@ -49,23 +27,24 @@ export default {
 
     require(locale) {
         const promises = [
+            new Promise(require(`bundle?name=[name]!react-intl/locale-data/${locale}.js`)),
             new Promise(require(`bundle?name=[name]!i18n/${locale}.json`))
         ];
 
         if (needPolyfill) {
-            promises.push(new Promise((resolve) => {
-                require.ensure([], () => {
-                    require('intl');
-                    require.context(
-                        'bundle?name=[name]-polyfill-data!intl/locale-data/jsonp',
-                        false,
-                        new RegExp(`\\./(${SUPPORTED_LANGUAGES.join('|')})\\.js$`)
-                    )(`./${locale}.js`)(resolve);
-                });
-            }));
+            promises.push(
+                new Promise(require('bundle?name=intl!intl')),
+            );
+            promises.push(
+                new Promise(require(`bundle?name=[name]-polyfill-data!intl/locale-data/jsonp/${locale}.js`)),
+            );
         }
 
         return Promise.all(promises)
-            .then(([messages]) => ({locale, messages}));
+            .then(([localeData, messages]) => {
+                addLocaleData(localeData);
+
+                return {locale, messages};
+            });
     }
 };
