@@ -37,7 +37,7 @@ class LangMenu extends Component {
     }
 
     render() {
-        const {userLang, showCurrentLang} = this.props;
+        const {userLang: userLocale, showCurrentLang} = this.props;
         const {isActive} = this.state;
 
         return (
@@ -50,10 +50,10 @@ class LangMenu extends Component {
                     })}>
                         {Object.keys(LANGS).map((locale) => (
                             <li className={classNames(styles.menuItem, {
-                                [styles.activeMenuItem]: locale === userLang
+                                [styles.activeMenuItem]: locale === userLocale
                             })} onClick={this.onChangeLang(locale)} key={locale}
                             >
-                                {this.renderLangLabel(locale)}
+                                {this.renderLangLabel(locale, LANGS[locale])}
                             </li>
                         ))}
                         <li className={styles.improveTranslatesLink}>
@@ -67,7 +67,7 @@ class LangMenu extends Component {
                 <div className={styles.triggerContainer} onClick={this.onToggle}>
                     <a className={styles.trigger} href="#">
                         {showCurrentLang
-                            ? this.renderLangLabel(userLang) : (
+                            ? this.renderLangLabel(userLocale, LANGS[userLocale]) : (
                             <span>
                                 <span className={styles.triggerIcon} />
                                 {' '}
@@ -82,15 +82,39 @@ class LangMenu extends Component {
         );
     }
 
-    renderLangLabel(locale) {
-        const langLabel = LANGS[locale].name;
+    renderLangLabel(locale, localeData) {
+        const {name, progress, isReleased} = localeData;
+        let progressLabel;
+        if (progress !== 100) {
+            progressLabel = (
+                <span className={styles.langTranslateUnfinished}>
+                    {`(${progress}%)`}
+                </span>
+            );
+        } else if (!isReleased) {
+            progressLabel = (
+                <span className={styles.langTranslateUnreviewed}>
+                    {'*'}
+                </span>
+            );
+        }
 
         return (
             <span>
                 <span className={styles[`lang${locale[0].toUpperCase() + locale.slice(1)}`]} />
-                {langLabel}
+                {this.formatLocaleName(locale) || name}
+                {progressLabel}
             </span>
         );
+    }
+
+    formatLocaleName(locale) {
+        switch (locale) {
+            case 'pt':
+                return 'Português (Br)';
+            default:
+                return null;
+        }
     }
 
     onChangeLang(lang) {

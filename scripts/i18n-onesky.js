@@ -113,6 +113,7 @@ async function pull() {
         mapFileContent[elem.locale] = {
             name: elem.local_name.match(/^([^\(]+)/)[0].trim(), // Обрезаем значения в скобках
             progress: parseFloat(elem.translation_progress),
+            isReleased: elem.is_ready_to_publish,
         };
     });
     fs.writeFileSync(`${LANG_DIR}/${INDEX_FILE_NAME}`, formatTranslates(mapFileContent));

@@ -1,42 +1,52 @@
 {
     "be": {
         "name": "Беларуская",
-        "progress": 100
+        "progress": 100,
+        "isReleased": true
     },
     "en": {
         "name": "English",
-        "progress": 100
+        "progress": 100,
+        "isReleased": true
     },
     "id": {
         "name": "Bahasa Indonesia",
-        "progress": 100
+        "progress": 100,
+        "isReleased": false
     },
     "pl": {
         "name": "Polski",
-        "progress": 99.5
+        "progress": 99.5,
+        "isReleased": false
     },
     "pt": {
         "name": "Português",
-        "progress": 100
+        "progress": 100,
+        "isReleased": true
     },
     "ro": {
         "name": "Română",
-        "progress": 99.5
+        "progress": 99.5,
+        "isReleased": false
     },
     "ru": {
         "name": "Русский",
-        "progress": 100
+        "progress": 100,
+        "isReleased": true
     },
     "sl": {
         "name": "Slovenščina",
-        "progress": 100
+        "progress": 100,
+        "isReleased": false
     },
     "uk": {
         "name": "Українська",
-        "progress": 100
+        "progress": 100,
+        "isReleased": true
     },
     "vi": {
         "name": "Tiếng Việt",
-        "progress": 100
+        "progress": 100,
+        "isReleased": true
     }
 }
