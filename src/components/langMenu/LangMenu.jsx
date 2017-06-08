@@ -101,7 +101,9 @@ class LangMenu extends Component {
 
         return (
             <span>
-                <span className={styles[`lang${locale[0].toUpperCase() + locale.slice(1)}`]} />
+                <span className={styles.langIco} style={{
+                    backgroundImage: `url('${require(`icons/flag_${locale}.svg`)}')`
+                }} />
                 {this.formatLocaleName(locale) || name}
                 {progressLabel}
             </span>
