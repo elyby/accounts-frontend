@@ -1,9 +1,16 @@
-import authFlow from 'services/authFlow';
+// @flow
+import React from 'react';
+
 import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-const PrivateRoute = ({user, component: Component, ...rest}) => (
-    <Route {...rest} render={(props) => (
+import type {User} from 'components/user';
+
+const PrivateRoute = ({user, component: Component, ...rest}: {
+    component: any,
+    user: User
+}) => (
+    <Route {...rest} render={(props: {location: string}) => (
         user.isGuest ? (
             <Redirect to={{
                 pathname: '/login',

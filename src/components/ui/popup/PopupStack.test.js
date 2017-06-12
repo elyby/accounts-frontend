@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import expect from 'unexpected';
 
 import React from 'react';

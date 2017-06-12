@@ -2,8 +2,9 @@ import React, { Component, PropTypes } from 'react';
 
 import classNames from 'classnames';
 
-import FormModel from './FormModel';
+import logger from 'services/logger';
 
+import FormModel from './FormModel';
 import styles from './form.scss';
 
 export default class Form extends Component {
@@ -106,7 +107,8 @@ export default class Form extends Component {
 
             Array.from(invalidEls).reduce((errors, el) => {
                 if (!el.name) {
-                    console.warn('Found an element without name', el);
+                    logger.warn('Found an element without name', {el});
+
                     return errors;
                 }
 

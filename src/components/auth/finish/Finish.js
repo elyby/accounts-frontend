@@ -104,7 +104,9 @@ class Finish extends Component {
             // TODO: было бы ещё неплохо сделать какую-то анимацию, вроде "Скопировано",
             // ибо сейчас после клика как-то неубедительно, скопировалось оно или нет
             console.log('Copying text command was ' + (successful ? 'successful' : 'unsuccessful'));
-        } catch (err) {}
+        } catch (err) {
+            // not critical
+        }
     };
 
     setCode = (el) => {

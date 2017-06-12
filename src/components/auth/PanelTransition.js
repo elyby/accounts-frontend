@@ -36,6 +36,7 @@ const contexts = [
     ['chooseAccount', 'permissions']
 ];
 
+// eslint-disable-next-line
 if (process.env.NODE_ENV !== 'production') {
     // test panel uniquenes between contexts
     // TODO: it may be moved to tests in future

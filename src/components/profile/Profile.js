@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { FormattedMessage as Message, FormattedRelative as Relative, FormattedHTMLMessage as HTMLMessage } from 'react-intl';
+import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 

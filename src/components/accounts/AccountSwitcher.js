@@ -123,12 +123,12 @@ export class AccountSwitcher extends Component {
                             className={styles.addAccount}
                             label={
                                 <Message {...messages.addAccount}>
-                                    {(message) =>
+                                    {(message) => (
                                         <span>
                                             <div className={styles.addIcon} />
                                             {message}
                                         </span>
-                                    }
+                                    )}
                                 </Message>
                             }
                         />

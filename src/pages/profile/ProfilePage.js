@@ -108,7 +108,9 @@ export default connect(null, {
         function requestPassword(form) {
             return new Promise((resolve) => {
                 dispatch(createPopup({
-                    Popup(props) {
+                    Popup(props: {
+                        onClose: Function
+                    }) {
                         const onSubmit = () => {
                             form.beginLoading();
                             sendData()

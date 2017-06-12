@@ -63,6 +63,7 @@
         "dot-notation": "error",
         "eqeqeq": ["error", "smart"],
         "no-alert": "error",
+        "no-console": "off",
         "no-caller": "error",
         "no-case-declarations": "error",
         "no-div-regex": "error",
@@ -134,7 +135,7 @@
         "consistent-this": ["error", "that"],
         "camelcase": "warn",
         "eol-last": "warn",
-        "id-length": ["error", {"min": 2, "exceptions": ["x", "y", "i", "$"]}],
+        "id-length": ["error", {"min": 2, "exceptions": ["x", "y", "i", "k", "l", "m", "n", "$", "_"]}],
         "indent": ["error", 4, {"SwitchCase": 1}],
         "jsx-quotes": "error",
         "key-spacing": ["error", {"mode": "minimum"}],
@@ -168,7 +169,7 @@
         "spaced-comment": "warn",
 
         // es6
-        "arrow-body-style": "warn",
+        "arrow-body-style": "off",
         "arrow-parens": "error",
         "arrow-spacing": "error",
         "constructor-super": "error",
