@@ -18,12 +18,19 @@ export default class AuthFlowRouteContents extends Component {
         component: null
     };
 
+    _isMounted = false;
+
     componentDidMount() {
         this.handleProps(this.props);
+        this._isMounted = true;
     }
 
     componentWillReceiveProps(nextProps: ComponentProps) {
         this.handleProps(nextProps);
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {
@@ -41,6 +48,10 @@ export default class AuthFlowRouteContents extends Component {
     }
 
     onRedirect(path: string) {
+        if (!this._isMounted) {
+            return;
+        }
+
         this.setState({
             component: <Redirect to={path} />
         });
@@ -48,6 +59,10 @@ export default class AuthFlowRouteContents extends Component {
 
     onRouteAllowed(props: ComponentProps) {
         const {component: Component} = props;
+
+        if (!this._isMounted) {
+            return;
+        }
 
         this.setState({
             component: <Component {...props.routerProps} />
