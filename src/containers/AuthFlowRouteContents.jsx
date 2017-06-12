@@ -1,15 +1,20 @@
-import { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import authFlow from 'services/authFlow';
 
-export default class AuthFlowRouteContents extends Component {
-    static propTypes = {
-        component: PropTypes.any,
-        routerProps: PropTypes.object
-    };
+type ComponentProps = {
+    component: any,
+    routerProps: Object
+};
 
-    state = {
+export default class AuthFlowRouteContents extends Component {
+    props: ComponentProps;
+
+    state: {
+        component: any
+    } = {
         component: null
     };
 
@@ -17,7 +22,7 @@ export default class AuthFlowRouteContents extends Component {
         this.handleProps(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: ComponentProps) {
         this.handleProps(nextProps);
     }
 
@@ -25,7 +30,7 @@ export default class AuthFlowRouteContents extends Component {
         return this.state.component;
     }
 
-    handleProps(props) {
+    handleProps(props: ComponentProps) {
         const {routerProps} = props;
 
         authFlow.handleRequest({
@@ -35,13 +40,13 @@ export default class AuthFlowRouteContents extends Component {
         }, this.onRedirect.bind(this), this.onRouteAllowed.bind(this, props));
     }
 
-    onRedirect(path) {
+    onRedirect(path: string) {
         this.setState({
             component: <Redirect to={path} />
         });
     }
 
-    onRouteAllowed(props) {
+    onRouteAllowed(props: ComponentProps) {
         const {component: Component} = props;
 
         this.setState({

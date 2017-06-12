@@ -1,4 +1,5 @@
-import { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
 
@@ -20,13 +21,12 @@ import Finish from 'components/auth/finish/Finish';
 import styles from './auth.scss';
 
 class AuthPage extends Component {
-    static displayName = 'AuthPage';
-    static propTypes = {
-        client: PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            description: PropTypes.string.isRequired
-        })
+    props: {
+        client: {
+            id: string,
+            name: string,
+            description: string
+        }
     };
 
     state = {
@@ -42,6 +42,7 @@ class AuthPage extends Component {
                 <div className={isSidebarHidden ? styles.hiddenSidebar : styles.sidebar}>
                     <AppInfo {...client} onGoToAuth={this.onGoToAuth} />
                 </div>
+
                 <div className={styles.content}>
                     <Switch>
                         <Route path="/login" render={renderPanelTransition(Login)} />

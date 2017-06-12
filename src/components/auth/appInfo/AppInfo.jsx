@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
@@ -9,12 +10,10 @@ import styles from './appInfo.scss';
 import messages from './AppInfo.intl.json';
 
 export default class AppInfo extends Component {
-    static displayName = 'AppInfo';
-
-    static propTypes = {
-        name: PropTypes.string,
-        description: PropTypes.string,
-        onGoToAuth: PropTypes.func.isRequired
+    props: {
+        name?: string,
+        description?: string,
+        onGoToAuth: () => void
     };
 
     render() {

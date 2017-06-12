@@ -1,9 +1,13 @@
-import { PropTypes } from 'react';
+// @flow
+import React from 'react';
 import { Route } from 'react-router-dom';
 
 import AuthFlowRouteContents from './AuthFlowRouteContents';
 
-export default function AuthFlowRoute(props) {
+export default function AuthFlowRoute(props: {
+    component: any,
+    routerProps: Object
+}) {
     const {component: Component, ...routeProps} = props;
 
     return (
@@ -12,8 +16,3 @@ export default function AuthFlowRoute(props) {
         )}/>
     );
 }
-
-AuthFlowRoute.propTypes = {
-    component: PropTypes.any,
-    routerProps: PropTypes.object
-};

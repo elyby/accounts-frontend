@@ -10,7 +10,6 @@ import messages from './langMenu.intl.json';
 import LANGS from 'i18n/index.json';
 
 class LangMenu extends Component {
-    static displayName = 'LangMenu';
     static propTypes = {
         showCurrentLang: PropTypes.bool,
         toggleRef: PropTypes.func,
@@ -85,6 +84,7 @@ class LangMenu extends Component {
     renderLangLabel(locale, localeData) {
         const {name, progress, isReleased} = localeData;
         let progressLabel;
+
         if (progress !== 100) {
             progressLabel = (
                 <span className={styles.langTranslateUnfinished}>
