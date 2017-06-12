@@ -114,7 +114,7 @@ function doFetch(url, options = {}) {
  * @return {string}
  */
 function convertQueryValue(value) {
-    if (typeof value === 'undefined') {
+    if (typeof value === 'undefined' || value === null) {
         return '';
     }
 
