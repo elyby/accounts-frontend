@@ -21,8 +21,8 @@ export default class AuthFlowRouteContents extends Component {
     _isMounted = false;
 
     componentDidMount() {
-        this.handleProps(this.props);
         this._isMounted = true;
+        this.handleProps(this.props);
     }
 
     componentWillReceiveProps(nextProps: ComponentProps) {

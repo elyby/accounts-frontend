@@ -5,8 +5,7 @@ import { Route } from 'react-router-dom';
 import AuthFlowRouteContents from './AuthFlowRouteContents';
 
 export default function AuthFlowRoute(props: {
-    component: any,
-    routerProps: Object
+    component: any
 }) {
     const {component: Component, ...routeProps} = props;
 

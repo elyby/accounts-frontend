@@ -123,7 +123,7 @@ export default class AuthFlow {
      * @param {object} request
      * @param {string} request.path
      * @param {object} request.params
-     * @param {object} request.query
+     * @param {URLSearchParams} request.query
      * @param {function} replace
      * @param {function} [callback = function() {}] - an optional callback function to be called, when state will be stabilized
      *                                                (state's enter function's promise resolved)

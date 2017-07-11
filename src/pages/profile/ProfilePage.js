@@ -42,6 +42,7 @@ class ProfilePage extends Component {
                     <Route path="/profile/change-password" component={ChangePasswordPage} />
                     <Route path="/profile/change-username" component={ChangeUsernamePage} />
                     <Route path="/profile/change-email/:step?/:code?" component={ChangeEmailPage} />
+                    <Route path="/profile" component={Profile} />
                     <Route path="/" exact component={Profile} />
                     <Redirect to="/404" />
                 </Switch>
