@@ -1,23 +1,25 @@
+// @flow
 import { UPDATE, SET, CHANGE_LANG } from './actions';
 
 export type User = {
-    id: number,
-    uuid: string,
+    id: ?number,
+    uuid: ?string,
     token: string,
     username: string,
     email: string,
     avatar: string,
     isGuest: boolean,
     isActive: boolean,
-    passwordChangedAt: number,
+    passwordChangedAt: ?number,
     hasMojangUsernameCollision: bool,
 };
 
 
-const defaults = {
+const defaults: User = {
     id: null,
     uuid: null,
     username: '',
+    token: '',
     email: '',
     // will contain user's email or masked email
     // (e.g. ex**ple@em*il.c**) depending on what information user have already provided
@@ -35,8 +37,8 @@ const defaults = {
 };
 
 export default function user(
-    state = null,
-    {type, payload = null}
+    state: User = defaults,
+    {type, payload}: {type: string, payload: ?Object}
 ) {
     switch (type) {
         case CHANGE_LANG:

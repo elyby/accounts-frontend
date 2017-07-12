@@ -28,7 +28,7 @@ export class AccountSwitcher extends Component {
                 id: PropTypes.number
             }))
         }),
-        user: userShape, // TODO: remove me, when we will be sure, that accounts.active is always set for user
+        user: userShape, // TODO: remove me, when we will be sure, that accounts.active is always set for user (event after register)
         skin: PropTypes.oneOf(skins),
         highlightActiveAccount: PropTypes.bool, // whether active account should be expanded and shown on the top
         allowLogout: PropTypes.bool, // whether to show logout icon near each account
@@ -46,7 +46,8 @@ export class AccountSwitcher extends Component {
 
     render() {
         const { accounts, skin, allowAdd, allowLogout, highlightActiveAccount } = this.props;
-        const activeAccount = accounts.active || this.props.user;
+        // const activeAccount = accounts.active || this.props.user;
+        const activeAccount = this.props.user;
 
         let {available} = accounts;
 
@@ -163,8 +164,7 @@ import { authenticate, revoke } from 'components/accounts/actions';
 
 export default connect(({accounts, user}) => ({
     accounts,
-    user,
-    userLang: user.lang // this is to force re-render on lang change
+    user
 }), {
     switchAccount: authenticate,
     removeAccount: revoke
