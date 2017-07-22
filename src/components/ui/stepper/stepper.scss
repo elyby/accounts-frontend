@@ -1,0 +1,63 @@
+@import '~components/ui/colors.scss';
+
+.steps {
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.step {
+    position: relative;
+    text-align: right;
+    width: 100%;
+
+    height: 4px;
+    background: #d8d5ce;
+
+
+    &:first-child {
+        width: 12px;
+    }
+
+    &:before {
+        content: '';
+        display: block;
+
+        position: absolute;
+        height: 4px;
+        left: 0;
+        right: 100%;
+        top: 50%;
+        margin-top: -2px;
+
+        background: #aaa;
+        transition: 0.4s ease 0.1s;
+    }
+
+    &:after {
+        content: '';
+        display: inline-block;
+        position: relative;
+        top: -7px;
+        z-index: 1;
+
+        width: 12px;
+        height: 12px;
+        border-radius: 100%;
+
+        background: #aaa;
+        transition: background 0.4s ease;
+    }
+}
+
+.activeStep {
+    &:before {
+        right: 0;
+        transition-delay: 0;
+    }
+
+    &:after {
+        background: $violet;
+        transition-delay: 0.3s;
+    }
+}

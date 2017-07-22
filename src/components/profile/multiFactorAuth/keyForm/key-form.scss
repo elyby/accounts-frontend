@@ -1,0 +1,27 @@
+.qrCode {
+    text-align: center;
+
+    img {
+        width: 242px;
+        height: 242px;
+    }
+}
+
+.manualDescription {
+    position: relative;
+}
+
+.or {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    margin-top: -18px;
+
+    text-align: center;
+    font-size: 10px;
+}
+
+.key {
+    text-align: center;
+    text-transform: uppercase;
+}

@@ -1,0 +1,19 @@
+{
+    "mfaTitle": "Two factor authentication",
+    "mfaDescription": "Two factor authentication is an extra layer of security for your account designed to ensure that you're the only person who can access your account, even when your password was compromised. This section will help you to setup two factor auth for your account.",
+
+    "mfaIntroduction": "First of all you need to install one of suggested apps on your phone. This app will generate auth codes for you. Please choose your OS to get corresponding installation links.",
+    "installOnOfTheApps": "Install one of the following apps:",
+    "getAlternativeApps": "Get alternative apps",
+    "theAppIsInstalled": "The app is installed",
+
+    "scanQrCode": "Open your favorit QR scanner app and scan the following QR code:",
+    "or": "OR",
+    "enterKeyManually": "If you can't scan QR code, then enter the secret key manually:",
+    "whenKeyEntered": "Go to the next step, after you will see temporary code in your two-factor auth app.",
+    "ready": "Ready",
+
+    "codePlaceholder": "Enter the code here",
+    "enterCodeFromApp": "In order to finish two-factor auth setup, please enter the code received in mobile app:",
+    "enableTwoFactorAuth": "Enable two-factor auth"
+}

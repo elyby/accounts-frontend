@@ -1,0 +1,13 @@
+@import '~components/ui/colors.scss';
+
+.stepper {
+    width: 35%;
+    margin: 0 auto;
+}
+
+.currentAccountEmail {
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 1.2;
+}

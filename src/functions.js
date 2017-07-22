@@ -1,5 +1,6 @@
+// @flow
 let lastId = 0;
-export function uniqueId(prefix = 'id') {
+export function uniqueId(prefix: string = 'id'): string {
     return `${prefix}${++lastId}`;
 }
 
@@ -9,7 +10,7 @@ export function uniqueId(prefix = 'id') {
  *
  * @return {object}
  */
-export function omit(obj, keys) {
+export function omit(obj: Object, keys: Array<string>): Object {
     const newObj = {...obj};
 
     keys.forEach((key) => {
@@ -26,7 +27,7 @@ export function omit(obj, keys) {
  *
  * @return {Promise}
  */
-export function loadScript(src) {
+export function loadScript(src: string): Promise<*> {
     const script = document.createElement('script');
 
     script.async = true;
@@ -34,10 +35,12 @@ export function loadScript(src) {
     script.src = src;
 
     return new Promise((resolve, reject) => {
-        script.onlaod = resolve;
+        script.onload = resolve;
         script.onerror = reject;
 
-        document.body.appendChild(script);
+        if (document && document.body) {
+            document.body.appendChild(script);
+        }
     });
 }
 
@@ -45,7 +48,7 @@ export const rAF = window.requestAnimationFrame
     || window.mozRequestAnimationFrame
     || window.webkitRequestAnimationFrame
     || window.msRequestAnimationFrame
-    || ((cb) => setTimeout(cb, 1000 / 60));
+    || ((cb: Function) => setTimeout(cb, 1000 / 60));
 
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
@@ -60,7 +63,7 @@ export const rAF = window.requestAnimationFrame
  * @param {number} [timeout=100] - timeout in ms
  * @param {bool} [immediate=false] - whether to execute at the beginning
  */
-export debounce from 'debounce';
+export { default as debounce } from 'debounce';
 
 /**
  * @param {string} jwt
@@ -69,7 +72,7 @@ export debounce from 'debounce';
  *
  * @return {object} - decoded jwt payload
  */
-export function getJwtPayload(jwt) {
+export function getJwtPayload(jwt: string): Object {
     const parts = (jwt || '').split('.');
 
     if (parts.length !== 3) {
@@ -88,9 +91,14 @@ export function getJwtPayload(jwt) {
  *
  * @return {number}
  */
-export function getScrollTop() {
+export function getScrollTop(): number {
     const doc = document.documentElement;
-    return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
+    if (doc) {
+        return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+    }
+
+    return 0;
 }
 
 /**
@@ -100,12 +108,16 @@ export function getScrollTop() {
  */
 
 const TIME_CONSTANT = 100; // higher numbers - slower animation
-export function scrollTo(y) {
+export function scrollTo(y: number) {
     const start = Date.now();
     let scrollWasTouched = false;
     rAF(() => { // wrap in rAF to optimize initial reading of scrollTop
-        const contentHeight = document.documentElement.scrollHeight;
-        const windowHeight = window.innerHeight;
+        if (!document.documentElement) {
+            return;
+        }
+
+        const contentHeight = document.documentElement.scrollHeight || 0;
+        const windowHeight: number = window.innerHeight;
         if (contentHeight < y + windowHeight) {
             y = contentHeight - windowHeight;
         }
@@ -169,6 +181,6 @@ export function restoreScroll() {
             y = getScrollTop() + top - SCROLL_ANCHOR_OFFSET;
         }
 
-        scrollTo(y, viewPort);
+        scrollTo(y);
     }, isFirstScroll ? 200 : 0);
 }

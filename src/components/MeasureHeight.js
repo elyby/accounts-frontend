@@ -1,7 +1,7 @@
-import React, { PureComponent, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+// @flow
+import React, { PureComponent } from 'react';
 
-import { omit, rAF } from 'functions';
+import { omit, rAF, debounce } from 'functions';
 
 /**
  * MeasureHeight is a component that allows you to measure the height of elements wrapped.
@@ -24,37 +24,40 @@ import { omit, rAF } from 'functions';
  */
 
 export default class MeasureHeight extends PureComponent {
-    static displayName = 'MeasureHeight';
-    static propTypes = {
-        shouldMeasure: PropTypes.func,
-        onMeasure: PropTypes.func,
-        state: PropTypes.any
+    props: {
+        shouldMeasure: (prevState: any, newState: any) => bool,
+        onMeasure: (height: number) => void,
+        state: any
     };
 
     static defaultProps = {
-        shouldMeasure: (prevState, newState) => prevState !== newState,
-        onMeasure: () => null
+        shouldMeasure: (prevState: any, newState: any) => prevState !== newState,
+        onMeasure: (height) => {} // eslint-disable-line
     };
 
-    componentDidMount() {
-        this.el = ReactDOM.findDOMNode(this);
+    el: HTMLDivElement;
 
+    componentDidMount() {
         this.measure();
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
         if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
             this.measure();
         }
     }
 
     render() {
-        const props = omit(this.props, Object.keys(MeasureHeight.propTypes));
+        const props: Object = omit(this.props, [
+            'shouldMeasure',
+            'onMeasure',
+            'state'
+        ]);
 
-        return <div {...props} />;
+        return <div {...props} ref={(el: HTMLDivElement) => this.el = el} />;
     }
 
-    measure() {
+    measure = debounce(() => {
         rAF(() => this.props.onMeasure(this.el.offsetHeight));
-    }
+    });
 }

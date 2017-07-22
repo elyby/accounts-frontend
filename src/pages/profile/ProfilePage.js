@@ -10,6 +10,7 @@ import Profile from 'components/profile/Profile';
 import ChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
 import ChangeEmailPage from 'pages/profile/ChangeEmailPage';
+import MultiFactorAuthPage from 'pages/profile/MultiFactorAuthPage';
 
 import { FooterMenu } from 'components/footerMenu';
 
@@ -39,6 +40,7 @@ class ProfilePage extends Component {
         return (
             <div className={styles.container}>
                 <Switch>
+                    <Route path="/profile/mfa/:step?" component={MultiFactorAuthPage} />
                     <Route path="/profile/change-password" component={ChangePasswordPage} />
                     <Route path="/profile/change-username" component={ChangeUsernamePage} />
                     <Route path="/profile/change-email/:step?/:code?" component={ChangeEmailPage} />
