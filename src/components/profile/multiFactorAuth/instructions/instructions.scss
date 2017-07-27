@@ -30,13 +30,15 @@
 
     transform: scale(1);
     opacity: 1;
-    transition: 0.2s ease-in;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    font-family: $font-family-title;
 }
 
 .osLogo {
     display: block;
     margin: 0 auto;
-    height: 90px;
+    height: 80px;
     color: #444;
 }
 
@@ -66,7 +68,7 @@
 }
 
 .appleTile {
-    $translateX: 125px;
+    $translateX: 124px;
 
     transform: translateX($translateX) scale(1);
 
@@ -86,7 +88,7 @@
 }
 
 .windowsTile {
-    $translateX: 232px;
+    $translateX: 230px;
 
     transform: translateX($translateX) scale(1);
 
@@ -107,7 +109,7 @@
 
 .osInstructionContainer {
     opacity: 0;
-    transition: 0.4s ease;
+    transition: 0.4s;
 
     .instructionActive & {
         opacity: 1;
@@ -127,7 +129,7 @@
 }
 
 .appList {
-    margin: 15px 0;
+    margin: 16px 0;
     font-size: 14px;
 
     li {
