@@ -11,13 +11,13 @@
     },
     "fr": {
         "name": "Français",
-        "progress": 82.1,
-        "isReleased": false
+        "progress": 100,
+        "isReleased": true
     },
     "id": {
         "name": "Bahasa Indonesia",
         "progress": 100,
-        "isReleased": false
+        "isReleased": true
     },
     "pl": {
         "name": "Polski",
