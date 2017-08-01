@@ -1,17 +1,28 @@
+// @flow
 import PromiseMiddlewareLayer from './PromiseMiddlewareLayer';
 import InternalServerError from './InternalServerError';
 
 const middlewareLayer = new PromiseMiddlewareLayer();
 
+export type Resp<T> = {
+    originalResponse: Response
+} & T;
+
+type Middleware = {
+    before?: () => Promise<*>,
+    after?: () => Promise<*>,
+    catch?: () => Promise<*>
+};
+
 export default {
     /**
      * @param {string} url
-     * @param {object} data - request data
-     * @param {object} options - additional options for fetch or middlewares
+     * @param {object} [data] - request data
+     * @param {object} [options] - additional options for fetch or middlewares
      *
      * @return {Promise}
      */
-    post(url, data, options = {}) {
+    post<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
         return doFetch(url, {
             method: 'POST',
             headers: {
@@ -24,12 +35,12 @@ export default {
 
     /**
      * @param {string} url
-     * @param {object} data - request data
-     * @param {object} options - additional options for fetch or middlewares
+     * @param {object} [data] - request data
+     * @param {object} [options] - additional options for fetch or middlewares
      *
      * @return {Promise}
      */
-    get(url, data, options = {}) {
+    get<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
         if (typeof data === 'object' && Object.keys(data).length) {
             const separator = url.indexOf('?') === -1 ? '?' : '&';
             url += separator + buildQuery(data);
@@ -59,13 +70,15 @@ export default {
      *                                        get response and callback to restart request as an arguments and should
      *                                        return a Promise that resolves to the new response.
      */
-    addMiddleware(middleware) {
+    addMiddleware(middleware: Middleware) {
         middlewareLayer.add(middleware);
     }
 };
 
 
-const checkStatus = (resp) => Promise[resp.status >= 200 && resp.status < 300 ? 'resolve' : 'reject'](resp);
+const checkStatus = (resp) => resp.status >= 200 && resp.status < 300
+    ? Promise.resolve(resp)
+    : Promise.reject(resp);
 const toJSON = (resp = {}) => {
     if (!resp.json) {
         // e.g. 'TypeError: Failed to fetch' due to CORS
@@ -87,7 +100,9 @@ const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {
 
     throw resp;
 });
-const handleResponseSuccess = (resp) => Promise[resp.success || typeof resp.success === 'undefined' ? 'resolve' : 'reject'](resp);
+const handleResponseSuccess = (resp) => resp.success || typeof resp.success === 'undefined'
+    ? Promise.resolve(resp)
+    : Promise.reject(resp);
 
 function doFetch(url, options = {}) {
     // NOTE: we are wrapping fetch, because it is returning
@@ -136,7 +151,7 @@ function convertQueryValue(value) {
  *
  * @return {string}
  */
-function buildQuery(data = {}) {
+function buildQuery(data: Object = {}): string {
     return Object.keys(data)
         .map(
             (keyName) =>

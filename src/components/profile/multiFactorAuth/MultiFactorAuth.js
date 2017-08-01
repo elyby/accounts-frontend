@@ -10,6 +10,7 @@ import styles from 'components/profile/profileForm.scss';
 import helpLinks from 'components/auth/helpLinks.scss';
 import Stepper from 'components/ui/stepper';
 import { ScrollMotion } from 'components/ui/motion';
+import mfa from 'services/api/mfa';
 
 import Instructions from './instructions';
 import KeyForm from './keyForm';
@@ -39,11 +40,17 @@ export default class MultiFactorAuth extends Component {
     };
 
     state: {
+        isLoading: bool,
         activeStep: number,
+        secret: string,
+        qrCodeSrc: string,
         code: string,
         newEmail: ?string
     } = {
+        isLoading: false,
         activeStep: this.props.step,
+        qrCodeSrc: '',
+        secret: '',
         code: this.props.code || '',
         newEmail: null
     };
@@ -56,7 +63,7 @@ export default class MultiFactorAuth extends Component {
     }
 
     render() {
-        const {activeStep} = this.state;
+        const {activeStep, isLoading} = this.state;
         const form = this.props.stepForm;
 
         const stepsData = [
@@ -76,6 +83,7 @@ export default class MultiFactorAuth extends Component {
         return (
             <Form form={form}
                 onSubmit={this.onFormSubmit}
+                isLoading={isLoading}
                 onInvalid={() => this.forceUpdate()}
             >
                 <div className={styles.contentWithBackButton}>
@@ -128,11 +136,16 @@ export default class MultiFactorAuth extends Component {
     }
 
     renderStepForms() {
-        const {activeStep} = this.state;
+        const {activeStep, secret, qrCodeSrc} = this.state;
 
         const steps = [
             () => <Instructions key="step1" />,
-            () => <KeyForm key="step2" />,
+            () => (
+                <KeyForm key="step2"
+                    secret={secret}
+                    qrCodeSrc={qrCodeSrc}
+                />
+            ),
             () => (
                 <Confirmation key="step3"
                     form={this.props.stepForm}
@@ -183,7 +196,15 @@ export default class MultiFactorAuth extends Component {
     };
 
     onFormSubmit = () => {
-        this.nextStep();
+        this.setState({isLoading: true});
+        mfa.getSecret().then((resp) => {
+            this.setState({
+                isLoading: false,
+                secret: resp.secret,
+                qrCodeSrc: `data:image/svg+xml;base64,${resp.qr}`
+            });
+            this.nextStep();
+        });
         // const {activeStep} = this.state;
         // const form = this.props.stepForms[activeStep];
         // const promise = this.props.onSubmit(activeStep, form);

@@ -10,11 +10,14 @@ import messages from '../MultiFactorAuth.intl.json';
 
 import styles from './key-form.scss';
 
-export default function KeyForm() {
-    const key = '123 123 52354 1234';
+export default function KeyForm({secret, qrCodeSrc}: {
+    secret: string,
+    qrCodeSrc: string
+}) {
+    const formattedSecret = formatSecret(secret);
 
     return (
-        <div className={profileForm.formBody} key="step2">
+        <div className={profileForm.formBody}>
             <div className={profileForm.formRow}>
                 <p className={profileForm.description}>
                     <Message {...messages.scanQrCode} />
@@ -23,22 +26,22 @@ export default function KeyForm() {
 
             <div className={profileForm.formRow}>
                 <div className={styles.qrCode}>
-                    <img src="//placekitten.com/g/242/242" alt={key} />
+                    <img src={qrCodeSrc} alt={secret} />
                 </div>
             </div>
 
             <div className={profileForm.formRow}>
                 <p className={classNames(styles.manualDescription, profileForm.description)}>
-                    <div className={styles.or}>
+                    <span className={styles.or}>
                         <Message {...messages.or} />
-                    </div>
+                    </span>
                     <Message {...messages.enterKeyManually} />
                 </p>
             </div>
 
             <div className={profileForm.formRow}>
                 <div className={styles.key}>
-                    {key}
+                    {formattedSecret}
                 </div>
             </div>
 
@@ -49,4 +52,8 @@ export default function KeyForm() {
             </div>
         </div>
     );
+}
+
+function formatSecret(secret: string): string {
+    return (secret.match(/.{1,4}/g) || []).join(' ');
 }

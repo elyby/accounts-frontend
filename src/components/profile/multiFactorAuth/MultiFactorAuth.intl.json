@@ -7,7 +7,7 @@
     "getAlternativeApps": "Get alternative apps",
     "theAppIsInstalled": "The app is installed",
 
-    "scanQrCode": "Open your favorit QR scanner app and scan the following QR code:",
+    "scanQrCode": "Open your favorite QR scanner app and scan the following QR code:",
     "or": "OR",
     "enterKeyManually": "If you can't scan QR code, then enter the secret key manually:",
     "whenKeyEntered": "Go to the next step, after you will see temporary code in your two-factor auth app.",
