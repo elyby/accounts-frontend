@@ -11,7 +11,6 @@
     "start": "npm run clean && npm run build:dll && webpack-dev-server --progress --colors",
     "clean": "rm -rf dist/",
     "up": "npm update",
-    "lockDeps": "npm shrinkwrap --dev",
     "test": "npm run build:dll && karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "flow": "flow",

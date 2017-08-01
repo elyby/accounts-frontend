@@ -11,14 +11,14 @@ const webpackConfig = require('../webpack.dll.config.js');
 const compiler = webpack(webpackConfig);
 
 Promise.all([
-    stat(__dirname + '/../npm-shrinkwrap.json'),
+    stat(__dirname + '/../package-lock.json'),
     stat(__dirname + '/../dll/vendor.json')
 ])
 .then(function(stats) {
-    const shrinkwrap = new Date(stats[0].mtime);
+    const lockFile = new Date(stats[0].mtime);
     const dll = new Date(stats[1].mtime);
 
-    if (dll < shrinkwrap) {
+    if (dll < lockFile) {
         return Promise.reject({
             code: 'OUTDATED'
         });
