@@ -42,7 +42,7 @@ const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
 
 const isDockerized = !!process.env.DOCKERIZED;
 const isCI = !!process.env.CI;
-const isSilent = isCI || process.argv.some((arg) => /quite/.test(arg));
+const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
 if (isTest) {
