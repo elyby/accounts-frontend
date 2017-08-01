@@ -18,8 +18,8 @@
     "i18n:publish": "babel-node --presets es2015,stage-0 ./scripts/i18n-onesky.js publish",
     "i18n:pull": "babel-node --presets es2015,stage-0 ./scripts/i18n-onesky.js pull",
     "build": "npm run clean && npm run build:webpack -- --progress",
-    "build:webpack": "webpack --colors -p",
-    "build:quite": "npm run clean && npm run build:webpack -- --quite",
+    "build:webpack": "webpack --colors -p --bail",
+    "build:quiet": "npm run clean && npm run build:webpack -- --quiet",
     "build:dll": "node ./scripts/build-dll.js"
   },
   "dependencies": {
