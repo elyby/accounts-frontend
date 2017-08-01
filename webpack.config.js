@@ -178,7 +178,7 @@ const webpackConfig = {
             },
             {
                 test: /\.intl\.json$/,
-                loader: 'babel!intl!json'
+                loader: 'babel!intl'
             },
             {
                 test: /\.font\.(js|json)$/,
