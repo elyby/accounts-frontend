@@ -201,7 +201,7 @@ export default class MultiFactorAuth extends Component {
             this.setState({
                 isLoading: false,
                 secret: resp.secret,
-                qrCodeSrc: `data:image/svg+xml;base64,${resp.qr}`
+                qrCodeSrc: resp.qr
             });
             this.nextStep();
         });
