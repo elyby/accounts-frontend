@@ -93,7 +93,7 @@ export default class MultiFactorAuth extends Component {
                         <div className={styles.formBody}>
                             <Message {...messages.mfaTitle}>
                                 {(pageTitle) => (
-                                    <h3 className={styles.violetTitle}>
+                                    <h3 className={styles.title}>
                                         <Helmet title={pageTitle} />
                                         {pageTitle}
                                     </h3>
@@ -108,7 +108,7 @@ export default class MultiFactorAuth extends Component {
                         </div>
                     </div>
 
-                    <div className={mfaStyles.stepper}>
+                    <div className={styles.stepper}>
                         <Stepper totalSteps={STEPS_TOTAL} activeStep={activeStep} />
                     </div>
 
@@ -116,7 +116,7 @@ export default class MultiFactorAuth extends Component {
                         {this.renderStepForms()}
 
                         <Button
-                            color="violet"
+                            color="green"
                             type="submit"
                             block
                             label={buttonLabel}

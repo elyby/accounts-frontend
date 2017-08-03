@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
-import classNames from 'classnames';
 import Helmet from 'react-helmet';
 import { Motion, spring } from 'react-motion';
 
@@ -10,6 +9,7 @@ import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
 import helpLinks from 'components/auth/helpLinks.scss';
 import MeasureHeight from 'components/MeasureHeight';
+import Stepper from 'components/ui/stepper';
 
 import changeEmail from './changeEmail.scss';
 import messages from './ChangeEmail.intl.json';
@@ -95,12 +95,8 @@ export default class ChangeEmail extends Component {
                         </div>
                     </div>
 
-                    <div className={changeEmail.steps}>
-                        {(new Array(STEPS_TOTAL)).fill(0).map((_, step) => (
-                            <div className={classNames(changeEmail.step, {
-                                [changeEmail.activeStep]: step <= activeStep
-                            })} key={step} />
-                        ))}
+                    <div className={changeEmail.stepper}>
+                        <Stepper totalSteps={STEPS_TOTAL} activeStep={activeStep} />
                     </div>
 
                     <div className={styles.form}>
