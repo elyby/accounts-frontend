@@ -8,10 +8,15 @@ import styles from './instructions.scss';
 
 type OS = 'android'|'ios'|'windows';
 
-const linksByOs: {[key: OS]: Array<{link: string, label: string}>} = {
+const linksByOs: {
+    [key: OS]: {
+        searchLink: string,
+        featured: Array<{link: string, label: string}>
+    }
+} = {
     android: {
-        storeSearch: 'https://play.google.com/store/search?q=totp%20authenticator',
-        recommendations: [
+        searchLink: 'https://play.google.com/store/search?q=totp%20authenticator',
+        featured: [
             {
                 link: 'https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2',
                 label: 'Google Authenticator',
@@ -27,8 +32,8 @@ const linksByOs: {[key: OS]: Array<{link: string, label: string}>} = {
         ],
     },
     ios: {
-        storeSearch: 'https://linkmaker.itunes.apple.com/en-us?mediaType=ios_apps&term=authenticator',
-        recommendations: [
+        searchLink: 'https://linkmaker.itunes.apple.com/en-us?mediaType=ios_apps&term=authenticator',
+        featured: [
             {
                 link: 'https://itunes.apple.com/ru/app/google-authenticator/id388497605',
                 label: 'Google Authenticator',
@@ -44,8 +49,8 @@ const linksByOs: {[key: OS]: Array<{link: string, label: string}>} = {
         ],
     },
     windows: {
-        storeSearch: 'https://www.microsoft.com/be-by/store/search/apps?devicetype=mobile&q=authenticator',
-        recommendations: [
+        searchLink: 'https://www.microsoft.com/be-by/store/search/apps?devicetype=mobile&q=authenticator',
+        featured: [
             {
                 link: 'https://www.microsoft.com/en-us/store/p/microsoft-authenticator/9nblgggzmcj6',
                 label: 'Microsoft Authenticator',
@@ -74,7 +79,7 @@ export default function OsInstruction({
             </h3>
 
             <ul className={styles.appList}>
-                {linksByOs[os].recommendations.map((item) => (
+                {linksByOs[os].featured.map((item) => (
                     <li key={item.label}>
                         <a href={item.link} target="_blank">
                             {item.label}
@@ -84,7 +89,7 @@ export default function OsInstruction({
             </ul>
 
             <div className={styles.otherApps}>
-                <a href={linksByOs[os].storeSearch} target="_blank">
+                <a href={linksByOs[os].searchLink} target="_blank">
                     <Message {...messages.findAlternativeApps} />
                 </a>
             </div>
