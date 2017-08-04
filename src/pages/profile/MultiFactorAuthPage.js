@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import MultiFactorAuth from 'components/profile/multiFactorAuth';
 
@@ -13,8 +14,7 @@ class MultiFactorAuthPage extends Component {
         }).isRequired,
         match: PropTypes.shape({
             params: PropTypes.shape({
-                step: PropTypes.oneOf(['step1', 'step2', 'step3']),
-                code: PropTypes.string
+                step: PropTypes.oneOf(['1', '2', '3'])
             })
         })
     };
@@ -27,23 +27,22 @@ class MultiFactorAuthPage extends Component {
     componentWillMount() {
         const step = this.props.match.params.step;
 
-        if (step && !/^step[123]$/.test(step)) {
+        if (step && !/^[1-3]$/.test(step)) {
             // wrong param value
             this.props.history.push('/404');
         }
     }
 
     render() {
-        const {step = 'step1', code} = this.props.match.params;
+        const {step = '1'} = this.props.match.params;
 
         return (
             <MultiFactorAuth
                 onSubmit={this.onSubmit}
                 email={this.props.email}
                 lang={this.props.lang}
-                step={step.slice(-1) * 1 - 1}
+                step={step * 1 - 1}
                 onChangeStep={this.onChangeStep}
-                code={code}
             />
         );
     }

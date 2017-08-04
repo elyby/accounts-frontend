@@ -55,11 +55,12 @@ export default class MultiFactorAuth extends Component {
         newEmail: null
     };
 
+    componentWillMount() {
+        this.syncState(this.props);
+    }
+
     componentWillReceiveProps(nextProps: Props) {
-        this.setState({
-            activeStep: typeof nextProps.step === 'number' ? nextProps.step : this.state.activeStep,
-            code: nextProps.code || ''
-        });
+        this.syncState(nextProps);
     }
 
     render() {
@@ -162,6 +163,25 @@ export default class MultiFactorAuth extends Component {
         );
     }
 
+    syncState(props: Props) {
+        if (props.step === 1) {
+            this.setState({isLoading: true});
+            mfa.getSecret().then((resp) => {
+                this.setState({
+                    isLoading: false,
+                    activeStep: props.step,
+                    secret: resp.secret,
+                    qrCodeSrc: resp.qr
+                });
+            });
+        } else {
+            this.setState({
+                activeStep: typeof props.step === 'number' ? props.step : this.state.activeStep,
+                code: props.code || ''
+            });
+        }
+    }
+
     nextStep() {
         const {activeStep} = this.state;
         const nextStep = activeStep + 1;
@@ -196,15 +216,7 @@ export default class MultiFactorAuth extends Component {
     };
 
     onFormSubmit = () => {
-        this.setState({isLoading: true});
-        mfa.getSecret().then((resp) => {
-            this.setState({
-                isLoading: false,
-                secret: resp.secret,
-                qrCodeSrc: resp.qr
-            });
-            this.nextStep();
-        });
+        this.nextStep();
         // const {activeStep} = this.state;
         // const form = this.props.stepForms[activeStep];
         // const promise = this.props.onSubmit(activeStep, form);

@@ -35,7 +35,7 @@ export default class MeasureHeight extends PureComponent {
         onMeasure: (height) => {} // eslint-disable-line
     };
 
-    el: HTMLDivElement;
+    el: ?HTMLDivElement;
 
     componentDidMount() {
         this.measure();
@@ -58,6 +58,6 @@ export default class MeasureHeight extends PureComponent {
     }
 
     measure = debounce(() => {
-        rAF(() => this.props.onMeasure(this.el.offsetHeight));
+        rAF(() => this.el && this.props.onMeasure(this.el.offsetHeight));
     });
 }

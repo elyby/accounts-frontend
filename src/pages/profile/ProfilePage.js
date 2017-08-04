@@ -40,11 +40,12 @@ class ProfilePage extends Component {
         return (
             <div className={styles.container}>
                 <Switch>
-                    <Route path="/profile/mfa/:step?" component={MultiFactorAuthPage} />
-                    <Route path="/profile/change-password" component={ChangePasswordPage} />
-                    <Route path="/profile/change-username" component={ChangeUsernamePage} />
+                    <Route path="/profile/mfa/step:step([1-3])" component={MultiFactorAuthPage} />
+                    <Route path="/profile/mfa" exact component={MultiFactorAuthPage} />
+                    <Route path="/profile/change-password" exact component={ChangePasswordPage} />
+                    <Route path="/profile/change-username" exact component={ChangeUsernamePage} />
                     <Route path="/profile/change-email/:step?/:code?" component={ChangeEmailPage} />
-                    <Route path="/profile" component={Profile} />
+                    <Route path="/profile" exact component={Profile} />
                     <Route path="/" exact component={Profile} />
                     <Redirect to="/404" />
                 </Switch>
