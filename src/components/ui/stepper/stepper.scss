@@ -65,3 +65,19 @@
         transition-delay: 0.3s;
     }
 }
+
+.greenSteps {
+    .activeStep {
+        &:after {
+            background: $green;
+        }
+    }
+}
+
+.violetSteps {
+    .activeStep {
+        &:after {
+            background: $violet;
+        }
+    }
+}

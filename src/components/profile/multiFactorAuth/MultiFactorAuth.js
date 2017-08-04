@@ -15,7 +15,6 @@ import mfa from 'services/api/mfa';
 import Instructions from './instructions';
 import KeyForm from './keyForm';
 import Confirmation from './confirmation';
-import mfaStyles from './mfa.scss';
 import messages from './MultiFactorAuth.intl.json';
 
 const STEPS_TOTAL = 3;

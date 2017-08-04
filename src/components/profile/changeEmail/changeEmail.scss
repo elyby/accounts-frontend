@@ -1,15 +1,3 @@
-@import '~components/ui/colors.scss';
-
-.stepper {
-    composes: stepper from 'components/profile/profileForm.scss';
-
-    .activeStep {
-        &:after {
-            background: $violet;
-        }
-    }
-}
-
 .currentAccountEmail {
     text-align: center;
     text-overflow: ellipsis;

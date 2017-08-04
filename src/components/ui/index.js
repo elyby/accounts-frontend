@@ -1,17 +1,27 @@
-export const SKIN_DARK = 'dark';
-export const SKIN_LIGHT = 'light';
+// @flow
+export type Color = 'green'
+    |'blue'
+    |'darkBlue'
+    |'violet'
+    |'lightViolet'
+    |'orange'
+    |'red'
+    |'black'
+    |'white';
 
-export const COLOR_GREEN = 'green';
-export const COLOR_BLUE = 'blue';
-export const COLOR_DARK_BLUE = 'darkBlue';
-export const COLOR_VIOLET = 'violet';
-export const COLOR_LIGHT_VIOLET = 'lightViolet';
-export const COLOR_ORANGE = 'orange';
-export const COLOR_RED = 'red';
-export const COLOR_BLACK = 'black';
-export const COLOR_WHITE = 'white';
+export type Skin = 'dark'|'light';
 
-export const colors = [
+export const COLOR_GREEN: Color = 'green';
+export const COLOR_BLUE: Color = 'blue';
+export const COLOR_DARK_BLUE: Color = 'darkBlue';
+export const COLOR_VIOLET: Color = 'violet';
+export const COLOR_LIGHT_VIOLET: Color = 'lightViolet';
+export const COLOR_ORANGE: Color = 'orange';
+export const COLOR_RED: Color = 'red';
+export const COLOR_BLACK: Color = 'black';
+export const COLOR_WHITE: Color = 'white';
+
+export const colors: Array<Color> = [
     COLOR_GREEN,
     COLOR_BLUE,
     COLOR_DARK_BLUE,
@@ -23,4 +33,7 @@ export const colors = [
     COLOR_WHITE
 ];
 
-export const skins = [SKIN_DARK, SKIN_LIGHT];
+export const SKIN_DARK: Skin = 'dark';
+export const SKIN_LIGHT: Skin = 'light';
+
+export const skins: Array<Skin> = [SKIN_DARK, SKIN_LIGHT];

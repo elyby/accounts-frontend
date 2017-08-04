@@ -18,8 +18,6 @@ import messages from './ChangeEmail.intl.json';
 const STEPS_TOTAL = 3;
 
 export default class ChangeEmail extends Component {
-    static displayName = 'ChangeEmail';
-
     static propTypes = {
         onChangeStep: PropTypes.func,
         lang: PropTypes.string.isRequired,
@@ -96,8 +94,8 @@ export default class ChangeEmail extends Component {
                         </div>
                     </div>
 
-                    <div className={changeEmail.stepper}>
-                        <Stepper totalSteps={STEPS_TOTAL} activeStep={activeStep} />
+                    <div className={styles.stepper}>
+                        <Stepper color="violet" totalSteps={STEPS_TOTAL} activeStep={activeStep} />
                     </div>
 
                     <div className={styles.form}>
