@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
@@ -9,8 +10,8 @@ import AuthPage from 'pages/auth/AuthPage';
 import ProfilePage from 'pages/profile/ProfilePage';
 import RulesPage from 'pages/rules/RulesPage';
 import PageNotFound from 'pages/404/PageNotFound';
+import SuccessOauthPage from 'pages/static/SuccessOauthPage';
 
-// @flow
 import { restoreScroll } from 'functions';
 import PrivateRoute from 'containers/PrivateRoute';
 import AuthFlowRoute from 'containers/AuthFlowRoute';
@@ -35,6 +36,7 @@ class RootPage extends Component {
         user: User,
         isPopupActive: boolean,
         onLogoClick: Function,
+        displayHeader: ?boolean,
         location: {
             pathname: string
         }
@@ -55,7 +57,7 @@ class RootPage extends Component {
 
     render() {
         const props = this.props;
-        const {user} = this.props;
+        const {user, displayHeader} = this.props;
         const isRegisterPage = props.location.pathname === '/register';
 
         if (document && document.body) {
@@ -70,20 +72,24 @@ class RootPage extends Component {
                 <div id="view-port" className={classNames(styles.viewPort, {
                     [styles.isPopupActive]: props.isPopupActive
                 })}>
-                    <div className={styles.header}>
-                        <div className={styles.headerContent}>
-                            <Link to="/" className={styles.logo} onClick={props.onLogoClick}>
-                                <Message {...messages.siteName} />
-                            </Link>
-                            <div className={styles.userbar}>
-                                <Userbar {...props}
-                                    guestAction={isRegisterPage ? 'login' : 'register'}
-                                />
+                    {displayHeader === false ? '' : (
+                        <div className={styles.header}>
+                            <div className={styles.headerContent}>
+                                <Link to="/" className={styles.logo} onClick={props.onLogoClick}>
+                                    <Message {...messages.siteName} />
+                                </Link>
+                                <div className={styles.userbar}>
+                                    <Userbar {...props}
+                                        guestAction={isRegisterPage ? 'login' : 'register'}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                     <div className={styles.body}>
                         <Switch>
+                            { /* TODO: это должен быть /oauth2/code/success */ }
+                            <Route path="/oauth/code/success" component={SuccessOauthPage} />
                             <PrivateRoute path="/profile" component={ProfilePage} />
                             <Route path="/404" component={PageNotFound} />
                             <Route path="/rules" component={RulesPage} />
