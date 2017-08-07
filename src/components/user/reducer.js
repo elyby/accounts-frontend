@@ -1,18 +1,21 @@
 // @flow
 import { UPDATE, SET, CHANGE_LANG } from './actions';
 
-export type User = {
+export type User = {|
     id: ?number,
     uuid: ?string,
     token: string,
     username: string,
     email: string,
     avatar: string,
-    isGuest: boolean,
-    isActive: boolean,
+    lang: string,
+    isGuest: bool,
+    isActive: bool,
     passwordChangedAt: ?number,
     hasMojangUsernameCollision: bool,
-};
+    maskedEmail?: string,
+    shouldAcceptRules?: bool,
+|};
 
 
 const defaults: User = {
@@ -32,8 +35,7 @@ const defaults: User = {
     hasMojangUsernameCollision: false,
 
     // frontend specific attributes
-    isGuest: true,
-    goal: null // the goal with wich user entered site
+    isGuest: true
 };
 
 export default function user(

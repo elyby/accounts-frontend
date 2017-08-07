@@ -10,7 +10,6 @@ import AuthPage from 'pages/auth/AuthPage';
 import ProfilePage from 'pages/profile/ProfilePage';
 import RulesPage from 'pages/rules/RulesPage';
 import PageNotFound from 'pages/404/PageNotFound';
-import SuccessOauthPage from 'pages/static/SuccessOauthPage';
 
 import { restoreScroll } from 'functions';
 import PrivateRoute from 'containers/PrivateRoute';
@@ -88,8 +87,6 @@ class RootPage extends Component {
                     )}
                     <div className={styles.body}>
                         <Switch>
-                            { /* TODO: это должен быть /oauth2/code/success */ }
-                            <Route path="/oauth/code/success" component={SuccessOauthPage} />
                             <PrivateRoute path="/profile" component={ProfilePage} />
                             <Route path="/404" component={PageNotFound} />
                             <Route path="/rules" component={RulesPage} />

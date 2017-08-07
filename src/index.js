@@ -15,8 +15,9 @@ import loader from 'services/loader';
 import logger from 'services/logger';
 import font from 'services/font';
 import history, { browserHistory } from 'services/history';
-import RootPage from 'pages/root/RootPage';
 import AuthFlowRoute from 'containers/AuthFlowRoute';
+import RootPage from 'pages/root/RootPage';
+import SuccessOauthPage from 'pages/auth/SuccessOauthPage';
 
 history.init();
 
@@ -39,7 +40,8 @@ Promise.all([
             <IntlProvider>
                 <Router history={browserHistory}>
                     <Switch>
-                        <AuthFlowRoute path="/oauth2/:version/:clientId?" component={() => null} />
+                        <Route path="/oauth2/code/success" component={SuccessOauthPage} />
+                        <AuthFlowRoute path="/oauth2/:version(v\d+)/:clientId?" component={() => null} />
                         <Route path="/" component={RootPage} />
                     </Switch>
                 </Router>

@@ -1,27 +1,48 @@
 // @flow
 import React, { Component } from 'react';
 
-import { FooterMenu } from 'components/footerMenu';
-
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
-import styles from './success-oauth.scss';
+import loader from 'services/loader';
 import rootMessages from 'pages/root/RootPage.intl.json';
+
+import styles from './success-oauth.scss';
 import messages from './SuccessOauthPage.intl.json';
 
-import profileStyles from 'pages/profile/profile.scss';
+import type { Query } from 'services/request';
 
 export default class SuccessOauthPage extends Component {
     props: {
-        appName: ?string
+        location: {
+            query: Query<'appName'>
+        }
     };
 
+    componentDidMount() {
+        this.onPageUpdate();
+
+        setTimeout(() => {
+            try {
+                // try to close window if possible
+                window.open('', '_self').close();
+            } catch (err) {
+                // don't care
+            }
+        }, 8000);
+    }
+
+    componentDidUpdate() {
+        this.onPageUpdate();
+    }
+
+    onPageUpdate() {
+        loader.hide();
+    }
+
     render() {
-        // TODO: detect GET param `appName`
-        // TODO: попытаться заркыть окно с помощью https://stackoverflow.com/a/31163281/5184751
-        const {appName} = this.props;
+        const appName = this.props.location.query.get('appName');
 
         return (
             <div className={styles.page}>
@@ -53,10 +74,6 @@ export default class SuccessOauthPage extends Component {
                         &nbsp;
                         <Message {...messages.youCanCloseThisPage} />
                     </div>
-                </div>
-
-                <div className={profileStyles.footer}>
-                    <FooterMenu/>
                 </div>
             </div>
         );
