@@ -35,7 +35,6 @@ class RootPage extends Component {
         user: User,
         isPopupActive: boolean,
         onLogoClick: Function,
-        displayHeader: ?boolean,
         location: {
             pathname: string
         }
@@ -56,11 +55,11 @@ class RootPage extends Component {
 
     render() {
         const props = this.props;
-        const {user, displayHeader} = this.props;
+        const {user, isPopupActive, onLogoClick} = this.props;
         const isRegisterPage = props.location.pathname === '/register';
 
         if (document && document.body) {
-            document.body.style.overflow = props.isPopupActive ? 'hidden' : '';
+            document.body.style.overflow = isPopupActive ? 'hidden' : '';
         }
 
         return (
@@ -69,22 +68,20 @@ class RootPage extends Component {
                     <html lang={user.lang} />
                 </Helmet>
                 <div id="view-port" className={classNames(styles.viewPort, {
-                    [styles.isPopupActive]: props.isPopupActive
+                    [styles.isPopupActive]: isPopupActive
                 })}>
-                    {displayHeader === false ? '' : (
-                        <div className={styles.header}>
-                            <div className={styles.headerContent}>
-                                <Link to="/" className={styles.logo} onClick={props.onLogoClick}>
-                                    <Message {...messages.siteName} />
-                                </Link>
-                                <div className={styles.userbar}>
-                                    <Userbar {...props}
-                                        guestAction={isRegisterPage ? 'login' : 'register'}
-                                    />
-                                </div>
+                    <div className={styles.header}>
+                        <div className={styles.headerContent}>
+                            <Link to="/" className={styles.logo} onClick={onLogoClick}>
+                                <Message {...messages.siteName} />
+                            </Link>
+                            <div className={styles.userbar}>
+                                <Userbar {...props}
+                                    guestAction={isRegisterPage ? 'login' : 'register'}
+                                />
                             </div>
                         </div>
-                    )}
+                    </div>
                     <div className={styles.body}>
                         <Switch>
                             <PrivateRoute path="/profile" component={ProfilePage} />
