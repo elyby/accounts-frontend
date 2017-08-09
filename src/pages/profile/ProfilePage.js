@@ -1,9 +1,11 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import logger from 'services/logger';
-
+import { browserHistory } from 'services/history';
 import Profile from 'components/profile/Profile';
 import ChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
@@ -13,14 +15,12 @@ import { FooterMenu } from 'components/footerMenu';
 
 import styles from './profile.scss';
 
-class ProfilePage extends Component {
-    displayName = 'ProfilePage';
+import type { FormModel } from 'components/ui/form';
 
-    static propTypes = {
-        onSubmit: PropTypes.func.isRequired,
-        fetchUserData: PropTypes.func.isRequired,
-        goToProfile: PropTypes.func.isRequired,
-        children: PropTypes.element
+class ProfilePage extends Component {
+    props: {
+        onSubmit: ({form: FormModel, sendData: () => Promise<*>}) => void,
+        fetchUserData: () => Promise<*>
     };
 
     static childContextTypes = {
@@ -31,7 +31,7 @@ class ProfilePage extends Component {
     getChildContext() {
         return {
             onSubmit: this.props.onSubmit,
-            goToProfile: () => this.props.fetchUserData().then(this.props.goToProfile)
+            goToProfile: () => this.props.fetchUserData().then(this.goToProfile)
         };
     }
 
@@ -53,18 +53,16 @@ class ProfilePage extends Component {
             </div>
         );
     }
+
+    goToProfile = () => browserHistory.push('/');
 }
 
 import { connect } from 'react-redux';
-import { browserHistory } from 'services/history';
 import { fetchUserData } from 'components/user/actions';
 import { create as createPopup } from 'components/ui/popup/actions';
 import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 
 export default connect(null, {
-    goToProfile() {
-        return browserHistory.push('/');
-    },
     fetchUserData,
     onSubmit: ({form, sendData}) => (dispatch) => {
         form.beginLoading();
