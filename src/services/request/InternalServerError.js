@@ -1,4 +1,5 @@
-function InternalServerError(error, resp) {
+// @flow
+function InternalServerError(error: Error|string|Object, resp?: Response|Object) {
     error = error || {};
 
     this.name = 'InternalServerError';
@@ -20,8 +21,8 @@ function InternalServerError(error, resp) {
         Object.assign(this, error);
     }
 }
+
 InternalServerError.prototype = Object.create(Error.prototype);
 InternalServerError.prototype.constructor = InternalServerError;
-
 
 export default InternalServerError;
