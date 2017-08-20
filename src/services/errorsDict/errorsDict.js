@@ -50,6 +50,10 @@ const errorsMap = {
         </span>
     ),
 
+    'error.totp_required': () => <Message {...messages.totpRequired} />,
+    'error.totp_incorrect': () => <Message {...messages.totpIncorrect} />,
+    'error.otp_already_enabled': () => <Message {...messages.mfaAlreadyEnabled} />,
+
     'error.rePassword_required': () => <Message {...messages.rePasswordRequired} />,
     'error.password_too_short': () => <Message {...messages.passwordTooShort} />,
     'error.rePassword_does_not_match': () => <Message {...messages.passwordsDoesNotMatch} />,

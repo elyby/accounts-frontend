@@ -1,26 +1,26 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 
 import classNames from 'classnames';
 
 import logger from 'services/logger';
 
-import FormModel from './FormModel';
 import styles from './form.scss';
 
-export default class Form extends Component {
-    static displayName = 'Form';
+import type FormModel from './FormModel';
 
-    static propTypes = {
-        id: PropTypes.string, // and id, that uniquely identifies form contents
-        isLoading: PropTypes.bool,
-        form: PropTypes.instanceOf(FormModel),
-        onSubmit: PropTypes.func,
-        onInvalid: PropTypes.func,
-        children: PropTypes.oneOfType([
-            PropTypes.arrayOf(PropTypes.node),
-            PropTypes.node
-        ])
-    };
+type Props = {
+    id: string,
+    isLoading: bool,
+    form?: FormModel,
+    onSubmit: Function,
+    onInvalid: (errors: {[errorKey: string]: string}) => void,
+    children: *
+};
+type InputElement = HTMLInputElement|HTMLTextAreaElement;
+
+export default class Form extends Component {
+    props: Props;
 
     static defaultProps = {
         id: 'default',
@@ -34,13 +34,15 @@ export default class Form extends Component {
         isLoading: this.props.isLoading || false
     };
 
+    formEl: ?HTMLFormElement;
+
     componentWillMount() {
         if (this.props.form) {
             this.props.form.addLoadingListener(this.onLoading);
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         if (nextProps.id !== this.props.id) {
             this.setState({
                 isTouched: false
@@ -55,9 +57,13 @@ export default class Form extends Component {
             });
         }
 
-        if (nextProps.form && this.props.form && nextProps.form !== this.props.form) {
+        const nextForm = nextProps.form;
+        if (nextForm
+            && this.props.form
+            && nextForm !== this.props.form
+        ) {
             this.props.form.removeLoadingListener(this.onLoading);
-            nextProps.form.addLoadingListener(this.onLoading);
+            nextForm.addLoadingListener(this.onLoading);
         }
     }
 
@@ -80,6 +86,7 @@ export default class Form extends Component {
                     }
                 )}
                 onSubmit={this.onFormSubmit}
+                ref={(el: ?HTMLFormElement) => this.formEl = el}
                 noValidate
             >
                 {this.props.children}
@@ -87,25 +94,32 @@ export default class Form extends Component {
         );
     }
 
-    onFormSubmit = (event) => {
-        event.preventDefault();
-
+    submit() {
         if (!this.state.isTouched) {
             this.setState({
                 isTouched: true
             });
         }
 
-        const form = event.currentTarget;
+        const form = this.formEl;
+
+        if (!form) {
+            return;
+        }
 
         if (form.checkValidity()) {
-            this.props.onSubmit();
+            Promise.resolve(this.props.onSubmit(
+                this.props.form ? this.props.form : new FormData(form)
+            ))
+            .catch((errors: {[key: string]: string}) => {
+                this.setErrors(errors);
+            });
         } else {
             const invalidEls = form.querySelectorAll(':invalid');
             const errors = {};
             invalidEls[0].focus(); // focus on first error
 
-            Array.from(invalidEls).reduce((errors, el) => {
+            Array.from(invalidEls).reduce((errors, el: InputElement) => {
                 if (!el.name) {
                     logger.warn('Found an element without name', {el});
 
@@ -124,10 +138,20 @@ export default class Form extends Component {
                 return errors;
             }, errors);
 
-            this.props.form && this.props.form.setErrors(errors);
-            this.props.onInvalid(errors);
+            this.setErrors(errors);
         }
+    }
+
+    setErrors(errors: {[key: string]: string}) {
+        this.props.form && this.props.form.setErrors(errors);
+        this.props.onInvalid(errors);
+    }
+
+    onFormSubmit = (event: Event) => {
+        event.preventDefault();
+
+        this.submit();
     };
 
-    onLoading = (isLoading) => this.setState({isLoading});
+    onLoading = (isLoading: bool) => this.setState({isLoading});
 }

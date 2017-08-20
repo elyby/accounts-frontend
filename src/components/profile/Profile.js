@@ -91,8 +91,13 @@ class Profile extends Component {
                             />
 
                             <ProfileField
+                                link="/profile/mfa"
                                 label={<Message {...messages.twoFactorAuth} />}
-                                value={<Message {...messages.disabled} />}
+                                value={user.isOtpEnabled ? (
+                                    <Message {...messages.enabled} />
+                                ) : (
+                                    <Message {...messages.disabled} />
+                                )}
                             />
 
                             <ProfileField

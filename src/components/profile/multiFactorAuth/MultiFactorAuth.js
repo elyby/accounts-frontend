@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
-import { Button, Form, FormModel } from 'components/ui/form';
+import { Button, FormModel } from 'components/ui/form';
 import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
-import helpLinks from 'components/auth/helpLinks.scss';
 import Stepper from 'components/ui/stepper';
 import { ScrollMotion } from 'components/ui/motion';
+import logger from 'services/logger';
 import mfa from 'services/api/mfa';
 
 import Instructions from './instructions';
@@ -17,42 +17,42 @@ import KeyForm from './keyForm';
 import Confirmation from './confirmation';
 import messages from './MultiFactorAuth.intl.json';
 
+import type { Form } from 'components/ui/form';
+
 const STEPS_TOTAL = 3;
 
+export type MfaStep = 0|1|2;
 type Props = {
     onChangeStep: Function,
     lang: string,
     email: string,
-    stepForm: FormModel,
-    onSubmit: Function,
-    step: 0|1|2,
-    code: string
+    confirmationForm: FormModel,
+    onSubmit: (form: FormModel, sendData: () => Promise<*>) => Promise<*>,
+    onComplete: Function,
+    step: MfaStep
 };
 
 export default class MultiFactorAuth extends Component {
     props: Props;
 
     static defaultProps = {
-        stepForm: new FormModel(),
-        onChangeStep() {},
+        confirmationForm: new FormModel(),
         step: 0
     };
 
     state: {
         isLoading: bool,
-        activeStep: number,
+        activeStep: MfaStep,
         secret: string,
-        qrCodeSrc: string,
-        code: string,
-        newEmail: ?string
+        qrCodeSrc: string
     } = {
         isLoading: false,
         activeStep: this.props.step,
         qrCodeSrc: '',
-        secret: '',
-        code: this.props.code || '',
-        newEmail: null
+        secret: ''
     };
+
+    confirmationFormEl: ?Form;
 
     componentWillMount() {
         this.syncState(this.props);
@@ -64,100 +64,84 @@ export default class MultiFactorAuth extends Component {
 
     render() {
         const {activeStep, isLoading} = this.state;
-        const form = this.props.stepForm;
 
         const stepsData = [
             {
-                buttonLabel: messages.theAppIsInstalled
+                buttonLabel: messages.theAppIsInstalled,
+                buttonAction: () => this.nextStep()
             },
             {
-                buttonLabel: messages.ready
+                buttonLabel: messages.ready,
+                buttonAction: () => this.nextStep()
             },
             {
-                buttonLabel: messages.enableTwoFactorAuth
+                buttonLabel: messages.enableTwoFactorAuth,
+                buttonAction: () => this.confirmationFormEl && this.confirmationFormEl.submit()
             }
         ];
 
-        const buttonLabel = stepsData[activeStep].buttonLabel;
+        const {buttonLabel, buttonAction} = stepsData[activeStep];
 
         return (
-            <Form form={form}
-                onSubmit={this.onFormSubmit}
-                isLoading={isLoading}
-                onInvalid={() => this.forceUpdate()}
-            >
-                <div className={styles.contentWithBackButton}>
-                    <BackButton />
+            <div className={styles.contentWithBackButton}>
+                <BackButton />
 
-                    <div className={styles.form}>
-                        <div className={styles.formBody}>
-                            <Message {...messages.mfaTitle}>
-                                {(pageTitle) => (
-                                    <h3 className={styles.title}>
-                                        <Helmet title={pageTitle} />
-                                        {pageTitle}
-                                    </h3>
-                                )}
-                            </Message>
+                <div className={styles.form}>
+                    <div className={styles.formBody}>
+                        <Message {...messages.mfaTitle}>
+                            {(pageTitle) => (
+                                <h3 className={styles.title}>
+                                    <Helmet title={pageTitle} />
+                                    {pageTitle}
+                                </h3>
+                            )}
+                        </Message>
 
-                            <div className={styles.formRow}>
-                                <p className={styles.description}>
-                                    <Message {...messages.mfaDescription} />
-                                </p>
-                            </div>
+                        <div className={styles.formRow}>
+                            <p className={styles.description}>
+                                <Message {...messages.mfaDescription} />
+                            </p>
                         </div>
                     </div>
-
-                    <div className={styles.stepper}>
-                        <Stepper totalSteps={STEPS_TOTAL} activeStep={activeStep} />
-                    </div>
-
-                    <div className={styles.form}>
-                        {this.renderStepForms()}
-
-                        <Button
-                            color="green"
-                            type="submit"
-                            block
-                            label={buttonLabel}
-                        />
-                    </div>
-
-                    {this.isLastStep() || 1 ? null : (
-                        <div className={helpLinks.helpLinks}>
-                            <a href="#" onClick={this.onSwitchStep}>
-                                <Message {...messages.alreadyReceivedCode} />
-                            </a>
-                        </div>
-                    )}
                 </div>
-            </Form>
+
+                <div className={styles.stepper}>
+                    <Stepper totalSteps={STEPS_TOTAL} activeStep={activeStep} />
+                </div>
+
+                <div className={styles.form}>
+                    {this.renderStepForms()}
+
+                    <Button
+                        color="green"
+                        onClick={buttonAction}
+                        loading={isLoading}
+                        block
+                        label={buttonLabel}
+                    />
+                </div>
+            </div>
         );
     }
 
     renderStepForms() {
         const {activeStep, secret, qrCodeSrc} = this.state;
 
-        const steps = [
-            () => <Instructions key="step1" />,
-            () => (
-                <KeyForm key="step2"
-                    secret={secret}
-                    qrCodeSrc={qrCodeSrc}
-                />
-            ),
-            () => (
-                <Confirmation key="step3"
-                    form={this.props.stepForm}
-                    isActiveStep={activeStep === 2}
-                    onCodeInput={this.onCodeInput}
-                />
-            )
-        ];
-
         return (
             <ScrollMotion activeStep={activeStep}>
-                {steps.map((renderStep) => renderStep())}
+                {[
+                    <Instructions key="step1" />,
+                    <KeyForm key="step2"
+                        secret={secret}
+                        qrCodeSrc={qrCodeSrc}
+                    />,
+                    <Confirmation key="step3"
+                        form={this.props.confirmationForm}
+                        formRef={(el: Form) => this.confirmationFormEl = el}
+                        onSubmit={this.onTotpSubmit}
+                        onInvalid={() => this.forceUpdate()}
+                    />
+                ]}
             </ScrollMotion>
         );
     }
@@ -165,72 +149,53 @@ export default class MultiFactorAuth extends Component {
     syncState(props: Props) {
         if (props.step === 1) {
             this.setState({isLoading: true});
+
             mfa.getSecret().then((resp) => {
                 this.setState({
                     isLoading: false,
-                    activeStep: props.step,
                     secret: resp.secret,
                     qrCodeSrc: resp.qr
                 });
             });
-        } else {
-            this.setState({
-                activeStep: typeof props.step === 'number' ? props.step : this.state.activeStep,
-                code: props.code || ''
-            });
         }
+
+        this.setState({
+            activeStep: typeof props.step === 'number' ? props.step : this.state.activeStep
+        });
     }
 
     nextStep() {
-        const {activeStep} = this.state;
-        const nextStep = activeStep + 1;
-        const newEmail = null;
+        const nextStep = this.state.activeStep + 1;
 
         if (nextStep < STEPS_TOTAL) {
-            this.setState({
-                activeStep: nextStep,
-                newEmail
-            });
-
             this.props.onChangeStep(nextStep);
+        } else {
+            this.props.onComplete();
         }
     }
 
-    isLastStep() {
-        return this.state.activeStep + 1 === STEPS_TOTAL;
-    }
+    onTotpSubmit = (form: FormModel): Promise<*> => {
+        this.setState({isLoading: true});
 
-    onSwitchStep = (event: Event) => {
-        event.preventDefault();
+        return this.props.onSubmit(
+            form,
+            () => {
+                const data = form.serialize();
 
-        this.nextStep();
-    };
+                return mfa.enable(data);
+            }
+        )
+        .catch((resp) => {
+            const {errors} = resp || {};
 
-    onCodeInput = (event: {target: HTMLInputElement}) => {
-        const {value} = event.target;
+            if (errors) {
+                return Promise.reject(errors);
+            }
 
-        this.setState({
-            code: this.props.code || value
-        });
-    };
-
-    onFormSubmit = () => {
-        this.nextStep();
-        // const {activeStep} = this.state;
-        // const form = this.props.stepForms[activeStep];
-        // const promise = this.props.onSubmit(activeStep, form);
-        //
-        // if (!promise || !promise.then) {
-        //     throw new Error('Expecting promise from onSubmit');
-        // }
-        //
-        // promise.then(() => this.nextStep(), (resp) => {
-        //     if (resp.errors) {
-        //         form.setErrors(resp.errors);
-        //         this.forceUpdate();
-        //     } else {
-        //         return Promise.reject(resp);
-        //     }
-        // });
+            logger.error('MFA: Unexpected form submit result', {
+                resp
+            });
+        })
+        .finally(() => this.setState({isLoading: false}));
     };
 }

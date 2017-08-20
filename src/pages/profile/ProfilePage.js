@@ -5,14 +5,12 @@ import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import logger from 'services/logger';
-import { browserHistory } from 'services/history';
+import { FooterMenu } from 'components/footerMenu';
 import Profile from 'components/profile/Profile';
 import ChangePasswordPage from 'pages/profile/ChangePasswordPage';
 import ChangeUsernamePage from 'pages/profile/ChangeUsernamePage';
 import ChangeEmailPage from 'pages/profile/ChangeEmailPage';
 import MultiFactorAuthPage from 'pages/profile/MultiFactorAuthPage';
-
-import { FooterMenu } from 'components/footerMenu';
 
 import styles from './profile.scss';
 
@@ -67,7 +65,10 @@ import PasswordRequestForm from 'components/profile/passwordRequestForm/Password
 
 export default connect(null, {
     fetchUserData,
-    onSubmit: ({form, sendData}) => (dispatch) => {
+    onSubmit: ({form, sendData}: {
+        form: FormModel,
+        sendData: () => Promise<*>
+    }) => (dispatch) => {
         form.beginLoading();
         return sendData()
             .catch((resp) => {
@@ -76,7 +77,7 @@ export default connect(null, {
                 // prevalidate user input, because requestPassword popup will block the
                 // entire form from input, so it must be valid
                 if (resp.errors) {
-                    Reflect.deleteProperty(resp.errors, 'password');
+                    delete resp.errors.password;
 
                     if (resp.errors.email && resp.data && resp.data.canRepeatIn) {
                         resp.errors.email = {
@@ -92,10 +93,13 @@ export default connect(null, {
                         return Promise.reject(resp);
                     }
 
-                    return Promise.resolve({requirePassword});
+                    if (requirePassword) {
+                        return requestPassword(form);
+                    }
                 }
+
+                return Promise.reject(resp);
             })
-            .then((resp) => !resp.requirePassword || requestPassword(form))
             .catch((resp) => {
                 if (!resp || !resp.errors) {
                     logger.warn('Unexpected profile editing error', {

@@ -284,7 +284,8 @@
     }
 
     [type="submit"] {
-        background: url('./images/loader_button.gif') #95a5a6 center center;
+        // TODO: duplicate of .loading from components/ui/buttons
+        background: url('./images/loader_button.gif') #95a5a6 center center !important;
 
         cursor: default;
         color: #fff;

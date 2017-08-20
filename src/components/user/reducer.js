@@ -11,12 +11,12 @@ export type User = {|
     lang: string,
     isGuest: bool,
     isActive: bool,
+    isOtpEnabled: bool,
     passwordChangedAt: ?number,
     hasMojangUsernameCollision: bool,
     maskedEmail?: string,
     shouldAcceptRules?: bool,
 |};
-
 
 const defaults: User = {
     id: null,
@@ -30,6 +30,7 @@ const defaults: User = {
     avatar: '',
     lang: '',
     isActive: false,
+    isOtpEnabled: false,
     shouldAcceptRules: false, // whether user need to review updated rules
     passwordChangedAt: null,
     hasMojangUsernameCollision: false,

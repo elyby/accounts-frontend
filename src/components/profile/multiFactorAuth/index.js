@@ -1,1 +1,1 @@
-export { default } from './MultiFactorAuth';
+export { default, MfaStep } from './MultiFactorAuth';

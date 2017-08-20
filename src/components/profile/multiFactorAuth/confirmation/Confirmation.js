@@ -3,38 +3,44 @@ import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
-import { Input, FormModel } from 'components/ui/form';
+import { Input, Form, FormModel } from 'components/ui/form';
 
 import profileForm from 'components/profile/profileForm.scss';
 import messages from '../MultiFactorAuth.intl.json';
 
 export default function Confirmation({
     form,
-    isActiveStep,
-    onCodeInput
+    formRef = () => {},
+    onSubmit,
+    onInvalid
 }: {
     form: FormModel,
-    isActiveStep: bool,
-    onCodeInput: (event: Event & {target: HTMLInputElement}) => void
+    formRef?: (el: ?Form) => void,
+    onSubmit: () => Promise<*>,
+    onInvalid: Function
 }) {
     return (
-        <div className={profileForm.formBody}>
-            <div className={profileForm.formRow}>
-                <p className={profileForm.description}>
-                    <Message {...messages.enterCodeFromApp} />
-                </p>
-            </div>
+        <Form form={form}
+            onSubmit={onSubmit}
+            onInvalid={onInvalid}
+            ref={formRef}
+        >
+            <div className={profileForm.formBody}>
+                <div className={profileForm.formRow}>
+                    <p className={profileForm.description}>
+                        <Message {...messages.enterCodeFromApp} />
+                    </p>
+                </div>
 
-            <div className={profileForm.formRow}>
-                <Input {...form.bindField('key')}
-                    required={isActiveStep}
-                    onChange={onCodeInput}
-                    autoComplete="off"
-                    skin="light"
-                    color="violet"
-                    placeholder={messages.codePlaceholder}
-                />
+                <div className={profileForm.formRow}>
+                    <Input {...form.bindField('totp')}
+                        required
+                        autoComplete="off"
+                        skin="light"
+                        placeholder={messages.codePlaceholder}
+                    />
+                </div>
             </div>
-        </div>
+        </Form>
     );
 }

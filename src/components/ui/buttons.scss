@@ -79,3 +79,13 @@
     display: block;
     width: 100%;
 }
+
+.loading {
+    background: url('./form/images/loader_button.gif') #95a5a6 center center !important;
+
+    cursor: default;
+    color: #fff;
+    transition: 0.25s;
+    outline: none;
+    pointer-events: none;
+}

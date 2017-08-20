@@ -1,22 +1,21 @@
+// @flow
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import MultiFactorAuth from 'components/profile/multiFactorAuth';
+import MultiFactorAuth, { MfaStep } from 'components/profile/multiFactorAuth';
 
-import accounts from 'services/api/accounts';
+import type { FormModel } from 'components/ui/form';
 
 class MultiFactorAuthPage extends Component {
-    static propTypes = {
-        email: PropTypes.string.isRequired,
-        lang: PropTypes.string.isRequired,
-        history: PropTypes.shape({
-            push: PropTypes.func
-        }).isRequired,
-        match: PropTypes.shape({
-            params: PropTypes.shape({
-                step: PropTypes.oneOf(['1', '2', '3'])
-            })
-        })
+    props: {
+        history: {
+            push: (string) => void
+        },
+        match: {
+            params: {
+                step?: '1'|'2'|'3'
+            }
+        }
     };
 
     static contextTypes = {
@@ -34,71 +33,32 @@ class MultiFactorAuthPage extends Component {
     }
 
     render() {
-        const {step = '1'} = this.props.match.params;
+        const step = (parseInt(this.props.match.params.step, 10) || 1) - 1;
 
         return (
             <MultiFactorAuth
                 onSubmit={this.onSubmit}
-                email={this.props.email}
-                lang={this.props.lang}
-                step={step * 1 - 1}
+                step={step}
                 onChangeStep={this.onChangeStep}
+                onComplete={this.onComplete}
             />
         );
     }
 
-    onChangeStep = (step) => {
-        this.props.history.push(`/profile/mfa/step${++step}`);
+    onChangeStep = (step: MfaStep) => {
+        this.props.history.push(`/profile/mfa/step${step + 1}`);
     };
 
-    onSubmit = (step, form) => {
+    onSubmit = (form: FormModel, sendData: () => Promise<*>) => {
         return this.context.onSubmit({
             form,
-            sendData: () => {
-                const data = form.serialize();
-
-                switch (step) {
-                    case 0:
-                        return accounts.requestEmailChange(data).catch(handleErrors());
-                    case 1:
-                        return accounts.setNewEmail(data).catch(handleErrors('/profile/change-email'));
-                    case 2:
-                        return accounts.confirmNewEmail(data).catch(handleErrors('/profile/change-email'));
-                    default:
-                        throw new Error(`Unsupported step ${step}`);
-                }
-            }
-        }).then(() => {
-            step > 1 && this.context.goToProfile();
+            sendData
         });
     };
-}
 
-function handleErrors(repeatUrl) {
-    return (resp) => {
-        if (resp.errors) {
-            if (resp.errors.key) {
-                resp.errors.key = {
-                    type: resp.errors.key,
-                    payload: {}
-                };
-
-                if (['error.key_not_exists', 'error.key_expire'].includes(resp.errors.key.type) && repeatUrl) {
-                    Object.assign(resp.errors.key.payload, {
-                        repeatUrl
-                    });
-                }
-            }
-        }
-
-        return Promise.reject(resp);
+    onComplete = () => {
+        this.context.goToProfile();
     };
 }
 
-import { connect } from 'react-redux';
-
-export default connect((state) => ({
-    email: state.user.email,
-    lang: state.user.lang
-}), {
-})(MultiFactorAuthPage);
+export default MultiFactorAuthPage;

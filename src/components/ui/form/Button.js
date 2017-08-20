@@ -1,27 +1,23 @@
-import React, { PropTypes } from 'react';
+// @flow
+import React from 'react';
 
 import classNames from 'classnames';
 
 import buttons from 'components/ui/buttons.scss';
-import { colors, COLOR_GREEN } from 'components/ui';
-import { omit } from 'functions';
+import { COLOR_GREEN } from 'components/ui';
 
 import FormComponent from './FormComponent';
 
-export default class Button extends FormComponent {
-    static displayName = 'Button';
+import type { Color } from 'components/ui';
 
-    static propTypes = {
-        label: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]).isRequired,
-        block: PropTypes.bool,
-        small: PropTypes.bool,
-        color: PropTypes.oneOf(colors),
-        className: PropTypes.string
+export default class Button extends FormComponent {
+    props: {
+        label: string | {id: string},
+        block: bool,
+        small: bool,
+        loading: bool,
+        className: string,
+        color: Color
     };
 
     static defaultProps = {
@@ -29,20 +25,25 @@ export default class Button extends FormComponent {
     };
 
     render() {
-        const { color, block, small, className } = this.props;
-
-        const props = omit(this.props, Object.keys(Button.propTypes));
-
-        const label = this.formatMessage(this.props.label);
+        const {
+            color,
+            block,
+            small,
+            className,
+            loading,
+            label,
+            ...restProps
+        } = this.props;
 
         return (
             <button className={classNames(buttons[color], {
+                [buttons.loading]: loading,
                 [buttons.block]: block,
                 [buttons.smallButton]: small
             }, className)}
-                {...props}
+                {...restProps}
             >
-                {label}
+                {this.formatMessage(label)}
             </button>
         );
     }
