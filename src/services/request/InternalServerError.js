@@ -4,6 +4,7 @@ function InternalServerError(error: Error|string|Object, resp?: Response|Object)
 
     this.name = 'InternalServerError';
     this.message = 'InternalServerError';
+    this.error = error;
     this.stack = (new Error()).stack;
 
     if (resp) {

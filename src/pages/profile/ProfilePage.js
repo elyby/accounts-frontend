@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import logger from 'services/logger';
+import { browserHistory } from 'services/history';
 import { FooterMenu } from 'components/footerMenu';
 import Profile from 'components/profile/Profile';
 import ChangePasswordPage from 'pages/profile/ChangePasswordPage';
