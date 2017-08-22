@@ -14,7 +14,9 @@ import androidLogo from './images/android.svg';
 import appleLogo from './images/apple.svg';
 import windowsLogo from './images/windows.svg';
 
-export default class Instructions extends Component {
+export default class Instructions extends Component<{}, {
+    activeOs: null|'android'|'ios'|'windows'
+}> {
     state: {
         activeOs: null|'android'|'ios'|'windows'
     } = {

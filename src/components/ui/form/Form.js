@@ -17,11 +17,13 @@ type Props = {
     onInvalid: (errors: {[errorKey: string]: string}) => void,
     children: *
 };
+type State = {
+    isTouched: bool,
+    isLoading: bool
+};
 type InputElement = HTMLInputElement|HTMLTextAreaElement;
 
-export default class Form extends Component {
-    props: Props;
-
+export default class Form extends Component<Props, State> {
     static defaultProps = {
         id: 'default',
         isLoading: false,

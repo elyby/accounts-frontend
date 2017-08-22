@@ -6,18 +6,16 @@ import MultiFactorAuth, { MfaStep } from 'components/profile/multiFactorAuth';
 
 import type { FormModel } from 'components/ui/form';
 
-class MultiFactorAuthPage extends Component {
-    props: {
-        history: {
-            push: (string) => void
-        },
-        match: {
-            params: {
-                step?: '1'|'2'|'3'
-            }
+class MultiFactorAuthPage extends Component<{
+    history: {
+        push: (string) => void
+    },
+    match: {
+        params: {
+            step?: '1'|'2'|'3'
         }
-    };
-
+    }
+}> {
     static contextTypes = {
         onSubmit: PropTypes.func.isRequired,
         goToProfile: PropTypes.func.isRequired

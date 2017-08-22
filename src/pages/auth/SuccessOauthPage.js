@@ -13,13 +13,11 @@ import messages from './SuccessOauthPage.intl.json';
 
 import type { Query } from 'services/request';
 
-export default class SuccessOauthPage extends Component {
-    props: {
-        location: {
-            query: Query<'appName'>
-        }
-    };
-
+export default class SuccessOauthPage extends Component<{
+    location: {
+        query: Query<'appName'>
+    }
+}> {
     componentDidMount() {
         this.onPageUpdate();
 

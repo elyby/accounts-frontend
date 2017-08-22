@@ -59,19 +59,17 @@ const rules = [
     }
 ];
 
-export default class RulesPage extends Component {
-    props: {
-        location: {
-            pathname: string,
-            search: string,
-            hash: string
-        },
+export default class RulesPage extends Component<{
+    location: {
+        pathname: string,
+        search: string,
+        hash: string
+    },
 
-        history: {
-            replace: Function
-        }
-    };
-
+    history: {
+        replace: Function
+    }
+}> {
     render() {
         let {hash} = this.props.location;
 

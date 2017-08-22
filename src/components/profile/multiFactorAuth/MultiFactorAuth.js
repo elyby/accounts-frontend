@@ -32,9 +32,12 @@ type Props = {
     step: MfaStep
 };
 
-export default class MultiFactorAuth extends Component {
-    props: Props;
-
+export default class MultiFactorAuth extends Component<Props, {
+    isLoading: bool,
+    activeStep: MfaStep,
+    secret: string,
+    qrCodeSrc: string
+}> {
     static defaultProps = {
         confirmationForm: new FormModel(),
         step: 0

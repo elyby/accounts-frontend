@@ -71,13 +71,13 @@ export function PanelFooter(props: {
     );
 }
 
-export class PanelBodyHeader extends Component {
-    props: {
-        type: 'default'|'error',
-        onClose: Function,
-        children: *
-    };
-
+export class PanelBodyHeader extends Component<{
+    type: 'default'|'error',
+    onClose: Function,
+    children: *
+}, {
+    isClosed: bool
+}> {
     state: {
         isClosed: bool
     } = {

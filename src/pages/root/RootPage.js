@@ -30,16 +30,14 @@ if (process.env.NODE_ENV === 'production') {
     DevTools = require('containers/DevTools').default;
 }
 
-class RootPage extends Component {
-    props: {
-        user: User,
-        isPopupActive: boolean,
-        onLogoClick: Function,
-        location: {
-            pathname: string
-        }
-    };
-
+class RootPage extends Component<{
+    user: User,
+    isPopupActive: boolean,
+    onLogoClick: Function,
+    location: {
+        pathname: string
+    }
+}> {
     componentDidMount() {
         this.onPageUpdate();
     }

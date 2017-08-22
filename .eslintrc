@@ -217,7 +217,7 @@
         "react/no-string-refs": "warn",
         "react/no-unknown-property": "warn",
         "react/prefer-es6-class": "warn",
-        "react/prop-types": "warn",
+        "react/prop-types": "off", // using flowtype for this task
         "react/self-closing-comp": "warn",
         "react/sort-comp": ["off", {"order": ["lifecycle", "render", "everything-else"]}]
     }

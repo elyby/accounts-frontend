@@ -9,11 +9,11 @@ import styles from './loggedInPanel.scss';
 
 import type { User } from 'components/user';
 
-export default class LoggedInPanel extends Component {
-    props: {
-        user: User
-    };
-
+export default class LoggedInPanel extends Component<{
+    user: User
+}, {
+    isAccountSwitcherActive: bool
+}> {
     state = {
         isAccountSwitcherActive: false
     };

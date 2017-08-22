@@ -21,15 +21,15 @@ import Finish from 'components/auth/finish/Finish';
 
 import styles from './auth.scss';
 
-class AuthPage extends Component {
-    props: {
-        client: {
-            id: string,
-            name: string,
-            description: string
-        }
-    };
-
+class AuthPage extends Component<{
+    client: {
+        id: string,
+        name: string,
+        description: string
+    }
+}, {
+    isSidebarHidden: bool
+}> {
     state = {
         isSidebarHidden: false
     };

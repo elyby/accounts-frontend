@@ -9,13 +9,11 @@ import { FooterMenu } from 'components/footerMenu';
 import styles from './appInfo.scss';
 import messages from './AppInfo.intl.json';
 
-export default class AppInfo extends Component {
-    props: {
-        name?: string,
-        description?: string,
-        onGoToAuth: () => void
-    };
-
+export default class AppInfo extends Component<{
+    name?: string,
+    description?: string,
+    onGoToAuth: () => void
+}> {
     render() {
         const { name, description, onGoToAuth } = this.props;
 

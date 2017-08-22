@@ -23,13 +23,11 @@ import { omit, rAF, debounce } from 'functions';
  * </MeasureHeight>
  */
 
-export default class MeasureHeight extends PureComponent {
-    props: {
-        shouldMeasure: (prevState: any, newState: any) => bool,
-        onMeasure: (height: number) => void,
-        state: any
-    };
-
+export default class MeasureHeight extends PureComponent<{
+    shouldMeasure: (prevState: any, newState: any) => bool,
+    onMeasure: (height: number) => void,
+    state: any
+}> {
     static defaultProps = {
         shouldMeasure: (prevState: any, newState: any) => prevState !== newState,
         onMeasure: (height) => {} // eslint-disable-line

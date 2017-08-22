@@ -9,9 +9,9 @@ type ComponentProps = {
     routerProps: Object
 };
 
-export default class AuthFlowRouteContents extends Component {
-    props: ComponentProps;
-
+export default class AuthFlowRouteContents extends Component<ComponentProps, {
+    component: any
+}> {
     state: {
         component: any
     } = {

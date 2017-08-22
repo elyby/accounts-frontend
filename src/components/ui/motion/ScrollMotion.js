@@ -6,12 +6,12 @@ import MeasureHeight from 'components/MeasureHeight';
 
 import styles from './scroll-motion.scss';
 
-export default class ScrollMotion extends Component {
-    props: {
-        activeStep: number,
-        children: ?React.Children
-    };
-
+export default class ScrollMotion extends Component<{
+    activeStep: number,
+    children: *
+}, {
+    version: number
+}> {
     state: {
         version: number
     } = {
