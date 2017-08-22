@@ -34,24 +34,24 @@ Promise.all([
     userFactory(store),
     font.load(['Roboto', 'Roboto Condensed'])
 ])
-.then(() => {
-    ReactDOM.render(
-        <ReduxProvider store={store}>
-            <IntlProvider>
-                <Router history={browserHistory}>
-                    <Switch>
-                        <Route path="/oauth2/code/success" component={SuccessOauthPage} />
-                        <AuthFlowRoute path="/oauth2/:version(v\d+)/:clientId?" component={() => null} />
-                        <Route path="/" component={RootPage} />
-                    </Switch>
-                </Router>
-            </IntlProvider>
-        </ReduxProvider>,
-        document.getElementById('app')
-    );
+    .then(() => {
+        ReactDOM.render(
+            <ReduxProvider store={store}>
+                <IntlProvider>
+                    <Router history={browserHistory}>
+                        <Switch>
+                            <Route path="/oauth2/code/success" component={SuccessOauthPage} />
+                            <AuthFlowRoute path="/oauth2/:version(v\d+)/:clientId?" component={() => null} />
+                            <Route path="/" component={RootPage} />
+                        </Switch>
+                    </Router>
+                </IntlProvider>
+            </ReduxProvider>,
+            document.getElementById('app')
+        );
 
-    initAnalytics();
-});
+        initAnalytics();
+    });
 
 import { loadScript, debounce } from 'functions';
 const trackPageView = debounce(_trackPageView);

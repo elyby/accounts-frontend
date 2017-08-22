@@ -66,28 +66,28 @@ export function login({
         authentication.login(
             {login, password, totp, rememberMe}
         )
-        .then(authHandler(dispatch))
-        .catch((resp) => {
-            if (resp.errors) {
-                if (resp.errors.password === PASSWORD_REQUIRED) {
-                    return dispatch(setLogin(login));
-                } else if (resp.errors.login === ACTIVATION_REQUIRED) {
-                    return dispatch(needActivation());
-                } else if (resp.errors.totp === TOTP_REQUIRED) {
-                    return dispatch(requestTotp({
-                        login,
-                        password,
-                        rememberMe
-                    }));
-                } else if (resp.errors.login === LOGIN_REQUIRED && password) {
-                    logger.warn('No login on password panel');
+            .then(authHandler(dispatch))
+            .catch((resp) => {
+                if (resp.errors) {
+                    if (resp.errors.password === PASSWORD_REQUIRED) {
+                        return dispatch(setLogin(login));
+                    } else if (resp.errors.login === ACTIVATION_REQUIRED) {
+                        return dispatch(needActivation());
+                    } else if (resp.errors.totp === TOTP_REQUIRED) {
+                        return dispatch(requestTotp({
+                            login,
+                            password,
+                            rememberMe
+                        }));
+                    } else if (resp.errors.login === LOGIN_REQUIRED && password) {
+                        logger.warn('No login on password panel');
 
-                    return dispatch(logoutAll());
+                        return dispatch(logoutAll());
+                    }
                 }
-            }
 
-            return validationErrorsHandler(dispatch)(resp);
-        })
+                return validationErrorsHandler(dispatch)(resp);
+            })
     );
 }
 
@@ -152,17 +152,17 @@ export function register({
             rulesAgreement, lang: getState().user.lang,
             captcha
         })
-        .then(() => {
-            dispatch(updateUser({
-                username,
-                email
-            }));
+            .then(() => {
+                dispatch(updateUser({
+                    username,
+                    email
+                }));
 
-            dispatch(needActivation());
+                dispatch(needActivation());
 
-            browserHistory.push('/activation');
-        })
-        .catch(validationErrorsHandler(dispatch))
+                browserHistory.push('/activation');
+            })
+            .catch(validationErrorsHandler(dispatch))
     );
 }
 

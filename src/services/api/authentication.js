@@ -95,19 +95,19 @@ const authentication = {
 
             resolve();
         })
-        .then(() => accounts.current({token}))
-        .then((user) => ({token, refreshToken, user}))
-        .catch((resp) => {
-            if (resp.message === 'Token expired') {
-                return authentication.requestToken(refreshToken)
-                    .then(({token}) =>
-                        accounts.current({token})
-                            .then((user) => ({token, refreshToken, user}))
-                    );
-            }
+            .then(() => accounts.current({token}))
+            .then((user) => ({token, refreshToken, user}))
+            .catch((resp) => {
+                if (resp.message === 'Token expired') {
+                    return authentication.requestToken(refreshToken)
+                        .then(({token}) =>
+                            accounts.current({token})
+                                .then((user) => ({token, refreshToken, user}))
+                        );
+                }
 
-            return Promise.reject(resp);
-        });
+                return Promise.reject(resp);
+            });
     },
 
     /**

@@ -32,8 +32,7 @@ export default class BaseAuthBody extends Component {
     renderErrors() {
         return this.form.hasErrors()
             ? <AuthError error={this.form.getFirstError()} onClose={this.onClearErrors} />
-            : null
-            ;
+            : null;
     }
 
     onFormSubmit() {

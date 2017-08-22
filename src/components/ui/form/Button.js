@@ -36,11 +36,12 @@ export default class Button extends FormComponent {
         } = this.props;
 
         return (
-            <button className={classNames(buttons[color], {
-                [buttons.loading]: loading,
-                [buttons.block]: block,
-                [buttons.smallButton]: small
-            }, className)}
+            <button
+                className={classNames(buttons[color], {
+                    [buttons.loading]: loading,
+                    [buttons.block]: block,
+                    [buttons.smallButton]: small
+                }, className)}
                 {...restProps}
             >
                 {this.formatMessage(label)}

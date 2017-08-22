@@ -117,8 +117,7 @@ function doFetch(url, options = {}) {
         .then(toJSON, rejectWithJSON)
         .then(handleResponseSuccess)
         .then((resp) => middlewareLayer.run('then', resp, {url, options}))
-        .catch((resp) => middlewareLayer.run('catch', resp, {url, options}, () => doFetch(url, options)))
-        ;
+        .catch((resp) => middlewareLayer.run('catch', resp, {url, options}, () => doFetch(url, options)));
 }
 
 /**
@@ -159,6 +158,5 @@ function buildQuery(data: Object = {}): string {
                     .map(encodeURIComponent)
                     .join('=')
         )
-        .join('&')
-        ;
+        .join('&');
 }

@@ -9,25 +9,6 @@
         "react"
     ],
 
-    "ecmaFeatures": {
-        "jsx": true,
-        "modules": true,
-        "classes": true,
-        "defaultParams": true,
-        "destructuring": true,
-        "spread": true,
-        "arrowFunctions": true,
-        "blockBindings": true,
-        "objectLiteralComputedProperties": true,
-        "objectLiteralDuplicateProperties": true,
-        "objectLiteralShorthandMethods": true,
-        "objectLiteralShorthandProperties": true,
-        "restParams": true,
-        "superInFunctions": true,
-        "templateStrings": true,
-        "experimentalObjectRestSpread": true
-    },
-
     "env": {
         "mocha": true, // needed for tests. Apply it globaly till eslint/selint#3611
         "browser": true,

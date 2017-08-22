@@ -188,17 +188,17 @@ export default class MultiFactorAuth extends Component<Props, {
                 return mfa.enable(data);
             }
         )
-        .catch((resp) => {
-            const {errors} = resp || {};
+            .catch((resp) => {
+                const {errors} = resp || {};
 
-            if (errors) {
-                return Promise.reject(errors);
-            }
+                if (errors) {
+                    return Promise.reject(errors);
+                }
 
-            logger.error('MFA: Unexpected form submit result', {
-                resp
-            });
-        })
-        .finally(() => this.setState({isLoading: false}));
+                logger.error('MFA: Unexpected form submit result', {
+                    resp
+                });
+            })
+            .finally(() => this.setState({isLoading: false}));
     };
 }

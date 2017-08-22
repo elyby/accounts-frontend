@@ -37,10 +37,10 @@ export default class MfaState extends AbstractState {
             rememberMe,
             login
         })
-        .then(() => context.setState(new CompleteState()))
-        .catch((err = {}) =>
-            err.errors || logger.warn('Error logging in', err)
-        );
+            .then(() => context.setState(new CompleteState()))
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error logging in', err)
+            );
     }
 
     goBack(context: AuthContext) {

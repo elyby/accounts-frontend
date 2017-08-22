@@ -73,9 +73,9 @@ describe('Accounts reducer', () => {
             };
 
             expect(accounts({...initial, available: [account]}, add(newAccount)),
-            'to satisfy', {
-                available: [newAccount, account]
-            });
+                'to satisfy', {
+                    available: [newAccount, account]
+                });
         });
 
         it('throws, when account is invalid', () => {

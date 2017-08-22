@@ -68,14 +68,14 @@ class LangMenu extends Component {
                     <a className={styles.trigger} href="#">
                         {showCurrentLang
                             ? this.renderLangLabel(userLocale, LANGS[userLocale]) : (
-                            <span>
-                                <span className={styles.triggerIcon} />
-                                {' '}
-                                <Message {...messages.siteLanguage} />
-                                {' '}
-                                <span className={isActive ? styles.triggerArrowBottom : styles.triggerArrowTop} />
-                            </span>
-                        )}
+                                <span>
+                                    <span className={styles.triggerIcon} />
+                                    {' '}
+                                    <Message {...messages.siteLanguage} />
+                                    {' '}
+                                    <span className={isActive ? styles.triggerArrowBottom : styles.triggerArrowTop} />
+                                </span>
+                            )}
                     </a>
                 </div>
             </div>

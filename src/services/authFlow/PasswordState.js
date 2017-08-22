@@ -38,18 +38,18 @@ export default class PasswordState extends AbstractState {
             rememberMe,
             login
         })
-        .then(() => {
-            const {isTotpRequired} = getCredentials(context.getState());
+            .then(() => {
+                const {isTotpRequired} = getCredentials(context.getState());
 
-            if (isTotpRequired) {
-                return context.setState(new MfaState());
-            }
+                if (isTotpRequired) {
+                    return context.setState(new MfaState());
+                }
 
-            return context.setState(new CompleteState());
-        })
-        .catch((err = {}) =>
-            err.errors || logger.warn('Error logging in', err)
-        );
+                return context.setState(new CompleteState());
+            })
+            .catch((err = {}) =>
+                err.errors || logger.warn('Error logging in', err)
+            );
     }
 
     reject(context: AuthContext) {

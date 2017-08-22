@@ -24,14 +24,12 @@ export default class Captcha extends FormInputComponent {
     };
 
     componentDidMount() {
-        setTimeout(() =>
+        setTimeout(() => {
             captcha.render(this.el, {
                 skin: this.props.skin,
                 onSetCode: this.setCode
-            })
-            .then((captchaId) => this.captchaId = captchaId),
-            this.props.delay
-        );
+            }).then((captchaId) => this.captchaId = captchaId);
+        }, this.props.delay);
     }
 
     render() {

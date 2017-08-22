@@ -113,9 +113,9 @@ export default class Form extends Component<Props, State> {
             Promise.resolve(this.props.onSubmit(
                 this.props.form ? this.props.form : new FormData(form)
             ))
-            .catch((errors: {[key: string]: string}) => {
-                this.setErrors(errors);
-            });
+                .catch((errors: {[key: string]: string}) => {
+                    this.setErrors(errors);
+                });
         } else {
             const invalidEls = form.querySelectorAll(':invalid');
             const errors = {};

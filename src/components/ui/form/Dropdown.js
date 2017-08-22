@@ -59,10 +59,11 @@ export default class Dropdown extends FormInputComponent {
 
         return (
             <div>
-                <div className={classNames(styles[color], {
-                    [styles.block]: block,
-                    [styles.opened]: isActive
-                })}
+                <div
+                    className={classNames(styles[color], {
+                        [styles.block]: block,
+                        [styles.opened]: isActive
+                    })}
                     {...props}
                     onClick={this.onToggle}
                 >

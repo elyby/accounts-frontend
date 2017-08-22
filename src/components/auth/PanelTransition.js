@@ -258,8 +258,8 @@ class PanelTransition extends Component {
 
         const currentContext = contexts.find((context) => context.includes(key));
         let sign = currentContext.indexOf(panelId) > currentContext.indexOf(prevPanelId)
-                ? fromRight
-                : fromLeft;
+            ? fromRight
+            : fromLeft;
         if (prevPanelId === key) {
             sign *= -1;
         }

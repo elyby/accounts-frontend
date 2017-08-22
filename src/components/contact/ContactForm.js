@@ -168,8 +168,7 @@ export class ContactForm extends Component {
 
                 logger.warn('Error sending feedback', resp);
             })
-            .finally(() => this.setState({isLoading: false}))
-            ;
+            .finally(() => this.setState({isLoading: false}));
     };
 }
 
