@@ -16,6 +16,7 @@ class Finish extends Component {
     static propTypes = {
         appName: PropTypes.string.isRequired,
         code: PropTypes.string.isRequired,
+        state: PropTypes.string.isRequired,
         displayCode: PropTypes.bool,
         success: PropTypes.bool
     };
@@ -28,8 +29,8 @@ class Finish extends Component {
         const {appName, code, state, displayCode, success} = this.props;
         const {isCopySupported} = this.state;
         const authData = JSON.stringify({
-            auth_code: code,
-            state: state
+            auth_code: code, // eslint-disable-line
+            state
         });
 
         history.pushState(null, null, `#${authData}`);
@@ -40,7 +41,7 @@ class Finish extends Component {
 
                 {success ? (
                     <div>
-                        <div className={styles.successBackground}></div>
+                        <div className={styles.successBackground} />
                         <div className={styles.greenTitle}>
                             <Message {...messages.authForAppSuccessful} values={{
                                 appName: (<span className={styles.appName}>{appName}</span>)
@@ -59,7 +60,7 @@ class Finish extends Component {
                                         color="green"
                                         small
                                         label={messages.copy}
-                                        onClick={this.handleCopyClick}
+                                        onClick={this.onCopyClick}
                                     />
                                 ) : (
                                     ''
@@ -73,7 +74,7 @@ class Finish extends Component {
                     </div>
                 ) : (
                     <div>
-                        <div className={styles.failBackground}></div>
+                        <div className={styles.failBackground} />
                         <div className={styles.redTitle}>
                             <Message {...messages.authForAppFailed} values={{
                                 appName: (<span className={styles.appName}>{appName}</span>)
@@ -88,7 +89,7 @@ class Finish extends Component {
         );
     }
 
-    handleCopyClick = (event) => {
+    onCopyClick = (event) => {
         event.preventDefault();
         // http://stackoverflow.com/a/987376/5184751
 
@@ -104,7 +105,7 @@ class Finish extends Component {
 
             // TODO: было бы ещё неплохо сделать какую-то анимацию, вроде "Скопировано",
             // ибо сейчас после клика как-то неубедительно, скопировалось оно или нет
-            console.log('Copying text command was ' + (successful ? 'successful' : 'unsuccessful'));
+            console.log('Copying text command was %s', successful ? 'successful' : 'unsuccessful');
         } catch (err) {
             // not critical
         }

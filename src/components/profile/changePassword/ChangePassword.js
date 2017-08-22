@@ -88,7 +88,11 @@ export default class ChangePassword extends Component {
                             </div>
                         </div>
 
-                        <Button color="green" block label={messages.changePasswordButton} type="submit" />
+                        <Button color="green"
+                            block
+                            label={messages.changePasswordButton}
+                            type="submit"
+                        />
                     </div>
                 </div>
             </Form>

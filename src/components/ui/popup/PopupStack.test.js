@@ -38,6 +38,7 @@ describe('<PopupStack />', () => {
             popups: [
                 {
                     Popup: (props = {}) => {
+                        // eslint-disable-next-line
                         expect(props.onClose, 'to be a', 'function');
 
                         return <DummyPopup {...expectedProps} />;

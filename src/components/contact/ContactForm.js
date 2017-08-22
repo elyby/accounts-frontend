@@ -15,11 +15,11 @@ import messages from './contactForm.intl.json';
 
 const CONTACT_CATEGORIES = [
     // TODO: сюда позже проставить реальные id категорий с backend
-    <Message {...messages.cannotAccessMyAccount} />,
-    <Message {...messages.foundBugOnSite} />,
-    <Message {...messages.improvementsSuggestion} />,
-    <Message {...messages.integrationQuestion} />,
-    <Message {...messages.other} />
+    <Message key="m1" {...messages.cannotAccessMyAccount} />,
+    <Message key="m2" {...messages.foundBugOnSite} />,
+    <Message key="m3" {...messages.improvementsSuggestion} />,
+    <Message key="m4" {...messages.integrationQuestion} />,
+    <Message key="m5" {...messages.other} />
 ];
 
 export class ContactForm extends Component {

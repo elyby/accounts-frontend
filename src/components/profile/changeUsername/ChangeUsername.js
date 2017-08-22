@@ -69,7 +69,11 @@ export default class ChangeUsername extends Component {
                             </div>
                         </div>
 
-                        <Button color="green" block label={messages.changeUsernameButton} type="submit" />
+                        <Button color="green"
+                            block
+                            label={messages.changeUsernameButton}
+                            type="submit"
+                        />
                     </div>
                 </div>
             </Form>

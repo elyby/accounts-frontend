@@ -1,3 +1,4 @@
+import React from 'react';
 import { Input } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 

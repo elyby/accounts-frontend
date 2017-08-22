@@ -39,7 +39,11 @@ export default class Checkbox extends FormInputComponent {
         return (
             <div className={classNames(styles[`${color}CheckboxRow`], styles[`${skin}CheckboxRow`])}>
                 <label className={styles.checkboxContainer}>
-                    <input ref={this.setEl} className={styles.checkboxInput} type="checkbox" {...props} />
+                    <input ref={this.setEl}
+                        className={styles.checkboxInput}
+                        type="checkbox"
+                        {...props}
+                    />
                     <div className={styles.checkbox} />
                     {label}
                 </label>

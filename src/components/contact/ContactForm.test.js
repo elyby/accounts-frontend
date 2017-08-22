@@ -1,3 +1,4 @@
+import React from 'react';
 import expect from 'unexpected';
 import sinon from 'sinon';
 import { shallow, mount } from 'enzyme';
