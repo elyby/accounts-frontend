@@ -6,7 +6,6 @@ const webpack = require('webpack');
 const loaderUtils = require('loader-utils');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CircularDependencyPlugin = require('circular-dependency-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
 const cssImport = require('postcss-import');
 
@@ -270,11 +269,7 @@ if (isProduction) {
 if (!isProduction && !isTest) {
     webpackConfig.plugins.push(
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new CircularDependencyPlugin({
-            exclude: /node_modules/,
-            failOnError: false
-        })
+        new webpack.NoErrorsPlugin()
     );
 
     if (config.apiHost) {
