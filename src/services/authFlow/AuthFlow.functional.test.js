@@ -45,12 +45,16 @@ describe('AuthFlow.functional', () => {
 
     describe('guest', () => {
         beforeEach(() => {
-            state.user = {
-                isGuest: true
-            };
-            state.auth = {
-                login: null
-            };
+            Object.assign(state, {
+                user: {
+                    isGuest: true,
+                },
+                auth: {
+                    credentials: {
+                        login: null
+                    }
+                }
+            });
         });
 
         it('should redirect guest / -> /login', () => {

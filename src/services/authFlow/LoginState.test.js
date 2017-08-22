@@ -27,7 +27,9 @@ describe('LoginState', () => {
         it('should navigate to /login', () => {
             context.getState.returns({
                 user: {isGuest: true},
-                auth: {login: null}
+                auth: {
+                    credentials: {login: null}
+                }
             });
 
             expectNavigate(mock, '/login');
@@ -38,7 +40,9 @@ describe('LoginState', () => {
         it('should transition to password if login was set', () => {
             context.getState.returns({
                 user: {isGuest: true},
-                auth: {login: 'foo'}
+                auth: {
+                    credentials: {login: 'foo'}
+                }
             });
 
             expectState(mock, PasswordState);

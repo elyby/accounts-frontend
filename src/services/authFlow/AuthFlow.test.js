@@ -202,11 +202,11 @@ describe('AuthFlow', () => {
             expect(actions.test, 'to have a call satisfying', ['arg']);
         });
 
-        it('should return action dispatch result', () => {
+        it('should resolve to action dispatch result', () => {
             const expected = 'dispatch called';
             store.dispatch.returns(expected);
 
-            expect(flow.run('test'), 'to be', expected);
+            expect(flow.run('test'), 'to be fulfilled with', expected);
         });
 
         it('throws when running unexisted action', () => {

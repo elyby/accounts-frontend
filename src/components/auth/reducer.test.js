@@ -2,16 +2,16 @@ import expect from 'unexpected';
 
 import auth from 'components/auth/reducer';
 import {
-    setLogin, SET_LOGIN,
+    setLogin, SET_CREDENTIALS,
     setAccountSwitcher, SET_SWITCHER
 } from 'components/auth/actions';
 
 describe('components/auth/reducer', () => {
-    describe(SET_LOGIN, () => {
+    describe(SET_CREDENTIALS, () => {
         it('should set login', () => {
             const expectedLogin = 'foo';
 
-            expect(auth(undefined, setLogin(expectedLogin)), 'to satisfy', {
+            expect(auth(undefined, setLogin(expectedLogin)).credentials, 'to satisfy', {
                 login: expectedLogin
             });
         });

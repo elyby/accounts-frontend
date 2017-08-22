@@ -1,3 +1,4 @@
+// @flow
 import { browserHistory } from 'services/history';
 
 import logger from 'services/logger';
@@ -13,18 +14,35 @@ import CompleteState from './CompleteState';
 import ResendActivationState from './ResendActivationState';
 import type AbstractState from './AbstractState';
 
-export type AuthContext = {
-    run: (actionId: string, payload: Object) => any,
-    setState: (newState: AbstractState) => void,
-    getRequest: () => {
-        path: string,
-        query: URLSearchParams,
-        params: Object
-    }
+type Request = {
+    path: string,
+    query: URLSearchParams,
+    params: Object
 };
+export interface AuthContext {
+    run(actionId: string, payload: *): *;
+    setState(newState: AbstractState): Promise<*>|void;
+    getState(): Object;
+    navigate(route: string): void;
+    getRequest(): Request;
+}
 
-export default class AuthFlow {
-    constructor(actions) {
+export default class AuthFlow implements AuthContext {
+    actions: {[key: string]: Function};
+    state: AbstractState;
+    prevState: AbstractState;
+    /**
+     * A callback from router, that allows to replace (perform redirect) route
+     * during route transition
+     */
+    replace: ?(string) => void;
+    onReady: Function;
+    navigate: Function;
+    currentRequest: Request;
+    dispatch: (action: Object) => void;
+    getState: () => Object;
+
+    constructor(actions: {[key: string]: Function}) {
         if (typeof actions !== 'object') {
             throw new Error('AuthFlow requires an actions object');
         }
@@ -36,16 +54,18 @@ export default class AuthFlow {
         }
     }
 
-    setStore(store) {
+    setStore(store: *) {
         /**
          * @param {string} route
          * @param {object} options
          * @param {object} options.replace
          */
-        this.navigate = (route, options = {}) => {
+        this.navigate = (route: string, options: {replace?: bool} = {}) => {
             if (this.getRequest().path !== route) {
                 this.currentRequest = {
-                    path: route
+                    path: route,
+                    params: {},
+                    query: new URLSearchParams()
                 };
 
                 if (this.replace) {
@@ -62,11 +82,11 @@ export default class AuthFlow {
         this.dispatch = store.dispatch.bind(store);
     }
 
-    resolve(payload = {}) {
+    resolve(payload: Object = {}) {
         this.state.resolve(this, payload);
     }
 
-    reject(payload = {}) {
+    reject(payload: Object = {}) {
         this.state.reject(this, payload);
     }
 
@@ -74,15 +94,15 @@ export default class AuthFlow {
         this.state.goBack(this);
     }
 
-    run(actionId, payload) {
+    run(actionId: string, payload: Object): Promise<*> {
         if (!this.actions[actionId]) {
             throw new Error(`Action ${actionId} does not exists`);
         }
 
-        return this.dispatch(this.actions[actionId](payload));
+        return Promise.resolve(this.dispatch(this.actions[actionId](payload)));
     }
 
-    setState(state) {
+    setState(state: AbstractState) {
         if (!state) {
             throw new Error('State is required');
         }
@@ -128,7 +148,7 @@ export default class AuthFlow {
      * @param {function} [callback = function() {}] - an optional callback function to be called, when state will be stabilized
      *                                                (state's enter function's promise resolved)
      */
-    handleRequest(request, replace, callback = function() {}) {
+    handleRequest(request: Request, replace: Function, callback: Function = function() {}) {
         const {path} = request;
         this.replace = replace;
         this.onReady = callback;
@@ -165,6 +185,7 @@ export default class AuthFlow {
             case '/':
             case '/login':
             case '/password':
+            case '/mfa':
             case '/accept-rules':
             case '/oauth/permissions':
             case '/oauth/finish':

@@ -3,7 +3,8 @@ import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
 import { Input, Captcha } from 'components/ui/form';
-import icons from 'components/ui/icons.scss';
+import { getLogin } from 'components/auth/reducer';
+import { PanelIcon } from 'components/ui/Panel';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 
 import styles from './forgotPassword.scss';
@@ -28,9 +29,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
             <div>
                 {this.renderErrors()}
 
-                <div className={styles.bigIcon}>
-                    <span className={icons.lock} />
-                </div>
+                <PanelIcon icon="lock" />
 
                 {isLoginEditShown ? (
                     <div>
@@ -73,9 +72,10 @@ export default class ForgotPasswordBody extends BaseAuthBody {
     }
 
     getLogin() {
-        const { user, auth } = this.context;
+        const login = getLogin(this.context);
+        const { user } = this.context;
 
-        return auth.login || user.username || user.email || '';
+        return login || user.username || user.email || '';
     }
 
     onClickEdit = () => {

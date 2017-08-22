@@ -1,3 +1,4 @@
+// @flow
 import { browserHistory } from 'services/history';
 
 import logger from 'services/logger';
@@ -23,7 +24,7 @@ export { authenticate, logoutAll as logout } from 'components/accounts/actions';
  *
  * @return {object} - action definition
  */
-export function goBack(fallbackUrl = null) {
+export function goBack(fallbackUrl?: ?string = null) {
     if (history.canGoBack()) {
         browserHistory.goBack();
     } else if (fallbackUrl) {
@@ -35,7 +36,7 @@ export function goBack(fallbackUrl = null) {
     };
 }
 
-export function redirect(url) {
+export function redirect(url: string) {
     loader.show();
 
     return () => new Promise(() => {
@@ -45,14 +46,25 @@ export function redirect(url) {
     });
 }
 
-export function login({login = '', password = '', rememberMe = false}) {
+export function login({
+    login = '',
+    password = '',
+    totp,
+    rememberMe = false
+}: {
+    login: string,
+    password?: string,
+    totp?: string,
+    rememberMe?: bool
+}) {
     const PASSWORD_REQUIRED = 'error.password_required';
     const LOGIN_REQUIRED = 'error.login_required';
     const ACTIVATION_REQUIRED = 'error.account_not_activated';
+    const TOTP_REQUIRED = 'error.totp_required';
 
     return wrapInLoader((dispatch) =>
         authentication.login(
-            {login, password, rememberMe}
+            {login, password, totp, rememberMe}
         )
         .then(authHandler(dispatch))
         .catch((resp) => {
@@ -61,6 +73,12 @@ export function login({login = '', password = '', rememberMe = false}) {
                     return dispatch(setLogin(login));
                 } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                     return dispatch(needActivation());
+                } else if (resp.errors.totp === TOTP_REQUIRED) {
+                    return dispatch(requestTotp({
+                        login,
+                        password,
+                        rememberMe
+                    }));
                 } else if (resp.errors.login === LOGIN_REQUIRED && password) {
                     logger.warn('No login on password panel');
 
@@ -83,6 +101,9 @@ export function acceptRules() {
 export function forgotPassword({
     login = '',
     captcha = ''
+}: {
+    login: string,
+    captcha: string
 }) {
     return wrapInLoader((dispatch, getState) =>
         authentication.forgotPassword({login, captcha})
@@ -97,6 +118,10 @@ export function recoverPassword({
     key = '',
     newPassword = '',
     newRePassword = ''
+}: {
+    key: string,
+    newPassword: string,
+    newRePassword: string
 }) {
     return wrapInLoader((dispatch) =>
         authentication.recoverPassword({key, newPassword, newRePassword})
@@ -112,6 +137,13 @@ export function register({
     rePassword = '',
     captcha = '',
     rulesAgreement = false
+}: {
+    email: string,
+    username: string,
+    password: string,
+    rePassword: string,
+    captcha: string,
+    rulesAgreement: bool
 }) {
     return wrapInLoader((dispatch, getState) =>
         signup.register({
@@ -134,7 +166,7 @@ export function register({
     );
 }
 
-export function activate({key = ''}) {
+export function activate({key = ''}: {key: string}) {
     return wrapInLoader((dispatch) =>
         signup.activate({key})
             .then(authHandler(dispatch))
@@ -142,7 +174,13 @@ export function activate({key = ''}) {
     );
 }
 
-export function resendActivation({email = '', captcha}) {
+export function resendActivation({
+    email = '',
+    captcha
+}: {
+    email: string,
+    captcha: string
+}) {
     return wrapInLoader((dispatch) =>
         signup.resendActivation({email, captcha})
             .then((resp) => {
@@ -160,16 +198,43 @@ export function contactUs() {
     return createPopup(ContactForm);
 }
 
-export const SET_LOGIN = 'auth:setLogin';
-export function setLogin(login) {
+export const SET_CREDENTIALS = 'auth:setCredentials';
+/**
+ * Sets login in credentials state
+ *
+ * Resets the state, when `null` is passed
+ *
+ * @param {string|null} login
+ *
+ * @return {object}
+ */
+export function setLogin(login: ?string) {
     return {
-        type: SET_LOGIN,
-        payload: login
+        type: SET_CREDENTIALS,
+        payload: login ? {
+            login
+        } : null
+    };
+}
+
+function requestTotp({login, password, rememberMe}: {
+    login: string,
+    password: string,
+    rememberMe: bool
+}) {
+    return {
+        type: SET_CREDENTIALS,
+        payload: {
+            login,
+            password,
+            rememberMe,
+            isTotpRequired: true
+        }
     };
 }
 
 export const SET_SWITCHER = 'auth:setAccountSwitcher';
-export function setAccountSwitcher(isOn) {
+export function setAccountSwitcher(isOn: bool) {
     return {
         type: SET_SWITCHER,
         payload: isOn
@@ -177,7 +242,7 @@ export function setAccountSwitcher(isOn) {
 }
 
 export const ERROR = 'auth:error';
-export function setErrors(errors) {
+export function setErrors(errors: ?{[key: string]: string}) {
     return {
         type: ERROR,
         payload: errors,
@@ -213,7 +278,16 @@ const KNOWN_SCOPES = [
  *
  * @return {Promise}
  */
-export function oAuthValidate(oauthData) {
+export function oAuthValidate(oauthData: {
+    clientId: string,
+    redirectUrl: string,
+    responseType: string,
+    description: string,
+    scope: string,
+    prompt: 'none'|'consent'|'select_account',
+    loginHint?: string,
+    state?: string
+}) {
     // TODO: move to oAuth actions?
     // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
     return wrapInLoader((dispatch) =>
@@ -255,7 +329,7 @@ export function oAuthValidate(oauthData) {
  *
  * @return {Promise}
  */
-export function oAuthComplete(params = {}) {
+export function oAuthComplete(params: {accept?: bool} = {}) {
     return wrapInLoader((dispatch, getState) =>
         oauth.complete(getState().auth.oauth, params)
             .then((resp) => {
@@ -297,7 +371,15 @@ function handleOauthParamsValidation(resp = {}) {
 }
 
 export const SET_CLIENT = 'set_client';
-export function setClient({id, name, description}) {
+export function setClient({
+    id,
+    name,
+    description
+}: {
+    id: string,
+    name: string,
+    description: string
+}) {
     return {
         type: SET_CLIENT,
         payload: {id, name, description}
@@ -305,7 +387,7 @@ export function setClient({id, name, description}) {
 }
 
 export function resetOAuth() {
-    return (dispatch) => {
+    return (dispatch: (Function|Object) => void) => {
         localStorage.removeItem('oauthData');
         dispatch(setOAuthRequest({}));
     };
@@ -317,14 +399,22 @@ export function resetOAuth() {
  * @return {function}
  */
 export function resetAuth() {
-    return (dispatch) => {
+    return (dispatch: (Function|Object) => void) => {
         dispatch(setLogin(null));
-        dispatch(resetOAuth({}));
+        dispatch(resetOAuth());
     };
 }
 
 export const SET_OAUTH = 'set_oauth';
-export function setOAuthRequest(oauth) {
+export function setOAuthRequest(oauth: {
+    client_id?: string,
+    redirect_uri?: string,
+    response_type?: string,
+    scope?: string,
+    prompt?: string,
+    loginHint?: string,
+    state?: string
+}) {
     return {
         type: SET_OAUTH,
         payload: {
@@ -340,7 +430,11 @@ export function setOAuthRequest(oauth) {
 }
 
 export const SET_OAUTH_RESULT = 'set_oauth_result';
-export function setOAuthCode(oauth) {
+export function setOAuthCode(oauth: {
+    success: bool,
+    code: string,
+    displayCode: bool
+}) {
     return {
         type: SET_OAUTH_RESULT,
         payload: {
@@ -359,7 +453,7 @@ export function requirePermissionsAccept() {
 }
 
 export const SET_SCOPES = 'set_scopes';
-export function setScopes(scopes) {
+export function setScopes(scopes: Array<string>) {
     if (!(scopes instanceof Array)) {
         throw new Error('Scopes must be array');
     }
@@ -372,7 +466,7 @@ export function setScopes(scopes) {
 
 
 export const SET_LOADING_STATE = 'set_loading_state';
-export function setLoadingState(isLoading) {
+export function setLoadingState(isLoading: bool) {
     return {
         type: SET_LOADING_STATE,
         payload: isLoading
@@ -380,7 +474,7 @@ export function setLoadingState(isLoading) {
 }
 
 function wrapInLoader(fn) {
-    return (dispatch, getState) => {
+    return (dispatch: (Function|Object) => void, getState: Object) => {
         dispatch(setLoadingState(true));
         const endLoading = () => dispatch(setLoadingState(false));
 
@@ -414,14 +508,15 @@ function authHandler(dispatch) {
     });
 }
 
-function validationErrorsHandler(dispatch, repeatUrl) {
+function validationErrorsHandler(dispatch: (Function|Object) => void, repeatUrl?: string) {
     return (resp) => {
         if (resp.errors) {
             const firstError = Object.keys(resp.errors)[0];
             const error = {
                 type: resp.errors[firstError],
                 payload: {
-                    isGuest: true
+                    isGuest: true,
+                    repeatUrl: ''
                 }
             };
 
@@ -432,9 +527,7 @@ function validationErrorsHandler(dispatch, repeatUrl) {
 
             if (['error.key_not_exists', 'error.key_expire'].includes(error.type) && repeatUrl) {
                 // TODO: this should be formatted on backend
-                Object.assign(error.payload, {
-                    repeatUrl
-                });
+                error.payload.repeatUrl = repeatUrl;
             }
 
             resp.errors[firstError] = error;

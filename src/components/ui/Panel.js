@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 
 import classNames from 'classnames';
 
@@ -7,8 +8,12 @@ import { omit } from 'functions';
 import styles from './panel.scss';
 import icons from './icons.scss';
 
-export function Panel(props) {
-    var { title, icon } = props;
+export function Panel(props: {
+    title: string,
+    icon: string,
+    children: *
+}) {
+    let { title, icon } = props;
 
     if (icon) {
         icon = (
@@ -36,7 +41,9 @@ export function Panel(props) {
     );
 }
 
-export function PanelHeader(props) {
+export function PanelHeader(props: {
+    children: *
+}) {
     return (
         <div className={styles.header} {...props}>
             {props.children}
@@ -44,7 +51,9 @@ export function PanelHeader(props) {
     );
 }
 
-export function PanelBody(props) {
+export function PanelBody(props: {
+    children: *
+}) {
     return (
         <div className={styles.body} {...props}>
             {props.children}
@@ -52,7 +61,9 @@ export function PanelBody(props) {
     );
 }
 
-export function PanelFooter(props) {
+export function PanelFooter(props: {
+    children: *
+}) {
     return (
         <div className={styles.footer} {...props}>
             {props.children}
@@ -61,11 +72,16 @@ export function PanelFooter(props) {
 }
 
 export class PanelBodyHeader extends Component {
-    static displayName = 'PanelBodyHeader';
+    props: {
+        type: 'default'|'error',
+        onClose: Function,
+        children: *
+    };
 
-    static propTypes = {
-        type: PropTypes.oneOf(['default', 'error']),
-        onClose: PropTypes.func
+    state: {
+        isClosed: bool
+    } = {
+        isClosed: false
     };
 
     render() {
@@ -79,22 +95,35 @@ export class PanelBodyHeader extends Component {
         }
 
         const className = classNames(styles[`${type}BodyHeader`], {
-            [styles.isClosed]: this.state && this.state.isClosed
+            [styles.isClosed]: this.state.isClosed
         });
 
+        const extraProps = omit(this.props, [
+            'type',
+            'onClose'
+        ]);
+
         return (
-            <div className={className} {...omit(this.props, Object.keys(PanelBodyHeader.propTypes))}>
+            <div className={className} {...extraProps}>
                 {close}
                 {children}
             </div>
         );
     }
 
-    onClose = (event) => {
+    onClose = (event: MouseEvent) => {
         event.preventDefault();
 
         this.setState({isClosed: true});
 
         this.props.onClose();
     };
+}
+
+export function PanelIcon({icon}: {icon: string}) {
+    return (
+        <div className={styles.panelIcon}>
+            <span className={icons[icon]} />
+        </div>
+    );
 }

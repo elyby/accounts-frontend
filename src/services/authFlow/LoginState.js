@@ -1,4 +1,5 @@
 import logger from 'services/logger';
+import { getLogin } from 'components/auth/reducer';
 
 import AbstractState from './AbstractState';
 import PasswordState from './PasswordState';
@@ -6,13 +7,14 @@ import RegisterState from './RegisterState';
 
 export default class LoginState extends AbstractState {
     enter(context) {
-        const {auth, user} = context.getState();
+        const login = getLogin(context.getState());
+        const {user} = context.getState();
 
         const isUserAddsSecondAccount = !user.isGuest
             && /login|password/.test(context.getRequest().path); // TODO: improve me
 
         // TODO: it may not allow user to leave password state till he click back or enters password
-        if (auth.login) {
+        if (login) {
             context.setState(new PasswordState());
         } else if (user.isGuest || isUserAddsSecondAccount) {
             context.navigate('/login');

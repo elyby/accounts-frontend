@@ -1,9 +1,11 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { TransitionMotion, spring } from 'react-motion';
 
 import { Panel, PanelBody, PanelFooter, PanelHeader } from 'components/ui/Panel';
+import { getLogin } from 'components/auth/reducer';
 import { Form } from 'components/ui/form';
 import MeasureHeight from 'components/MeasureHeight';
 import { helpLinks as helpLinksStyles } from 'components/auth/helpLinks.scss';
@@ -30,7 +32,7 @@ const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
  * (e.g. the panel with lower index will slide from left side, and with greater from right side)
  */
 const contexts = [
-    ['login', 'password', 'forgotPassword', 'recoverPassword'],
+    ['login', 'password', 'mfa', 'forgotPassword', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
     ['acceptRules'],
     ['chooseAccount', 'permissions']
@@ -459,7 +461,7 @@ class PanelTransition extends Component {
 }
 
 export default connect((state) => {
-    const {login} = state.auth;
+    const login = getLogin(state);
     let user = {
         ...state.user
     };

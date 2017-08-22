@@ -8,12 +8,12 @@ import {
     SET_SCOPES,
     SET_LOADING_STATE,
     REQUIRE_PERMISSIONS_ACCEPT,
-    SET_LOGIN,
+    SET_CREDENTIALS,
     SET_SWITCHER
 } from './actions';
 
 export default combineReducers({
-    login,
+    credentials,
     error,
     isLoading,
     isSwitcherEnabled,
@@ -39,21 +39,31 @@ function error(
     }
 }
 
-function login(
-    state = null,
-    {type, payload = null}
-) {
-    switch (type) {
-        case SET_LOGIN:
-            if (payload !== null && typeof payload !== 'string') {
-                throw new Error('Expected payload with login string or null');
-            }
-
-            return payload;
-
-        default:
-            return state;
+function credentials(
+    state = {},
+    {type, payload}: {
+        type: string,
+        payload: ?{
+            login?: string,
+            password?: string,
+            rememberMe?: bool,
+            isTotpRequired?: bool
+        }
     }
+) {
+    if (type === SET_CREDENTIALS) {
+        if (payload
+            && typeof payload === 'object'
+        ) {
+            return {
+                ...payload
+            };
+        }
+
+        return {};
+    }
+
+    return state;
 }
 
 function isSwitcherEnabled(
@@ -149,4 +159,17 @@ function scopes(
         default:
             return state;
     }
+}
+
+export function getLogin(state: Object): ?string {
+    return state.auth.credentials.login || null;
+}
+
+export function getCredentials(state: Object): {
+    login?: string,
+    password?: string,
+    rememberMe?: bool,
+    isTotpRequired?: bool
+} {
+    return state.auth.credentials;
 }

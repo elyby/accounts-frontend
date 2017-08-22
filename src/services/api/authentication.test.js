@@ -15,6 +15,8 @@ describe('authentication api', () => {
 
         beforeEach(() => {
             sinon.stub(request, 'post').named('request.post');
+
+            request.post.returns(Promise.resolve());
         });
 
         afterEach(() => {

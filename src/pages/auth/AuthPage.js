@@ -16,6 +16,7 @@ import Password from 'components/auth/password/Password';
 import AcceptRules from 'components/auth/acceptRules/AcceptRules';
 import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import RecoverPassword from 'components/auth/recoverPassword/RecoverPassword';
+import Mfa from 'components/auth/mfa/Mfa';
 import Finish from 'components/auth/finish/Finish';
 
 import styles from './auth.scss';
@@ -46,6 +47,7 @@ class AuthPage extends Component {
                 <div className={styles.content}>
                     <Switch>
                         <Route path="/login" render={renderPanelTransition(Login)} />
+                        <Route path="/mfa" render={renderPanelTransition(Mfa)} />
                         <Route path="/password" render={renderPanelTransition(Password)} />
                         <Route path="/register" render={renderPanelTransition(Register)} />
                         <Route path="/activation/:key?" render={renderPanelTransition(Activation)} />
@@ -72,6 +74,7 @@ class AuthPage extends Component {
 
 function renderPanelTransition(factory) {
     const {Title, Body, Footer, Links} = factory();
+
     return (props) => (
         <PanelTransition
             key="panel-transition"

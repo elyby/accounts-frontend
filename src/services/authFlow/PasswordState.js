@@ -1,40 +1,62 @@
+// @flow
 import logger from 'services/logger';
+import { getCredentials } from 'components/auth/reducer';
 
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
 import ForgotPasswordState from './ForgotPasswordState';
 import LoginState from './LoginState';
+import MfaState from './MfaState';
+
+import type { AuthContext } from './AuthFlow';
 
 export default class PasswordState extends AbstractState {
-    enter(context) {
-        const {auth} = context.getState();
+    enter(context: AuthContext) {
+        const {login} = getCredentials(context.getState());
 
-        if (auth.login) {
+        if (login) {
             context.navigate('/password');
         } else {
             context.setState(new CompleteState());
         }
     }
 
-    resolve(context, {password, rememberMe}) {
-        const {auth: {login}} = context.getState();
+    resolve(
+        context: AuthContext,
+        {
+            password,
+            rememberMe
+        }: {
+            password: string,
+            rememberMe: bool
+        }
+    ) {
+        const {login} = getCredentials(context.getState());
 
-        return context.run('login', {
+        context.run('login', {
             password,
             rememberMe,
             login
         })
-        .then(() => context.setState(new CompleteState()))
+        .then(() => {
+            const {isTotpRequired} = getCredentials(context.getState());
+
+            if (isTotpRequired) {
+                return context.setState(new MfaState());
+            }
+
+            return context.setState(new CompleteState());
+        })
         .catch((err = {}) =>
             err.errors || logger.warn('Error logging in', err)
         );
     }
 
-    reject(context) {
+    reject(context: AuthContext) {
         context.setState(new ForgotPasswordState());
     }
 
-    goBack(context) {
+    goBack(context: AuthContext) {
         context.run('setLogin', null);
         context.setState(new LoginState());
     }

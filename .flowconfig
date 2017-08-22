@@ -4,6 +4,7 @@
 [include]
 
 [libs]
+./flow-typed
 
 [options]
 module.system.node.resolve_dirname=node_modules

@@ -1,35 +1,54 @@
+// @flow
 import request from 'services/request';
 import accounts from 'services/api/accounts';
 
 const authentication = {
     login({
-        login = '',
-        password = '',
+        login,
+        password,
+        totp,
         rememberMe = false
+    }: {
+        login: string,
+        password?: string,
+        totp?: string,
+        rememberMe: bool
     }) {
         return request.post(
             '/api/authentication/login',
-            {login, password, rememberMe},
+            {login, password, token: totp, rememberMe},
             {token: null}
-        );
+        ).catch((resp) => {
+            if (resp && resp.errors && resp.errors.token) {
+                resp.errors.totp = resp.errors.token.replace('token', 'totp');
+                delete resp.errors.token;
+            }
+
+            return Promise.reject(resp);
+        });
     },
 
     /**
      * @param {object} options
-     * @param {object} [options.token] - an optional token to overwrite headers
+     * @param {string} [options.token] - an optional token to overwrite headers
      *                                   in middleware and disable token auto-refresh
      *
      * @return {Promise}
      */
-    logout(options = {}) {
+    logout(options: {
+        token?: string
+    } = {}) {
         return request.post('/api/authentication/logout', {}, {
             token: options.token
         });
     },
 
     forgotPassword({
-        login = '',
-        captcha = ''
+        login,
+        captcha
+    }: {
+        login: string,
+        captcha: string
     }) {
         return request.post(
             '/api/authentication/forgot-password',
@@ -39,9 +58,13 @@ const authentication = {
     },
 
     recoverPassword({
-        key = '',
-        newPassword = '',
-        newRePassword = ''
+        key,
+        newPassword,
+        newRePassword
+    }: {
+        key: string,
+        newPassword: string,
+        newRePassword: string
     }) {
         return request.post(
             '/api/authentication/recover-password',
@@ -61,7 +84,10 @@ const authentication = {
      *                     if it was refreshed. As a side effect the response
      *                     will have a `user` field with current user data
      */
-    validateToken({token, refreshToken}) {
+    validateToken({token, refreshToken}: {
+        token: string,
+        refreshToken: string
+    }) {
         return new Promise((resolve) => {
             if (typeof token !== 'string') {
                 throw new Error('token must be a string');
@@ -91,12 +117,12 @@ const authentication = {
      *
      * @return {Promise} - resolves to {token}
      */
-    requestToken(refreshToken) {
+    requestToken(refreshToken: string): Promise<{token: string}> {
         return request.post(
             '/api/authentication/refresh-token',
             {refresh_token: refreshToken}, // eslint-disable-line
             {token: null}
-        ).then((resp) => ({
+        ).then((resp: {access_token: string}) => ({
             token: resp.access_token
         }));
     }
