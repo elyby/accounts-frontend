@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 import accounts from 'services/api/accounts';
 import { FormModel } from 'components/ui/form';

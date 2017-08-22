@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 
@@ -7,11 +8,11 @@ import styles from './profile.scss';
 export default class ProfileField extends Component {
     static displayName = 'ProfileField';
     static propTypes = {
-        label: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+        label: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
         link: PropTypes.string,
         onChange: PropTypes.func,
-        value: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
-        warningMessage: React.PropTypes.oneOfType([PropTypes.string, PropTypes.element])
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+        warningMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
     };
 
     render() {

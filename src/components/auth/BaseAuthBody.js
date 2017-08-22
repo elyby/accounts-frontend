@@ -1,7 +1,8 @@
 /**
  * Helps with form fields binding, form serialization and errors rendering
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 import AuthError from 'components/auth/authError/AuthError';
 import { userShape } from 'components/user/User';
