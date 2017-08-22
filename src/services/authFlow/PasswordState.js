@@ -33,7 +33,7 @@ export default class PasswordState extends AbstractState {
     ) {
         const {login} = getCredentials(context.getState());
 
-        context.run('login', {
+        return context.run('login', {
             password,
             rememberMe,
             login

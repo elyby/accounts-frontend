@@ -31,7 +31,7 @@ export default class MfaState extends AbstractState {
             rememberMe
         } = getCredentials(context.getState());
 
-        context.run('login', {
+        return context.run('login', {
             totp,
             password,
             rememberMe,
