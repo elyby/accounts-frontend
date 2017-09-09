@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
 
 class RootPage extends Component<{
     user: User,
-    isPopupActive: boolean,
+    isPopupActive: bool,
     onLogoClick: Function,
     location: {
         pathname: string

@@ -42,18 +42,30 @@ class MultiFactorAuthPage extends Component<{
     }
 
     render() {
-        const step = (parseInt(this.props.match.params.step, 10) || 1) - 1;
         const {user} = this.props;
 
         return (
             <MultiFactorAuth
                 isMfaEnabled={user.isOtpEnabled}
                 onSubmit={this.onSubmit}
-                step={step}
+                step={this.getStep()}
                 onChangeStep={this.onChangeStep}
                 onComplete={this.onComplete}
             />
         );
+    }
+
+    getStep(): MfaStep {
+        const step = (parseInt(this.props.match.params.step, 10) || 1) - 1;
+
+        if (step !== 0
+            && step !== 1
+            && step !== 2
+        ) { // NOTE: flow does not understand Array.includes()
+            return 1;
+        }
+
+        return step;
     }
 
     onChangeStep = (step: MfaStep) => {

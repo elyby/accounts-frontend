@@ -6,7 +6,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import messages from '../MultiFactorAuth.intl.json';
 import styles from './instructions.scss';
 
-type OS = 'android'|'ios'|'windows';
+type OS = 'android' | 'ios' | 'windows';
 
 const linksByOs: {
     [key: OS]: {

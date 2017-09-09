@@ -1,15 +1,15 @@
 // @flow
 export type Color = 'green'
-    |'blue'
-    |'darkBlue'
-    |'violet'
-    |'lightViolet'
-    |'orange'
-    |'red'
-    |'black'
-    |'white';
+    | 'blue'
+    | 'darkBlue'
+    | 'violet'
+    | 'lightViolet'
+    | 'orange'
+    | 'red'
+    | 'black'
+    | 'white';
 
-export type Skin = 'dark'|'light';
+export type Skin = 'dark' | 'light';
 
 export const COLOR_GREEN: Color = 'green';
 export const COLOR_BLUE: Color = 'blue';

@@ -284,7 +284,7 @@ export function oAuthValidate(oauthData: {
     responseType: string,
     description: string,
     scope: string,
-    prompt: 'none'|'consent'|'select_account',
+    prompt: 'none' | 'consent' | 'select_account',
     loginHint?: string,
     state?: string
 }) {
@@ -387,7 +387,7 @@ export function setClient({
 }
 
 export function resetOAuth() {
-    return (dispatch: (Function|Object) => void) => {
+    return (dispatch: (Function | Object) => void) => {
         localStorage.removeItem('oauthData');
         dispatch(setOAuthRequest({}));
     };
@@ -399,7 +399,7 @@ export function resetOAuth() {
  * @return {function}
  */
 export function resetAuth() {
-    return (dispatch: (Function|Object) => void) => {
+    return (dispatch: (Function | Object) => void) => {
         dispatch(setLogin(null));
         dispatch(resetOAuth());
     };
@@ -474,7 +474,7 @@ export function setLoadingState(isLoading: bool) {
 }
 
 function wrapInLoader(fn) {
-    return (dispatch: (Function|Object) => void, getState: Object) => {
+    return (dispatch: (Function | Object) => void, getState: Object) => {
         dispatch(setLoadingState(true));
         const endLoading = () => dispatch(setLoadingState(false));
 

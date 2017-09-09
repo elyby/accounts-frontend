@@ -72,7 +72,7 @@ export function PanelFooter(props: {
 }
 
 export class PanelBodyHeader extends Component<{
-    type: 'default'|'error',
+    type: 'default' | 'error',
     onClose: Function,
     children: *
 }, {

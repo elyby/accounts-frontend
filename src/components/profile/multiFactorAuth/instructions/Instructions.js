@@ -15,10 +15,10 @@ import appleLogo from './images/apple.svg';
 import windowsLogo from './images/windows.svg';
 
 export default class Instructions extends Component<{}, {
-    activeOs: null|'android'|'ios'|'windows'
+    activeOs: null | 'android' | 'ios' | 'windows'
 }> {
     state: {
-        activeOs: null|'android'|'ios'|'windows'
+        activeOs: null | 'android' | 'ios' | 'windows'
     } = {
         activeOs: null
     };
@@ -74,7 +74,7 @@ export default class Instructions extends Component<{}, {
         );
     }
 
-    onChangeOs(event: MouseEvent, osName: 'android'|'ios'|'windows') {
+    onChangeOs(event: MouseEvent, osName: 'android' | 'ios' | 'windows') {
         event.preventDefault();
 
         this.setState({

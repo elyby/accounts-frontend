@@ -13,7 +13,7 @@ export default function Stepper({
     totalSteps,
     activeStep,
     color = COLOR_GREEN
-} : {
+}: {
     totalSteps: number,
     activeStep: number,
     color: Color

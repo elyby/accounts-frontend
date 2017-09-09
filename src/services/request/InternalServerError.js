@@ -1,5 +1,5 @@
 // @flow
-function InternalServerError(error: Error|string|Object, resp?: Response|Object) {
+function InternalServerError(error: Error | string | Object, resp?: Response | Object) {
     error = error || {};
 
     this.name = 'InternalServerError';

@@ -21,7 +21,7 @@ type State = {
     isTouched: bool,
     isLoading: bool
 };
-type InputElement = HTMLInputElement|HTMLTextAreaElement;
+type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
 export default class Form extends Component<Props, State> {
     static defaultProps = {

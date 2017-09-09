@@ -17,7 +17,7 @@ import type { Form } from 'components/ui/form';
 
 const STEPS_TOTAL = 3;
 
-export type MfaStep = 0|1|2;
+export type MfaStep = 0 | 1 | 2;
 type Props = {
     onChangeStep: Function,
     confirmationForm: FormModel,

@@ -19,9 +19,40 @@ type Request = {
     query: URLSearchParams,
     params: Object
 };
+
+// TODO: temporary added to improve typing without major refactoring
+type ActionId =
+    | 'updateUser'
+    | 'authenticate'
+    | 'logout'
+    | 'goBack'
+    | 'redirect'
+    | 'login'
+    | 'acceptRules'
+    | 'forgotPassword'
+    | 'recoverPassword'
+    | 'register'
+    | 'activate'
+    | 'resendActivation'
+    | 'contactUs'
+    | 'setLogin'
+    | 'setAccountSwitcher'
+    | 'setErrors'
+    | 'clearErrors'
+    | 'oAuthValidate'
+    | 'oAuthComplete'
+    | 'setClient'
+    | 'resetOAuth'
+    | 'resetAuth'
+    | 'setOAuthRequest'
+    | 'setOAuthCode'
+    | 'requirePermissionsAccept'
+    | 'setScopes'
+    | 'setLoadingState';
+
 export interface AuthContext {
-    run(actionId: string, payload: *): *;
-    setState(newState: AbstractState): Promise<*>|void;
+    run(actionId: ActionId, payload?: ?Object): *;
+    setState(newState: AbstractState): Promise<*> | void;
     getState(): Object;
     navigate(route: string): void;
     getRequest(): Request;
@@ -94,7 +125,7 @@ export default class AuthFlow implements AuthContext {
         this.state.goBack(this);
     }
 
-    run(actionId: string, payload: Object): Promise<*> {
+    run(actionId: ActionId, payload?: ?Object): Promise<*> {
         if (!this.actions[actionId]) {
             throw new Error(`Action ${actionId} does not exists`);
         }

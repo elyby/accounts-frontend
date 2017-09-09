@@ -18,7 +18,7 @@ export default class LoggedInPanel extends Component<{
         isAccountSwitcherActive: false
     };
 
-    _isMounted: boolean = false;
+    _isMounted: bool = false;
     el: ?HTMLElement;
 
     componentDidMount() {
@@ -95,7 +95,7 @@ export default class LoggedInPanel extends Component<{
  */
 function createOnOutsideComponentClickHandler(
     getEl: () => ?HTMLElement,
-    isActive: () => boolean,
+    isActive: () => bool,
     callback: Function
 ) {
     // TODO: we have the same logic in LangMenu

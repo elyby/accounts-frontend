@@ -8,7 +8,7 @@ const ABORT_ERR = 20;
 
 export default function BsodMiddleware(dispatchBsod: Function, logger: Logger) {
     return {
-        catch<T: Resp<*>|InternalServerError>(resp?: T): Promise<T> {
+        catch<T: Resp<*> | InternalServerError>(resp?: T): Promise<T> {
             if (resp && (
                 (resp instanceof InternalServerError
                         && resp.error.code !== ABORT_ERR

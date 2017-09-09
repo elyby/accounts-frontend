@@ -8,7 +8,7 @@ import icons from 'components/ui/icons.scss';
 import messages from '../MultiFactorAuth.intl.json';
 import mfaStyles from '../mfa.scss';
 
-export default function MfaStatus({onProceed} : {
+export default function MfaStatus({onProceed}: {
     onProceed: Function
 }) {
     return (
