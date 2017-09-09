@@ -1,3 +1,4 @@
+// @flow
 import { createStore, applyMiddleware, compose } from 'redux';
 // midleware, который позволяет возвращать из экшенов функции
 // это полезно для работы с асинхронными действиями,
@@ -22,14 +23,17 @@ export default function storeFactory() {
     if (process.env.NODE_ENV === 'production') {
         enhancer = compose(middlewares, persistStateEnhancer);
     } else {
-        const DevTools = require('containers/DevTools').default;
-        enhancer = compose(middlewares, persistStateEnhancer, DevTools.instrument());
+        const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+        enhancer = composeEnhancers(
+            middlewares,
+            persistStateEnhancer
+        );
     }
 
     const store = createStore(reducers, {}, enhancer);
 
     // Hot reload reducers
-    if (module.hot) {
+    if (module.hot && typeof module.hot.accept === 'function') {
         module.hot.accept('reducers', () =>
             store.replaceReducer(require('reducers').default)
         );

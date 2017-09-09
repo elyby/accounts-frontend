@@ -1,6 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
+import { resetAuth } from 'components/auth/actions';
+import { withRouter } from 'react-router';
 import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
 import Helmet from 'react-helmet';
@@ -21,14 +23,6 @@ import type { User } from 'components/user';
 
 import styles from './root.scss';
 import messages from './RootPage.intl.json';
-
-/* global process: false */
-let DevTools;
-if (process.env.NODE_ENV === 'production') {
-    DevTools = () => null;
-} else {
-    DevTools = require('containers/DevTools').default;
-}
 
 class RootPage extends Component<{
     user: User,
@@ -92,15 +86,10 @@ class RootPage extends Component<{
                     </div>
                 </div>
                 <PopupStack />
-                <DevTools />
             </div>
         );
     }
 }
-
-import { connect } from 'react-redux';
-import { resetAuth } from 'components/auth/actions';
-import { withRouter } from 'react-router';
 
 export default withRouter(connect((state) => ({
     user: state.user,
