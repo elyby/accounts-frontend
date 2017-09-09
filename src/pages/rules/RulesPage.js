@@ -128,10 +128,10 @@ export default class RulesPage extends Component<{
         );
     }
 
-    onRuleClick(event: MouseEvent & {target: HTMLElement, currentTarget: HTMLElement}) {
+    onRuleClick(event: SyntheticMouseEvent<HTMLElement>) {
         if (event.defaultPrevented
             || !event.currentTarget.id
-            || event.target.tagName.toLowerCase() === 'a'
+            || event.target instanceof HTMLAnchorElement
         ) {
             // some-one have already processed this event or it is a link
             return;

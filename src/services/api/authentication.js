@@ -16,16 +16,9 @@ const authentication = {
     }) {
         return request.post(
             '/api/authentication/login',
-            {login, password, token: totp, rememberMe},
+            {login, password, totp, rememberMe},
             {token: null}
-        ).catch((resp) => {
-            if (resp && resp.errors && resp.errors.token) {
-                resp.errors.totp = resp.errors.token.replace('token', 'totp');
-                delete resp.errors.token;
-            }
-
-            return Promise.reject(resp);
-        });
+        );
     },
 
     /**

@@ -110,12 +110,15 @@ export default class Form extends Component<Props, State> {
         }
 
         if (form.checkValidity()) {
+            this.setState({isLoading: true});
+
             Promise.resolve(this.props.onSubmit(
                 this.props.form ? this.props.form : new FormData(form)
             ))
                 .catch((errors: {[key: string]: string}) => {
                     this.setErrors(errors);
-                });
+                })
+                .finally(() => this.setState({isLoading: false}));
         } else {
             const invalidEls = form.querySelectorAll(':invalid');
             const errors = {};
@@ -129,6 +132,7 @@ export default class Form extends Component<Props, State> {
                 }
 
                 let errorMessage = el.validationMessage;
+
                 if (el.validity.valueMissing) {
                     errorMessage = `error.${el.name}_required`;
                 } else if (el.validity.typeMismatch) {

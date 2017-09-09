@@ -6,7 +6,8 @@
     },
 
     "plugins": [
-        "react"
+        "react",
+        "flowtype"
     ],
 
     "env": {
@@ -16,7 +17,10 @@
         "es6": true
     },
 
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:flowtype/recommended"
+    ],
 
     // @see: http://eslint.org/docs/rules/
     "rules": {
@@ -200,6 +204,8 @@
         "react/prefer-es6-class": "warn",
         "react/prop-types": "off", // using flowtype for this task
         "react/self-closing-comp": "warn",
-        "react/sort-comp": ["off", {"order": ["lifecycle", "render", "everything-else"]}]
+        "react/sort-comp": ["off", {"order": ["lifecycle", "render", "everything-else"]}],
+
+        "flowtype/boolean-style": ["error", "bool"],
     }
 }

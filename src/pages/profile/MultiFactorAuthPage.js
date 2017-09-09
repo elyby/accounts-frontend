@@ -1,18 +1,21 @@
 // @flow
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import MultiFactorAuth, { MfaStep } from 'components/profile/multiFactorAuth';
-
+import MultiFactorAuth from 'components/profile/multiFactorAuth';
+import type { MfaStep } from 'components/profile/multiFactorAuth';
 import type { FormModel } from 'components/ui/form';
+import type { User } from 'components/user';
 
 class MultiFactorAuthPage extends Component<{
+    user: User,
     history: {
         push: (string) => void
     },
     match: {
         params: {
-            step?: '1'|'2'|'3'
+            step?: '1' | '2' | '3'
         }
     }
 }> {
@@ -23,18 +26,28 @@ class MultiFactorAuthPage extends Component<{
 
     componentWillMount() {
         const step = this.props.match.params.step;
+        const {user} = this.props;
 
-        if (step && !/^[1-3]$/.test(step)) {
-            // wrong param value
-            this.props.history.push('/404');
+        if (step) {
+            if (!/^[1-3]$/.test(step)) {
+                // wrong param value
+                this.props.history.push('/404');
+                return;
+            }
+
+            if (user.isOtpEnabled) {
+                this.props.history.push('/mfa');
+            }
         }
     }
 
     render() {
         const step = (parseInt(this.props.match.params.step, 10) || 1) - 1;
+        const {user} = this.props;
 
         return (
             <MultiFactorAuth
+                isMfaEnabled={user.isOtpEnabled}
                 onSubmit={this.onSubmit}
                 step={step}
                 onChangeStep={this.onChangeStep}
@@ -59,4 +72,4 @@ class MultiFactorAuthPage extends Component<{
     };
 }
 
-export default MultiFactorAuthPage;
+export default connect(({user}) => ({user}))(MultiFactorAuthPage);

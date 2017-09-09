@@ -15,5 +15,11 @@
 
     "codePlaceholder": "Enter the code here",
     "enterCodeFromApp": "In order to finish two-factor auth setup, please enter the code received in mobile app:",
-    "enableTwoFactorAuth": "Enable two-factor auth"
+    "enableTwoFactorAuth": "Enable two-factor auth",
+
+    "disable": "Disable",
+    "mfaEnabledForYourAcc": "The two-factor authentication is enabled for yout account",
+    "mfaLoginFlowDesc": "In order to log in next time, you'll need to enter additional code. Please note, that Minecraft authorization won't work with two-factor auth enabled.",
+    "disableMfa": "Disable two-factor authentication",
+    "disableMfaInstruction": "In order to disable two-factor authentication, you need to provide a code from your mobile app and finally confirm your action with your current account password."
 }

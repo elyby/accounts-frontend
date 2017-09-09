@@ -41,12 +41,27 @@ export default {
      * @return {Promise}
      */
     get<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
-        if (typeof data === 'object' && Object.keys(data).length) {
-            const separator = url.indexOf('?') === -1 ? '?' : '&';
-            url += separator + buildQuery(data);
-        }
+        url = buildUrl(url, data);
 
         return doFetch(url, options);
+    },
+
+    /**
+     * @param {string} url
+     * @param {object} [data] - request data
+     * @param {object} [options] - additional options for fetch or middlewares
+     *
+     * @return {Promise}
+     */
+    delete<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
+        return doFetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: buildQuery(data),
+            ...options
+        });
     },
 
     /**
@@ -74,7 +89,6 @@ export default {
         middlewareLayer.add(middleware);
     }
 };
-
 
 const checkStatus = (resp) => resp.status >= 200 && resp.status < 300
     ? Promise.resolve(resp)
@@ -159,4 +173,13 @@ function buildQuery(data: Object = {}): string {
                     .join('=')
         )
         .join('&');
+}
+
+function buildUrl(url: string, data?: Object): string {
+    if (typeof data === 'object' && Object.keys(data).length) {
+        const separator = url.indexOf('?') === -1 ? '?' : '&';
+        url += separator + buildQuery(data);
+    }
+
+    return url;
 }

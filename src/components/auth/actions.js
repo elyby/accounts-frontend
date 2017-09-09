@@ -36,7 +36,7 @@ export function goBack(fallbackUrl?: ?string = null) {
     };
 }
 
-export function redirect(url: string) {
+export function redirect(url: string): () => Promise<*> {
     loader.show();
 
     return () => new Promise(() => {
@@ -508,7 +508,7 @@ function authHandler(dispatch) {
     });
 }
 
-function validationErrorsHandler(dispatch: (Function|Object) => void, repeatUrl?: string) {
+function validationErrorsHandler(dispatch: (Function | Object) => void, repeatUrl?: string) {
     return (resp) => {
         if (resp.errors) {
             const firstError = Object.keys(resp.errors)[0];

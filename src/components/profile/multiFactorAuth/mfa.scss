@@ -1,0 +1,21 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+
+.mfaTitle {
+    font-size: 18px;
+    font-family: $font-family-title;
+    text-align: center;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+
+.bigIcon {
+    color: $blue;
+    font-size: 100px;
+    line-height: 1;
+    text-align: center;
+}
+
+.disableMfa {
+    text-align: center;
+}

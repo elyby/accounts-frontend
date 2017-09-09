@@ -1,9 +1,12 @@
 // @flow
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
+import { fetchUserData } from 'components/user/actions';
+import { create as createPopup } from 'components/ui/popup/actions';
+import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
 import logger from 'services/logger';
 import { browserHistory } from 'services/history';
 import { FooterMenu } from 'components/footerMenu';
@@ -57,11 +60,6 @@ class ProfilePage extends Component<{
     goToProfile = () => browserHistory.push('/');
 }
 
-import { connect } from 'react-redux';
-import { fetchUserData } from 'components/user/actions';
-import { create as createPopup } from 'components/ui/popup/actions';
-import PasswordRequestForm from 'components/profile/passwordRequestForm/PasswordRequestForm';
-
 export default connect(null, {
     fetchUserData,
     onSubmit: ({form, sendData}: {
@@ -69,6 +67,7 @@ export default connect(null, {
         sendData: () => Promise<*>
     }) => (dispatch) => {
         form.beginLoading();
+
         return sendData()
             .catch((resp) => {
                 const requirePassword = resp.errors && !!resp.errors.password;

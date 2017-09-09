@@ -1,1 +1,2 @@
-export { default, MfaStep } from './MultiFactorAuth';
+export { default } from './MultiFactorAuth';
+export type { MfaStep } from './MfaEnable';

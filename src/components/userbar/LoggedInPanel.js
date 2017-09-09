@@ -101,7 +101,7 @@ function createOnOutsideComponentClickHandler(
     // TODO: we have the same logic in LangMenu
     // Probably we should decouple this into some helper function
     // TODO: the name of function may be better...
-    return (event: MouseEvent & {target: HTMLElement}) => {
+    return (event: {target: HTMLElement} & MouseEvent) => {
         const el = getEl();
 
         if (isActive() && el) {

@@ -27,9 +27,7 @@ describe('RulesPage', () => {
             const expectedUrl = `/foo?bar#${id}`;
 
             page.find(`#${id}`).simulate('click', {
-                target: {
-                    tagName: 'li'
-                },
+                target: document.createElement('li'),
 
                 currentTarget: {
                     id
@@ -41,9 +39,7 @@ describe('RulesPage', () => {
 
         it('should not update location if link was clicked', () => {
             page.find(`#${id}`).simulate('click', {
-                target: {
-                    tagName: 'a'
-                },
+                target: document.createElement('a'),
 
                 currentTarget: {
                     id

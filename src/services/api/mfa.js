@@ -9,17 +9,15 @@ export default {
 
     enable(data: {totp: string, password?: string}): Promise<Resp<*>> {
         return request.post('/api/two-factor-auth', {
-            token: data.totp,
+            totp: data.totp,
             password: data.password || ''
-        }).catch((resp) => {
-            if (resp.errors) {
-                if (resp.errors.token) {
-                    resp.errors.totp = resp.errors.token.replace('token', 'totp');
-                    delete resp.errors.token;
-                }
-            }
+        });
+    },
 
-            return Promise.reject(resp);
+    disable(data: {totp: string, password?: string}): Promise<Resp<*>> {
+        return request.delete('/api/two-factor-auth', {
+            totp: data.totp,
+            password: data.password || ''
         });
     }
 };
