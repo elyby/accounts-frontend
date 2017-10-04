@@ -19,6 +19,11 @@
         "progress": 97.5,
         "isReleased": true
     },
+    "lt": {
+        "name": "Lietuvių",
+        "progress": 100,
+        "isReleased": false
+    },
     "pl": {
         "name": "Polski",
         "progress": 97,
@@ -51,7 +56,7 @@
     },
     "vi": {
         "name": "Tiếng Việt",
-        "progress": 97.5,
+        "progress": 100,
         "isReleased": true
     }
 }

@@ -23,6 +23,7 @@ const LOCALES_MAP = {
     el: 'el-GR',
     de: 'de-DE',
     sr: 'sr-RS',
+    lt: 'lt-LT',
 };
 
 // https://ely-translates.oneskyapp.com/admin/site/settings
