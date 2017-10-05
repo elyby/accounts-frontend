@@ -1,7 +1,7 @@
 {
     "be": {
         "name": "Беларуская",
-        "progress": 99,
+        "progress": 100,
         "isReleased": true
     },
     "en": {
@@ -51,7 +51,7 @@
     },
     "uk": {
         "name": "Українська",
-        "progress": 97.5,
+        "progress": 100,
         "isReleased": true
     },
     "vi": {
