@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
+import { requireLocaleFlag } from 'functions';
+import LANGS from 'i18n/index.json';
+
 import { userShape } from 'components/user/User';
-import { LangMenu } from 'components/langMenu';
 
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
@@ -17,7 +20,8 @@ import RulesPage from 'pages/rules/RulesPage';
 class Profile extends Component {
     static displayName = 'Profile';
     static propTypes = {
-        user: userShape
+        user: userShape,
+        createLanguageSwitcherPopup: PropTypes.func.isRequired,
     };
 
     render() {
@@ -86,7 +90,14 @@ class Profile extends Component {
 
                             <ProfileField
                                 label={<Message {...messages.siteLanguage} />}
-                                value={<LangMenu showCurrentLang />}
+                                value={
+                                    <span className={styles.language} onClick={this.onLanguageSwitcher.bind(this)}>
+                                        <span className={styles.languageIcon} style={{
+                                            backgroundImage: `url('${requireLocaleFlag(user.lang)}')`
+                                        }} />
+                                        {LANGS[user.lang].name}
+                                    </span>
+                                }
                             />
 
                             <ProfileField
@@ -118,6 +129,10 @@ class Profile extends Component {
         );
     }
 
+    onLanguageSwitcher() {
+        this.props.createLanguageSwitcherPopup();
+    }
+
     handleUUIDMouseOver() {
         try {
             const selection = window.getSelection();
@@ -136,7 +151,11 @@ class Profile extends Component {
 }
 
 import { connect } from 'react-redux';
+import LanguageSwitcher from 'components/languageSwitcher/LanguageSwitcher';
+import { create as createPopup } from 'components/ui/popup/actions';
 
 export default connect((state) => ({
-    user: state.user
-}))(Profile);
+    user: state.user,
+}), {
+    createLanguageSwitcherPopup: () => createPopup(LanguageSwitcher),
+})(Profile);

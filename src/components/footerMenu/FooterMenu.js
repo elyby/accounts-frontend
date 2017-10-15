@@ -4,8 +4,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 
-import { LangMenu } from 'components/langMenu';
-
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
 
@@ -13,7 +11,8 @@ class FooterMenu extends Component {
     static displayName = 'FooterMenu';
 
     static propTypes = {
-        createPopup: PropTypes.func.isRequired
+        createContactPopup: PropTypes.func.isRequired,
+        createLanguageSwitcherPopup: PropTypes.func.isRequired,
     };
 
     render() {
@@ -27,23 +26,35 @@ class FooterMenu extends Component {
                     <Message {...messages.contactUs} />
                 </a>
 
-                <LangMenu />
+                <div className={styles.langTriggerContainer}>
+                    <a href="#" className={styles.langTrigger} onClick={this.onLanguageSwitcher}>
+                        <span className={styles.langTriggerIcon} />
+                        <Message {...messages.siteLanguage} />
+                    </a>
+                </div>
             </div>
         );
     }
 
     onContact = (event) => {
         event.preventDefault();
-        this.props.createPopup();
+        this.props.createContactPopup();
+    };
+
+    onLanguageSwitcher = (event) => {
+        event.preventDefault();
+        this.props.createLanguageSwitcherPopup();
     };
 }
 
 import { connect } from 'react-redux';
 import ContactForm from 'components/contact/ContactForm';
+import LanguageSwitcher from 'components/languageSwitcher/LanguageSwitcher';
 import { create as createPopup } from 'components/ui/popup/actions';
 
 // mark this component, as not pure, because it is stateless,
 // but should be re-rendered, if current lang was changed
 export default connect(null, {
-    createPopup: () => createPopup(ContactForm)
+    createContactPopup: () => createPopup(ContactForm),
+    createLanguageSwitcherPopup: () => createPopup(LanguageSwitcher),
 }, null, {pure: false})(FooterMenu);

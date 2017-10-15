@@ -1,61 +1,73 @@
 {
     "be": {
         "name": "Беларуская",
+        "englishName": "Belarusian",
         "progress": 100,
         "isReleased": true
     },
     "en": {
-        "name": "English",
+        "name": "English, UK",
+        "englishName": "English, UK",
         "progress": 100,
         "isReleased": true
     },
     "fr": {
         "name": "Français",
+        "englishName": "French",
         "progress": 89,
         "isReleased": true
     },
     "id": {
         "name": "Bahasa Indonesia",
+        "englishName": "Indonesian",
         "progress": 100,
         "isReleased": true
     },
     "lt": {
         "name": "Lietuvių",
+        "englishName": "Lithuanian",
         "progress": 96.9,
         "isReleased": false
     },
     "pl": {
         "name": "Polski",
+        "englishName": "Polish",
         "progress": 85.5,
         "isReleased": false
     },
     "pt": {
-        "name": "Português",
+        "name": "Português do Brasil",
+        "englishName": "Portuguese, Brazilian",
         "progress": 100,
         "isReleased": true
     },
     "ro": {
         "name": "Română",
+        "englishName": "Romanian",
         "progress": 85.5,
         "isReleased": false
     },
     "ru": {
         "name": "Русский",
+        "englishName": "Russian",
         "progress": 100,
         "isReleased": true
     },
     "sl": {
         "name": "Slovenščina",
+        "englishName": "Slovenian",
         "progress": 86,
         "isReleased": false
     },
     "uk": {
         "name": "Українська",
+        "englishName": "Ukrainian",
         "progress": 89,
         "isReleased": true
     },
     "vi": {
         "name": "Tiếng Việt",
+        "englishName": "Vietnamese",
         "progress": 96.9,
         "isReleased": true
     }

@@ -79,3 +79,24 @@ export function getJwtPayload(jwt: string): Object {
         throw new Error('Can not decode jwt token');
     }
 }
+
+const localeToCountryCode = {
+    en: 'gb',
+    be: 'by',
+    pt: 'br',
+    uk: 'ua',
+    vi: 'vn',
+    sl: 'si',
+};
+
+/**
+ * Возвращает для указанной локали её флаг с учётом всех нюансов загрузки флага
+ * и подбора соответствующего локали флага.
+ *
+ * @param {string} locale
+ * @return {*}
+ */
+export function requireLocaleFlag(locale: string) {
+    return require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
+}
+

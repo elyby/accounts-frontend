@@ -8,3 +8,16 @@
         border-bottom-color: #666;
     }
 }
+
+.langTriggerContainer {
+    text-align: center;
+}
+
+.langTriggerIcon {
+    composes: globe from 'components/ui/icons.scss';
+
+    position: relative;
+    bottom: 1px;
+    font-size: 11px;
+    margin-right: 3px;
+}

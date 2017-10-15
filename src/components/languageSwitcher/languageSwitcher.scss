@@ -1,0 +1,162 @@
+@import '~components/ui/colors.scss';
+@import '~components/ui/fonts.scss';
+@import '~components/ui/popup/popup.scss';
+
+.languageSwitcher {
+    composes: popupWrapper from 'components/ui/popup/popup.scss';
+
+    @include popupBounding(400px);
+}
+
+.languageSwitcherBody {
+    composes: body from 'components/ui/popup/popup.scss';
+
+    display: flex;
+    flex-direction: column;
+    max-height: 550px;
+}
+
+.searchBox {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.searchIcon {
+    composes: search from 'components/ui/icons.scss';
+
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    font-size: 22px;
+    color: #EDEBE5;
+    pointer-events: none; // Иконка чисто декоративная, так что клик должен проходить сквозь неё
+}
+
+$languageListBorderStyle: 1px solid #eee;
+
+.languagesList {
+    flex-grow: 1;
+    overflow-y: auto;
+    border-top: $languageListBorderStyle;
+    border-bottom: $languageListBorderStyle;
+    margin-bottom: 20px;
+}
+
+.languageItem {
+    padding: 10px;
+    border-top: $languageListBorderStyle;
+    font-family: $font-family-title;
+    transition: .25s;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:first-child {
+        border-top: none;
+    }
+
+    &:hover {
+        background: $whiteButtonLight;
+    }
+}
+
+.languageFlex {
+    display: flex;
+    align-items: center;
+}
+
+.languageIco {
+    display: inline-block;
+    margin-right: 7px;
+    width: 40px;
+    height: 30px;
+    box-shadow: 0 0 1px rgba(#000, .2);
+
+    background: no-repeat;
+    background-size: cover;
+}
+
+.languageCaptions {
+    flex-grow: 1;
+}
+
+.languageName {
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.languageSubName {
+    font-size: 11px;
+    color: #CCC;
+}
+
+// Реализация радио кнопки. Когда у нас будет нормальный компонент радио кнопок, нужно будет перейти на него
+.languageCircle {
+    composes: checkmark from 'components/ui/icons.scss';
+
+    position: relative;
+    box-sizing: border-box;
+    width: 22px;
+    height: 22px;
+    right: -32px;
+
+
+    font-size: 10px;
+    line-height: 18px;
+    text-align: center;
+    color: #fff;
+    border: 2px solid #DCD8CD;
+    border-radius: 50%;
+
+    transition: .5s cubic-bezier(0.19, 1, 0.22, 1);
+
+    &:before {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .languageItem:hover & {
+        right: 0;
+    }
+
+    .activeLanguageItem & {
+        border-color: $green;
+        background: $green;
+        right: 0;
+
+        &:before {
+            opacity: 1;
+        }
+    }
+}
+
+.improveTranslates {
+    border: 1px solid #DEDEDE;
+    background: #F3F1ED;
+    padding: 10px;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.improveTranslatesIcon {
+    composes: translate from 'components/ui/icons.scss';
+
+    color: lighter($blue);
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.improveTranslatesContent {
+
+}
+
+.improveTranslatesTitle {
+    font-family: $font-family-title;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.improveTranslatesText {
+    font-size: 10px;
+    color: #9A9A9A;
+    line-height: 1.2;
+}

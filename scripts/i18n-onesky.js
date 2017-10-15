@@ -26,6 +26,24 @@ const LOCALES_MAP = {
     lt: 'lt-LT',
 };
 
+/**
+ * Некоторые языки, после выгрузки из OneSky, имеют не очень информативные названия,
+ * так что здесь можно указать точные имена для результирующего файла index.json
+ */
+const ORIGINAL_NAMES_MAP = {
+    en: 'English, UK',
+    pt: 'Português do Brasil',
+};
+
+/**
+ * Некоторые языки, после выгрузки из OneSky, имеют не очень точные английские названия,
+ * так что здесь можно указать точные имена для результирующего файла index.json
+ */
+const ENGLISH_NAMES_MAP = {
+    en: 'English, UK',
+    pt: 'Portuguese, Brazilian',
+};
+
 // https://ely-translates.oneskyapp.com/admin/site/settings
 const defaultOptions = {
     apiKey: '5MaW9TYp0S3qdJgkZ5QLgEIDeabkFDzB',
@@ -83,6 +101,17 @@ function sortByKeys(object) {
     }, {});
 }
 
+/**
+ * Убирает значение в скобках.
+ * Например: "French (France)" => "French".
+ *
+ * @param {string} value
+ * @return {string}
+ */
+function trimValueInBrackets(value) {
+    return value.match(/^([^\(]+)/)[0].trim();
+}
+
 async function pullReadyLanguages() {
     const languages = JSON.parse(await onesky.getLanguages({...defaultOptions}));
     return languages.data
@@ -112,7 +141,8 @@ async function pull() {
     const mapFileContent = {};
     langs.map((elem) => {
         mapFileContent[elem.locale] = {
-            name: elem.local_name.match(/^([^\(]+)/)[0].trim(), // Обрезаем значения в скобках
+            name: ORIGINAL_NAMES_MAP[elem.locale] || trimValueInBrackets(elem.local_name),
+            englishName: ENGLISH_NAMES_MAP[elem.locale] || trimValueInBrackets(elem.english_name),
             progress: parseFloat(elem.translation_progress),
             isReleased: elem.is_ready_to_publish,
         };
