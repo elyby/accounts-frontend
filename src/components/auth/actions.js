@@ -189,6 +189,12 @@ export function clearErrors() {
     return setErrors(null);
 }
 
+const KNOWN_SCOPES = [
+    'minecraft_server_session',
+    'offline_access',
+    'account_info',
+    'account_email',
+];
 /**
  * @param {object} oauthData
  * @param {string} oauthData.clientId
@@ -213,9 +219,18 @@ export function oAuthValidate(oauthData) {
     return wrapInLoader((dispatch) =>
         oauth.validate(oauthData)
             .then((resp) => {
+                const scopes = resp.session.scopes;
+                const invalidScopes = scopes.filter((scope) => !KNOWN_SCOPES.includes(scope));
                 let prompt = (oauthData.prompt || 'none').split(',').map((item) => item.trim);
+
                 if (prompt.includes('none')) {
                     prompt = ['none'];
+                }
+
+                if (invalidScopes.length) {
+                    logger.error('Got invalid scopes after oauth validation', {
+                        invalidScopes
+                    });
                 }
 
                 dispatch(setClient(resp.client));
@@ -224,7 +239,7 @@ export function oAuthValidate(oauthData) {
                     prompt: oauthData.prompt || 'none',
                     loginHint: oauthData.loginHint
                 }));
-                dispatch(setScopes(resp.session.scopes));
+                dispatch(setScopes(scopes));
                 localStorage.setItem('oauthData', JSON.stringify({ // @see services/authFlow/AuthFlow
                     timestamp: Date.now(),
                     payload: oauthData
