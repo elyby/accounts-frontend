@@ -32,7 +32,7 @@ const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
  * (e.g. the panel with lower index will slide from left side, and with greater from right side)
  */
 const contexts = [
-    ['login', 'password', 'mfa', 'forgotPassword', 'recoverPassword'],
+    ['login', 'password', 'forgotPassword', 'mfa', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
     ['acceptRules'],
     ['chooseAccount', 'permissions']

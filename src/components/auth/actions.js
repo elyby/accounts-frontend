@@ -46,6 +46,12 @@ export function redirect(url: string): () => Promise<*> {
     });
 }
 
+
+const PASSWORD_REQUIRED = 'error.password_required';
+const LOGIN_REQUIRED = 'error.login_required';
+const ACTIVATION_REQUIRED = 'error.account_not_activated';
+const TOTP_REQUIRED = 'error.totp_required';
+
 export function login({
     login = '',
     password = '',
@@ -57,11 +63,6 @@ export function login({
     totp?: string,
     rememberMe?: bool
 }) {
-    const PASSWORD_REQUIRED = 'error.password_required';
-    const LOGIN_REQUIRED = 'error.login_required';
-    const ACTIVATION_REQUIRED = 'error.account_not_activated';
-    const TOTP_REQUIRED = 'error.totp_required';
-
     return wrapInLoader((dispatch) =>
         authentication.login(
             {login, password, totp, rememberMe}
@@ -86,8 +87,9 @@ export function login({
                     }
                 }
 
-                return validationErrorsHandler(dispatch)(resp);
+                return Promise.reject(resp);
             })
+            .catch(validationErrorsHandler(dispatch))
     );
 }
 
@@ -508,7 +510,10 @@ function authHandler(dispatch) {
     });
 }
 
-function validationErrorsHandler(dispatch: (Function | Object) => void, repeatUrl?: string) {
+function validationErrorsHandler(
+    dispatch: (Function | Object) => void,
+    repeatUrl?: string
+) {
     return (resp) => {
         if (resp.errors) {
             const firstError = Object.keys(resp.errors)[0];
