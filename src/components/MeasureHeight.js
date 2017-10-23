@@ -37,12 +37,17 @@ export default class MeasureHeight extends PureComponent<{
 
     componentDidMount() {
         this.measure();
+        window.addEventListener('resize', this.measure);
     }
 
     componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
         if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
             this.measure();
         }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.measure);
     }
 
     render() {
