@@ -78,7 +78,7 @@ export default class Instructions extends Component<{}, {
         event.preventDefault();
 
         this.setState({
-            activeOs: osName
+            activeOs: this.state.activeOs === osName ? null : osName
         });
     }
 }

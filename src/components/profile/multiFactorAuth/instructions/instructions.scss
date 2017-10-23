@@ -29,16 +29,18 @@ $boxHeight: 140px;
     position: absolute;
     text-align: center;
     cursor: pointer;
+    max-width: 28%;
 
     transform: scale(1);
     opacity: 1;
     transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 
     font-family: $font-family-title;
 
-    .instructionActive & {
-        cursor: default;
-    }
+    // .instructionActive & {
+    //     cursor: default;
+    // }
 }
 
 .osLogo {
@@ -46,6 +48,10 @@ $boxHeight: 140px;
     margin: 0 auto;
     height: 80px;
     color: #444;
+
+    @media screen and (max-width: 380px) { // for old iPhones
+        height: 60px;
+    }
 }
 
 .osName {
@@ -64,6 +70,7 @@ $boxHeight: 140px;
 
     .androidActive & {
         transform: translateX(0);
+        left: 0;
     }
 
     .appleActive &,
@@ -75,8 +82,10 @@ $boxHeight: 140px;
 
 .appleTile {
     $translateX: 124px;
+    $translateX: -50%;
 
     transform: translateX($translateX) scale(1);
+    left: 50%;
 
     &:hover {
         transform: translateX($translateX) scale(1.1);
@@ -84,6 +93,7 @@ $boxHeight: 140px;
 
     .appleActive & {
         transform: translateX(0);
+        left: 0;
     }
 
     .androidActive &,
@@ -95,8 +105,10 @@ $boxHeight: 140px;
 
 .windowsTile {
     $translateX: 230px;
+    $translateX: -100%;
 
     transform: translateX($translateX) scale(1);
+    left: 100%;
 
     &:hover {
         transform: translateX($translateX) scale(1.1);
@@ -104,6 +116,7 @@ $boxHeight: 140px;
 
     .windowsActive & {
         transform: translateX(0);
+        left: 0;
     }
 
     .appleActive &,
@@ -123,12 +136,10 @@ $boxHeight: 140px;
 }
 
 .osInstruction {
-    $padding: 15px;
-
     position: relative;
     z-index: 1;
-    margin-left: 115px - $padding;
-    padding: $padding;
+    margin-left: 30%;
+    padding: 15px;
 }
 
 .instructionTitle {
