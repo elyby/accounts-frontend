@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
-import { Motion, spring } from 'react-motion';
 
+import { ScrollMotion } from 'components/ui/motion';
 import { Input, Button, Form, FormModel, FormError } from 'components/ui/form';
 import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
 import helpLinks from 'components/auth/helpLinks.scss';
-import MeasureHeight from 'components/MeasureHeight';
 import Stepper from 'components/ui/stepper';
 
 import changeEmail from './changeEmail.scss';
@@ -127,58 +126,26 @@ export default class ChangeEmail extends Component {
         const {activeStep, code} = this.state;
         const isCodeSpecified = !!this.props.code;
 
-        const activeStepHeight = this.state[`step${activeStep}Height`] || 0;
-
-        // a hack to disable height animation on first render
-        const isHeightMeasured = this.isHeightMeasured;
-        this.isHeightMeasured = isHeightMeasured || activeStepHeight > 0;
-
         return (
-            <Motion
-                style={{
-                    transform: spring(activeStep * 100, {stiffness: 500, damping: 50, precision: 0.5}),
-                    height: isHeightMeasured ? spring(activeStepHeight, {stiffness: 500, damping: 20, precision: 0.5}) : activeStepHeight
-                }}
-            >
-                {(interpolatingStyle) => (
-                    <div style={{
-                        overflow: 'hidden',
-                        height: `${interpolatingStyle.height}px`
-                    }}>
-                        <div className={changeEmail.stepForms} style={{
-                            WebkitTransform: `translateX(-${interpolatingStyle.transform}%)`,
-                            transform: `translateX(-${interpolatingStyle.transform}%)`
-                        }}>
-                            {(new Array(STEPS_TOTAL)).fill(0).map((_, step) => {
-                                const form = this.props.stepForms[step];
+            <ScrollMotion activeStep={activeStep}>
+                {(new Array(STEPS_TOTAL)).fill(0).map((_, step) => {
+                    const form = this.props.stepForms[step];
 
-                                return (
-                                    <MeasureHeight
-                                        className={changeEmail.stepForm}
-                                        onMeasure={this.onStepMeasure(step)}
-                                        state={`${step}.${form.hasErrors()}.${this.props.lang}`}
-                                        key={step}
-                                    >
-                                        {this[`renderStep${step}`]({
-                                            email,
-                                            code,
-                                            isCodeSpecified,
-                                            form,
-                                            isActiveStep: step === activeStep
-                                        })}
-                                    </MeasureHeight>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-            </Motion>
+                    return this[`renderStep${step}`]({
+                        email,
+                        code,
+                        isCodeSpecified,
+                        form,
+                        isActiveStep: step === activeStep
+                    });
+                })}
+            </ScrollMotion>
         );
     }
 
     renderStep0({email, form}) {
         return (
-            <div className={styles.formBody}>
+            <div key="step0" className={styles.formBody}>
                 <div className={styles.formRow}>
                     <p className={styles.description}>
                         <Message {...messages.currentAccountEmail} />
@@ -204,7 +171,7 @@ export default class ChangeEmail extends Component {
 
     renderStep1({email, form, code, isCodeSpecified, isActiveStep}) {
         return (
-            <div className={styles.formBody}>
+            <div key="step1" className={styles.formBody}>
                 <div className={styles.formRow}>
                     <p className={styles.description}>
                         <Message {...messages.enterInitializationCode} values={{
@@ -248,7 +215,7 @@ export default class ChangeEmail extends Component {
         const {newEmail} = this.state;
 
         return (
-            <div className={styles.formBody}>
+            <div key="step2" className={styles.formBody}>
                 <div className={styles.formRow}>
                     <p className={styles.description}>
                         {newEmail ? (
