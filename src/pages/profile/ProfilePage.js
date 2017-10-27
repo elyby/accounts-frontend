@@ -110,19 +110,27 @@ export default connect(null, {
             .finally(() => form.endLoading());
 
         function requestPassword(form) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 dispatch(createPopup({
                     Popup(props: {
                         onClose: Function
                     }) {
                         const onSubmit = () => {
                             form.beginLoading();
+
                             sendData()
                                 .then(resolve)
                                 .then(props.onClose)
                                 .catch((resp) => {
                                     if (resp.errors) {
                                         form.setErrors(resp.errors);
+
+                                        if (Object.keys(resp.errors).length > 1) {
+                                            // something wrong with parent form, hidding popup and show that form
+                                            props.onClose();
+                                            reject(resp);
+                                            logger.warn('Profile: can not submit pasword popup due to errors in source form', { resp });
+                                        }
                                     } else {
                                         return Promise.reject(resp);
                                     }

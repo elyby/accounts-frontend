@@ -1,16 +1,19 @@
+// @flow
 import FormInputComponent from './FormInputComponent';
 
 export default class FormModel {
     fields = {};
     errors = {};
     handlers = [];
+    renderErrors: bool;
+    _isLoading: bool;
 
     /**
      * @param {object} options
      * @param {bool} [options.renderErrors=true] - whether the bound filed should
      *                                             render their errors
      */
-    constructor(options = {}) {
+    constructor(options: {renderErrors?: bool} = {}) {
         this.renderErrors = options.renderErrors !== false;
     }
 
@@ -24,17 +27,21 @@ export default class FormModel {
      *
      * @return {object} - ref and name props for component
      */
-    bindField(name) {
+    bindField(name: string) {
         this.fields[name] = {};
 
-        const props = {
+        const props: Object = {
             name,
-            ref: (el) => {
-                if (el && !(el instanceof FormInputComponent)) {
-                    throw new Error('Expected FormInputComponent component');
-                }
+            ref: (el: ?FormInputComponent) => {
+                if (el) {
+                    if (!(el instanceof FormInputComponent)) {
+                        throw new Error('Expected FormInputComponent component');
+                    }
 
-                this.fields[name] = el;
+                    this.fields[name] = el;
+                } else {
+                    delete this.fields[name];
+                }
             }
         };
 
@@ -50,7 +57,7 @@ export default class FormModel {
      *
      * @param {string} fieldId - an id of field to focus
      */
-    focus(fieldId) {
+    focus(fieldId: string) {
         if (!this.fields[fieldId]) {
             throw new Error(`Can not focus. The field with an id ${fieldId} does not exists`);
         }
@@ -65,7 +72,7 @@ export default class FormModel {
      *
      * @return {string}
      */
-    value(fieldId) {
+    value(fieldId: string) {
         const field = this.fields[fieldId];
 
         if (!field) {
@@ -87,7 +94,7 @@ export default class FormModel {
      *
      * @param {object} errors - object maping {fieldId: errorType}
      */
-    setErrors(errors) {
+    setErrors(errors: {[key: string]: string}) {
         if (typeof errors !== 'object' || errors === null) {
             throw new Error('Errors must be an object');
         }
@@ -122,7 +129,7 @@ export default class FormModel {
      *
      * @return {string|object|null}
      */
-    getError(fieldId) {
+    getError(fieldId: string) {
         return this.errors[fieldId] || null;
     }
 
@@ -140,7 +147,13 @@ export default class FormModel {
      */
     serialize() {
         return Object.keys(this.fields).reduce((acc, fieldId) => {
-            acc[fieldId] = this.fields[fieldId].getValue();
+            const field = this.fields[fieldId];
+
+            if (field) {
+                acc[fieldId] = field.getValue();
+            } else {
+                console.warn('Can not serialize %s field. Because it is null', fieldId);
+            }
 
             return acc;
         }, {});
@@ -151,7 +164,7 @@ export default class FormModel {
      *
      * @param {function} fn
      */
-    addLoadingListener(fn) {
+    addLoadingListener(fn: Function) {
         this.removeLoadingListener(fn);
         this.handlers.push(fn);
     }
@@ -161,7 +174,7 @@ export default class FormModel {
      *
      * @param {function} fn
      */
-    removeLoadingListener(fn) {
+    removeLoadingListener(fn: Function) {
         this.handlers = this.handlers.filter((handler) => handler !== fn);
     }
 
