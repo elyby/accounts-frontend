@@ -110,15 +110,17 @@ export default class Form extends Component<Props, State> {
         }
 
         if (form.checkValidity()) {
-            this.setState({isLoading: true});
-
-            Promise.resolve(this.props.onSubmit(
+            const result = this.props.onSubmit(
                 this.props.form ? this.props.form : new FormData(form)
-            ))
-                .catch((errors: {[key: string]: string}) => {
+            );
+
+            if (result && result.then) {
+                this.setState({isLoading: true});
+
+                result.catch((errors: {[key: string]: string}) => {
                     this.setErrors(errors);
-                })
-                .finally(() => this.setState({isLoading: false}));
+                }).finally(() => this.setState({isLoading: false}));
+            }
         } else {
             const invalidEls = form.querySelectorAll(':invalid');
             const errors = {};
