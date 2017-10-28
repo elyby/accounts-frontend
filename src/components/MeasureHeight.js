@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react';
 
-import { omit, rAF, debounce } from 'functions';
+import { omit, debounce } from 'functions';
 
 /**
  * MeasureHeight is a component that allows you to measure the height of elements wrapped.
@@ -61,6 +61,6 @@ export default class MeasureHeight extends PureComponent<{
     }
 
     measure = debounce(() => {
-        rAF(() => this.el && this.props.onMeasure(this.el.offsetHeight));
+        requestAnimationFrame(() => this.el && this.props.onMeasure(this.el.offsetHeight));
     });
 }

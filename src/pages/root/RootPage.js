@@ -13,7 +13,7 @@ import ProfilePage from 'pages/profile/ProfilePage';
 import RulesPage from 'pages/rules/RulesPage';
 import PageNotFound from 'pages/404/PageNotFound';
 
-import { restoreScroll } from 'functions';
+import { ScrollIntoView } from 'components/ui/scroll';
 import PrivateRoute from 'containers/PrivateRoute';
 import AuthFlowRoute from 'containers/AuthFlowRoute';
 import Userbar from 'components/userbar/Userbar';
@@ -42,7 +42,6 @@ class RootPage extends Component<{
 
     onPageUpdate() {
         loader.hide();
-        restoreScroll();
     }
 
     render() {
@@ -59,6 +58,9 @@ class RootPage extends Component<{
                 <Helmet>
                     <html lang={user.lang} />
                 </Helmet>
+
+                <ScrollIntoView top />
+
                 <div id="view-port" className={classNames(styles.viewPort, {
                     [styles.isPopupActive]: isPopupActive
                 })}>

@@ -2,7 +2,9 @@ import 'babel-polyfill';
 import 'url-search-params-polyfill';
 import 'whatwg-fetch';
 import { shim as shimPromiseFinaly } from 'promise.prototype.finally';
+import { polyfill as rafPolyfill } from 'raf';
 
+rafPolyfill();
 shimPromiseFinaly();
 
 // allow :active styles in mobile Safary

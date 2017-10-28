@@ -1,5 +1,3 @@
-import { rAF as requestAnimationFrame } from 'functions';
-
 import Box from './Box';
 
 /**

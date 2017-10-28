@@ -5,6 +5,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
 import { ScrollMotion } from 'components/ui/motion';
+import { ScrollIntoView } from 'components/ui/scroll';
 import { Input, Button, Form, FormModel, FormError } from 'components/ui/form';
 import { BackButton } from 'components/profile/ProfileForm';
 import styles from 'components/profile/profileForm.scss';
@@ -98,6 +99,8 @@ export default class ChangeEmail extends Component {
                     </div>
 
                     <div className={styles.form}>
+                        {activeStep > 0 ? <ScrollIntoView /> : null}
+
                         {this.renderStepForms()}
 
                         <Button

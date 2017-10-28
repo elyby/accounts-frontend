@@ -5,6 +5,7 @@ import { Button, FormModel } from 'components/ui/form';
 import styles from 'components/profile/profileForm.scss';
 import Stepper from 'components/ui/stepper';
 import { ScrollMotion } from 'components/ui/motion';
+import { ScrollIntoView } from 'components/ui/scroll';
 import logger from 'services/logger';
 import mfa from 'services/api/mfa';
 
@@ -81,6 +82,8 @@ export default class MfaEnable extends Component<Props, {
                 </div>
 
                 <div className={styles.form}>
+                    {activeStep > 0 ? <ScrollIntoView /> : null}
+
                     {this.renderStepForms()}
 
                     <Button

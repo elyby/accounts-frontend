@@ -3,6 +3,7 @@ import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
 import styles from 'components/profile/profileForm.scss';
+import { ScrollIntoView } from 'components/ui/scroll';
 import icons from 'components/ui/icons.scss';
 
 import messages from '../MultiFactorAuth.intl.json';
@@ -13,6 +14,8 @@ export default function MfaStatus({onProceed}: {
 }) {
     return (
         <div className={styles.formBody}>
+            <ScrollIntoView />
+
             <div className={styles.formRow}>
                 <div className={mfaStyles.bigIcon}>
                     <span className={icons.lock} />
