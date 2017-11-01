@@ -18,7 +18,7 @@
     "enableTwoFactorAuth": "Enable two-factor auth",
 
     "disable": "Disable",
-    "mfaEnabledForYourAcc": "The two-factor authentication is enabled for yout account",
+    "mfaEnabledForYourAcc": "The two-factor authentication is enabled for your account",
     "mfaLoginFlowDesc": "In order to log in next time, you'll need to enter additional code. Please note, that Minecraft authorization won't work with two-factor auth enabled.",
     "disableMfa": "Disable two-factor authentication",
     "disableMfaInstruction": "In order to disable two-factor authentication, you need to provide a code from your mobile app and finally confirm your action with your current account password."
