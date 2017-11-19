@@ -1,6 +1,6 @@
 {
     "mfaTitle": "Two factor authentication",
-    "mfaDescription": "Two factor authentication is an extra layer of security for your account designed to ensure that you're the only person who can access your account, even when your password was compromised. This section will help you to setup two factor auth for your account.",
+    "mfaDescription": "Two factor authentication is an extra layer of security for your account designed to ensure that you're the only person who can access your account, even when your password was compromised.",
 
     "mfaIntroduction": "First of all you need to install one of suggested apps on your phone. This app will generate auth codes for you. Please choose your OS to get corresponding installation links.",
     "installOnOfTheApps": "Install one of the following apps:",
