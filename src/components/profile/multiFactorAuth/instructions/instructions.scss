@@ -1,10 +1,17 @@
 @import "~components/ui/fonts.scss";
 
-$boxHeight: 140px;
+$boxHeight: 110px;
+$boxPadding: 15px;
+
+@mixin media-old-ifphone {
+  @media screen and (max-width: 380px) {
+    @content
+  }
+}
 
 .instructionContainer {
     position: relative;
-    min-height: $boxHeight;
+    min-height: $boxHeight + $boxPadding * 2;
 
     background: #fff;
     border: 1px #fff solid;
@@ -21,7 +28,7 @@ $boxHeight: 140px;
     position: absolute;
     left: 0;
     right: 0;
-    margin: 15px;
+    margin: $boxPadding;
     height: $boxHeight;
 }
 
@@ -49,15 +56,19 @@ $boxHeight: 140px;
     height: 80px;
     color: #444;
 
-    @media screen and (max-width: 380px) { // for old iPhones
+    @include media-old-ifphone {
         height: 60px;
     }
 }
 
 .osName {
-    font-size: 16px;
+    font-size: 15px;
     margin: 10px 0;
     white-space: nowrap;
+
+    @include media-old-ifphone {
+        font-size: 11px;
+    }
 }
 
 .androidTile {
@@ -137,10 +148,14 @@ $boxHeight: 140px;
 }
 
 .osInstruction {
+    box-sizing: border-box;
     position: relative;
     z-index: 1;
+    margin: 15px;
     margin-left: 30%;
-    padding: 15px;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    min-height: $boxHeight;
 }
 
 .instructionTitle {
@@ -163,9 +178,10 @@ $boxHeight: 140px;
     }
 }
 
-// TODO: прижать это к нижней части
 .otherApps {
-    text-align: right;
+    position: absolute;
+    right: 0;
+    bottom: 5px;
     font-size: 10px;
 
     a {
