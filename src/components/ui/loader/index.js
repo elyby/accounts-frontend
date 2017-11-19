@@ -1,5 +1,4 @@
-import ComponentLoader from './ComponentLoader';
+// @flow
 
-export {
-    ComponentLoader
-};
+export {default as ImageLoader} from './ImageLoader';
+export {default as ComponentLoader} from './ComponentLoader';

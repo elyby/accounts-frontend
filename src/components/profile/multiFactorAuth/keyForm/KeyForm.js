@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { FormattedMessage as Message } from 'react-intl';
 
+import { ImageLoader } from 'components/ui/loader';
 import profileForm from 'components/profile/profileForm.scss';
 import messages from '../MultiFactorAuth.intl.json';
 
@@ -14,7 +15,8 @@ export default function KeyForm({secret, qrCodeSrc}: {
     secret: string,
     qrCodeSrc: string
 }) {
-    const formattedSecret = formatSecret(secret);
+    // we are using invisible symbol (\u2063) as a placeholder till we get actual secret
+    const formattedSecret = formatSecret(secret) || '\u2063';
 
     return (
         <div className={profileForm.formBody}>
@@ -26,7 +28,7 @@ export default function KeyForm({secret, qrCodeSrc}: {
 
             <div className={profileForm.formRow}>
                 <div className={styles.qrCode}>
-                    <img src={qrCodeSrc} alt={secret} />
+                    <ImageLoader ratio={1} src={qrCodeSrc} alt={secret} />
                 </div>
             </div>
 
