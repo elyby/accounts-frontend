@@ -36,18 +36,19 @@ export default class MeasureHeight extends PureComponent<{
     el: ?HTMLDivElement;
 
     componentDidMount() {
+        // we want to measure height immediately on first mount to avoid ui laggs
         this.measure();
-        window.addEventListener('resize', this.measure);
+        window.addEventListener('resize', this.enqueueMeasurement);
     }
 
     componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
         if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
-            this.measure();
+            this.enqueueMeasurement();
         }
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.measure);
+        window.removeEventListener('resize', this.enqueueMeasurement);
     }
 
     render() {
@@ -60,7 +61,9 @@ export default class MeasureHeight extends PureComponent<{
         return <div {...props} ref={(el: HTMLDivElement) => this.el = el} />;
     }
 
-    measure = debounce(() => {
-        requestAnimationFrame(() => this.el && this.props.onMeasure(this.el.offsetHeight));
-    });
+    measure = () => {
+        requestAnimationFrame(() => {this.el && this.props.onMeasure(this.el.offsetHeight);});
+    };
+
+    enqueueMeasurement = debounce(this.measure);
 }
