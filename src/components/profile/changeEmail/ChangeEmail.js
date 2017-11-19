@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
-import { ScrollMotion } from 'components/ui/motion';
+import { SlideMotion } from 'components/ui/motion';
 import { ScrollIntoView } from 'components/ui/scroll';
 import { Input, Button, Form, FormModel, FormError } from 'components/ui/form';
 import { BackButton } from 'components/profile/ProfileForm';
@@ -130,7 +130,7 @@ export default class ChangeEmail extends Component {
         const isCodeSpecified = !!this.props.code;
 
         return (
-            <ScrollMotion activeStep={activeStep}>
+            <SlideMotion activeStep={activeStep}>
                 {(new Array(STEPS_TOTAL)).fill(0).map((_, step) => {
                     const form = this.props.stepForms[step];
 
@@ -142,7 +142,7 @@ export default class ChangeEmail extends Component {
                         isActiveStep: step === activeStep
                     });
                 })}
-            </ScrollMotion>
+            </SlideMotion>
         );
     }
 

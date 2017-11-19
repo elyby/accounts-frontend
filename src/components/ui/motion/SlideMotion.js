@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import { Motion, spring } from 'react-motion';
 import MeasureHeight from 'components/MeasureHeight';
 
-import styles from './scroll-motion.scss';
+import styles from './slide-motion.scss';
 
-export default class ScrollMotion extends Component<{
+export default class SlideMotion extends Component<{
     activeStep: number,
     children: *
 }, {

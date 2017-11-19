@@ -1,2 +1,2 @@
 // @flow
-export { default as ScrollMotion } from './ScrollMotion';
+export { default as SlideMotion } from './SlideMotion';

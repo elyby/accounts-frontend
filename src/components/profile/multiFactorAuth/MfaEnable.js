@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Button, FormModel } from 'components/ui/form';
 import styles from 'components/profile/profileForm.scss';
 import Stepper from 'components/ui/stepper';
-import { ScrollMotion } from 'components/ui/motion';
+import { SlideMotion } from 'components/ui/motion';
 import { ScrollIntoView } from 'components/ui/scroll';
 import logger from 'services/logger';
 import mfa from 'services/api/mfa';
@@ -102,7 +102,7 @@ export default class MfaEnable extends Component<Props, {
         const {activeStep, secret, qrCodeSrc} = this.state;
 
         return (
-            <ScrollMotion activeStep={activeStep}>
+            <SlideMotion activeStep={activeStep}>
                 {[
                     <Instructions key="step1" />,
                     <KeyForm key="step2"
@@ -116,7 +116,7 @@ export default class MfaEnable extends Component<Props, {
                         onInvalid={() => this.forceUpdate()}
                     />
                 ]}
-            </ScrollMotion>
+            </SlideMotion>
         );
     }
 
