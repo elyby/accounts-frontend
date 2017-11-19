@@ -125,7 +125,11 @@ export default connect(null, {
                                     if (resp.errors) {
                                         form.setErrors(resp.errors);
 
-                                        if (Object.keys(resp.errors).length > 1) {
+                                        const parentFormHasErrors = Object.keys(resp.errors)
+                                            .filter((name) => name !== 'password')
+                                            .length > 0;
+
+                                        if (parentFormHasErrors) {
                                             // something wrong with parent form, hidding popup and show that form
                                             props.onClose();
                                             reject(resp);
