@@ -1,11 +1,13 @@
+$maxQrCodeSize: 242px;
+
 .qrCode {
     text-align: center;
-    width: 242px;
+    width: $maxQrCodeSize;
     margin: 0 auto;
 
     img {
-        width: 242px;
-        height: 242px;
+        width: $maxQrCodeSize;
+        height: $maxQrCodeSize;
     }
 }
 
@@ -21,9 +23,17 @@
 
     text-align: center;
     font-size: 10px;
+    text-transform: capitalize;
 }
 
 .key {
     text-align: center;
     text-transform: uppercase;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 359px) {
+    .key {
+        font-size: 13px;
+    }
 }
