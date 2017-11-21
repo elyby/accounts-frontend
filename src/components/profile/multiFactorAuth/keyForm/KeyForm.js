@@ -15,8 +15,7 @@ export default function KeyForm({secret, qrCodeSrc}: {
     secret: string,
     qrCodeSrc: string
 }) {
-    // we are using invisible symbol (\u2063) as a placeholder till we get actual secret
-    const formattedSecret = formatSecret(secret) || '\u2063';
+    const formattedSecret = formatSecret(secret || (new Array(24)).join('X'));
 
     return (
         <div className={profileForm.formBody}>

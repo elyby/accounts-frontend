@@ -2,6 +2,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { ComponentLoader } from 'components/ui/loader';
+import { SKIN_LIGHT } from 'components/ui';
 
 import styles from './imageLoader.scss';
 
@@ -49,7 +50,7 @@ export default class ImageLoader extends React.Component<{
 
                 {isLoading && (
                     <div className={styles.loader}>
-                        <ComponentLoader />
+                        <ComponentLoader skin={SKIN_LIGHT} />
                     </div>
                 )}
 

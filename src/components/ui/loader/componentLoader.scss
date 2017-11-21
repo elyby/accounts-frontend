@@ -12,7 +12,6 @@
 .spin {
     height: 20px;
     width: 20px;
-    // background: $green;
     display: inline-block;
     margin: 10px 2px;
     opacity: 0;
@@ -44,7 +43,7 @@
  */
 .lightComponentLoader {
     .spin {
-        background: #fff;
+        background: #aaa;
     }
 }
 
@@ -56,15 +55,15 @@
 
 @keyframes loaderAnimation {
     0% {
-        opacity:0;
+        opacity: 0;
     }
 
     50% {
-        opacity:1;
+        opacity: 1;
         transform: scaleY(2)
     }
 
     100% {
-        opacity:0;
+        opacity: 0;
     }
 }
