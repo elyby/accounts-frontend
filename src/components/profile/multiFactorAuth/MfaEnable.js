@@ -68,7 +68,7 @@ export default class MfaEnable extends Component<Props, {
                 buttonAction: () => this.nextStep()
             },
             {
-                buttonLabel: messages.enableTwoFactorAuth,
+                buttonLabel: messages.enable,
                 buttonAction: () => this.confirmationFormEl && this.confirmationFormEl.submit()
             }
         ];
