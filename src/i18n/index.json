@@ -1,7 +1,7 @@
 {
     "be": {
         "name": "Беларуская",
-        "progress": 100,
+        "progress": 98.2,
         "isReleased": true
     },
     "en": {
@@ -11,27 +11,27 @@
     },
     "fr": {
         "name": "Français",
-        "progress": 100,
+        "progress": 88.9,
         "isReleased": true
     },
     "id": {
         "name": "Bahasa Indonesia",
-        "progress": 97.5,
+        "progress": 88.9,
         "isReleased": true
     },
     "pl": {
         "name": "Polski",
-        "progress": 97,
+        "progress": 86.3,
         "isReleased": false
     },
     "pt": {
         "name": "Português",
-        "progress": 97.5,
+        "progress": 86.7,
         "isReleased": true
     },
     "ro": {
         "name": "Română",
-        "progress": 97,
+        "progress": 86.3,
         "isReleased": false
     },
     "ru": {
@@ -41,17 +41,17 @@
     },
     "sl": {
         "name": "Slovenščina",
-        "progress": 97.5,
+        "progress": 86.7,
         "isReleased": false
     },
     "uk": {
         "name": "Українська",
-        "progress": 100,
+        "progress": 88.9,
         "isReleased": true
     },
     "vi": {
         "name": "Tiếng Việt",
-        "progress": 100,
+        "progress": 88.9,
         "isReleased": true
     }
 }
