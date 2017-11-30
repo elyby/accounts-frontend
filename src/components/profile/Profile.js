@@ -73,7 +73,7 @@ class Profile extends Component {
 
                             <ProfileField
                                 link="/profile/change-email"
-                                label={'E‑mail'}
+                                label={<Message {...messages.email} />}
                                 value={user.email}
                             />
 
@@ -86,7 +86,7 @@ class Profile extends Component {
                             />
 
                             <ProfileField
-                                label={<Message {...langMenuMessages.siteLanguage} />}
+                                label={<Message {...messages.siteLanguage} />}
                                 value={<LangMenu showCurrentLang />}
                             />
 
@@ -101,7 +101,7 @@ class Profile extends Component {
                             />
 
                             <ProfileField
-                                label={'UUID'}
+                                label={<Message {...messages.uuid} />}
                                 value={
                                     <span
                                         className={styles.uuid}

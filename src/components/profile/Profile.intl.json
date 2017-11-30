@@ -8,7 +8,10 @@
     "changedAt": "Changed {at}",
     "disabled": "Disabled",
     "enabled": "Enabled",
-    "nickname": "Nickname",
-    "password": "Password",
-    "twoFactorAuth": "Two‑factor auth"
+    "nickname": "Nickname:",
+    "email": "E‑mail:",
+    "password": "Password:",
+    "siteLanguage": "Site language:",
+    "twoFactorAuth": "Two‑factor auth:",
+    "uuid": "UUID:"
 }

@@ -31,7 +31,7 @@ export default class ProfileField extends Component {
         return (
             <div className={styles.paramItem}>
                 <div className={styles.paramRow}>
-                    <div className={styles.paramName}>{label}:</div>
+                    <div className={styles.paramName}>{label}</div>
                     <div className={styles.paramValue}>{value}</div>
 
                     {Action ? (
