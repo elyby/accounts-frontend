@@ -6,7 +6,6 @@ import Helmet from 'react-helmet';
 
 import { userShape } from 'components/user/User';
 import { LangMenu } from 'components/langMenu';
-import langMenuMessages from 'components/langMenu/langMenu.intl.json';
 
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
