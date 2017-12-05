@@ -159,7 +159,6 @@
     "components.profile.projectRules": "zasady projektu",
     "components.profile.siteLanguage": "Site language:",
     "components.profile.twoFactorAuth": "Uwierzytelnianie dwupoziomowe",
-    "components.profile.uuid": "UUID:",
     "components.ui.bsod.alsoYouCanInteractWithBackground": "Możesz też pobawić się tłem - jest interaktywne ;)",
     "components.ui.bsod.criticalErrorHappened": "Wystąpił krytyczny błąd, dzięki któremu aplikacja nie może kontynuować normalnej pracy.",
     "components.ui.bsod.reloadPageOrContactUs": "Proszę ponownie załadować tę stronę i spróbować ponownie. Jeśli problem się powtórzy, zgłoś to programistom, wysyłając e-maile do",

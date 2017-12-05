@@ -159,7 +159,6 @@
     "components.profile.projectRules": "règles de projet",
     "components.profile.siteLanguage": "Langue du site:",
     "components.profile.twoFactorAuth": "Authentification a deux facteurs:",
-    "components.profile.uuid": "UUID:",
     "components.ui.bsod.alsoYouCanInteractWithBackground": "Vous pouvez aussi jouer avec l'arrière-plans, il est interactif  ;)",
     "components.ui.bsod.criticalErrorHappened": "Une erreur critique est due au fait que l'application ne peut pas continuer son fonctionnement normal.",
     "components.ui.bsod.reloadPageOrContactUs": "Veuillez recharger cette page et réessayer. Si le problème survient à nouveau, veuillez le signaler aux développeurs en envoyant un E-mail à",
