@@ -7,19 +7,22 @@
   "public": false,
   "license": "UNLICENSED",
   "repository": "git@gitlab.ely.by:elyby/accounts.git",
+  "engines": {
+    "node": "8"
+  },
   "scripts": {
-    "start": "npm run clean && npm run build:dll && webpack-dev-server --progress --colors",
+    "start": "yarn run clean && yarn run build:dll && webpack-dev-server --progress --colors",
     "clean": "rm -rf dist/",
-    "test": "npm run build:dll && karma start ./karma.conf.js",
+    "test": "yarn run build:dll && karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "flow": "flow",
     "i18n:collect": "babel-node ./scripts/i18n-collect.js",
     "i18n:publish": "babel-node --presets es2015,stage-0 ./scripts/i18n-onesky.js publish",
     "i18n:pull": "babel-node --presets es2015,stage-0 ./scripts/i18n-onesky.js pull",
-    "build": "npm run clean && npm run build:webpack -- --progress",
-    "build:install": "npm install --no-save --quiet && check-node-version",
+    "build": "yarn run clean && yarn run build:webpack --progress",
+    "build:install": "yarn install && check-node-version",
     "build:webpack": "webpack --colors -p --bail",
-    "build:quiet": "npm run clean && npm run build:webpack -- --quiet",
+    "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
     "build:dll": "node ./scripts/build-dll.js"
   },
   "dependencies": {
@@ -30,6 +33,7 @@
     "intl-format-cache": "^2.0.4",
     "intl-messageformat": "^2.1.0",
     "promise.prototype.finally": "3.0.1",
+    "prop-types": "^15.6.0",
     "raf": "^3.4.0",
     "raven-js": "^3.8.1",
     "react": "^15.0.0",
