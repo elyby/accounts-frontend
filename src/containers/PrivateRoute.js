@@ -12,10 +12,7 @@ const PrivateRoute = ({user, component: Component, ...rest}: {
 }) => (
     <Route {...rest} render={(props: {location: string}) => (
         user.isGuest ? (
-            <Redirect to={{
-                pathname: '/login',
-                state: { from: props.location }
-            }}/>
+            <Redirect to="/login" />
         ) : (
             <Component {...props}/>
         )
