@@ -8,7 +8,7 @@
   "license": "UNLICENSED",
   "repository": "git@gitlab.ely.by:elyby/accounts.git",
   "engines": {
-    "node": "8"
+    "node": "9"
   },
   "scripts": {
     "start": "yarn run clean && yarn run build:dll && webpack-dev-server --progress --colors",
