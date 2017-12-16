@@ -13,7 +13,11 @@
 
     display: flex;
     flex-direction: column;
-    max-height: 550px;
+    max-height: calc(100vh - 132px);
+
+    @media screen and (min-height: 630px) {
+        max-height: 500px;
+    }
 }
 
 .searchBox {
@@ -135,6 +139,12 @@ $languageListBorderStyle: 1px solid #eee;
     padding: 10px;
     display: flex;
     flex-shrink: 0;
+
+    @media screen and (max-height: 455px) {
+        & {
+            display: none;
+        }
+    }
 }
 
 .improveTranslatesIcon {

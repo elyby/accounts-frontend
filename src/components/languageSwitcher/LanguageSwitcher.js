@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
-import { FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message, intlShape } from 'react-intl';
 
 import { requireLocaleFlag } from 'functions';
 import LANGS from 'i18n/index.json';
@@ -13,6 +13,8 @@ import icons from 'components/ui/icons.scss';
 import styles from './languageSwitcher.scss';
 import messages from './languageSwitcher.intl.json';
 
+const improveTranslationUrl = 'http://ely.by/erickskrauch/posts/174943';
+
 class LanguageSwitcher extends Component {
     static displayName = 'LanguageSwitcher';
 
@@ -20,6 +22,10 @@ class LanguageSwitcher extends Component {
         onClose: PropTypes.func,
         userLang: PropTypes.string,
         changeLang: PropTypes.func,
+    };
+
+    static contextTypes = {
+        intl: intlShape.isRequired,
     };
 
     state = {
@@ -56,15 +62,10 @@ class LanguageSwitcher extends Component {
                                     formStyles.lightTextField,
                                     formStyles.greenTextField
                                 )}
-                                placeholder={
-                                    <Message {...messages.startTyping}>
-                                        {(placeholder) => (
-                                            {placeholder}
-                                        )}
-                                    </Message>
-                                }
+                                placeholder={this.context.intl.formatMessage(messages.startTyping)}
                                 onChange={this.onFilterUpdate()}
                                 onKeyPress={this.onFilterKeyPress()}
+                                autoFocus
                             />
                             <span className={styles.searchIcon} />
                         </div>
@@ -89,7 +90,7 @@ class LanguageSwitcher extends Component {
                                 <div className={styles.improveTranslatesText}>
                                     <Message {...messages.improveTranslatesDescription} values={{
                                         articleLink: (
-                                            <a href="#">
+                                            <a href={improveTranslationUrl} target="_blank">
                                                 <Message {...messages.improveTranslatesArticleLink} />
                                             </a>
                                         )
@@ -184,7 +185,7 @@ class LanguageSwitcher extends Component {
 
             this.changeLang(locales[0]);
         };
-    };
+    }
 }
 
 import { connect } from 'react-redux';
