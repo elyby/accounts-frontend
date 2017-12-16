@@ -106,7 +106,8 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
 }
 
 .languageCaptions {
-    flex-grow: 1;
+    flex: 1;
+    overflow: hidden;
 }
 
 .languageName {
@@ -117,6 +118,9 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
 .languageSubName {
     font-size: 11px;
     color: #CCC;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 // Реализация радио кнопки. Когда у нас будет нормальный компонент радио кнопок, нужно будет перейти на него
