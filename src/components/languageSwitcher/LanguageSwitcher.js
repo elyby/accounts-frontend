@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { TransitionMotion, spring, presets } from 'react-motion';
+import { FormattedMessage as Message, intlShape } from 'react-intl';
 
 import classNames from 'classnames';
-import { FormattedMessage as Message, intlShape } from 'react-intl';
 
 import { requireLocaleFlag } from 'functions';
 import LANGS from 'i18n/index.json';
@@ -14,6 +15,7 @@ import styles from './languageSwitcher.scss';
 import messages from './languageSwitcher.intl.json';
 
 const improveTranslationUrl = 'http://ely.by/erickskrauch/posts/174943';
+const itemHeight = 51;
 
 class LanguageSwitcher extends Component {
     static displayName = 'LanguageSwitcher';
@@ -22,6 +24,7 @@ class LanguageSwitcher extends Component {
         onClose: PropTypes.func,
         userLang: PropTypes.string,
         changeLang: PropTypes.func,
+        langs: PropTypes.objectOf(PropTypes.object).isRequired,
     };
 
     static contextTypes = {
@@ -29,21 +32,18 @@ class LanguageSwitcher extends Component {
     };
 
     state = {
-        items: [],
         filter: '',
+        filteredLangs: this.props.langs,
     };
 
     static defaultProps = {
-        onClose() {}
+        langs: LANGS,
+        onClose() {},
     };
-
-    componentWillMount() {
-        this.setState({items: LANGS});
-    }
 
     render() {
         const {userLang, onClose} = this.props;
-        const {items} = this.state;
+        const firstLocale = Object.keys(this.state.filteredLangs)[0] || null;
 
         return (
             <div className={styles.languageSwitcher}>
@@ -60,26 +60,40 @@ class LanguageSwitcher extends Component {
                             <input
                                 className={classNames(
                                     formStyles.lightTextField,
-                                    formStyles.greenTextField
+                                    formStyles.greenTextField,
                                 )}
                                 placeholder={this.context.intl.formatMessage(messages.startTyping)}
-                                onChange={this.onFilterUpdate()}
+                                onChange={this.onFilterUpdate}
                                 onKeyPress={this.onFilterKeyPress()}
                                 autoFocus
                             />
                             <span className={styles.searchIcon} />
                         </div>
 
-                        <div className={styles.languagesList}>
-                            {Object.keys(items).map((locale) => (
-                                <li className={classNames(styles.languageItem, {
-                                    [styles.activeLanguageItem]: locale === userLang
-                                })} onClick={this.onChangeLang(locale)} key={locale}
-                                >
-                                    {this.renderLanguageItem(locale, items[locale])}
-                                </li>
-                            ))}
-                        </div>
+                        <TransitionMotion
+                            defaultStyles={this.getItemsWithDefaultStyles()}
+                            styles={this.getItemsWithStyles()}
+                            willLeave={this.willLeave}
+                            willEnter={this.willEnter}
+                        >
+                            {(items) => (
+                                <div className={styles.languagesList}>
+                                    {items.map(({key: locale, data: definition, style}) => (
+                                        <li
+                                            key={locale}
+                                            style={style}
+                                            className={classNames(styles.languageItem, {
+                                                [styles.activeLanguageItem]: locale === userLang,
+                                                [styles.firstLanguageItem]: locale === firstLocale,
+                                            })}
+                                            onClick={this.onChangeLang(locale)}
+                                        >
+                                            {this.renderLanguageItem(locale, definition)}
+                                        </li>
+                                    ))}
+                                </div>
+                            )}
+                        </TransitionMotion>
 
                         <div className={styles.improveTranslates}>
                             <div className={styles.improveTranslatesIcon} />
@@ -93,7 +107,7 @@ class LanguageSwitcher extends Component {
                                             <a href={improveTranslationUrl} target="_blank">
                                                 <Message {...messages.improveTranslatesArticleLink} />
                                             </a>
-                                        )
+                                        ),
                                     }} />
                                 </div>
                             </div>
@@ -122,7 +136,7 @@ class LanguageSwitcher extends Component {
         return (
             <div className={styles.languageFlex}>
                 <div className={styles.languageIco} style={{
-                    backgroundImage: `url('${requireLocaleFlag(locale)}')`
+                    backgroundImage: `url('${requireLocaleFlag(locale)}')`,
                 }} />
                 <div className={styles.languageCaptions}>
                     <div className={styles.languageName}>
@@ -149,28 +163,26 @@ class LanguageSwitcher extends Component {
         setTimeout(this.props.onClose, 300);
     }
 
-    onFilterUpdate() {
-        return (event) => {
-            const value = event.target.value.trim().toLowerCase();
-            let items = LANGS;
-            if (value.length !== 0) {
-                items = Object.keys(items).reduce((prev, next) => {
-                    if (items[next].englishName.toLowerCase().search(value) !== -1
-                     || items[next].name.toLowerCase().search(value) !== -1
-                    ) {
-                        prev[next] = items[next];
-                    }
-
-                    return prev;
-                }, {});
+    onFilterUpdate = (event) => {
+        const filter = event.target.value.trim().toLowerCase();
+        const { langs } = this.props;
+        const result = Object.keys(langs).reduce((previous, key) => {
+            if (langs[key].englishName.toLowerCase().search(filter) === -1
+             && langs[key].name.toLowerCase().search(filter) === -1
+            ) {
+                return previous;
             }
 
-            this.setState({
-                items,
-                filter: value,
-            });
-        };
-    }
+            previous[key] = langs[key];
+
+            return previous;
+        }, {});
+
+        this.setState({
+            filter,
+            filteredLangs: result,
+        });
+    };
 
     onFilterKeyPress() {
         return (event) => {
@@ -178,12 +190,52 @@ class LanguageSwitcher extends Component {
                 return;
             }
 
-            const locales = Object.keys(this.state.items);
+            const locales = Object.keys(this.props.langs);
             if (locales.length === 0) {
                 return;
             }
 
             this.changeLang(locales[0]);
+        };
+    }
+
+    getItemsWithDefaultStyles = () => Object.keys(this.props.langs).reduce((previous, key) => {
+        return [
+            ...previous,
+            {
+                key,
+                data: this.props.langs[key],
+                style: {
+                    height: itemHeight,
+                    opacity: 1,
+                },
+            },
+        ];
+    }, {});
+
+    getItemsWithStyles = () => Object.keys({...this.state.filteredLangs}).reduce((previous, key) => [
+        ...previous,
+        {
+            key,
+            data: this.props.langs[key],
+            style: {
+                height: spring(itemHeight, presets.gentle),
+                opacity: spring(1, presets.gentle),
+            },
+        },
+    ], []);
+
+    willEnter() {
+        return {
+            height: 0,
+            opacity: 1,
+        };
+    }
+
+    willLeave() {
+        return {
+            height: spring(0),
+            opacity: spring(0),
         };
     }
 }
@@ -192,7 +244,7 @@ import { connect } from 'react-redux';
 import { changeLang } from 'components/user/actions';
 
 export default connect((state) => ({
-    userLang: state.user.lang
+    userLang: state.user.lang,
 }), {
-    changeLang
+    changeLang,
 })(LanguageSwitcher);

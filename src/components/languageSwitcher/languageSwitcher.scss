@@ -2,6 +2,12 @@
 @import '~components/ui/fonts.scss';
 @import '~components/ui/popup/popup.scss';
 
+@mixin hideFooter {
+    @media (max-height: 455px) {
+        @content;
+    }
+}
+
 .languageSwitcher {
     composes: popupWrapper from 'components/ui/popup/popup.scss';
 
@@ -36,7 +42,8 @@
     pointer-events: none; // Иконка чисто декоративная, так что клик должен проходить сквозь неё
 }
 
-$languageListBorderStyle: 1px solid #eee;
+$languageListBorderColor: #eee;
+$languageListBorderStyle: 1px solid $languageListBorderColor;
 
 .languagesList {
     flex-grow: 1;
@@ -44,28 +51,35 @@ $languageListBorderStyle: 1px solid #eee;
     border-top: $languageListBorderStyle;
     border-bottom: $languageListBorderStyle;
     margin-bottom: 20px;
+
+    @include hideFooter {
+        & {
+            margin-bottom: 0;
+        }
+    }
 }
 
 .languageItem {
-    padding: 10px;
-    border-top: $languageListBorderStyle;
     font-family: $font-family-title;
-    transition: .25s;
+    transition: background-color .25s;
     cursor: pointer;
     overflow: hidden;
 
-    &:first-child {
-        border-top: none;
-    }
-
     &:hover {
-        background: $whiteButtonLight;
+        background-color: $whiteButtonLight;
     }
 }
 
 .languageFlex {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
+    padding: 10px;
+    border-top: $languageListBorderStyle;
+
+    .firstLanguageItem & {
+        border-top: none;
+    }
 }
 
 .languageIco {
@@ -140,7 +154,7 @@ $languageListBorderStyle: 1px solid #eee;
     display: flex;
     flex-shrink: 0;
 
-    @media screen and (max-height: 455px) {
+    @include hideFooter {
         & {
             display: none;
         }
