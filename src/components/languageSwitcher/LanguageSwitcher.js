@@ -190,7 +190,7 @@ class LanguageSwitcher extends Component {
                 return;
             }
 
-            const locales = Object.keys(this.props.langs);
+            const locales = Object.keys(this.state.filteredLangs);
             if (locales.length === 0) {
                 return;
             }
