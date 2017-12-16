@@ -52,6 +52,18 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
     border-bottom: $languageListBorderStyle;
     margin-bottom: 20px;
 
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: #F3F3F3;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #D8D5D0;
+    }
+
     @include hideFooter {
         & {
             margin-bottom: 0;
