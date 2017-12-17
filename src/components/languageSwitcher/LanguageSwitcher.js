@@ -185,7 +185,7 @@ class LanguageSwitcher extends Component {
         if (progress !== 100) {
             progressLabel = (
                 <Message {...messages.translationProgress} values={{
-                    progress: `${progress}%`,
+                    progress,
                 }} />
             );
         } else if (!isReleased) {
