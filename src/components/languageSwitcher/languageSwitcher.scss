@@ -163,6 +163,36 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
     }
 }
 
+.emptyLanguagesListWrapper {
+    $transitionTime: .5s;
+
+    opacity: 0;
+    overflow: hidden;
+    transition: height $transitionTime;
+
+    &.emptyLanguagesListVisible {
+        opacity: 1;
+        transition: $transitionTime;
+    }
+}
+
+.emptyLanguagesList {
+    padding: 20px;
+    text-align: center;
+}
+
+.emptyLanguagesListCaption {
+    height: 20px;
+    max-width: 100%;
+    margin-bottom: 5px;
+}
+
+.emptyLanguagesListSubtitle {
+    font-family: $font-family-title;
+    color: #ccc;
+    font-size: 13px;
+}
+
 .improveTranslates {
     border: 1px solid #DEDEDE;
     background: #F3F1ED;

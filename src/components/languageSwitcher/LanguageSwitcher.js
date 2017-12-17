@@ -14,6 +14,11 @@ import icons from 'components/ui/icons.scss';
 import styles from './languageSwitcher.scss';
 import messages from './languageSwitcher.intl.json';
 
+import thatFuckingPumpkin from './images/that_fucking_pumpkin.svg';
+import mayTheForceBeWithYou from './images/may_the_force_be_with_you.svg';
+import biteMyShinyMetalAss from './images/bite_my_shiny_metal_ass.svg';
+import iTookAnArrowInMyKnee from './images/i_took_an_arrow_in_my_knee.svg';
+
 const improveTranslationUrl = 'http://ely.by/erickskrauch/posts/174943';
 const itemHeight = 51;
 
@@ -24,7 +29,16 @@ class LanguageSwitcher extends Component {
         onClose: PropTypes.func,
         userLang: PropTypes.string,
         changeLang: PropTypes.func,
-        langs: PropTypes.objectOf(PropTypes.object).isRequired,
+        langs: PropTypes.objectOf(PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            englishName: PropTypes.string.isRequired,
+            progress: PropTypes.number.isRequired,
+            isReleased: PropTypes.bool.isRequired,
+        })).isRequired,
+        emptyCaptions: PropTypes.arrayOf(PropTypes.shape({
+            src: PropTypes.string.isRequired,
+            caption: PropTypes.string.isRequired,
+        })).isRequired,
     };
 
     static contextTypes = {
@@ -39,11 +53,35 @@ class LanguageSwitcher extends Component {
     static defaultProps = {
         langs: LANGS,
         onClose() {},
+        emptyCaptions: [
+            {
+                // Homestuck
+                src: thatFuckingPumpkin,
+                caption: 'That fucking pumpkin',
+            },
+            {
+                // Star Wars
+                src: mayTheForceBeWithYou,
+                caption: 'May The Force Be With You',
+            },
+            {
+                // Futurama
+                src: biteMyShinyMetalAss,
+                caption: 'Bite my shiny metal ass',
+            },
+            {
+                // The Elder Scrolls V: Skyrim
+                src: iTookAnArrowInMyKnee,
+                caption: 'I took an arrow in my knee',
+            },
+        ],
     };
 
     render() {
-        const {userLang, onClose} = this.props;
+        const {userLang, onClose, emptyCaptions} = this.props;
+        const isListEmpty = Object.keys(this.state.filteredLangs).length === 0;
         const firstLocale = Object.keys(this.state.filteredLangs)[0] || null;
+        const emptyCaption = emptyCaptions[Math.floor(Math.random() * emptyCaptions.length)];
 
         return (
             <div className={styles.languageSwitcher}>
@@ -78,6 +116,29 @@ class LanguageSwitcher extends Component {
                         >
                             {(items) => (
                                 <div className={styles.languagesList}>
+                                    <div
+                                        className={classNames(styles.emptyLanguagesListWrapper, {
+                                            [styles.emptyLanguagesListVisible]: isListEmpty,
+                                        })}
+                                        style={{
+                                            height: isListEmpty ? this.emptyListStateInner.clientHeight : 0,
+                                        }}
+                                    >
+                                        <div
+                                            ref={(elem) => this.emptyListStateInner = elem}
+                                            className={styles.emptyLanguagesList}
+                                        >
+                                            <img
+                                                src={emptyCaption.src}
+                                                alt={emptyCaption.caption}
+                                                className={styles.emptyLanguagesListCaption}
+                                            />
+                                            <div className={styles.emptyLanguagesListSubtitle}>
+                                                <Message {...messages.weDoNotSupportThisLang} />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {items.map(({key: locale, data: definition, style}) => (
                                         <li
                                             key={locale}
