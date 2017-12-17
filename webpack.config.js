@@ -15,7 +15,18 @@ const outputPath = path.join(__dirname, 'dist');
 
 const packageJson = require('./package.json');
 
-var config = {};
+const localeToCountryCode = {
+    en: 'gb',
+    be: 'by',
+    pt: 'br',
+    uk: 'ua',
+    vi: 'vn',
+    sl: 'si',
+};
+
+const flagsList = SUPPORTED_LANGUAGES.map((locale) => localeToCountryCode[locale] || locale);
+
+let config = {};
 try {
     config = require('./config/env.js');
 } catch (err) {
@@ -135,8 +146,12 @@ const webpackConfig = {
         // restrict webpack import context, to create chunks only for supported locales
         // @see services/i18n.js
         new webpack.ContextReplacementPlugin(
-            /locale-data/, new RegExp('/(' + SUPPORTED_LANGUAGES.join('|') + ')\\.js')
-        )
+            /locale-data/, new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js`)
+        ),
+        // @see functions.js:requireLocaleFlag()
+        new webpack.ContextReplacementPlugin(
+            /flag-icon-css\/flags\/4x3/, new RegExp(`/(${flagsList.join('|')})\\.svg`)
+        ),
     ],
 
     module: {
@@ -256,7 +271,12 @@ if (isProduction) {
 
     webpackConfig.devtool = false;
 
-    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies);
+    const ignoredPlugins = [
+        'flag-icon-css',
+    ];
+
+    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies)
+        .filter((module) => ignoredPlugins.indexOf(module) === -1);
 } else {
     webpackConfig.plugins.push(
         new webpack.DllReferencePlugin({

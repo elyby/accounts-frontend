@@ -99,4 +99,3 @@ const localeToCountryCode = {
 export function requireLocaleFlag(locale: string) {
     return require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
 }
-
