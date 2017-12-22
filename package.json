@@ -106,6 +106,7 @@
     "sass-loader": "^4.0.0",
     "scripts": "file:./scripts",
     "sinon": "^3.2.1",
+    "sitemap-webpack-plugin": "^0.5.1",
     "style-loader": "^0.18.0",
     "unexpected": "^10.33.2",
     "unexpected-sinon": "^10.5.1",

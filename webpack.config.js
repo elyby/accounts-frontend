@@ -10,6 +10,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
 const cssImport = require('postcss-import');
+const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const localeFlags = require('./src/components/i18n/localeFlags').default;
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
@@ -131,6 +132,17 @@ const webpackConfig = {
             minify: {
                 collapseWhitespace: isProduction
             }
+        }),
+        new SitemapPlugin('https://account.ely.by', [
+            '/',
+            '/register',
+            '/resend-activation',
+            '/activation',
+            '/forgot-password',
+            '/rules',
+        ], {
+            lastMod: true,
+            changeFreq: 'weekly',
         }),
         new webpack.ProvidePlugin({
             React: 'react'
