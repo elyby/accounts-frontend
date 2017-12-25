@@ -17,7 +17,7 @@ export default function BSoD({store}: {store: *}) {
         <IntlProvider store={store}>
             <div className={styles.body}>
                 <canvas className={styles.canvas}
-                    ref={(el: ?HTMLCanvasElement) => new BoxesField(el)}
+                    ref={(el: ?HTMLCanvasElement) => el && new BoxesField(el)}
                 />
 
                 <div className={styles.wrapper}>

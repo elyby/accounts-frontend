@@ -6,14 +6,14 @@ import { IntlProvider as OrigIntlProvider } from 'react-intl';
 class IntlProvider extends Component {
     static displayName = 'IntlProvider';
     static propTypes = {
-        locale: PropTypes.string.isRequired,
-        messages: PropTypes.objectOf(PropTypes.string).isRequired,
+        locale: PropTypes.string,
+        messages: PropTypes.objectOf(PropTypes.string),
         children: PropTypes.element
     };
 
     render() {
         return (
-            <OrigIntlProvider {...this.props} />
+            <OrigIntlProvider locale="en" {...this.props} />
         );
     }
 }
