@@ -1,4 +1,20 @@
+// @flow
 import request from 'services/request';
+
+type UserResponse = {
+    elyProfileLink: string,
+    email: string,
+    hasMojangUsernameCollision: bool,
+    id: number,
+    isActive: bool,
+    isOtpEnabled: bool,
+    lang: string,
+    passwordChangedAt: number, // timestamp
+    registeredAt: number, // timestamp
+    shouldAcceptRules: bool,
+    username: string,
+    uuid: string,
+};
 
 export default {
     /**
@@ -6,9 +22,9 @@ export default {
      * @param {object} [options.token] - an optional token to overwrite headers
      *                                   in middleware and disable token auto-refresh
      *
-     * @return {Promise<User>}
+     * @return {Promise<UserResponse>}
      */
-    current(options = {}) {
+    current(options: { token?: ?string } = {}): Promise<UserResponse> {
         return request.get('/api/accounts/current', {}, {
             token: options.token
         });
@@ -19,6 +35,11 @@ export default {
         newPassword = '',
         newRePassword = '',
         logoutAll = true
+    }: {
+        password?: string,
+        newPassword?: string,
+        newRePassword?: string,
+        logoutAll?: bool,
     }) {
         return request.post(
             '/api/accounts/change-password',
@@ -33,6 +54,9 @@ export default {
     changeUsername({
         username = '',
         password = ''
+    }: {
+        username?: string,
+        password?: string,
     }) {
         return request.post(
             '/api/accounts/change-username',
@@ -40,14 +64,14 @@ export default {
         );
     },
 
-    changeLang(lang) {
+    changeLang(lang: string) {
         return request.post(
             '/api/accounts/change-lang',
             {lang}
         );
     },
 
-    requestEmailChange({password = ''}) {
+    requestEmailChange({password = ''}: { password?: string }) {
         return request.post(
             '/api/accounts/change-email/initialize',
             {password}
@@ -57,6 +81,9 @@ export default {
     setNewEmail({
         email = '',
         key = ''
+    }: {
+        email?: string,
+        key?: string,
     }) {
         return request.post(
             '/api/accounts/change-email/submit-new-email',
@@ -64,7 +91,7 @@ export default {
         );
     },
 
-    confirmNewEmail({key}) {
+    confirmNewEmail({key}: { key: string }) {
         return request.post(
             '/api/accounts/change-email/confirm-new-email',
             {key}

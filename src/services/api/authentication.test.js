@@ -125,6 +125,43 @@ describe('authentication api', () => {
                 );
             });
         });
+
+        describe('when token is incorrect', () => {
+            const expiredResponse = {
+                name: 'Unauthorized',
+                message: 'Incorrect token',
+                code: 0,
+                status: 401,
+                type: 'yii\\web\\UnauthorizedHttpException'
+            };
+            const newToken = 'baz';
+
+            beforeEach(() => {
+                sinon.stub(authentication, 'requestToken');
+
+                accounts.current.onCall(0).returns(Promise.reject(expiredResponse));
+                authentication.requestToken.returns(Promise.resolve({token: newToken}));
+            });
+
+            afterEach(() => {
+                authentication.requestToken.restore();
+            });
+
+            it('resolves with new token and user object', () =>
+                expect(authentication.validateToken(validTokens),
+                    'to be fulfilled with', {...validTokens, token: newToken, user}
+                )
+            );
+
+            it('rejects if token request failed', () => {
+                const error = 'Something wrong';
+                authentication.requestToken.returns(Promise.reject(error));
+
+                return expect(authentication.validateToken(validTokens),
+                    'to be rejected with', error
+                );
+            });
+        });
     });
 
     describe('#logout', () => {

@@ -3,7 +3,6 @@ import sinon from 'sinon';
 
 import { browserHistory } from 'services/history';
 
-import logger from 'services/logger';
 import { InternalServerError } from 'services/request';
 import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';
@@ -58,7 +57,6 @@ describe('components/accounts/actions', () => {
         });
 
         sinon.stub(authentication, 'validateToken').named('authentication.validateToken');
-        sinon.stub(logger, 'warn').named('logger.warn');
         authentication.validateToken.returns(Promise.resolve({
             token: account.token,
             refreshToken: account.refreshToken,
@@ -68,7 +66,6 @@ describe('components/accounts/actions', () => {
 
     afterEach(() => {
         authentication.validateToken.restore();
-        logger.warn.restore();
     });
 
     describe('#authenticate()', () => {
@@ -122,9 +119,6 @@ describe('components/accounts/actions', () => {
             authentication.validateToken.returns(Promise.reject({}));
 
             return expect(authenticate(account)(dispatch, getState), 'to be rejected').then(() => {
-                expect(logger.warn, 'to have a call satisfying', [
-                    'Error validating token during auth', {}
-                ]);
                 expect(dispatch, 'to have a call satisfying', [
                     {payload: {isGuest: true}},
                 ]);
@@ -139,13 +133,10 @@ describe('components/accounts/actions', () => {
 
             authentication.validateToken.returns(Promise.reject(resp));
 
-            return expect(authenticate(account)(dispatch, getState), 'to be rejected with', resp).then(() => {
-                expect(dispatch, 'to have no calls satisfying', [
+            return expect(authenticate(account)(dispatch, getState), 'to be rejected with', resp)
+                .then(() => expect(dispatch, 'to have no calls satisfying', [
                     {payload: {isGuest: true}},
-                ]);
-
-                expect(logger.warn, 'was not called');
-            });
+                ]));
         });
 
         it('marks user as stranger, if there is no refreshToken', () => {

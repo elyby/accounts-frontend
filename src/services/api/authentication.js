@@ -1,5 +1,6 @@
 // @flow
-import request from 'services/request';
+import logger from 'services/logger';
+import request, { InternalServerError } from 'services/request';
 import accounts from 'services/api/accounts';
 
 const authentication = {
@@ -91,12 +92,31 @@ const authentication = {
             .then(() => accounts.current({token}))
             .then((user) => ({token, refreshToken, user}))
             .catch((resp) => {
-                if (resp.message === 'Token expired') {
+                if (resp instanceof InternalServerError) {
+                    // delegate error recovering to the bsod middleware
+                    return new Promise(() => {});
+                }
+
+                if (['Token expired', 'Incorrect token'].includes(resp.message)) {
                     return authentication.requestToken(refreshToken)
                         .then(({token}) =>
                             accounts.current({token})
                                 .then((user) => ({token, refreshToken, user}))
-                        );
+                        )
+                        .catch((error) => {
+                            logger.error('Failed refreshing token during token validation', {
+                                error
+                            });
+
+                            return Promise.reject(error);
+                        });
+                }
+
+                const errors = resp.errors || {};
+                if (errors.refresh_token !== 'error.refresh_token_not_exist') {
+                    logger.error('Unexpected error during token validation', {
+                        resp
+                    });
                 }
 
                 return Promise.reject(resp);

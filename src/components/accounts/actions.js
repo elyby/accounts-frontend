@@ -6,7 +6,6 @@ import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import { setAccountSwitcher } from 'components/auth/actions';
 import logger from 'services/logger';
-import { InternalServerError } from 'services/request';
 
 import {
     add,
@@ -38,15 +37,9 @@ export function authenticate({token, refreshToken}) {
     return (dispatch, getState) =>
         authentication.validateToken({token, refreshToken})
             .catch((resp = {}) => {
-                if (resp instanceof InternalServerError) {
-                    // delegate error recovering to the later logic
-                    return Promise.reject(resp);
-                }
 
-                logger.warn('Error validating token during auth', {
-                    resp
-                });
-
+                // all the logic to get the valid token was failed,
+                // we must forget current token, but leave other user's accounts
                 return dispatch(logoutAll())
                     .then(() => Promise.reject(resp));
             })
