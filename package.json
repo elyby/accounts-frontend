@@ -11,9 +11,9 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "start": "yarn run clean && yarn run build:dll && webpack-dev-server --progress --colors",
+    "start": "yarn run clean && yarn run build:dll && NODE_PATH=./src webpack-dev-server --progress --colors",
     "clean": "rm -rf dist/",
-    "test": "yarn run build:dll && karma start ./karma.conf.js",
+    "test": "yarn run build:dll && NODE_PATH=./src karma start ./karma.conf.js",
     "lint": "eslint ./src",
     "flow": "flow",
     "i18n:collect": "babel-node ./scripts/i18n-collect.js",
@@ -21,7 +21,7 @@
     "i18n:pull": "babel-node --presets es2015,stage-0 ./scripts/i18n-onesky.js pull",
     "build": "yarn run clean && yarn run build:webpack --progress",
     "build:install": "yarn install && check-node-version",
-    "build:webpack": "webpack --colors -p --bail",
+    "build:webpack": "NODE_PATH=./src webpack --colors -p --bail",
     "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
     "build:dll": "node ./scripts/build-dll.js"
   },

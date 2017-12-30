@@ -5,7 +5,7 @@ import { FormattedMessage as Message, intlShape } from 'react-intl';
 
 import classNames from 'classnames';
 
-import { requireLocaleFlag } from 'functions';
+import { localeFlags } from 'components/i18n';
 import LANGS from 'i18n/index.json';
 
 import formStyles from 'components/ui/form/form.scss';
@@ -197,7 +197,7 @@ class LanguageSwitcher extends Component {
         return (
             <div className={styles.languageFlex}>
                 <div className={styles.languageIco} style={{
-                    backgroundImage: `url('${requireLocaleFlag(locale)}')`,
+                    backgroundImage: `url('${localeFlags.getIconUrl(locale)}')`,
                 }} />
                 <div className={styles.languageCaptions}>
                     <div className={styles.languageName}>

@@ -5,7 +5,7 @@ import { FormattedMessage as Message, FormattedRelative as Relative } from 'reac
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
-import { requireLocaleFlag } from 'functions';
+import { localeFlags } from 'components/i18n';
 import LANGS from 'i18n/index.json';
 
 import { userShape } from 'components/user/User';
@@ -93,7 +93,7 @@ class Profile extends Component {
                                 value={
                                     <span className={styles.language} onClick={this.onLanguageSwitcher.bind(this)}>
                                         <span className={styles.languageIcon} style={{
-                                            backgroundImage: `url('${requireLocaleFlag(user.lang)}')`
+                                            backgroundImage: `url('${localeFlags.getIconUrl(user.lang)}')`
                                         }} />
                                         {LANGS[user.lang].name}
                                     </span>

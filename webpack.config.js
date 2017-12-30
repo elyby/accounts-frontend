@@ -1,5 +1,7 @@
 /* eslint-env node */
 
+require('babel-register');
+
 const path = require('path');
 
 const webpack = require('webpack');
@@ -8,23 +10,13 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
 const cssImport = require('postcss-import');
+const localeFlags = require('./src/components/i18n/localeFlags').default;
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
 
 const packageJson = require('./package.json');
-
-const localeToCountryCode = {
-    en: 'gb',
-    be: 'by',
-    pt: 'br',
-    uk: 'ua',
-    vi: 'vn',
-    sl: 'si',
-};
-
-const flagsList = SUPPORTED_LANGUAGES.map((locale) => localeToCountryCode[locale] || locale);
 
 let config = {};
 try {
@@ -148,9 +140,9 @@ const webpackConfig = {
         new webpack.ContextReplacementPlugin(
             /locale-data/, new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js`)
         ),
-        // @see functions.js:requireLocaleFlag()
+        // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
-            /flag-icon-css\/flags\/4x3/, new RegExp(`/(${flagsList.join('|')})\\.svg`)
+            /flag-icon-css\/flags\/4x3/, new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`)
         ),
     ],
 
@@ -159,7 +151,7 @@ const webpackConfig = {
             {
                 test: /\.scss$/,
                 extractInProduction: true,
-                loader: 'style!css?' + JSON.stringify(cssLoaderQuery) + '!sass!postcss?syntax=postcss-scss'
+                loader: `style!css?${ JSON.stringify(cssLoaderQuery) }!sass!postcss?syntax=postcss-scss`
             },
             {
                 test: /\.jsx?$/,
