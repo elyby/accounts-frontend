@@ -11,47 +11,47 @@ const webpackConfig = require('../webpack.dll.config.js');
 const compiler = webpack(webpackConfig);
 
 Promise.all([
-    stat(__dirname + '/../package-lock.json'),
-    stat(__dirname + '/../dll/vendor.json')
+    stat(`${__dirname}/../yarn.lock`),
+    stat(`${__dirname}/../dll/vendor.json`)
 ])
-.then(function(stats) {
-    const lockFile = new Date(stats[0].mtime);
-    const dll = new Date(stats[1].mtime);
+    .then((stats) => {
+        const lockFile = new Date(stats[0].mtime);
+        const dll = new Date(stats[1].mtime);
 
-    if (dll < lockFile) {
-        return Promise.reject({
-            code: 'OUTDATED'
-        });
-    }
+        if (dll < lockFile) {
+            return Promise.reject({
+                code: 'OUTDATED'
+            });
+        }
 
-    logResult(chalk.green('Current dlls are up to date!'));
-})
-.catch(function(err) {
-    if (err.code !== 'ENOENT' && err.code !== 'OUTDATED') {
-        return Promise.reject(err);
-    }
+        logResult(chalk.green('Current dlls are up to date!'));
+    })
+    .catch((err) => {
+        if (err.code !== 'ENOENT' && err.code !== 'OUTDATED') {
+            return Promise.reject(err);
+        }
 
-    console.log('Rebuilding dlls...');
+        console.log('Rebuilding dlls...');
 
-    return new Promise(function(resolve, reject) {
-        compiler.run(function(err, stats) {
-            if (err) {
-                return reject(err);
-            }
+        return new Promise(((resolve, reject) => {
+            compiler.run((err, stats) => {
+                if (err) {
+                    return reject(err);
+                }
 
-            logResult(
-                chalk.green('Dll was successfully build in %s ms'),
-                stats.endTime - stats.startTime
-            );
+                logResult(
+                    chalk.green('Dll was successfully build in %s ms'),
+                    stats.endTime - stats.startTime
+                );
 
-            resolve();
-        });
+                resolve();
+            });
+        }));
+    })
+    .catch((err) => {
+        logResult(chalk.red('Unexpected error checking dll state'), err);
+        process.exit(1);
     });
-})
-.catch(function(err) {
-    logResult(chalk.red('Unexpected error checking dll state'), err);
-    process.exit(1);
-});
 
 function logResult() {
     console.log('\n');
@@ -60,9 +60,9 @@ function logResult() {
 }
 
 function stat(path) {
-    return new Promise(function(resolve, reject) {
-        fs.stat(path, function(err, stats) {
+    return new Promise(((resolve, reject) => {
+        fs.stat(path, (err, stats) => {
             err ? reject(err) : resolve(stats);
         });
-    });
+    }));
 }
