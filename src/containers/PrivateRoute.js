@@ -1,17 +1,17 @@
 // @flow
 import React from 'react';
-
 import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { getActiveAccount } from 'components/accounts/reducer';
+import type { ComponentType } from 'react';
+import type { Account } from 'components/accounts';
 
-import type {User} from 'components/user';
-
-const PrivateRoute = ({user, component: Component, ...rest}: {
-    component: any,
-    user: User
+const PrivateRoute = ({account, component: Component, ...rest}: {
+    component: ComponentType<*>,
+    account: ?Account
 }) => (
     <Route {...rest} render={(props: {location: string}) => (
-        user.isGuest ? (
+        !account || !account.token ? (
             <Redirect to="/login" />
         ) : (
             <Component {...props}/>
@@ -20,5 +20,5 @@ const PrivateRoute = ({user, component: Component, ...rest}: {
 );
 
 export default connect((state) => ({
-    user: state.user
+    account: getActiveAccount(state)
 }))(PrivateRoute);

@@ -21,7 +21,7 @@ import {
 import { SET_LOCALE } from 'components/i18n/actions';
 
 import { updateUser, setUser } from 'components/user/actions';
-import { setAccountSwitcher } from 'components/auth/actions';
+import { setLogin, setAccountSwitcher } from 'components/auth/actions';
 
 const account = {
     id: 1,
@@ -57,6 +57,10 @@ describe('components/accounts/actions', () => {
         });
 
         sinon.stub(authentication, 'validateToken').named('authentication.validateToken');
+        sinon.stub(browserHistory, 'push').named('browserHistory.push');
+        sinon.stub(authentication, 'logout').named('authentication.logout');
+
+        authentication.logout.returns(Promise.resolve());
         authentication.validateToken.returns(Promise.resolve({
             token: account.token,
             refreshToken: account.refreshToken,
@@ -66,6 +70,8 @@ describe('components/accounts/actions', () => {
 
     afterEach(() => {
         authentication.validateToken.restore();
+        authentication.logout.restore();
+        browserHistory.push.restore();
     });
 
     describe('#authenticate()', () => {
@@ -118,14 +124,16 @@ describe('components/accounts/actions', () => {
         it('rejects when bad auth data', () => {
             authentication.validateToken.returns(Promise.reject({}));
 
-            return expect(authenticate(account)(dispatch, getState), 'to be rejected').then(() => {
-                expect(dispatch, 'to have a call satisfying', [
-                    {payload: {isGuest: true}},
-                ]);
-                expect(dispatch, 'to have a call satisfying', [
-                    reset()
-                ]);
-            });
+            return expect(authenticate(account)(dispatch, getState), 'to be rejected')
+                .then(() => {
+                    expect(dispatch, 'to have a call satisfying', [
+                        setLogin(account.email)
+                    ]);
+
+                    expect(browserHistory.push, 'to have a call satisfying', [
+                        '/login'
+                    ]);
+                });
         });
 
         it('rejects when 5xx without logouting', () => {
@@ -182,19 +190,11 @@ describe('components/accounts/actions', () => {
     });
 
     describe('#revoke()', () => {
-        beforeEach(() => {
-            sinon.stub(authentication, 'logout').named('authentication.logout');
-        });
-
-        afterEach(() => {
-            authentication.logout.restore();
-        });
-
         describe('when one account available', () => {
             beforeEach(() => {
                 getState.returns({
                     accounts: {
-                        active: account,
+                        active: account.id,
                         available: [account]
                     },
                     user
@@ -220,8 +220,7 @@ describe('components/accounts/actions', () => {
             it('should update user state', () =>
                 revoke(account)(dispatch, getState).then(() =>
                     expect(dispatch, 'to have a call satisfying', [
-                        {payload: {isGuest: true}}
-                        // updateUser({isGuest: true})
+                        setUser({isGuest: true})
                     ])
                     // expect(dispatch, 'to have calls satisfying', [
                     //     [remove(account)],
@@ -238,7 +237,7 @@ describe('components/accounts/actions', () => {
             beforeEach(() => {
                 getState.returns({
                     accounts: {
-                        active: account2,
+                        active: account2.id,
                         available: [account, account2]
                     },
                     user
@@ -277,19 +276,11 @@ describe('components/accounts/actions', () => {
         beforeEach(() => {
             getState.returns({
                 accounts: {
-                    active: account2,
+                    active: account2.id,
                     available: [account, account2]
                 },
                 user
             });
-
-            sinon.stub(authentication, 'logout').named('authentication.logout');
-            sinon.stub(browserHistory, 'push').named('browserHistory.push');
-        });
-
-        afterEach(() => {
-            authentication.logout.restore();
-            browserHistory.push.restore();
         });
 
         it('should call logout api method for each account', () => {
@@ -344,17 +335,11 @@ describe('components/accounts/actions', () => {
         beforeEach(() => {
             getState.returns({
                 accounts: {
-                    active: foreignAccount,
+                    active: foreignAccount.id,
                     available: [account, foreignAccount, foreignAccount2]
                 },
                 user
             });
-
-            sinon.stub(authentication, 'logout').named('authentication.logout');
-        });
-
-        afterEach(() => {
-            authentication.logout.restore();
         });
 
         it('should remove stranger accounts', () => {
@@ -389,7 +374,7 @@ describe('components/accounts/actions', () => {
         it('should not activate another account if active account is already not a stranger', () => {
             getState.returns({
                 accounts: {
-                    active: account,
+                    active: account.id,
                     available: [account, foreignAccount]
                 },
                 user
@@ -405,7 +390,7 @@ describe('components/accounts/actions', () => {
         it('should not dispatch if no strangers', () => {
             getState.returns({
                 accounts: {
-                    active: account,
+                    active: account.id,
                     available: [account]
                 },
                 user
@@ -421,7 +406,7 @@ describe('components/accounts/actions', () => {
             beforeEach(() => {
                 getState.returns({
                     accounts: {
-                        active: foreignAccount,
+                        active: foreignAccount.id,
                         available: [foreignAccount, foreignAccount2]
                     },
                     user
@@ -431,9 +416,13 @@ describe('components/accounts/actions', () => {
             });
 
             it('logouts all accounts', () => {
+                expect(authentication.logout, 'to have calls satisfying', [
+                    [foreignAccount],
+                    [foreignAccount2],
+                ]);
+
                 expect(dispatch, 'to have a call satisfying', [
-                    {payload: {isGuest: true}}
-                    // updateUser({isGuest: true})
+                    setUser({isGuest: true})
                 ]);
 
                 expect(dispatch, 'to have a call satisfying', [

@@ -97,7 +97,9 @@ describe('LoginState', () => {
 
     describe('#goBack', () => {
         it('should return to previous page', () => {
-            expectRun(mock, 'goBack', '/');
+            expectRun(mock, 'goBack', {
+                fallbackUrl: '/'
+            });
 
             state.goBack(context);
         });

@@ -1,6 +1,6 @@
 import { changeLang } from 'components/user/actions';
 import { authenticate, logoutStrangers } from 'components/accounts/actions';
-
+import { getActiveAccount } from 'components/accounts/reducer';
 import request from 'services/request';
 import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';
 import refreshTokenMiddleware from './middlewares/refreshTokenMiddleware';
@@ -25,11 +25,11 @@ export function factory(store) {
     promise = Promise.resolve()
         .then(() => store.dispatch(logoutStrangers()))
         .then(() => {
-            const {accounts} = store.getState();
+            const activeAccount = getActiveAccount(store.getState());
 
-            if (accounts.active) {
+            if (activeAccount) {
                 // authorizing user if it is possible
-                return store.dispatch(authenticate(accounts.active));
+                return store.dispatch(authenticate(activeAccount));
             }
 
             return Promise.reject();

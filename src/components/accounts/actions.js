@@ -1,10 +1,13 @@
+// @flow
+import { getJwtPayload } from 'functions';
 import { browserHistory } from 'services/history';
-
 import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';
+import { setLogin } from 'components/auth/actions';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import { setAccountSwitcher } from 'components/auth/actions';
+import { getActiveAccount } from 'components/accounts/reducer';
 import logger from 'services/logger';
 
 import {
@@ -13,18 +16,21 @@ import {
     activate,
     reset,
     updateToken
-} from 'components/accounts/actions/pure-actions';
+} from './actions/pure-actions';
+import type { Account, State as AccountsState } from './reducer';
+
+type Dispatch = (action: Object) => Promise<*>;
+
+type State = {
+    accounts: AccountsState,
+    auth: {
+        oauth?: {
+            clientId?: string
+        },
+    },
+};
 
 export { updateToken };
-
-/**
- * @typedef {object} Account
- * @property {string} id
- * @property {string} username
- * @property {string} email
- * @property {string} token
- * @property {string} refreshToken
- */
 
 /**
  * @param {Account|object} account
@@ -33,15 +39,25 @@ export { updateToken };
  *
  * @return {function}
  */
-export function authenticate({token, refreshToken}) {
-    return (dispatch, getState) =>
+export function authenticate(account: Account | {
+    token: string,
+    refreshToken: ?string,
+}) {
+    const {token, refreshToken} = account;
+    const email = account.email || null;
+
+    return (dispatch: Dispatch, getState: () => State): Promise<Account> =>
         authentication.validateToken({token, refreshToken})
             .catch((resp = {}) => {
-
                 // all the logic to get the valid token was failed,
-                // we must forget current token, but leave other user's accounts
-                return dispatch(logoutAll())
-                    .then(() => Promise.reject(resp));
+                // looks like we have some problems with token
+                // lets redirect to login page
+                if (typeof email === 'string') {
+                    // TODO: we should somehow try to find email by token
+                    dispatch(relogin(email));
+                }
+
+                return Promise.reject(resp);
             })
             .then(({token, refreshToken, user}) => ({
                 user: {
@@ -84,6 +100,89 @@ export function authenticate({token, refreshToken}) {
             });
 }
 
+export function ensureToken() {
+    return (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const {token} = getActiveAccount(getState()) || {};
+
+        try {
+            const SAFETY_FACTOR = 300; // ask new token earlier to overcome time dissynchronization problem
+            const jwt = getJwtPayload(token);
+
+            if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
+                return dispatch(requestNewToken());
+            }
+        } catch (err) {
+            logger.warn('Refresh token error: bad token', {
+                token
+            });
+
+            dispatch(relogin());
+
+            return Promise.reject(new Error('Invalid token'));
+        }
+
+        return Promise.resolve();
+    };
+}
+
+export function recoverFromTokenError(error: ?{
+    status: number,
+    message: string,
+}) {
+    return (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        if (error && error.status === 401) {
+            const activeAccount = getActiveAccount(getState());
+
+            if (activeAccount && activeAccount.refreshToken) {
+                if ([
+                    'Token expired',
+                    'Incorrect token',
+                    'You are requesting with an invalid credential.'
+                ].includes(error.message)) {
+                    // request token and retry
+                    return dispatch(requestNewToken());
+                }
+
+                logger.error('Unknown unauthorized response', {
+                    error
+                });
+            }
+
+            // user's access token is outdated and we have no refreshToken
+            // or something unexpected happend
+            // in both cases we resetting all the user's state
+            dispatch(relogin());
+        }
+
+        return Promise.reject(error);
+    };
+}
+
+export function requestNewToken() {
+    return (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const {refreshToken} = getActiveAccount(getState()) || {};
+
+        if (!refreshToken) {
+            dispatch(relogin());
+
+            return Promise.resolve();
+        }
+
+        return authentication.requestToken(refreshToken)
+            .then(({ token }) => {
+                dispatch(updateToken(token));
+            })
+            .catch((resp) => {
+                // all the logic to get the valid token was failed,
+                // looks like we have some problems with token
+                // lets redirect to login page
+                dispatch(relogin());
+
+                return Promise.reject(resp);
+            });
+    };
+}
+
 /**
  * Remove one account from current user's account list
  *
@@ -91,9 +190,9 @@ export function authenticate({token, refreshToken}) {
  *
  * @return {function}
  */
-export function revoke(account) {
-    return (dispatch, getState) => {
-        const accountToReplace = getState().accounts.available.find(({id}) => id !== account.id);
+export function revoke(account: Account) {
+    return (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const accountToReplace: ?Account = getState().accounts.available.find(({id}) => id !== account.id);
 
         if (accountToReplace) {
             return dispatch(authenticate(accountToReplace))
@@ -107,17 +206,34 @@ export function revoke(account) {
     };
 }
 
+export function relogin(email?: string) {
+    return (dispatch: Dispatch, getState: () => State) => {
+        const activeAccount = getActiveAccount(getState());
+
+        if (!email && activeAccount) {
+            email = activeAccount.email;
+        }
+
+        email && dispatch(setLogin(email));
+        browserHistory.push('/login');
+    };
+}
+
 export function logoutAll() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch, getState: () => State): Promise<void> => {
         dispatch(setGuest());
 
         const {accounts: {available}} = getState();
 
-        available.forEach((account) => authentication.logout(account));
+        available.forEach((account) =>
+            authentication.logout(account)
+                .catch(() => {
+                    // we don't care
+                })
+        );
 
         dispatch(reset());
-
-        browserHistory.push('/login');
+        dispatch(relogin());
 
         return Promise.resolve();
     };
@@ -132,10 +248,11 @@ export function logoutAll() {
  * @return {function}
  */
 export function logoutStrangers() {
-    return (dispatch, getState) => {
-        const {accounts: {available, active}} = getState();
+    return (dispatch: Dispatch, getState: () => State): Promise<void> => {
+        const {accounts: {available}} = getState();
+        const activeAccount = getActiveAccount(getState());
 
-        const isStranger = ({refreshToken, id}) => !refreshToken && !sessionStorage.getItem(`stranger${id}`);
+        const isStranger = ({refreshToken, id}: Account) => !refreshToken && !sessionStorage.getItem(`stranger${id}`);
 
         if (available.some(isStranger)) {
             const accountToReplace = available.filter((account) => !isStranger(account))[0];
@@ -147,7 +264,7 @@ export function logoutStrangers() {
                         authentication.logout(account);
                     });
 
-                if (isStranger(active)) {
+                if (activeAccount && isStranger(activeAccount)) {
                     return dispatch(authenticate(accountToReplace));
                 }
             } else {

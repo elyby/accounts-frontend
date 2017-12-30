@@ -1,3 +1,4 @@
+// @flow
 import logger from 'services/logger';
 import { getLogin } from 'components/auth/reducer';
 
@@ -5,8 +6,10 @@ import AbstractState from './AbstractState';
 import PasswordState from './PasswordState';
 import RegisterState from './RegisterState';
 
+import type { AuthContext } from './AuthFlow';
+
 export default class LoginState extends AbstractState {
-    enter(context) {
+    enter(context: AuthContext) {
         const login = getLogin(context.getState());
         const {user} = context.getState();
 
@@ -24,7 +27,9 @@ export default class LoginState extends AbstractState {
         }
     }
 
-    resolve(context, payload) {
+    resolve(context: AuthContext, payload: {
+        login: string
+    }) {
         context.run('login', payload)
             .then(() => context.setState(new PasswordState()))
             .catch((err = {}) =>
@@ -32,11 +37,13 @@ export default class LoginState extends AbstractState {
             );
     }
 
-    reject(context) {
+    reject(context: AuthContext) {
         context.setState(new RegisterState());
     }
 
-    goBack(context) {
-        context.run('goBack', '/');
+    goBack(context: AuthContext) {
+        context.run('goBack', {
+            fallbackUrl: '/'
+        });
     }
 }

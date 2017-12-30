@@ -6,8 +6,9 @@ describe('bearerHeaderMiddleware', () => {
     const emptyState = {
         user: {},
         accounts: {
-            active: null
-        }
+            active: null,
+            available: [],
+        },
     };
 
     describe('when token available', () => {
@@ -16,7 +17,11 @@ describe('bearerHeaderMiddleware', () => {
             getState: () => ({
                 ...emptyState,
                 accounts: {
-                    active: {token}
+                    active: 1,
+                    available: [{
+                        id: 1,
+                        token,
+                    }],
                 }
             })
         });

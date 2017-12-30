@@ -21,14 +21,7 @@ export class AccountSwitcher extends Component {
         removeAccount: PropTypes.func.isRequired,
         onAfterAction: PropTypes.func, // called after each action performed
         onSwitch: PropTypes.func, // called after switching an account. The active account will be passed as arg
-        accounts: PropTypes.shape({ // TODO: accounts shape
-            active: PropTypes.shape({
-                id: PropTypes.number
-            }),
-            available: PropTypes.arrayOf(PropTypes.shape({
-                id: PropTypes.number
-            }))
-        }),
+        accounts: PropTypes.object, // eslint-disable-line
         user: userShape, // TODO: remove me, when we will be sure, that accounts.active is always set for user (event after register)
         skin: PropTypes.oneOf(skins),
         highlightActiveAccount: PropTypes.bool, // whether active account should be expanded and shown on the top

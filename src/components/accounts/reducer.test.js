@@ -35,7 +35,7 @@ describe('Accounts reducer', () => {
     describe(ACTIVATE, () => {
         it('sets active account', () => {
             expect(accounts(initial, activate(account)), 'to satisfy', {
-                active: account
+                active: account.id
             });
         });
     });
@@ -108,14 +108,14 @@ describe('Accounts reducer', () => {
             const newToken = 'newToken';
 
             expect(accounts(
-                {active: account, available: [account]},
+                {active: account.id, available: [account]},
                 updateToken(newToken)
             ), 'to satisfy', {
-                active: {
+                active: account.id,
+                available: [{
                     ...account,
                     token: newToken
-                },
-                available: [account]
+                }]
             });
         });
     });

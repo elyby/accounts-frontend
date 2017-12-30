@@ -20,11 +20,16 @@ export { authenticate, logoutAll as logout } from 'components/accounts/actions';
 /**
  * Reoutes user to the previous page if it is possible
  *
- * @param {string} fallbackUrl - an url to route user to if goBack is not possible
+ * @param {object} options
+ * @param {string} options.fallbackUrl - an url to route user to if goBack is not possible
  *
  * @return {object} - action definition
  */
-export function goBack(fallbackUrl?: ?string = null) {
+export function goBack(options: {
+    fallbackUrl?: string
+}) {
+    const { fallbackUrl } = options || {};
+
     if (history.canGoBack()) {
         browserHistory.goBack();
     } else if (fallbackUrl) {

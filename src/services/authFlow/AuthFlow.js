@@ -51,7 +51,7 @@ type ActionId =
     | 'setLoadingState';
 
 export interface AuthContext {
-    run(actionId: ActionId, payload?: ?Object): *;
+    run(actionId: ActionId, payload?: mixed): *;
     setState(newState: AbstractState): Promise<*> | void;
     getState(): Object;
     navigate(route: string): void;
@@ -59,7 +59,7 @@ export interface AuthContext {
 }
 
 export default class AuthFlow implements AuthContext {
-    actions: {[key: string]: Function};
+    actions: {[key: string]: (mixed) => Object};
     state: AbstractState;
     prevState: AbstractState;
     /**
@@ -125,12 +125,18 @@ export default class AuthFlow implements AuthContext {
         this.state.goBack(this);
     }
 
-    run(actionId: ActionId, payload?: ?Object): Promise<*> {
-        if (!this.actions[actionId]) {
+    run(actionId: ActionId, payload?: mixed): Promise<any> {
+        const action = this.actions[actionId];
+
+        if (!action) {
             throw new Error(`Action ${actionId} does not exists`);
         }
 
-        return Promise.resolve(this.dispatch(this.actions[actionId](payload)));
+        return Promise.resolve(
+            this.dispatch(
+                action(payload)
+            )
+        );
     }
 
     setState(state: AbstractState) {

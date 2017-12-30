@@ -29,11 +29,11 @@ const authentication = {
      *
      * @return {Promise}
      */
-    logout(options: {
-        token?: string
-    } = {}) {
+    logout(options: ?{
+        token: string
+    }) {
         return request.post('/api/authentication/logout', {}, {
-            token: options.token
+            token: options && options.token
         });
     },
 
@@ -80,7 +80,7 @@ const authentication = {
      */
     validateToken({token, refreshToken}: {
         token: string,
-        refreshToken: string
+        refreshToken: ?string
     }) {
         return new Promise((resolve) => {
             if (typeof token !== 'string') {
@@ -91,36 +91,39 @@ const authentication = {
         })
             .then(() => accounts.current({token}))
             .then((user) => ({token, refreshToken, user}))
-            .catch((resp) => {
-                if (resp instanceof InternalServerError) {
-                    // delegate error recovering to the bsod middleware
-                    return new Promise(() => {});
-                }
+            .catch((resp) =>
+                this.handleTokenError(resp, refreshToken)
+                    // TODO: use recursion here
+                    .then(({token}) =>
+                        accounts.current({token})
+                            .then((user) => ({token, refreshToken, user}))
+                    )
+            );
+    },
 
-                if (['Token expired', 'Incorrect token'].includes(resp.message)) {
-                    return authentication.requestToken(refreshToken)
-                        .then(({token}) =>
-                            accounts.current({token})
-                                .then((user) => ({token, refreshToken, user}))
-                        )
-                        .catch((error) => {
-                            logger.error('Failed refreshing token during token validation', {
-                                error
-                            });
+    handleTokenError(resp: Error | { message: string }, refreshToken: ?string): Promise<{
+        token: string,
+    }> {
+        if (resp instanceof InternalServerError) {
+            // delegate error recovering to the bsod middleware
+            return new Promise(() => {});
+        }
 
-                            return Promise.reject(error);
-                        });
-                }
+        if (refreshToken) {
+            if ([
+                'Token expired',
+                'Incorrect token',
+                'You are requesting with an invalid credential.'
+            ].includes(resp.message)) {
+                return authentication.requestToken(refreshToken);
+            }
 
-                const errors = resp.errors || {};
-                if (errors.refresh_token !== 'error.refresh_token_not_exist') {
-                    logger.error('Unexpected error during token validation', {
-                        resp
-                    });
-                }
-
-                return Promise.reject(resp);
+            logger.error('Unexpected error during token validation', {
+                resp
             });
+        }
+
+        return Promise.reject(resp);
     },
 
     /**
@@ -135,9 +138,21 @@ const authentication = {
             '/api/authentication/refresh-token',
             {refresh_token: refreshToken}, // eslint-disable-line
             {token: null}
-        ).then((resp: {access_token: string}) => ({
-            token: resp.access_token
-        }));
+        )
+            .then((resp: {access_token: string}) => ({
+                token: resp.access_token
+            }))
+            .catch((resp) => {
+                const errors = resp.errors || {};
+
+                if (errors.refresh_token !== 'error.refresh_token_not_exist') {
+                    logger.error('Failed refreshing token: unknown error', {
+                        resp
+                    });
+                }
+
+                return Promise.reject(resp);
+            });
     }
 };
 

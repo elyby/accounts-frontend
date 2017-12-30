@@ -1,30 +1,52 @@
-import { ADD, REMOVE, ACTIVATE, RESET, UPDATE_TOKEN } from './actions/pure-actions';
+// @flow
+export type Account = {
+    id: number,
+    username: string,
+    email: string,
+    token: string,
+    refreshToken: ?string,
+};
 
-/**
- * @typedef {AccountsState}
- * @property {Account} active
- * @property {Account[]} available
- */
+export type State = {
+    active: ?number,
+    available: Array<Account>,
+};
 
-/**
- * @param {AccountsState} state
- * @param {string} options.type
- * @param {object} options.payload
- *
- * @return {AccountsState}
- */
+
+export type AddAction = { type: 'accounts:add', payload: Account};
+export type RemoveAction = { type: 'accounts:remove', payload: Account};
+export type ActivateAction = { type: 'accounts:activate', payload: Account};
+export type UpdateTokenAction = { type: 'accounts:updateToken', payload: string };
+export type ResetAction = { type: 'accounts:reset' };
+
+type Action =
+    | AddAction
+    | RemoveAction
+    | ActivateAction
+    | UpdateTokenAction
+    | ResetAction;
+
+export function getActiveAccount(state: { accounts: State }): ?Account {
+    const activeAccount = state.accounts.active;
+    // TODO: remove activeAccount.id, when will be sure, that magor part of users have migrated to new state structure
+    const accountId: number | void = typeof activeAccount === 'number' ? activeAccount : (activeAccount || {}).id;
+
+    return state.accounts.available.find((account) => account.id === accountId);
+}
+
 export default function accounts(
-    state = {
+    state: State = {
         active: null,
         available: []
     },
-    {type, payload = {}}
-) {
-    switch (type) {
-        case ADD:
-            if (!payload || !payload.id || !payload.token) {
+    action: Action
+): State {
+    switch (action.type) {
+        case 'accounts:add': {
+            if (!action.payload || !action.payload.id || !action.payload.token) {
                 throw new Error('Invalid or empty payload passed for accounts.add');
             }
+            const { payload } = action;
 
             state.available = state.available
                 .filter((account) => account.id !== payload.id)
@@ -39,44 +61,70 @@ export default function accounts(
             });
 
             return state;
+        }
 
-        case ACTIVATE:
-            if (!payload || !payload.id || !payload.token) {
+        case 'accounts:activate': {
+            if (!action.payload || !action.payload.id || !action.payload.token) {
                 throw new Error('Invalid or empty payload passed for accounts.add');
             }
 
+            const { payload } = action;
+
             return {
-                ...state,
-                active: payload
+                available: state.available.map((account) => {
+                    if (account.id === payload.id) {
+                        return {...payload};
+                    }
+
+                    return {...account};
+                }),
+                active: payload.id
+            };
+        }
+
+        case 'accounts:reset':
+            return {
+                active: null,
+                available: []
             };
 
-        case RESET:
-            return accounts(undefined, {});
-
-        case REMOVE:
-            if (!payload || !payload.id) {
+        case 'accounts:remove': {
+            if (!action.payload || !action.payload.id) {
                 throw new Error('Invalid or empty payload passed for accounts.remove');
             }
+
+            const { payload } = action;
 
             return {
                 ...state,
                 available: state.available.filter((account) => account.id !== payload.id)
             };
+        }
 
-        case UPDATE_TOKEN:
-            if (typeof payload !== 'string') {
+        case 'accounts:updateToken': {
+            if (typeof action.payload !== 'string') {
                 throw new Error('payload must be a jwt token');
             }
 
+            const { payload } = action;
+
             return {
                 ...state,
-                active: {
-                    ...state.active,
-                    token: payload
-                }
+                available: state.available.map((account) => {
+                    if (account.id === state.active) {
+                        return {
+                            ...account,
+                            token: payload,
+                        };
+                    }
+
+                    return {...account};
+                }),
             };
+        }
 
         default:
+            (action: empty);
             return state;
     }
 }

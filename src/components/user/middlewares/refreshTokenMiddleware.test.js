@@ -2,7 +2,7 @@ import expect from 'unexpected';
 import sinon from 'sinon';
 
 import refreshTokenMiddleware from 'components/user/middlewares/refreshTokenMiddleware';
-
+import { browserHistory } from 'services/history';
 import authentication from 'services/api/authentication';
 import { InternalServerError } from 'services/request';
 import { updateToken } from 'components/accounts/actions';
@@ -17,9 +17,12 @@ describe('refreshTokenMiddleware', () => {
     let getState;
     let dispatch;
 
+    const email = 'test@email.com';
+
     beforeEach(() => {
         sinon.stub(authentication, 'requestToken').named('authentication.requestToken');
         sinon.stub(authentication, 'logout').named('authentication.logout');
+        sinon.stub(browserHistory, 'push');
 
         getState = sinon.stub().named('store.getState');
         dispatch = sinon.spy((arg) =>
@@ -32,7 +35,21 @@ describe('refreshTokenMiddleware', () => {
     afterEach(() => {
         authentication.requestToken.restore();
         authentication.logout.restore();
+        browserHistory.push.restore();
     });
+
+    function assertRelogin() {
+        expect(dispatch, 'to have a call satisfying', [
+            {
+                type: 'auth:setCredentials',
+                payload: {login: email}
+            }
+        ]);
+
+        expect(browserHistory.push, 'to have a call satisfying', [
+            '/login'
+        ]);
+    }
 
     it('must be till 2100 to test with validToken', () =>
         expect(new Date().getFullYear(), 'to be less than', 2100)
@@ -42,6 +59,7 @@ describe('refreshTokenMiddleware', () => {
         describe('when token expired', () => {
             beforeEach(() => {
                 const account = {
+                    email,
                     token: expiredToken,
                     refreshToken
                 };
@@ -111,8 +129,9 @@ describe('refreshTokenMiddleware', () => {
                 );
             });
 
-            it('should logout if token can not be parsed', () => {
+            it('should relogin if token can not be parsed', () => {
                 const account = {
+                    email,
                     token: 'realy bad token',
                     refreshToken
                 };
@@ -126,23 +145,23 @@ describe('refreshTokenMiddleware', () => {
 
                 const req = {url: 'foo', options: {}};
 
-                return expect(middleware.before(req), 'to be fulfilled with', req).then(() => {
-                    expect(authentication.requestToken, 'was not called');
+                return expect(middleware.before(req), 'to be rejected with', {
+                    message: 'Invalid token'
+                })
+                    .then(() => {
+                        expect(authentication.requestToken, 'was not called');
 
-                    expect(dispatch, 'to have a call satisfying', [
-                        {payload: {isGuest: true}}
-                    ]);
-                });
+                        assertRelogin();
+                    });
             });
 
-            it('should logout if token request failed', () => {
+            it('should relogin if token request failed', () => {
                 authentication.requestToken.returns(Promise.reject());
 
-                return expect(middleware.before({url: 'foo', options: {}}), 'to be fulfilled').then(() =>
-                    expect(dispatch, 'to have a call satisfying', [
-                        {payload: {isGuest: true}}
-                    ])
-                );
+                return expect(middleware.before({url: 'foo', options: {}}), 'to be rejected')
+                    .then(() =>
+                        assertRelogin()
+                    );
             });
 
             it('should not logout if request failed with 5xx', () => {
@@ -161,12 +180,16 @@ describe('refreshTokenMiddleware', () => {
         it('should not be applied if no token', () => {
             getState.returns({
                 accounts: {
-                    active: null
+                    active: null,
+                    available: [],
                 },
                 user: {}
             });
 
-            const data = {url: 'foo'};
+            const data = {
+                url: 'foo',
+                options: {},
+            };
             const resp = middleware.before(data);
 
             return expect(resp, 'to be fulfilled with', data)
@@ -206,8 +229,13 @@ describe('refreshTokenMiddleware', () => {
         beforeEach(() => {
             getState.returns({
                 accounts: {
-                    active: {refreshToken},
-                    available: [{refreshToken}]
+                    active: 1,
+                    available: [{
+                        id: 1,
+                        email,
+                        token: 'old token',
+                        refreshToken,
+                    }]
                 },
                 user: {}
             });
@@ -217,36 +245,55 @@ describe('refreshTokenMiddleware', () => {
             authentication.requestToken.returns(Promise.resolve({token: validToken}));
         });
 
+        function assertNewTokenRequest() {
+            expect(authentication.requestToken, 'to have a call satisfying', [
+                refreshToken
+            ]);
+            expect(restart, 'was called');
+            expect(dispatch, 'was called');
+        }
+
         it('should request new token if expired', () =>
-            middleware.catch(expiredResponse, {options: {}}, restart).then(() => {
-                expect(authentication.requestToken, 'to have a call satisfying', [
-                    refreshToken
-                ]);
-                expect(restart, 'was called');
-            })
+            expect(
+                middleware.catch(expiredResponse, {options: {}}, restart),
+                'to be fulfilled'
+            ).then(assertNewTokenRequest)
         );
 
-        it('should logout user if invalid credential', () =>
+        it('should request new token if invalid credential', () =>
             expect(
                 middleware.catch(badTokenReponse, {options: {}}, restart),
-                'to be rejected'
-            ).then(() =>
-                expect(dispatch, 'to have a call satisfying', [
-                    {payload: {isGuest: true}}
-                ])
-            )
+                'to be fulfilled'
+            ).then(assertNewTokenRequest)
         );
 
-        it('should logout user if token is incorrect', () =>
+        it('should request new token if token is incorrect', () =>
             expect(
                 middleware.catch(incorrectTokenReponse, {options: {}}, restart),
-                'to be rejected'
-            ).then(() =>
-                expect(dispatch, 'to have a call satisfying', [
-                    {payload: {isGuest: true}}
-                ])
-            )
+                'to be fulfilled'
+            ).then(assertNewTokenRequest)
         );
+
+        it('should relogin if no refreshToken', () => {
+            getState.returns({
+                accounts: {
+                    active: 1,
+                    available: [{
+                        id: 1,
+                        email,
+                        refreshToken: null,
+                    }]
+                },
+                user: {}
+            });
+
+            return expect(
+                middleware.catch(incorrectTokenReponse, {options: {}}, restart),
+                'to be rejected'
+            ).then(() => {
+                assertRelogin();
+            });
+        });
 
         it('should pass the request through if options.token specified', () => {
             const promise = middleware.catch(expiredResponse, {

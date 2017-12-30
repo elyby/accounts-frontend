@@ -166,9 +166,7 @@ describe('CompleteState', () => {
                         {id: 1},
                         {id: 2}
                     ],
-                    active: {
-                        id: 1
-                    }
+                    active: 1
                 },
                 auth: {
                     isSwitcherEnabled: true,
@@ -195,9 +193,7 @@ describe('CompleteState', () => {
                         {id: 1},
                         {id: 2}
                     ],
-                    active: {
-                        id: 1
-                    }
+                    active: 1
                 },
                 auth: {
                     isSwitcherEnabled: false,
@@ -224,9 +220,7 @@ describe('CompleteState', () => {
                     available: [
                         {id: 1}
                     ],
-                    active: {
-                        id: 1
-                    }
+                    active: 1
                 },
                 auth: {
                     isSwitcherEnabled: true,
@@ -252,9 +246,7 @@ describe('CompleteState', () => {
                     available: [
                         {id: 1}
                     ],
-                    active: {
-                        id: 1
-                    }
+                    active: 1
                 },
                 auth: {
                     isSwitcherEnabled: false,
@@ -416,9 +408,7 @@ describe('CompleteState', () => {
                         available: [
                             account
                         ],
-                        active: {
-                            id: 100
-                        }
+                        active: 100
                     },
                     auth: {
                         oauth: {
@@ -465,7 +455,7 @@ describe('CompleteState', () => {
                         available: [
                             account
                         ],
-                        active: account
+                        active: account.id,
                     },
                     auth: {
                         oauth: {
@@ -497,7 +487,7 @@ describe('CompleteState', () => {
                     },
                     accounts: {
                         available: [{id: 1}],
-                        active: {id: 1}
+                        active: 1
                     },
                     auth: {
                         oauth: {

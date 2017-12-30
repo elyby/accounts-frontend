@@ -1,3 +1,5 @@
+// @flow
+import { getActiveAccount } from 'components/accounts/reducer';
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import PermissionsState from './PermissionsState';
@@ -5,18 +7,23 @@ import ChooseAccountState from './ChooseAccountState';
 import ActivationState from './ActivationState';
 import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
+import type { AuthContext } from './AuthFlow';
 
 const PROMPT_ACCOUNT_CHOOSE = 'select_account';
 const PROMPT_PERMISSIONS = 'consent';
 
 export default class CompleteState extends AbstractState {
-    constructor(options = {}) {
-        super(options);
+    isPermissionsAccepted: bool | void;
+
+    constructor(options: {
+        accept?: bool,
+    } = {}) {
+        super();
 
         this.isPermissionsAccepted = options.accept;
     }
 
-    enter(context) {
+    enter(context: AuthContext) {
         const {auth = {}, user} = context.getState();
 
         if (user.isGuest) {
@@ -32,7 +39,7 @@ export default class CompleteState extends AbstractState {
         }
     }
 
-    processOAuth(context) {
+    processOAuth(context: AuthContext) {
         const {auth = {}, accounts} = context.getState();
 
         let isSwitcherEnabled = auth.isSwitcherEnabled;
@@ -44,13 +51,14 @@ export default class CompleteState extends AbstractState {
                     || account.email === loginHint
                     || account.username === loginHint
             )[0];
+            const activeAccount = getActiveAccount(context.getState());
 
             if (account) {
                 // disable switching, because we are know the account, user must be authorized with
                 context.run('setAccountSwitcher', false);
                 isSwitcherEnabled = false;
 
-                if (account.id !== accounts.active.id) {
+                if (!activeAccount || account.id !== activeAccount.id) {
                     // lets switch user to an account, that is needed for auth
                     return context.run('authenticate', account)
                         .then(() => context.setState(new CompleteState()));
@@ -75,8 +83,10 @@ export default class CompleteState extends AbstractState {
                 return;
             }
 
-            // TODO: it seams that oAuthComplete may be a separate state
-            return context.run('oAuthComplete', data).then((resp) => {
+            // TODO: it seems that oAuthComplete may be a separate state
+            return context.run('oAuthComplete', data).then((resp: {
+                redirectUri: string,
+            }) => {
                 // TODO: пусть в стейт попадает флаг или тип авторизации
                 // вместо волшебства над редирект урлой
                 if (resp.redirectUri.indexOf('static_page') === 0) {

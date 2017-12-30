@@ -1,8 +1,6 @@
-import { getJwtPayload } from 'functions';
-import authentication from 'services/api/authentication';
-import logger from 'services/logger';
-import { InternalServerError } from 'services/request';
-import { updateToken, logoutAll } from 'components/accounts/actions';
+// @flow
+import { ensureToken, recoverFromTokenError } from 'components/accounts/actions';
+import { getActiveAccount } from 'components/accounts/reducer';
 
 /**
  * Ensures, that all user's requests have fresh access token
@@ -13,75 +11,29 @@ import { updateToken, logoutAll } from 'components/accounts/actions';
  *
  * @return {object} - request middleware
  */
-export default function refreshTokenMiddleware({dispatch, getState}) {
+export default function refreshTokenMiddleware({dispatch, getState}: {dispatch: (Object) => *, getState: () => Object}) {
     return {
-        before(req) {
-            const {accounts} = getState();
-
-            let refreshToken;
-            let token;
+        before<T: {options: {token?: string}, url: string}>(req: T): Promise<T> {
+            const activeAccount = getActiveAccount(getState());
+            const disableMiddleware = !!req.options.token || req.options.token === null;
 
             const isRefreshTokenRequest = req.url.includes('refresh-token');
 
-            if (accounts.active) {
-                token = accounts.active.token;
-                refreshToken = accounts.active.refreshToken;
-            }
-
-            if (!token || req.options.token || isRefreshTokenRequest) {
+            if (!activeAccount || disableMiddleware || isRefreshTokenRequest) {
                 return Promise.resolve(req);
             }
 
-            try {
-                const SAFETY_FACTOR = 300; // ask new token earlier to overcome time dissynchronization problem
-                const jwt = getJwtPayload(token);
-
-                if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
-                    return requestAccessToken(refreshToken, dispatch).then(() => req);
-                }
-            } catch (err) {
-                logger.warn('Refresh token error: bad token', {
-                    token
-                });
-
-                return dispatch(logoutAll()).then(() => req);
-            }
-
-            return Promise.resolve(req);
+            return dispatch(ensureToken()).then(() => req);
         },
 
-        catch(resp, req, restart) {
-            if (resp && resp.status === 401 && !req.options.token) {
-                const {accounts} = getState();
-                const {refreshToken} = accounts.active || {};
+        catch(resp: {status: number, message: string}, req: {options: { token?: string}}, restart: () => Promise<mixed>): Promise<*> {
+            const disableMiddleware = !!req.options.token || req.options.token === null;
 
-                if (resp.message === 'Token expired' && refreshToken) {
-                    // request token and retry
-                    return requestAccessToken(refreshToken, dispatch).then(restart);
-                }
-
-                return dispatch(logoutAll()).then(() => Promise.reject(resp));
+            if (disableMiddleware) {
+                return Promise.reject(resp);
             }
 
-            return Promise.reject(resp);
+            return dispatch(recoverFromTokenError(resp)).then(restart);
         }
     };
 }
-
-function requestAccessToken(refreshToken, dispatch) {
-    if (refreshToken) {
-        return authentication.requestToken(refreshToken)
-            .then(({token}) => dispatch(updateToken(token)))
-            .catch((resp = {}) => {
-                if (resp instanceof InternalServerError) {
-                    return Promise.reject(resp);
-                }
-
-                return dispatch(logoutAll());
-            });
-    }
-
-    return dispatch(logoutAll());
-}
-
-

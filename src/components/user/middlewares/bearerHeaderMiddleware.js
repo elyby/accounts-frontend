@@ -1,3 +1,6 @@
+// @flow
+import { getActiveAccount } from 'components/accounts/reducer';
+
 /**
  * Applies Bearer header for all requests
  *
@@ -9,12 +12,17 @@
  *
  * @return {object} - request middleware
  */
-export default function bearerHeaderMiddleware({getState}) {
+export default function bearerHeaderMiddleware(store: { getState: () => Object }) {
     return {
-        before(req) {
-            const {accounts} = getState();
+        before<T: {
+            options: {
+                token?: ?string,
+                headers: Object,
+            }
+        }>(req: T): T {
+            const activeAccount = getActiveAccount(store.getState());
 
-            let {token} = accounts.active || {};
+            let {token} = activeAccount || {};
 
             if (req.options.token || req.options.token === null) {
                 token = req.options.token;
