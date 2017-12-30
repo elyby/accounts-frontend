@@ -1,71 +1,83 @@
 {
     "be": {
+        "code": "be",
         "name": "Беларуская",
         "englishName": "Belarusian",
         "progress": 100,
         "isReleased": true
     },
     "en": {
+        "code": "en",
         "name": "English, UK",
         "englishName": "English, UK",
         "progress": 100,
         "isReleased": true
     },
     "fr": {
+        "code": "fr",
         "name": "Français",
         "englishName": "French",
         "progress": 85.6,
         "isReleased": true
     },
     "id": {
+        "code": "id",
         "name": "Bahasa Indonesia",
         "englishName": "Indonesian",
         "progress": 96.2,
         "isReleased": true
     },
     "lt": {
+        "code": "lt",
         "name": "Lietuvių",
         "englishName": "Lithuanian",
         "progress": 92.8,
         "isReleased": false
     },
     "pl": {
+        "code": "pl",
         "name": "Polski",
         "englishName": "Polish",
         "progress": 81.8,
         "isReleased": false
     },
     "pt": {
+        "code": "pt",
         "name": "Português do Brasil",
         "englishName": "Portuguese, Brazilian",
         "progress": 96.2,
         "isReleased": true
     },
     "ro": {
+        "code": "ro",
         "name": "Română",
         "englishName": "Romanian",
         "progress": 81.8,
         "isReleased": false
     },
     "ru": {
+        "code": "ru",
         "name": "Русский",
         "englishName": "Russian",
         "progress": 100,
         "isReleased": true
     },
     "sl": {
+        "code": "sl",
         "name": "Slovenščina",
         "englishName": "Slovenian",
         "progress": 82.2,
         "isReleased": false
     },
     "uk": {
+        "code": "uk",
         "name": "Українська",
         "englishName": "Ukrainian",
         "progress": 85.6,
         "isReleased": true
     },
     "vi": {
+        "code": "vi",
         "name": "Tiếng Việt",
         "englishName": "Vietnamese",
         "progress": 96.2,

@@ -68,28 +68,6 @@ $formColumnWidth: 416px;
     flex-grow: 1;
 }
 
-.language {
-    color: #666;
-    border-bottom: 1px dotted #666;
-    text-decoration: none;
-    transition: .25s;
-    cursor: pointer;
-}
-
-.languageIcon {
-    $height: 13px;
-
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    margin-right: 4px;
-    height: $height;
-    width: $height * 4 / 3;
-    box-shadow: 0 0 1px rgba(#000, .2);
-
-    background-size: cover;
-}
-
 .uuidValue {
     composes: paramName;
     composes: paramValue;

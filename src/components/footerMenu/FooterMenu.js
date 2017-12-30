@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
+import ContactForm from 'components/contact/ContactForm';
+import LanguageSwitcher from 'components/languageSwitcher';
+import { create as createPopup } from 'components/ui/popup/actions';
 
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
@@ -46,11 +49,6 @@ class FooterMenu extends Component {
         this.props.createLanguageSwitcherPopup();
     };
 }
-
-import { connect } from 'react-redux';
-import ContactForm from 'components/contact/ContactForm';
-import LanguageSwitcher from 'components/languageSwitcher/LanguageSwitcher';
-import { create as createPopup } from 'components/ui/popup/actions';
 
 // mark this component, as not pure, because it is stateless,
 // but should be re-rendered, if current lang was changed

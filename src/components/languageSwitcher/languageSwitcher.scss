@@ -76,6 +76,7 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
     transition: background-color .25s;
     cursor: pointer;
     overflow: hidden;
+    line-height: 1;
 
     &:hover {
         background-color: $whiteButtonLight;

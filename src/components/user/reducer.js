@@ -12,7 +12,7 @@ export type User = {|
     isGuest: bool,
     isActive: bool,
     isOtpEnabled: bool,
-    passwordChangedAt: ?number,
+    passwordChangedAt: number,
     hasMojangUsernameCollision: bool,
     maskedEmail?: string,
     shouldAcceptRules?: bool,
@@ -32,7 +32,7 @@ const defaults: User = {
     isActive: false,
     isOtpEnabled: false,
     shouldAcceptRules: false, // whether user need to review updated rules
-    passwordChangedAt: null,
+    passwordChangedAt: 0,
     hasMojangUsernameCollision: false,
 
     // frontend specific attributes

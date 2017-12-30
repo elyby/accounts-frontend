@@ -1,28 +1,22 @@
+// @flow
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
-
-import { localeFlags } from 'components/i18n';
-import LANGS from 'i18n/index.json';
-
-import { userShape } from 'components/user/User';
-
+import { ChangeLanguageLink } from 'components/languageSwitcher';
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
 import profileForm from './profileForm.scss';
 import messages from './Profile.intl.json';
-
 import RulesPage from 'pages/rules/RulesPage';
 
-class Profile extends Component {
-    static displayName = 'Profile';
-    static propTypes = {
-        user: userShape,
-        createLanguageSwitcherPopup: PropTypes.func.isRequired,
-    };
+import type { User } from 'components/user';
+
+class Profile extends Component<{
+    user: User
+}> {
+    UUID: ?HTMLDivElement;
 
     render() {
         const { user } = this.props;
@@ -30,7 +24,7 @@ class Profile extends Component {
         return (
             <div>
                 <Message {...messages.accountPreferencesTitle}>
-                    {(pageTitle) => (
+                    {(pageTitle: string) => (
                         <h2 className={styles.indexTitle}>
                             <Helmet title={pageTitle} />
                             {pageTitle}
@@ -90,14 +84,7 @@ class Profile extends Component {
 
                             <ProfileField
                                 label={<Message {...messages.siteLanguage} />}
-                                value={
-                                    <span className={styles.language} onClick={this.onLanguageSwitcher.bind(this)}>
-                                        <span className={styles.languageIcon} style={{
-                                            backgroundImage: `url('${localeFlags.getIconUrl(user.lang)}')`
-                                        }} />
-                                        {LANGS[user.lang].name}
-                                    </span>
-                                }
+                                value={<ChangeLanguageLink />}
                             />
 
                             <ProfileField
@@ -129,15 +116,17 @@ class Profile extends Component {
         );
     }
 
-    onLanguageSwitcher() {
-        this.props.createLanguageSwitcherPopup();
-    }
-
     handleUUIDMouseOver() {
+        if (!this.UUID) {
+            return;
+        }
+
+        const el = this.UUID;
+
         try {
             const selection = window.getSelection();
             const range = document.createRange();
-            range.selectNodeContents(this.UUID);
+            range.selectNodeContents(el);
             selection.removeAllRanges();
             selection.addRange(range);
         } catch (err) {
@@ -145,17 +134,11 @@ class Profile extends Component {
         }
     }
 
-    setUUID(el) {
+    setUUID(el: ?HTMLDivElement) {
         this.UUID = el;
     }
 }
 
-import { connect } from 'react-redux';
-import LanguageSwitcher from 'components/languageSwitcher/LanguageSwitcher';
-import { create as createPopup } from 'components/ui/popup/actions';
-
 export default connect((state) => ({
     user: state.user,
-}), {
-    createLanguageSwitcherPopup: () => createPopup(LanguageSwitcher),
-})(Profile);
+}))(Profile);

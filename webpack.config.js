@@ -268,7 +268,7 @@ if (isProduction) {
     ];
 
     webpackConfig.entry.vendor = Object.keys(packageJson.dependencies)
-        .filter((module) => ignoredPlugins.indexOf(module) === -1);
+        .filter((module) => !ignoredPlugins.includes(module));
 } else {
     webpackConfig.plugins.push(
         new webpack.DllReferencePlugin({

@@ -109,7 +109,7 @@ function sortByKeys(object) {
  * @return {string}
  */
 function trimValueInBrackets(value) {
-    return value.match(/^([^\(]+)/)[0].trim();
+    return value.match(/^([^(]+)/)[0].trim();
 }
 
 async function pullReadyLanguages() {
@@ -141,6 +141,7 @@ async function pull() {
     const mapFileContent = {};
     langs.map((elem) => {
         mapFileContent[elem.locale] = {
+            code: elem.locale,
             name: ORIGINAL_NAMES_MAP[elem.locale] || trimValueInBrackets(elem.local_name),
             englishName: ENGLISH_NAMES_MAP[elem.locale] || trimValueInBrackets(elem.english_name),
             progress: parseFloat(elem.translation_progress),
