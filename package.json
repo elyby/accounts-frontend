@@ -70,6 +70,7 @@
     "babel-runtime": "^6.0.0",
     "bundle-loader": "^0.5.4",
     "check-node-version": "^2.1.0",
+    "csp-webpack-plugin": "^1.0.2",
     "css-loader": "^0.28.0",
     "enzyme": "^2.2.0",
     "eslint": "^4.0.0",

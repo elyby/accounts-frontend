@@ -1482,7 +1482,7 @@ check-node-version@^2.1.0:
     run-parallel "^1.1.4"
     semver "^5.0.3"
 
-cheerio@^0.22.0:
+cheerio@0.22.0, cheerio@^0.22.0:
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-0.22.0.tgz#a9baa860a3f9b595a6b81b1a86873121ed3a269e"
   dependencies:
@@ -1860,6 +1860,13 @@ crypto-browserify@3.3.0:
     pbkdf2-compat "2.0.1"
     ripemd160 "0.2.0"
     sha.js "2.2.6"
+
+csp-webpack-plugin@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/csp-webpack-plugin/-/csp-webpack-plugin-1.0.2.tgz#171cb7af8061ac5c339d0368d6de7596dc218cfb"
+  dependencies:
+    cheerio "0.22.0"
+    lodash "^4.17.4"
 
 css-color-names@0.0.4:
   version "0.0.4"

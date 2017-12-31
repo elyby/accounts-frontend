@@ -11,6 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
 const cssImport = require('postcss-import');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
+const CSPPlugin = require('csp-webpack-plugin');
 const localeFlags = require('./src/components/i18n/localeFlags').default;
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
@@ -46,6 +47,7 @@ const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
 const isDockerized = !!process.env.DOCKERIZED;
 const isCI = !!process.env.CI;
 const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
+const isCspEnabled = false;
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
 if (isTest) {
@@ -107,7 +109,7 @@ const webpackConfig = {
         'react/addons': true
     } : {},
 
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'cheap-module-source-map',
 
     plugins: [
         new webpack.DefinePlugin({
@@ -131,7 +133,8 @@ const webpackConfig = {
             inject: false,
             minify: {
                 collapseWhitespace: isProduction
-            }
+            },
+            isCspEnabled,
         }),
         new SitemapPlugin('https://account.ely.by', [
             '/',
@@ -312,6 +315,25 @@ if (!isProduction && !isTest) {
             historyApiFallback: true
         };
     }
+}
+
+if (isCspEnabled) {
+    webpackConfig.plugins.push(new CSPPlugin({
+        'default-src': '\'none\'',
+        'style-src': ['\'self\'', '\'unsafe-inline\''],
+        'script-src': [
+            '\'self\'',
+            '\'unsafe-inline\'',
+            'https://www.google-analytics.com',
+            'https://www.google.com/recaptcha/',
+            'https://www.gstatic.com/recaptcha/',
+        ],
+        'img-src': ['\'self\'', 'data:', 'www.google-analytics.com'],
+        'font-src': ['\'self\'', 'data:'],
+        'connect-src': isProduction ? ['\'self\''] : ['\'self\'', 'ws://localhost:8080'],
+        'frame-src': ['https://www.google.com/recaptcha/'],
+        'report-uri': 'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
+    }));
 }
 
 if (isDockerized) {
