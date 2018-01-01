@@ -21,6 +21,12 @@ import Finish from 'components/auth/finish/Finish';
 
 import styles from './auth.scss';
 
+// TODO: after migrating to new react router (posibly) this view started remounting
+// after route change e.g. /login -> /password which results in state dropping
+// we should find why this view is remounting or move isSidebarHidden into store
+// so that it persist disregarding remounts
+let isSidebarHiddenCache = false;
+
 class AuthPage extends Component<{
     client: {
         id: string,
@@ -31,7 +37,7 @@ class AuthPage extends Component<{
     isSidebarHidden: bool
 }> {
     state = {
-        isSidebarHidden: false
+        isSidebarHidden: isSidebarHiddenCache
     };
 
     render() {
@@ -66,6 +72,8 @@ class AuthPage extends Component<{
     }
 
     onGoToAuth = () => {
+        isSidebarHiddenCache = true;
+
         this.setState({
             isSidebarHidden: true
         });
