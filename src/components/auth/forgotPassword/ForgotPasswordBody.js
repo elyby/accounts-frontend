@@ -82,9 +82,8 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         this.setState({
             isLoginEdit: true
         });
-        this.context.requestRedraw();
-        // TODO: requestRedraw должен возвращать promise, по которому нужно ставить фокус на поле
-        // иначе же, если фокус ставить сразу, то форма скачет
-        setTimeout(() => {this.form.focus('login');}, 300);
+
+        this.context.requestRedraw()
+            .then(() => this.form.focus('login'));
     };
 }

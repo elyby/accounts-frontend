@@ -113,7 +113,18 @@ class PanelTransition extends Component {
         return {
             auth: this.props.auth,
             user: this.props.user,
-            requestRedraw: () => this.setState({isHeightDirty: true}, () => this.setState({isHeightDirty: false})),
+            requestRedraw: () =>
+                new Promise((resolve) =>
+                    this.setState(
+                        {isHeightDirty: true},
+                        () => {
+                            this.setState({isHeightDirty: false});
+
+                            // wait till transition end
+                            setTimeout(resolve, 200);
+                        }
+                    )
+                ),
             clearErrors: this.props.clearErrors,
             resolve: this.props.resolve,
             reject: this.props.reject
