@@ -330,7 +330,7 @@ if (isCspEnabled) {
         ],
         'img-src': ['\'self\'', 'data:', 'www.google-analytics.com'],
         'font-src': ['\'self\'', 'data:'],
-        'connect-src': isProduction ? ['\'self\''] : ['\'self\'', 'ws://localhost:8080'],
+        'connect-src': ['\'self\'', 'https://sentry.ely.by'].concat(isProduction ? [] : ['ws://localhost:8080']),
         'frame-src': ['https://www.google.com/recaptcha/'],
         'report-uri': 'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
     }));
