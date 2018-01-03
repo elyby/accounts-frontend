@@ -121,8 +121,8 @@ class LanguageSwitcher extends Component<{
         const { langs } = this.props;
 
         const result = Object.keys(langs).reduce((previous, key) => {
-            if (langs[key].englishName.toLowerCase().search(filter) === -1
-                && langs[key].name.toLowerCase().search(filter) === -1
+            if (langs[key].englishName.toLowerCase().indexOf(filter) === -1
+                && langs[key].name.toLowerCase().indexOf(filter) === -1
             ) {
                 return previous;
             }
