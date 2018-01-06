@@ -24,6 +24,7 @@ const LOCALES_MAP = {
     de: 'de-DE',
     sr: 'sr-RS',
     lt: 'lt-LT',
+    zh: 'zh-Hans-CN',
 };
 
 /**
@@ -33,6 +34,7 @@ const LOCALES_MAP = {
 const ORIGINAL_NAMES_MAP = {
     en: 'English, UK',
     pt: 'Português do Brasil',
+    zh: '简体中文',
 };
 
 /**
@@ -42,6 +44,7 @@ const ORIGINAL_NAMES_MAP = {
 const ENGLISH_NAMES_MAP = {
     en: 'English, UK',
     pt: 'Portuguese, Brazilian',
+    zh: 'Simplified Chinese',
 };
 
 // https://ely-translates.oneskyapp.com/admin/site/settings

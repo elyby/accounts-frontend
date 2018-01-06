@@ -45,7 +45,7 @@
         "code": "pt",
         "name": "Português do Brasil",
         "englishName": "Portuguese, Brazilian",
-        "progress": 96.2,
+        "progress": 100,
         "isReleased": true
     },
     "ro": {
@@ -82,5 +82,12 @@
         "englishName": "Vietnamese",
         "progress": 96.2,
         "isReleased": true
+    },
+    "zh": {
+        "code": "zh",
+        "name": "简体中文",
+        "englishName": "Simplified Chinese",
+        "progress": 100,
+        "isReleased": false
     }
 }

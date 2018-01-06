@@ -8,6 +8,7 @@ const localeToCountryCode = {
     uk: 'ua',
     vi: 'vn',
     sl: 'si',
+    zh: 'cn',
 };
 const SUPPORTED_LANGUAGES: Array<string> = Object.keys(supportedLocales);
 
@@ -26,5 +27,5 @@ export default {
      */
     getIconUrl(locale: string): string {
         return require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
-    }
+    },
 };
