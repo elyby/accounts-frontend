@@ -14,7 +14,7 @@
         <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.favicon %>">
     <% } %>
 
-    <script>
+    <script nonce="edge-must-die">
         if (/Edge\/(must die)?/.test(navigator.userAgent)) {
             // Edge has a broken fetch implementation, so forcing the polyfill
             // https://www.reddit.com/r/webdev/comments/57ii4f/psa_edge_14_ships_a_broken_windowfetch/

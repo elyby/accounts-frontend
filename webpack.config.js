@@ -323,6 +323,7 @@ if (isCspEnabled) {
         'style-src': ['\'self\'', '\'unsafe-inline\''],
         'script-src': [
             '\'self\'',
+            '\'nonce-edge-must-die\'',
             '\'unsafe-inline\'',
             'https://www.google-analytics.com',
             'https://www.google.com/recaptcha/',
