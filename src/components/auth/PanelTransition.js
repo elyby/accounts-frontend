@@ -109,6 +109,8 @@ class PanelTransition extends Component {
         panelId: this.props.Body && this.props.Body.type.panelId
     };
 
+    timerIds = []; // this is a list of a probably running timeouts to clean on unmount
+
     getChildContext() {
         return {
             auth: this.props.auth,
@@ -121,7 +123,9 @@ class PanelTransition extends Component {
                             this.setState({isHeightDirty: false});
 
                             // wait till transition end
-                            setTimeout(resolve, 200);
+                            this.timerIds.push(
+                                setTimeout(resolve, 200)
+                            );
                         }
                     )
                 ),
@@ -148,11 +152,18 @@ class PanelTransition extends Component {
             });
 
             if (forceHeight) {
-                setTimeout(() => {
-                    this.setState({forceHeight: 0});
-                }, 100);
+                this.timerIds.push(
+                    setTimeout(() => {
+                        this.setState({forceHeight: 0});
+                    }, 100)
+                );
             }
         }
+    }
+
+    componentWillUnmount() {
+        this.timerIds.forEach((id) => clearTimeout(id));
+        this.timerIds = [];
     }
 
     render() {
