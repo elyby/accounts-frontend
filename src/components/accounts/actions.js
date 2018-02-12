@@ -100,6 +100,14 @@ export function authenticate(account: Account | {
             });
 }
 
+/**
+ * Checks the current user's token exp time. Supposed to be used before performing
+ * any api request
+ *
+ * @see components/user/middlewares/refreshTokenMiddleware
+ *
+ * @return {function}
+ */
 export function ensureToken() {
     return (dispatch: Dispatch, getState: () => State): Promise<void> => {
         const {token} = getActiveAccount(getState()) || {};
@@ -125,6 +133,16 @@ export function ensureToken() {
     };
 }
 
+/**
+ * Checks whether request `error` is an auth error and tries recover from it by
+ * requesting a new auth token
+ *
+ * @see components/user/middlewares/refreshTokenMiddleware
+ *
+ * @param  {object} error
+ *
+ * @return {function}
+ */
 export function recoverFromTokenError(error: ?{
     status: number,
     message: string,
@@ -158,6 +176,12 @@ export function recoverFromTokenError(error: ?{
     };
 }
 
+/**
+ * Requests new token and updates state. In case, when token can not be updated,
+ * it will redirect user to login page
+ *
+ * @return {function}
+ */
 export function requestNewToken() {
     return (dispatch: Dispatch, getState: () => State): Promise<void> => {
         const {refreshToken} = getActiveAccount(getState()) || {};
