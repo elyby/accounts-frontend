@@ -90,7 +90,7 @@ export default {
     }
 };
 
-const checkStatus = (resp) => resp.status >= 200 && resp.status < 300
+const checkStatus = (resp: Response) => resp.status >= 200 && resp.status < 300
     ? Promise.resolve(resp)
     : Promise.reject(resp);
 const toJSON = (resp = {}) => {
@@ -118,7 +118,7 @@ const handleResponseSuccess = (resp) => resp.success || typeof resp.success === 
     ? Promise.resolve(resp)
     : Promise.reject(resp);
 
-function doFetch(url, options = {}) {
+async function doFetch(url, options = {}) {
     // NOTE: we are wrapping fetch, because it is returning
     // Promise instance that can not be pollyfilled with Promise.prototype.finally
 
@@ -126,12 +126,14 @@ function doFetch(url, options = {}) {
     options.headers.Accept = 'application/json';
 
     return middlewareLayer.run('before', {url, options})
-        .then(({url, options}) => fetch(url, options))
-        .then(checkStatus)
-        .then(toJSON, rejectWithJSON)
-        .then(handleResponseSuccess)
-        .then((resp) => middlewareLayer.run('then', resp, {url, options}))
-        .catch((resp) => middlewareLayer.run('catch', resp, {url, options}, () => doFetch(url, options)));
+        .then(({url, options}) =>
+            fetch(url, options)
+                .then(checkStatus)
+                .then(toJSON, rejectWithJSON)
+                .then(handleResponseSuccess)
+                .then((resp) => middlewareLayer.run('then', resp, {url, options}))
+                .catch((resp) => middlewareLayer.run('catch', resp, {url, options}, () => doFetch(url, options)))
+        );
 }
 
 /**
