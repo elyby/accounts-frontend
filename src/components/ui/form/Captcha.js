@@ -4,6 +4,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import captcha from 'services/captcha';
+import logger from 'services/logger';
 import { skins, SKIN_DARK } from 'components/ui';
 import { ComponentLoader } from 'components/ui/loader';
 
@@ -28,7 +29,7 @@ export default class Captcha extends FormInputComponent {
             captcha.render(this.el, {
                 skin: this.props.skin,
                 onSetCode: this.setCode
-            }).then((captchaId) => this.captchaId = captchaId);
+            }).then((captchaId) => this.captchaId = captchaId, (error) => logger.error('Error rendering captcha', { error }));
         }, this.props.delay);
     }
 
