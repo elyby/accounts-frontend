@@ -139,8 +139,11 @@ export class AccountSwitcher extends Component {
         loader.show();
 
         this.props.switchAccount(account)
-            .then(() => this.props.onAfterAction())
+            .finally(() => this.props.onAfterAction())
             .then(() => this.props.onSwitch(account))
+            // we won't sent any logs to sentry, because an error should be already
+            // handled by external logic
+            .catch((error) => console.warn('Error switching account', { error }))
             .finally(() => loader.hide());
     };
 
