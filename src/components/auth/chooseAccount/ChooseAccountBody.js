@@ -19,11 +19,13 @@ export default class ChooseAccountBody extends BaseAuthBody {
             <div>
                 {this.renderErrors()}
 
-                <div className={styles.description}>
-                    <Message {...messages.description} values={{
-                        appName: <span className={styles.appName}>{client.name}</span>
-                    }} />
-                </div>
+                {client && (
+                    <div className={styles.description}>
+                        <Message {...messages.description} values={{
+                            appName: <span className={styles.appName}>{client.name}</span>
+                        }} />
+                    </div>
+                )}
 
                 <div className={styles.accountSwitcherContainer}>
                     <AccountSwitcher

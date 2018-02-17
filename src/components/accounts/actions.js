@@ -1,9 +1,8 @@
 // @flow
 import { getJwtPayload } from 'functions';
-import { browserHistory } from 'services/history';
 import { sessionStorage } from 'services/localStorage';
 import authentication from 'services/api/authentication';
-import { setLogin } from 'components/auth/actions';
+import { relogin as navigateToLogin } from 'components/auth/actions';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
 import { setAccountSwitcher } from 'components/auth/actions';
@@ -238,8 +237,7 @@ export function relogin(email?: string) {
             email = activeAccount.email;
         }
 
-        email && dispatch(setLogin(email));
-        browserHistory.push('/login');
+        dispatch(navigateToLogin(email || null));
     };
 }
 

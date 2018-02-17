@@ -11,6 +11,7 @@ import ForgotPasswordState from './ForgotPasswordState';
 import RecoverPasswordState from './RecoverPasswordState';
 import ActivationState from './ActivationState';
 import CompleteState from './CompleteState';
+import ChooseAccountState from './ChooseAccountState';
 import ResendActivationState from './ResendActivationState';
 import type AbstractState from './AbstractState';
 
@@ -217,6 +218,10 @@ export default class AuthFlow implements AuthContext {
 
             case '/resend-activation':
                 this.setState(new ResendActivationState());
+                break;
+
+            case '/choose-account':
+                this.setState(new ChooseAccountState());
                 break;
 
             case '/':

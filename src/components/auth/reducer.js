@@ -13,6 +13,15 @@ import {
     SET_SWITCHER
 } from './actions';
 
+type Credentials = {
+    login?: string,
+    password?: string,
+    rememberMe?: bool,
+    returnUrl?: string,
+    isRelogin?: bool,
+    isTotpRequired?: bool,
+};
+
 export default combineReducers({
     credentials,
     error,
@@ -44,12 +53,7 @@ function credentials(
     state = {},
     {type, payload}: {
         type: string,
-        payload: ?{
-            login?: string,
-            password?: string,
-            rememberMe?: bool,
-            isTotpRequired?: bool
-        }
+        payload: ?Credentials
     }
 ) {
     if (type === SET_CREDENTIALS) {
@@ -166,11 +170,6 @@ export function getLogin(state: Object): ?string {
     return state.auth.credentials.login || null;
 }
 
-export function getCredentials(state: Object): {
-    login?: string,
-    password?: string,
-    rememberMe?: bool,
-    isTotpRequired?: bool
-} {
+export function getCredentials(state: Object): Credentials {
     return state.auth.credentials;
 }

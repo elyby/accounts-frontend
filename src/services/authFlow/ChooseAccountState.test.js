@@ -23,7 +23,25 @@ describe('ChooseAccountState', () => {
 
     describe('#enter', () => {
         it('should navigate to /oauth/choose-account', () => {
+            context.getState.returns({
+                auth: {
+                    oauth: {},
+                },
+            });
+
             expectNavigate(mock, '/oauth/choose-account');
+
+            state.enter(context);
+        });
+
+        it('should navigate to /choose-account if not oauth', () => {
+            context.getState.returns({
+                auth: {
+                    oauth: null,
+                },
+            });
+
+            expectNavigate(mock, '/choose-account');
 
             state.enter(context);
         });
@@ -38,6 +56,7 @@ describe('ChooseAccountState', () => {
 
         it('should transition to login if user wants to add new account', () => {
             expectNavigate(mock, '/login');
+            expectRun(mock, 'setLogin', null);
             expectState(mock, LoginState);
 
             state.resolve(context, {});

@@ -16,6 +16,7 @@ import ContactForm from 'components/contact/ContactForm';
 
 export { updateUser } from 'components/user/actions';
 export { authenticate, logoutAll as logout } from 'components/accounts/actions';
+import { getCredentials } from './reducer';
 
 /**
  * Reoutes user to the previous page if it is possible
@@ -224,19 +225,40 @@ export function setLogin(login: ?string) {
     };
 }
 
+export function relogin(login: ?string) {
+    return (dispatch: (Function | Object) => void) => {
+        dispatch({
+            type: SET_CREDENTIALS,
+            payload: {
+                login,
+                returnUrl: location.pathname + location.search,
+                isRelogin: true,
+            },
+        });
+
+        browserHistory.push('/login');
+    };
+}
+
 function requestTotp({login, password, rememberMe}: {
     login: string,
     password: string,
     rememberMe: bool
 }) {
-    return {
-        type: SET_CREDENTIALS,
-        payload: {
-            login,
-            password,
-            rememberMe,
-            isTotpRequired: true
-        }
+    return (dispatch: (Function | Object) => void, getState: () => Object) => {
+        // merging with current credentials to propogate returnUrl
+        const credentials = getCredentials(getState());
+
+        dispatch({
+            type: SET_CREDENTIALS,
+            payload: {
+                ...credentials,
+                login,
+                password,
+                rememberMe,
+                isTotpRequired: true
+            }
+        });
     };
 }
 

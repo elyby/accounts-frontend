@@ -3,6 +3,7 @@ import logger from 'services/logger';
 import { getCredentials } from 'components/auth/reducer';
 
 import AbstractState from './AbstractState';
+import ChooseAccountState from './ChooseAccountState';
 import CompleteState from './CompleteState';
 import ForgotPasswordState from './ForgotPasswordState';
 import LoginState from './LoginState';
@@ -31,7 +32,7 @@ export default class PasswordState extends AbstractState {
             rememberMe: bool
         }
     ) {
-        const {login} = getCredentials(context.getState());
+        const { login, returnUrl } = getCredentials(context.getState());
 
         return context.run('login', {
             password,
@@ -39,10 +40,15 @@ export default class PasswordState extends AbstractState {
             login
         })
             .then(() => {
-                const {isTotpRequired} = getCredentials(context.getState());
+                const { isTotpRequired } = getCredentials(context.getState());
 
                 if (isTotpRequired) {
                     return context.setState(new MfaState());
+                }
+
+                if (returnUrl) {
+                    context.navigate(returnUrl);
+                    return;
                 }
 
                 return context.setState(new CompleteState());
@@ -57,7 +63,13 @@ export default class PasswordState extends AbstractState {
     }
 
     goBack(context: AuthContext) {
-        context.run('setLogin', null);
-        context.setState(new LoginState());
+        const { isRelogin } = getCredentials(context.getState());
+
+        if (isRelogin) {
+            context.setState(new ChooseAccountState());
+        } else {
+            context.run('setLogin', null);
+            context.setState(new LoginState());
+        }
     }
 }

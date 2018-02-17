@@ -59,6 +59,7 @@ class AuthPage extends Component<{
                         <Route path="/activation/:key?" render={renderPanelTransition(Activation)} />
                         <Route path="/resend-activation" render={renderPanelTransition(ResendActivation)} />
                         <Route path="/oauth/permissions" render={renderPanelTransition(Permissions)} />
+                        <Route path="/choose-account" render={renderPanelTransition(ChooseAccount)} />
                         <Route path="/oauth/choose-account" render={renderPanelTransition(ChooseAccount)} />
                         <Route path="/oauth/finish" component={Finish} />
                         <Route path="/accept-rules" render={renderPanelTransition(AcceptRules)} />

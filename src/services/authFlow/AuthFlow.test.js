@@ -13,6 +13,7 @@ import ActivationState from 'services/authFlow/ActivationState';
 import ResendActivationState from 'services/authFlow/ResendActivationState';
 import LoginState from 'services/authFlow/LoginState';
 import CompleteState from 'services/authFlow/CompleteState';
+import ChooseAccountState from 'services/authFlow/ChooseAccountState';
 
 describe('AuthFlow', () => {
     let flow;
@@ -275,6 +276,7 @@ describe('AuthFlow', () => {
             '/oauth2/v1': OAuthState,
             '/oauth2': OAuthState,
             '/register': RegisterState,
+            '/choose-account': ChooseAccountState,
             '/recover-password': RecoverPasswordState,
             '/recover-password/key123': RecoverPasswordState,
             '/forgot-password': ForgotPasswordState,
