@@ -53,7 +53,10 @@ describe('components/accounts/actions', () => {
                 available: [],
                 active: null
             },
-            user: {}
+            auth: {
+                credentials: {},
+            },
+            user: {},
         });
 
         sinon.stub(authentication, 'validateToken').named('authentication.validateToken');
@@ -197,7 +200,10 @@ describe('components/accounts/actions', () => {
                         active: account.id,
                         available: [account]
                     },
-                    user
+                    auth: {
+                        credentials: {},
+                    },
+                    user,
                 });
             });
 
@@ -279,7 +285,10 @@ describe('components/accounts/actions', () => {
                     active: account2.id,
                     available: [account, account2]
                 },
-                user
+                auth: {
+                    credentials: {},
+                },
+                user,
             });
         });
 
@@ -338,7 +347,7 @@ describe('components/accounts/actions', () => {
                     active: foreignAccount.id,
                     available: [account, foreignAccount, foreignAccount2]
                 },
-                user
+                user,
             });
         });
 
@@ -409,7 +418,10 @@ describe('components/accounts/actions', () => {
                         active: foreignAccount.id,
                         available: [foreignAccount, foreignAccount2]
                     },
-                    user
+                    auth: {
+                        credentials: {},
+                    },
+                    user,
                 });
 
                 logoutStrangers()(dispatch, getState);

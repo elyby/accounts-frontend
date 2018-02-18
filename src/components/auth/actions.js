@@ -226,12 +226,15 @@ export function setLogin(login: ?string) {
 }
 
 export function relogin(login: ?string) {
-    return (dispatch: (Function | Object) => void) => {
+    return (dispatch: (Function | Object) => void, getState: () => Object) => {
+        const credentials = getCredentials(getState());
+        const returnUrl = credentials.returnUrl || location.pathname + location.search;
+
         dispatch({
             type: SET_CREDENTIALS,
             payload: {
                 login,
-                returnUrl: location.pathname + location.search,
+                returnUrl,
                 isRelogin: true,
             },
         });

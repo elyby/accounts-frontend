@@ -64,7 +64,7 @@ class RootPage extends Component<{
                 <div id="view-port" className={classNames(styles.viewPort, {
                     [styles.isPopupActive]: isPopupActive
                 })}>
-                    <div className={styles.header}>
+                    <div className={styles.header} data-e2e-toolbar>
                         <div className={styles.headerContent}>
                             <Link to="/" className={styles.logo} onClick={onLogoClick}>
                                 <Message {...messages.siteName} />

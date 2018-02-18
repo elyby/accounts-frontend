@@ -1,0 +1,17 @@
+{
+  "name": "tests-e2e",
+  "version": "1.0.0",
+  "description": "account.ely.by e2e test suit",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress open"
+  },
+  "keywords": [],
+  "author": "SleepWalker <dev@udf.su>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "cypress": "^2.0.0",
+    "prettier": "^1.10.2"
+  }
+}

@@ -373,6 +373,7 @@ class PanelTransition extends Component {
         const backButton = (
             <button style={sideScrollStyle}
                 className={panelStyles.headerControl}
+                data-e2e-go-back
                 type="button"
                 onClick={this.onGoBack}
             >

@@ -42,7 +42,10 @@ describe('refreshTokenMiddleware', () => {
         expect(dispatch, 'to have a call satisfying', [
             {
                 type: 'auth:setCredentials',
-                payload: {login: email}
+                payload: {
+                    login: email,
+                    returnUrl: expect.it('to be a string'),
+                },
             }
         ]);
 
@@ -68,7 +71,10 @@ describe('refreshTokenMiddleware', () => {
                         active: account,
                         available: [account]
                     },
-                    user: {}
+                    auth: {
+                        credentials: {},
+                    },
+                    user: {},
                 });
             });
 
@@ -140,7 +146,10 @@ describe('refreshTokenMiddleware', () => {
                         active: account,
                         available: [account]
                     },
-                    user: {}
+                    auth: {
+                        credentials: {},
+                    },
+                    user: {},
                 });
 
                 const req = {url: 'foo', options: {}};
@@ -284,7 +293,10 @@ describe('refreshTokenMiddleware', () => {
                         refreshToken: null,
                     }]
                 },
-                user: {}
+                auth: {
+                    credentials: {},
+                },
+                user: {},
             });
 
             return expect(

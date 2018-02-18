@@ -50,7 +50,7 @@ class AuthPage extends Component<{
                     <AppInfo {...client} onGoToAuth={this.onGoToAuth} />
                 </div>
 
-                <div className={styles.content}>
+                <div className={styles.content} data-e2e-content>
                     <Switch>
                         <Route path="/login" render={renderPanelTransition(Login)} />
                         <Route path="/mfa" render={renderPanelTransition(Mfa)} />
