@@ -9,6 +9,7 @@ import { setAccountSwitcher } from 'components/auth/actions';
 import { getActiveAccount } from 'components/accounts/reducer';
 import logger from 'services/logger';
 
+import type { Account, State as AccountsState } from './reducer';
 import {
     add,
     remove,
@@ -16,7 +17,6 @@ import {
     reset,
     updateToken
 } from './actions/pure-actions';
-import type { Account, State as AccountsState } from './reducer';
 
 type Dispatch = (action: Object) => Promise<*>;
 
@@ -45,8 +45,19 @@ export function authenticate(account: Account | {
     const {token, refreshToken} = account;
     const email = account.email || null;
 
-    return (dispatch: Dispatch, getState: () => State): Promise<Account> =>
-        authentication.validateToken({token, refreshToken})
+    return (dispatch: Dispatch, getState: () => State): Promise<Account> => {
+        const accountId: number | null = typeof account.id === 'number' ? account.id : null;
+        const knownAccount: ?Account = accountId
+            ? getState().accounts.available.find((item) => item.id === accountId)
+            : null;
+
+        if (knownAccount) {
+            // this account is already available
+            // activate it before validation
+            dispatch(activate(knownAccount));
+        }
+
+        return authentication.validateToken({token, refreshToken})
             .catch((resp = {}) => {
                 // all the logic to get the valid token was failed,
                 // looks like we have some problems with token
@@ -97,6 +108,7 @@ export function authenticate(account: Account | {
                 return dispatch(setLocale(user.lang))
                     .then(() => account);
             });
+    };
 }
 
 /**
@@ -219,9 +231,17 @@ export function revoke(account: Account) {
 
         if (accountToReplace) {
             return dispatch(authenticate(accountToReplace))
-                .then(() => {
-                    authentication.logout(account);
+                .finally(() => {
+                    // we need to logout user, even in case, when we can
+                    // not authenticate him with new account
+                    authentication.logout(account)
+                        .catch(() => {
+                            // we don't care
+                        });
                     dispatch(remove(account));
+                })
+                .catch(() => {
+                    // we don't care
                 });
         }
 

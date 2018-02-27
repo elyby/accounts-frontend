@@ -1,4 +1,6 @@
 // @flow
+import type { User } from 'components/user';
+import type { Account } from 'components/accounts/reducer';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { resetAuth } from 'components/auth/actions';
@@ -7,24 +9,23 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import classNames from 'classnames';
-
 import AuthPage from 'pages/auth/AuthPage';
 import ProfilePage from 'pages/profile/ProfilePage';
 import RulesPage from 'pages/rules/RulesPage';
 import PageNotFound from 'pages/404/PageNotFound';
-
 import { ScrollIntoView } from 'components/ui/scroll';
 import PrivateRoute from 'containers/PrivateRoute';
 import AuthFlowRoute from 'containers/AuthFlowRoute';
 import Userbar from 'components/userbar/Userbar';
 import PopupStack from 'components/ui/popup/PopupStack';
 import loader from 'services/loader';
-import type { User } from 'components/user';
+import { getActiveAccount } from 'components/accounts/reducer';
 
 import styles from './root.scss';
 import messages from './RootPage.intl.json';
 
 class RootPage extends Component<{
+    account: ?Account,
     user: User,
     isPopupActive: bool,
     onLogoClick: Function,
@@ -46,7 +47,7 @@ class RootPage extends Component<{
 
     render() {
         const props = this.props;
-        const {user, isPopupActive, onLogoClick} = this.props;
+        const {user, account, isPopupActive, onLogoClick} = this.props;
         const isRegisterPage = props.location.pathname === '/register';
 
         if (document && document.body) {
@@ -70,7 +71,8 @@ class RootPage extends Component<{
                                 <Message {...messages.siteName} />
                             </Link>
                             <div className={styles.userbar}>
-                                <Userbar {...props}
+                                <Userbar
+                                    account={account}
                                     guestAction={isRegisterPage ? 'login' : 'register'}
                                 />
                             </div>
@@ -95,6 +97,7 @@ class RootPage extends Component<{
 
 export default withRouter(connect((state) => ({
     user: state.user,
+    account: getActiveAccount(state),
     isPopupActive: state.popup.popups.length > 0
 }), {
     onLogoClick: resetAuth

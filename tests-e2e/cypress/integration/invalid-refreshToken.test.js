@@ -24,6 +24,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
     });
 
     it('should allow select account', () => {
+        // TODO: need a way to get valid token for one of the accounts
         cy.visit('/');
 
         cy.get('[data-e2e-go-back]').click();
@@ -37,6 +38,16 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.location('pathname', { timeout: 15000 }).should('eq', '/');
         cy.contains('account preferences');
+    });
+
+    it('should allow logout', () => {
+        cy.visit('/');
+
+        cy.get('[data-e2e-toolbar]').contains(account2.username).click();
+        cy.get('[data-e2e-toolbar]').contains('Log out').click();
+
+        cy.contains(account2.email).should('not.exist');
+        cy.get('[data-e2e-toolbar]').contains(account2.username).should('not.exist');
     });
 
     it('should allow enter new login from choose account', () => {

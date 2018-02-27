@@ -1,16 +1,12 @@
 // @flow
 import React, { Component } from 'react';
-
 import classNames from 'classnames';
-
 import { AccountSwitcher } from 'components/accounts';
 
 import styles from './loggedInPanel.scss';
 
-import type { User } from 'components/user';
-
 export default class LoggedInPanel extends Component<{
-    user: User
+    username: string
 }, {
     isAccountSwitcherActive: bool
 }> {
@@ -38,7 +34,7 @@ export default class LoggedInPanel extends Component<{
     }
 
     render() {
-        const { user } = this.props;
+        const { username } = this.props;
         const { isAccountSwitcherActive } = this.state;
 
         return (
@@ -48,7 +44,7 @@ export default class LoggedInPanel extends Component<{
                 })}>
                     <button className={styles.activeAccountButton} onClick={this.onExpandAccountSwitcher}>
                         <span className={styles.userIcon} />
-                        <span className={styles.userName}>{user.username}</span>
+                        <span className={styles.userName}>{username}</span>
                         <span className={styles.expandIcon} />
                     </button>
 

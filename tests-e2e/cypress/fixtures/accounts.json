@@ -1,11 +1,13 @@
 {
     "account1": {
         "username": "SleepWalker",
+        "email": "danilenkos@auroraglobal.com",
         "login": "SleepWalker",
         "password": "qwer1234"
     },
     "account2": {
         "username": "test",
+        "email": "admin@udf.su",
         "login": "test",
         "password": "qwer1234"
     }

@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-
 import loader from 'services/loader';
 import { skins, SKIN_DARK, COLOR_WHITE } from 'components/ui';
 import { Button } from 'components/ui/form';
-import { userShape } from 'components/user/User';
+import { authenticate, revoke } from 'components/accounts/actions';
+import { getActiveAccount } from 'components/accounts/reducer';
 
 import styles from './accountSwitcher.scss';
 import messages from './AccountSwitcher.intl.json';
@@ -22,7 +22,6 @@ export class AccountSwitcher extends Component {
         onAfterAction: PropTypes.func, // called after each action performed
         onSwitch: PropTypes.func, // called after switching an account. The active account will be passed as arg
         accounts: PropTypes.object, // eslint-disable-line
-        user: userShape, // TODO: remove me, when we will be sure, that accounts.active is always set for user (event after register)
         skin: PropTypes.oneOf(skins),
         highlightActiveAccount: PropTypes.bool, // whether active account should be expanded and shown on the top
         allowLogout: PropTypes.bool, // whether to show logout icon near each account
@@ -40,8 +39,7 @@ export class AccountSwitcher extends Component {
 
     render() {
         const { accounts, skin, allowAdd, allowLogout, highlightActiveAccount } = this.props;
-        // const activeAccount = accounts.active || this.props.user;
-        const activeAccount = this.props.user;
+        const activeAccount = getActiveAccount({ accounts });
 
         let {available} = accounts;
 
@@ -83,14 +81,14 @@ export class AccountSwitcher extends Component {
                         </div>
                     </div>
                 ) : null}
-                {available.map((account, id) => (
+                {available.map((account, index) => (
                     <div className={classNames(styles.item, styles.accountSwitchItem)}
                         key={account.id}
                         onClick={this.onSwitch(account)}
                     >
                         <div className={classNames(
                             styles.accountIcon,
-                            styles[`accountIcon${id % 7 + (highlightActiveAccount ? 2 : 1)}`]
+                            styles[`accountIcon${index % 7 + (highlightActiveAccount ? 2 : 1)}`]
                         )} />
 
                         {allowLogout ? (
@@ -156,12 +154,8 @@ export class AccountSwitcher extends Component {
     };
 }
 
-import { connect } from 'react-redux';
-import { authenticate, revoke } from 'components/accounts/actions';
-
-export default connect(({accounts, user}) => ({
+export default connect(({accounts}) => ({
     accounts,
-    user
 }), {
     switchAccount: authenticate,
     removeAccount: revoke

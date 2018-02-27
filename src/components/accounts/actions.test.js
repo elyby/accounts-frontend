@@ -190,6 +190,35 @@ describe('components/accounts/actions', () => {
                 )
             );
         });
+
+        describe('when one account available', () => {
+            beforeEach(() => {
+                getState.returns({
+                    accounts: {
+                        active: account.id,
+                        available: [account]
+                    },
+                    auth: {
+                        credentials: {},
+                    },
+                    user,
+                });
+            });
+
+            it('should activate account before auth api call', () => {
+                authentication.validateToken.returns(Promise.reject({ error: 'foo'}));
+
+                return expect(
+                    authenticate(account)(dispatch, getState),
+                    'to be rejected with',
+                    { error: 'foo'}
+                ).then(() =>
+                    expect(dispatch, 'to have a call satisfying', [
+                        activate(account)
+                    ])
+                );
+            });
+        });
     });
 
     describe('#revoke()', () => {

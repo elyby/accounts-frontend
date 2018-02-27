@@ -1,31 +1,26 @@
-import PropTypes from 'prop-types';
+// @flow
+import type { Account } from 'components/accounts/reducer';
 import React, { Component } from 'react';
-
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-
 import buttons from 'components/ui/buttons.scss';
 
 import messages from './Userbar.intl.json';
 import styles from './userbar.scss';
-
-import { userShape } from 'components/user/User';
-
 import LoggedInPanel from './LoggedInPanel';
 
-export default class Userbar extends Component {
+export default class Userbar extends Component<{
+    account: ?Account,
+    guestAction: 'register' | 'login',
+}> {
     static displayName = 'Userbar';
-    static propTypes = {
-        user: userShape,
-        guestAction: PropTypes.oneOf(['register', 'login'])
-    };
 
     static defaultProps = {
         guestAction: 'register'
     };
 
     render() {
-        const { user } = this.props;
+        const { account } = this.props;
         let { guestAction } = this.props;
 
         switch (guestAction) {
@@ -48,12 +43,12 @@ export default class Userbar extends Component {
 
         return (
             <div className={styles.userbar}>
-                {user.isGuest
+                {account
                     ? (
-                        guestAction
+                        <LoggedInPanel username={account.username} />
                     )
                     : (
-                        <LoggedInPanel {...this.props} />
+                        guestAction
                     )
                 }
             </div>
