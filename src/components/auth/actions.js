@@ -7,6 +7,7 @@ import loader from 'services/loader';
 import history from 'services/history';
 import { updateUser, acceptRules as userAcceptRules } from 'components/user/actions';
 import { authenticate, logoutAll } from 'components/accounts/actions';
+import { getActiveAccount } from 'components/accounts/reducer';
 import authentication from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
@@ -436,9 +437,20 @@ export function resetOAuth() {
  * @return {function}
  */
 export function resetAuth() {
-    return (dispatch: (Function | Object) => void) => {
+    return (dispatch: (Function | Object) => void, getSate: () => Object): Promise<void> => {
         dispatch(setLogin(null));
         dispatch(resetOAuth());
+        // ensure current account is valid
+        const activeAccount = getActiveAccount(getSate());
+
+        if (activeAccount) {
+            return Promise.resolve(dispatch(authenticate(activeAccount)))
+                .catch(() => {
+                    // its okay. user will be redirected to an appropriate place
+                });
+        }
+
+        return Promise.resolve();
     };
 }
 

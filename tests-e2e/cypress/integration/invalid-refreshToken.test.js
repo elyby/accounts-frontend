@@ -23,6 +23,21 @@ describe('when user\'s token and refreshToken are invalid', () => {
         cy.contains('account preferences');
     });
 
+    it('should not allow to return to profile using toolbar', () => {
+        cy.visit('/');
+
+        cy.url().should('include', '/password');
+
+        cy
+            .get('[data-e2e-toolbar] a')
+            .contains('Ely.by')
+            .click();
+
+        // TODO: currently we can not skip redirect to /, but we will in future
+        cy.location('pathname', { timeout: 15000 }).should('eq', '/');
+        cy.url({ timeout: 15000 }).should('include', '/password');
+    });
+
     it('should allow select account', () => {
         // TODO: need a way to get valid token for one of the accounts
         cy.visit('/');
