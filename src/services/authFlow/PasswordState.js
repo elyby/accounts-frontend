@@ -1,6 +1,7 @@
 // @flow
 import logger from 'services/logger';
 import { getCredentials } from 'components/auth/reducer';
+import { getActiveAccount, getAvailableAccounts } from 'components/accounts/reducer';
 
 import AbstractState from './AbstractState';
 import ChooseAccountState from './ChooseAccountState';
@@ -63,10 +64,24 @@ export default class PasswordState extends AbstractState {
     }
 
     goBack(context: AuthContext) {
-        const { isRelogin } = getCredentials(context.getState());
+        const state = context.getState();
+        const { isRelogin } = getCredentials(state);
 
         if (isRelogin) {
-            context.setState(new ChooseAccountState());
+            const availableAccounts = getAvailableAccounts(state);
+            const accountToRemove = getActiveAccount(state);
+
+            if (availableAccounts.length === 1 || !accountToRemove) {
+                context.run('logout');
+                context.run('setLogin', null);
+                context.setState(new LoginState());
+            } else {
+                const accountToReplace = availableAccounts.find(({id}) => id !== accountToRemove.id);
+
+                context.run('activateAccount', accountToReplace);
+                context.run('removeAccount', accountToRemove);
+                context.setState(new ChooseAccountState());
+            }
         } else {
             context.run('setLogin', null);
             context.setState(new LoginState());

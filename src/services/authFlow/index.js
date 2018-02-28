@@ -7,6 +7,8 @@ import * as actions from 'components/auth/actions';
 const availableActions = {
     updateUser: actions.updateUser,
     authenticate: actions.authenticate,
+    activateAccount: actions.activateAccount,
+    removeAccount: actions.removeAccount,
     logout: actions.logout,
     goBack: actions.goBack,
     redirect: actions.redirect,

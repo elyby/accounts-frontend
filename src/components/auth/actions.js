@@ -15,7 +15,12 @@ import { create as createPopup } from 'components/ui/popup/actions';
 import ContactForm from 'components/contact/ContactForm';
 
 export { updateUser } from 'components/user/actions';
-export { authenticate, logoutAll as logout } from 'components/accounts/actions';
+export {
+    authenticate,
+    logoutAll as logout,
+    revoke as removeAccount,
+    activate as activateAccount
+} from 'components/accounts/actions';
 import { getCredentials } from './reducer';
 
 /**

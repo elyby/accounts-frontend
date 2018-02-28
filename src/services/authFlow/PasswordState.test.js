@@ -173,6 +173,13 @@ describe('PasswordState', () => {
 
         it('should transition to ChooseAccountState if this is relogin', () => {
             context.getState.returns({
+                accounts: {
+                    active: 1,
+                    available: [
+                        {id: 1},
+                        {id: 2}
+                    ]
+                },
                 auth: {
                     credentials: {
                         login: 'foo',
@@ -181,7 +188,32 @@ describe('PasswordState', () => {
                 }
             });
 
+            expectRun(mock, 'activateAccount', { id: 2 });
+            expectRun(mock, 'removeAccount', { id: 1 });
             expectState(mock, ChooseAccountState);
+
+            state.goBack(context);
+        });
+
+        it('should transition to LoginState if this is relogin and only one account available', () => {
+            context.getState.returns({
+                accounts: {
+                    active: 1,
+                    available: [
+                        {id: 1},
+                    ]
+                },
+                auth: {
+                    credentials: {
+                        login: 'foo',
+                        isRelogin: true,
+                    }
+                }
+            });
+
+            expectRun(mock, 'logout');
+            expectRun(mock, 'setLogin', null);
+            expectState(mock, LoginState);
 
             state.goBack(context);
         });

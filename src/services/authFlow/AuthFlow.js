@@ -25,6 +25,8 @@ type Request = {
 type ActionId =
     | 'updateUser'
     | 'authenticate'
+    | 'activateAccount'
+    | 'removeAccount'
     | 'logout'
     | 'goBack'
     | 'redirect'

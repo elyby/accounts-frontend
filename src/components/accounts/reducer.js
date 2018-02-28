@@ -34,6 +34,10 @@ export function getActiveAccount(state: { accounts: State }): ?Account {
     return state.accounts.available.find((account) => account.id === accountId);
 }
 
+export function getAvailableAccounts(state: { accounts: State }): Array<Account> {
+    return state.accounts.available;
+}
+
 export default function accounts(
     state: State = {
         active: null,
