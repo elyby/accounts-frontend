@@ -1,15 +1,39 @@
+// account1 - authenticated
+// account2 - invalid refreshToken
 import { account1, account2 } from '../fixtures/accounts.json';
 
-const multiAccount
-    = '{"accounts":{"available":[{"id":7,"username":"SleepWalker","email":"danilenkos@auroraglobal.com","token":"eyJhbGciOiJIUzI1NiJ9.eyJlbHktc2NvcGVzIjoiYWNjb3VudHNfd2ViX3VzZXIiLCJpYXQiOjE1MTgzNzM4MDksImV4cCI6MTUxODM3NzQwOSwic3ViIjoiZWx5fDciLCJqdGkiOjM1NDh9.Fv4AbJ0iDbrH3bhbgF0ViJLfYYiwH78deR4fMlMhKrQ","refreshToken":"3gh6ZZ3R9jGeFdp0TmlY7sd0zBxH6Zfq48M86eUAv952RcAKx32RAnjlKkgd6i-MV-RKbjtADIdoRwMUWOYQjEYtwwXPjcQJ"},{"id":102,"username":"test","email":"admin@udf.su","token":"eyJhbGciOiJIUzI1NiJ9.eyJlbHktc2NvcGVzIjoiYWNjb3VudHNfd2ViX3VzZXIiLCJpYXQiOjE1MTgzNzM4NjUsImV4cCI6MTUxODM3NzQ2NSwic3ViIjoiZWx5fDEwMiIsImp0aSI6MzU0OX0.eJEgvXT3leGqBe3tYNGZb0E4WEvWfrLPjcD7eNjyQYO","refreshToken":"Al75SIx-LFOCP7kaqZBVqMVmSljJw9_bdFQGyuM64c6ShP7YsXbkCD8vPOundAwUDfRZqsIbOHUROmAHPB0VBfjLfw96yqxx"}],"active":102},"user":{"id":102,"uuid":"e49cafdc-6e0c-442d-b608-dacdb864ee34","username":"test","token":"","email":"admin@udf.su","maskedEmail":"","avatar":"","lang":"en","isActive":true,"isOtpEnabled":true,"shouldAcceptRules":false,"passwordChangedAt":1478961317,"hasMojangUsernameCollision":true,"isGuest":false,"registeredAt":1478961317,"elyProfileLink":"http://ely.by/u102","originalResponse":{}}}';
-const singleAccount
-    = '{"accounts":{"available":[{"id":102,"username":"test","email":"admin@udf.su","token":"eyJhbGciOiJIUzI1NiJ9.eyJlbHktc2NvcGVzIjoiYWNjb3VudHNfd2ViX3VzZXIiLCJpYXQiOjE1MTgzNzM4NjUsImV4cCI6MTUxODM3NzQ2NSwic3ViIjoiZWx5fDEwMiIsImp0aSI6MzU0OX0.eJEgvXT3leGqBe3tYNGZb0E4WEvWfrLPjcD7eNjyQYO","refreshToken":"Al75SIx-LFOCP7kaqZBVqMVmSljJw9_bdFQGyuM64c6ShP7YsXbkCD8vPOundAwUDfRZqsIbOHUROmAHPB0VBfjLfw96yqxx"}],"active":102},"user":{"id":102,"uuid":"e49cafdc-6e0c-442d-b608-dacdb864ee34","username":"test","token":"","email":"admin@udf.su","maskedEmail":"","avatar":"","lang":"en","isActive":true,"isOtpEnabled":true,"shouldAcceptRules":false,"passwordChangedAt":1478961317,"hasMojangUsernameCollision":true,"isGuest":false,"registeredAt":1478961317,"elyProfileLink":"http://ely.by/u102","originalResponse":{}}}';
+const multiAccount = createState();
+const multiAccountWithBadTokens = createState();
+const singleAccount = createState();
+singleAccount.accounts.available = singleAccount.accounts.available.filter(
+    (account) => account.id === singleAccount.accounts.active
+);
 
 describe('when user\'s token and refreshToken are invalid', () => {
+    before(() =>
+        // ensure we always have one account with correct token
+        cy.visit('/').then(() =>
+            fetch('/api/authentication/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type':
+                        'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: `login=${account1.login}&password=${account1.password}`
+            })
+                .then((resp) => resp.json())
+                .then((resp) => {
+                    const account = multiAccount.accounts.available.find(
+                        (account) => account.username === account1.username
+                    );
+
+                    account.token = resp.access_token;
+                })
+        )
+    );
+
     beforeEach(() =>
-        cy
-            .visit('/')
-            .then(() => localStorage.setItem('redux-storage', multiAccount))
+        localStorage.setItem('redux-storage', JSON.stringify(multiAccount))
     );
 
     it('should ask for password', () => {
@@ -63,8 +87,15 @@ describe('when user\'s token and refreshToken are invalid', () => {
     it('it should redirect to login, when one account and clicking back', () => {
         cy
             .url()
-            .should(() => localStorage.setItem('redux-storage', singleAccount));
+            .should(() =>
+                localStorage.setItem(
+                    'redux-storage',
+                    JSON.stringify(singleAccount)
+                )
+            );
         cy.visit('/');
+
+        cy.url().should('include', '/password');
 
         cy.get('[data-e2e-go-back]').click();
 
@@ -85,7 +116,13 @@ describe('when user\'s token and refreshToken are invalid', () => {
             .contains('Log out')
             .click();
 
-        cy.contains(account2.email).should('not.exist');
+        cy
+            .get('@fetch', { timeout: 15000 })
+            .should('be.calledWith', '/api/authentication/logout');
+        cy
+            .get('[data-e2e-toolbar]')
+            .contains(account2.email)
+            .should('not.exist');
         cy
             .get('[data-e2e-toolbar]')
             .contains(account2.username)
@@ -132,6 +169,14 @@ describe('when user\'s token and refreshToken are invalid', () => {
     });
 
     it('should ask for password if selected account with bad token', () => {
+        cy
+            .url()
+            .should(() =>
+                localStorage.setItem(
+                    'redux-storage',
+                    JSON.stringify(multiAccountWithBadTokens)
+                )
+            );
         cy.visit('/');
 
         cy.get('[data-e2e-go-back]').click();
@@ -145,6 +190,9 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.url().should('include', '/password');
 
+        // TODO: remove wait and fix logic so that
+        // it won't show 'Please enter E‑mail or username' error
+        cy.wait(1000);
         cy.get('[name="password"]').type(`${account1.password}{enter}`);
 
         cy.location('pathname', { timeout: 15000 }).should('eq', '/');
@@ -199,3 +247,49 @@ describe('when user\'s token and refreshToken are invalid', () => {
         cy.url().should('contain', '//ely.by');
     });
 });
+
+function createState() {
+    return {
+        accounts: {
+            available: [
+                {
+                    id: 7,
+                    username: 'SleepWalker',
+                    email: 'danilenkos@auroraglobal.com',
+                    token:
+                        'eyJhbGciOiJIUzI1NiJ9.eyJlbHktc2NvcGVzIjoiYWNjb3VudHNfd2ViX3VzZXIiLCJpYXQiOjE1MTgzNzM4MDksImV4cCI6MTUxODM3NzQwOSwic3ViIjoiZWx5fDciLCJqdGkiOjM1NDh9.Fv4AbJ0iDbrH3bhbgF0ViJLfYYiwH78deR4fMlMhKrQ',
+                    refreshToken:
+                        '3gh6ZZ3R9jGeFdp0TmlY7sd0zBxH6Zfq48M86eUAv952RcAKx32RAnjlKkgd6i-MV-RKbjtADIdoRwMUWOYQjEYtwwXPjcQJ'
+                },
+                {
+                    id: 102,
+                    username: 'test',
+                    email: 'admin@udf.su',
+                    token:
+                        'eyJhbGciOiJIUzI1NiJ9.eyJlbHktc2NvcGVzIjoiYWNjb3VudHNfd2ViX3VzZXIiLCJpYXQiOjE1MTgzNzM4NjUsImV4cCI6MTUxODM3NzQ2NSwic3ViIjoiZWx5fDEwMiIsImp0aSI6MzU0OX0.eJEgvXT3leGqBe3tYNGZb0E4WEvWfrLPjcD7eNjyQYO',
+                    refreshToken:
+                        'Al75SIx-LFOCP7kaqZBVqMVmSljJw9_bdFQGyuM64c6ShP7YsXbkCD8vPOundAwUDfRZqsIbOHUROmAHPB0VBfjLfw96yqxx'
+                }
+            ],
+            active: 102
+        },
+        user: {
+            id: 102,
+            uuid: 'e49cafdc-6e0c-442d-b608-dacdb864ee34',
+            username: 'test',
+            token: '',
+            email: 'admin@udf.su',
+            maskedEmail: '',
+            avatar: '',
+            lang: 'en',
+            isActive: true,
+            isOtpEnabled: true,
+            shouldAcceptRules: false,
+            passwordChangedAt: 1478961317,
+            hasMojangUsernameCollision: true,
+            isGuest: false,
+            registeredAt: 1478961317,
+            elyProfileLink: 'http://ely.by/u102'
+        }
+    };
+}

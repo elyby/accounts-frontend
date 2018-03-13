@@ -14,15 +14,15 @@ import signup from 'services/api/signup';
 import dispatchBsod from 'components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'components/ui/popup/actions';
 import ContactForm from 'components/contact/ContactForm';
+import { getCredentials } from './reducer';
 
 export { updateUser } from 'components/user/actions';
 export {
     authenticate,
     logoutAll as logout,
-    revoke as removeAccount,
+    remove as removeAccount,
     activate as activateAccount
 } from 'components/accounts/actions';
-import { getCredentials } from './reducer';
 
 /**
  * Reoutes user to the previous page if it is possible

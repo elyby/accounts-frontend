@@ -29,7 +29,7 @@ type State = {
     },
 };
 
-export { updateToken, activate };
+export { updateToken, activate, remove };
 
 /**
  * @param {Account|object} account
