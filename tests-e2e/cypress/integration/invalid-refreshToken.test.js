@@ -228,6 +228,27 @@ describe('when user\'s token and refreshToken are invalid', () => {
         cy.url().should('contain', '/register');
     });
 
+    /**
+     * This is a regression test for the edge case, when user tries to register new
+     * account via direct sign up page link
+     *
+     * Expected result:
+     * It should show register page
+     *
+     * Actual result:
+     * User was redirected from register page back to password page due to recursive
+     * atempt to get new refreshToken
+     *
+     * @see https://trello.com/c/iINbZ2l2
+     */
+    it('should allow enter register page', () => {
+        cy.visit('/register');
+
+        cy.get('@fetch').should('be.calledWith', '/api/options');
+
+        cy.url().should('contain', '/register');
+    });
+
     it('should allow oauth', () => {
         cy.visit(
             '/oauth2/v1/ely?client_id=ely&redirect_uri=http%3A%2F%2Fely.by%2Fauthorization%2Foauth&response_type=code&scope=account_info%2Caccount_email'
