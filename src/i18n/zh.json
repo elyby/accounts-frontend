@@ -196,7 +196,7 @@
     "pages.rules.emailAndNickname5": "Minecraft高级账户的所有者有权要求控制恢复他的昵称,如果发生了,你必须在3天内更改你的昵称,否则将自动完成。",
     "pages.rules.emailAndNickname6": "如果您的帐户在过去3个月内没有任何活动,您的昵称可以被任何用户占用.",
     "pages.rules.emailAndNickname7": "如果昵称变更导致服务器上丢失您的游戏进度,我们不负任何责任.",
-    "pages.rules.mainProvision1": "{name} service was created for the organization of safety access to Ely.by's users accounts, his partners and any side project that wish to use one of the our's services",
+    "pages.rules.mainProvision1": "为了安全访问Ely.by的用户帐户,他的合作伙伴以及任何希望使用我们的服务的项目,创建了 {name}服务.",
     "pages.rules.mainProvision2": "我们(在这里和下一点)-由项目开发团队为《Minecraft》社区创造优质服务。\n",
     "pages.rules.mainProvision3": "Ely.by是子项目,与Mojang和微软公司无关.我们不提供对Minecraft高级帐户的支持,而且我们与使用或不使用我们的服务的服务器无关.",
     "pages.rules.mainProvision4": "用户帐户在服务器上的注册是免费的.创建帐号Ely.by只能在该页面{link}.",

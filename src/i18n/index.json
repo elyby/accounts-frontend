@@ -17,42 +17,42 @@
         "code": "fr",
         "name": "Français",
         "englishName": "French",
-        "progress": 85.6,
+        "progress": 84.8,
         "isReleased": true
     },
     "id": {
         "code": "id",
         "name": "Bahasa Indonesia",
         "englishName": "Indonesian",
-        "progress": 100,
+        "progress": 99.2,
         "isReleased": true
     },
     "lt": {
         "code": "lt",
         "name": "Lietuvių",
         "englishName": "Lithuanian",
-        "progress": 92.8,
+        "progress": 92,
         "isReleased": false
     },
     "pl": {
         "code": "pl",
         "name": "Polski",
         "englishName": "Polish",
-        "progress": 81.8,
+        "progress": 88.6,
         "isReleased": false
     },
     "pt": {
         "code": "pt",
         "name": "Português do Brasil",
         "englishName": "Portuguese, Brazilian",
-        "progress": 100,
+        "progress": 99.2,
         "isReleased": true
     },
     "ro": {
         "code": "ro",
         "name": "Română",
         "englishName": "Romanian",
-        "progress": 81.8,
+        "progress": 81,
         "isReleased": false
     },
     "ru": {
@@ -66,28 +66,28 @@
         "code": "sl",
         "name": "Slovenščina",
         "englishName": "Slovenian",
-        "progress": 82.2,
+        "progress": 81.4,
         "isReleased": false
     },
     "uk": {
         "code": "uk",
         "name": "Українська",
         "englishName": "Ukrainian",
-        "progress": 85.6,
+        "progress": 99.2,
         "isReleased": true
     },
     "vi": {
         "code": "vi",
         "name": "Tiếng Việt",
         "englishName": "Vietnamese",
-        "progress": 96.2,
+        "progress": 100,
         "isReleased": true
     },
     "zh": {
         "code": "zh",
         "name": "简体中文",
         "englishName": "Simplified Chinese",
-        "progress": 100,
+        "progress": 99.2,
         "isReleased": false
     }
 }
