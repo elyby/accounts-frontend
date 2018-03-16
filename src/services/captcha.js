@@ -63,7 +63,7 @@ export default {
                 options.get().then((resp) => this.setApiKey(resp.reCaptchaPublicKey))
             ]);
 
-            loadScript(`https://www.google.com/recaptcha/api.js?onload=onReCaptchaReady&render=explicit&hl=${lang}`);
+            loadScript(`https://recaptcha.net/recaptcha/api.js?onload=onReCaptchaReady&render=explicit&hl=${lang}`);
         }
 
         return readyPromise;
