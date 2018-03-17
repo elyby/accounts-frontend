@@ -1,10 +1,10 @@
 {
     "title": "Feedback form",
     "subject": "Subject",
-    "email": "E-mail",
+    "email": "E‑mail",
     "message": "Message",
     "send": "Send",
-    "philosophicalThought": "Properly formulated question - half of the answer",
+    "philosophicalThought": "Properly formulated question — half of the answer",
     "disclaimer": "Please formulate your feedback providing as much useful information, as possible to help us understand your problem and solve it",
     "whichQuestion" : "What are you interested in?",
 
@@ -14,6 +14,6 @@
     "integrationQuestion" : "Service integration question",
     "other" : "Other",
 
-    "youMessageReceived" : "Your message was received. We will respond to you shortly. The answer will come to your E-mail:",
+    "youMessageReceived" : "Your message was received. We will respond to you shortly. The answer will come to your E‑mail:",
     "close" : "Close"
 }
