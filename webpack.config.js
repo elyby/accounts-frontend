@@ -326,13 +326,17 @@ if (isCspEnabled) {
             '\'nonce-edge-must-die\'',
             '\'unsafe-inline\'',
             'https://www.google-analytics.com',
-            'https://www.google.com/recaptcha/',
+            'https://recaptcha.net/recaptcha/',
             'https://www.gstatic.com/recaptcha/',
+            'https://www.gstatic.cn/recaptcha/',
         ],
         'img-src': ['\'self\'', 'data:', 'www.google-analytics.com'],
         'font-src': ['\'self\'', 'data:'],
         'connect-src': ['\'self\'', 'https://sentry.ely.by'].concat(isProduction ? [] : ['ws://localhost:8080']),
-        'frame-src': ['https://www.google.com/recaptcha/'],
+        'frame-src': [
+            'https://www.google.com/recaptcha/',
+            'https://recaptcha.net/recaptcha/',
+        ],
         'report-uri': 'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
     }));
 }
