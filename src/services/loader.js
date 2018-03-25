@@ -1,9 +1,16 @@
+// On page initialization loader is already visible, so initial value is 1
+let stack = 1;
+
 export default {
     show() {
-        document.getElementById('loader').classList.add('is-active');
+        if (++stack !== 1) {
+            document.getElementById('loader').classList.add('is-active');
+        }
     },
 
     hide() {
-        document.getElementById('loader').classList.remove('is-active');
+        if (--stack === 0) {
+            document.getElementById('loader').classList.remove('is-active');
+        }
     }
 };

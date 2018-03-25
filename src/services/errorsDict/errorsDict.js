@@ -86,6 +86,9 @@ const errorsMap = {
     'error.captcha_required': () => <Message {...messages.captchaRequired} />,
     'error.captcha_invalid': () => errorsMap['error.captcha_required'](),
 
+    'error.redirectUri_required': () => <Message {...messages.redirectUriRequired} />,
+    'error.redirectUri_invalid': () => <Message {...messages.redirectUriInvalid} />,
+
     suggestResetPassword: () => (
         <span>
             <br/>

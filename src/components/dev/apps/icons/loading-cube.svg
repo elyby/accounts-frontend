@@ -1,0 +1,17 @@
+<svg viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path fill="url(#gradient)" d="M110,20V10H80V0H40V10H10V20H0v80H10v10H40v10H80V110h30V100h10V20H110ZM20,30V20H50V10H70V20h30V30H70V40H50V30H20Zm90,60H100v10H70v10H60V50H80V40h30V90h0Z" />
+
+    <defs>
+        <linearGradient id="gradient">
+            <stop offset="0%" stop-color="#EBE8E2">
+                <animate attributeName="offset" values="-2; 1" dur="1s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="50%" stop-color="#DDD8CE">
+                <animate attributeName="offset" values="-1.5; 1.5" dur="1s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stop-color="#EBE8E2">
+                <animate attributeName="offset" values="-1; 2" dur="1s" repeatCount="indefinite" />
+            </stop>
+        </linearGradient>
+    </defs>
+</svg>

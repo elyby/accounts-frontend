@@ -14,6 +14,15 @@ type Middleware = {
     catch?: () => Promise<*>
 };
 
+const buildOptions = (method: string, data?: Object, options: Object) => ({
+    method,
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body: buildQuery(data),
+    ...options,
+});
+
 export default {
     /**
      * @param {string} url
@@ -23,14 +32,7 @@ export default {
      * @return {Promise}
      */
     post<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
-        return doFetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: buildQuery(data),
-            ...options
-        });
+        return doFetch(url, buildOptions('POST', data, options));
     },
 
     /**
@@ -54,14 +56,18 @@ export default {
      * @return {Promise}
      */
     delete<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
-        return doFetch(url, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: buildQuery(data),
-            ...options
-        });
+        return doFetch(url, buildOptions('DELETE', data, options));
+    },
+
+    /**
+     * @param {string} url
+     * @param {object} [data] - request data
+     * @param {object} [options] - additional options for fetch or middlewares
+     *
+     * @return {Promise}
+     */
+    put<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
+        return doFetch(url, buildOptions('PUT', data, options));
     },
 
     /**
@@ -87,7 +93,7 @@ export default {
      */
     addMiddleware(middleware: Middleware) {
         middlewareLayer.add(middleware);
-    }
+    },
 };
 
 const checkStatus = (resp: Response) => resp.status >= 200 && resp.status < 300

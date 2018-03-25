@@ -94,6 +94,23 @@
     @include form-transition();
 }
 
+.copyIcon {
+    position: absolute;
+    right: 5px;
+    top: 10px;
+
+    padding: 5px;
+    cursor: pointer;
+
+    font-size: 20px;
+
+    transition: .25s;
+}
+
+.copyCheckmark {
+    color: $green!important;
+}
+
 .darkTextField {
     background: $black;
 
@@ -106,10 +123,31 @@
     ~ .textFieldIcon {
         border-color: lighter($black);
     }
+
+    ~ .copyIcon {
+        color: #999;
+        background: $black;
+
+        &:hover {
+            background: lighter($black);
+        }
+    }
 }
 
 .lightTextField {
     background: #fff;
+
+    &:disabled {
+        background: #DCD8CD;
+
+        ~ .copyIcon {
+            background: #dcd8ce;
+
+            &:hover {
+                background: #EBE8E2;
+            }
+        }
+    }
 
     &::placeholder {
         opacity: 1;
@@ -119,6 +157,15 @@
     &,
     ~ .textFieldIcon {
         border-color: #dcd8cd;
+    }
+
+    ~ .copyIcon {
+        color: #AAA;
+        background: #fff;
+
+        &:hover {
+            background: #F5F5F5;
+        }
     }
 }
 
@@ -151,9 +198,10 @@
 }
 
 .textArea {
-    height: 150px;
+    height: auto; // unset .textField height
+    min-height: 50px;
     padding: 5px 10px;
-    resize: vertical;
+    resize: none;
     position: relative;
 }
 
@@ -169,23 +217,23 @@
 @include input-theme('violet', $violet);
 
 /**
- * Checkbox
+ * Markable is our common name for checkboxes and radio buttons
  */
-@mixin checkbox-theme($themeName, $color) {
-    .#{$themeName}CheckboxRow {
-        composes: checkboxRow;
+@mixin markable-theme($themeName, $color) {
+    .#{$themeName}MarkableRow {
+        composes: markableRow;
 
-        .checkboxContainer {
+        .markableContainer {
             &:hover {
-                .checkbox {
+                .mark {
                     border-color: $color;
                 }
             }
         }
 
-        .checkboxInput {
+        .markableInput {
             &:checked {
-                + .checkbox {
+                + .mark {
                     background: $color;
                     border-color: $color;
                 }
@@ -194,12 +242,11 @@
     }
 }
 
-.checkboxRow {
+.markableRow {
     height: 22px;
-    margin-top: 15px;
 }
 
-.checkboxContainer {
+.markableContainer {
     display: inline-block;
     position: relative;
     padding-left: 27px;
@@ -211,7 +258,7 @@
     cursor: pointer;
 }
 
-.checkboxPosition {
+.markPosition {
     position: absolute;
     box-sizing: border-box;
     left: 0;
@@ -222,12 +269,12 @@
     height: 22px;
 }
 
-.checkboxInput {
-    composes: checkboxPosition;
+.markableInput {
+    composes: markPosition;
     opacity: 0;
 
     &:checked {
-        + .checkbox {
+        + .mark {
             &:before {
                 opacity: 1;
             }
@@ -235,8 +282,8 @@
     }
 }
 
-.checkbox {
-    composes: checkboxPosition;
+.mark {
+    composes: markPosition;
     composes: checkmark from 'components/ui/icons.scss';
 
     border: 2px #dcd8cd solid;
@@ -254,21 +301,31 @@
     }
 }
 
-.lightCheckboxRow {
-    .checkboxContainer {
+.checkbox {
+    composes: mark;
+}
+
+.radio {
+    composes: mark;
+
+    border-radius: 50%;
+}
+
+.lightMarkableRow {
+    .markableContainer {
         color: #666;
     }
 }
 
-.darkCheckboxRow {
-    .checkboxContainer {
+.darkMarkableRow {
+    .markableContainer {
         color: #fff;
     }
 }
 
-@include checkbox-theme('green', $green);
-@include checkbox-theme('blue', $blue);
-@include checkbox-theme('red', $red);
+@include markable-theme('green', $green);
+@include markable-theme('blue', $blue);
+@include markable-theme('red', $red);
 
 .isFormLoading {
     // TODO: надо бы разнести from и input на отдельные модули,

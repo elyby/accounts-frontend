@@ -1,38 +1,38 @@
-import PropTypes from 'prop-types';
+// @flow
 import React from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 import classNames from 'classnames';
 
 import { uniqueId, omit } from 'functions';
-import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
+import { SKIN_DARK, COLOR_GREEN } from 'components/ui';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-export default class TextArea extends FormInputComponent {
-    static displayName = 'TextArea';
+import type { Skin, Color } from 'components/ui';
+import type { MessageDescriptor } from 'react-intl';
 
-    static propTypes = {
-        placeholder: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]),
-        label: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]),
-        error: PropTypes.string,
-        skin: PropTypes.oneOf(skins),
-        color: PropTypes.oneOf(colors)
-    };
+type TextareaAutosizeProps = {
+    onHeightChange?: (number, TextareaAutosizeProps) => void,
+    useCacheForDOMMeasurements?: bool,
+    minRows?: number,
+    maxRows?: number,
+    inputRef?: (HTMLTextAreaElement) => void,
+} | HTMLTextAreaElement;
+
+export default class TextArea extends FormInputComponent<{
+    placeholder?: string | MessageDescriptor,
+    label?: string | MessageDescriptor,
+    error?: string,
+    skin: Skin,
+    color: Color,
+} | TextareaAutosizeProps> {
+    static displayName = 'TextArea';
 
     static defaultProps = {
         color: COLOR_GREEN,
-        skin: SKIN_DARK
+        skin: SKIN_DARK,
     };
 
     render() {
@@ -41,8 +41,8 @@ export default class TextArea extends FormInputComponent {
 
         const props = omit({
             type: 'text',
-            ...this.props
-        }, Object.keys(TextArea.propTypes).filter((prop) => prop !== 'placeholder'));
+            ...this.props,
+        }, ['label', 'error', 'skin', 'color']);
 
         if (label) {
             if (!props.id) {
@@ -64,7 +64,7 @@ export default class TextArea extends FormInputComponent {
             <div className={styles.formRow}>
                 {label}
                 <div className={styles.textAreaContainer}>
-                    <textarea ref={this.setEl}
+                    <TextareaAutosize inputRef={this.setEl}
                         className={classNames(
                             styles.textArea,
                             styles[`${skin}TextField`],

@@ -12,12 +12,12 @@ import FormInputComponent from './FormInputComponent';
 import type { Color, Skin } from 'components/ui';
 import type { MessageDescriptor } from 'react-intl';
 
-export default class Checkbox extends FormInputComponent<{
+export default class Radio extends FormInputComponent<{
     color: Color,
     skin: Skin,
     label: string | MessageDescriptor,
 }> {
-    static displayName = 'Checkbox';
+    static displayName = 'Radio';
 
     static defaultProps = {
         color: COLOR_GREEN,
@@ -37,10 +37,10 @@ export default class Checkbox extends FormInputComponent<{
                 <label className={styles.markableContainer}>
                     <input ref={this.setEl}
                         className={styles.markableInput}
-                        type="checkbox"
+                        type="radio"
                         {...props}
                     />
-                    <div className={styles.checkbox} />
+                    <div className={styles.radio} />
                     {label}
                 </label>
                 {this.renderError()}

@@ -25,10 +25,11 @@ b {
     font-weight: $font-weight-bold;
 }
 
-a {
+a, .textLink {
     color: #444;
     border-bottom: 1px dotted #444;
     text-decoration: none;
+    cursor: pointer;
     transition: .25s;
 
     &:hover {

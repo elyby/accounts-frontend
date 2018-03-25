@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import type { ComponentType } from 'react';
 
 import classNames from 'classnames';
 
@@ -9,19 +10,21 @@ import { COLOR_GREEN } from 'components/ui';
 import FormComponent from './FormComponent';
 
 import type { Color } from 'components/ui';
+import type { MessageDescriptor } from 'react-intl';
 
-export default class Button extends FormComponent {
-    props: {
-        label: string | {id: string},
-        block: bool,
-        small: bool,
-        loading: bool,
-        className: string,
-        color: Color
-    };
-
+export default class Button extends FormComponent<{
+    label: string | MessageDescriptor,
+    block?: bool,
+    small?: bool,
+    loading?: bool,
+    className?: string,
+    color?: Color,
+    disabled?: bool,
+    component?: string | ComponentType<any>,
+} | HTMLButtonElement> {
     static defaultProps = {
-        color: COLOR_GREEN
+        color: COLOR_GREEN,
+        component: 'button',
     };
 
     render() {
@@ -29,23 +32,27 @@ export default class Button extends FormComponent {
             color,
             block,
             small,
+            disabled,
             className,
             loading,
             label,
+            component: ComponentProp,
             ...restProps
         } = this.props;
 
         return (
-            <button
+            <ComponentProp
                 className={classNames(buttons[color], {
                     [buttons.loading]: loading,
                     [buttons.block]: block,
-                    [buttons.smallButton]: small
+                    [buttons.smallButton]: small,
+                    [buttons.disabled]: disabled,
                 }, className)}
+                disabled={disabled}
                 {...restProps}
             >
                 {this.formatMessage(label)}
-            </button>
+            </ComponentProp>
         );
     }
 }

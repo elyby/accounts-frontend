@@ -4,6 +4,7 @@ import icons from 'components/ui/icons.scss';
 import { Input, Checkbox } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 
+import authStyles from 'components/auth/auth.scss';
 import styles from './password.scss';
 import messages from './Password.intl.json';
 
@@ -40,10 +41,12 @@ export default class PasswordBody extends BaseAuthBody {
                     placeholder={messages.accountPassword}
                 />
 
-                <Checkbox {...this.bindField('rememberMe')}
-                    defaultChecked
-                    label={messages.rememberMe}
-                />
+                <div className={authStyles.checkboxInput}>
+                    <Checkbox {...this.bindField('rememberMe')}
+                        defaultChecked
+                        label={messages.rememberMe}
+                    />
+                </div>
             </div>
         );
     }

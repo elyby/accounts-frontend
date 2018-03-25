@@ -47,7 +47,7 @@
     composes: button;
 
     height: 30px;
-    padding: 0 7px;
+    padding: 0 15px;
     font-size: 14px;
     line-height: 30px;
 }
@@ -75,6 +75,7 @@
 @include button-theme('darkBlue', $dark_blue);
 @include button-theme('lightViolet', $light_violet);
 @include button-theme('violet', $violet);
+@include button-theme('red', $red);
 
 .block {
     display: block;
@@ -89,4 +90,9 @@
     transition: 0.25s;
     outline: none;
     pointer-events: none;
+}
+
+.black.disabled {
+    background: #95A5A6;
+    cursor: default;
 }

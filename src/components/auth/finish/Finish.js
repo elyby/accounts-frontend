@@ -6,6 +6,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 
 import { Button } from 'components/ui/form';
+import copy from 'services/copy';
 
 import messages from './Finish.intl.json';
 import styles from './finish.scss';
@@ -21,13 +22,8 @@ class Finish extends Component {
         success: PropTypes.bool
     };
 
-    state = {
-        isCopySupported: document.queryCommandSupported && document.queryCommandSupported('copy')
-    };
-
     render() {
         const {appName, code, state, displayCode, success} = this.props;
-        const {isCopySupported} = this.state;
         const authData = JSON.stringify({
             auth_code: code, // eslint-disable-line
             state
@@ -53,18 +49,16 @@ class Finish extends Component {
                                     <Message {...messages.passCodeToApp} values={{appName}} />
                                 </div>
                                 <div className={styles.codeContainer}>
-                                    <div className={styles.code} ref={this.setCode}>{code}</div>
+                                    <div className={styles.code}>
+                                        {code}
+                                    </div>
                                 </div>
-                                {isCopySupported ? (
-                                    <Button
-                                        color="green"
-                                        small
-                                        label={messages.copy}
-                                        onClick={this.onCopyClick}
-                                    />
-                                ) : (
-                                    ''
-                                )}
+                                <Button
+                                    color="green"
+                                    small
+                                    label={messages.copy}
+                                    onClick={this.onCopyClick}
+                                />
                             </div>
                         ) : (
                             <div className={styles.description}>
@@ -91,28 +85,7 @@ class Finish extends Component {
 
     onCopyClick = (event) => {
         event.preventDefault();
-        // http://stackoverflow.com/a/987376/5184751
-
-        try {
-            const selection = window.getSelection();
-            const range = document.createRange();
-            range.selectNodeContents(this.code);
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            const successful = document.execCommand('copy');
-            selection.removeAllRanges();
-
-            // TODO: было бы ещё неплохо сделать какую-то анимацию, вроде "Скопировано",
-            // ибо сейчас после клика как-то неубедительно, скопировалось оно или нет
-            console.log('Copying text command was %s', successful ? 'successful' : 'unsuccessful');
-        } catch (err) {
-            // not critical
-        }
-    };
-
-    setCode = (el) => {
-        this.code = el;
+        copy(this.props.code);
     };
 }
 

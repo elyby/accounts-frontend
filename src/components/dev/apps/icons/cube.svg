@@ -1,0 +1,5 @@
+<svg viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#DDD8CE" d="M110,20V10H80V0H40V10H10V20H0v80H10v10H40v10H80V110h30V100h10V20H110ZM20,30V20H50V10H70V20h30V30H70V40H50V30H20Zm90,60H100v10H70v10H60V50H80V40h30V90h0Z">
+        <animate attributeName="fill" from="#EBE8E2" to="#DDD8CE" dur="1s" />
+    </path>
+</svg>

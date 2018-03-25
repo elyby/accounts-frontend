@@ -13,7 +13,7 @@ export default function BsodMiddleware(dispatchBsod: Function, logger: Logger) {
                 (resp instanceof InternalServerError
                         && resp.error.code !== ABORT_ERR
                 ) || (resp.originalResponse
-                    && /404|5\d\d/.test((resp.originalResponse.status: string))
+                    && /5\d\d/.test((resp.originalResponse.status: string))
                 )
             )) {
                 dispatchBsod();

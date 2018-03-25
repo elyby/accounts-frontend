@@ -370,7 +370,7 @@ export function oAuthValidate(oauthData: {
 export function oAuthComplete(params: {accept?: bool} = {}) {
     return wrapInLoader((dispatch, getState) =>
         oauth.complete(getState().auth.oauth, params)
-            .then((resp) => {
+            .then((resp: Object) => {
                 localStorage.removeItem('oauthData');
 
                 if (resp.redirectUri.startsWith('static_page')) {

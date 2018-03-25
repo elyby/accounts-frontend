@@ -6,6 +6,7 @@ import accounts from 'components/accounts/reducer';
 import i18n from 'components/i18n/reducer';
 import popup from 'components/ui/popup/reducer';
 import bsod from 'components/ui/bsod/reducer';
+import apps from 'components/dev/apps/reducer';
 
 export default combineReducers({
     bsod,
@@ -13,5 +14,6 @@ export default combineReducers({
     user,
     accounts,
     i18n,
-    popup
+    popup,
+    apps,
 });

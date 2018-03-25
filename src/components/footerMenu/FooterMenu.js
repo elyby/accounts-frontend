@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -10,13 +10,11 @@ import { create as createPopup } from 'components/ui/popup/actions';
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
 
-class FooterMenu extends Component {
+class FooterMenu extends Component<{
+    createContactPopup: () => void,
+    createLanguageSwitcherPopup: () => void,
+}> {
     static displayName = 'FooterMenu';
-
-    static propTypes = {
-        createContactPopup: PropTypes.func.isRequired,
-        createLanguageSwitcherPopup: PropTypes.func.isRequired,
-    };
 
     render() {
         return (
@@ -28,6 +26,10 @@ class FooterMenu extends Component {
                 <a href="#" onClick={this.onContact}>
                     <Message {...messages.contactUs} />
                 </a>
+                {' | '}
+                <Link to="/dev">
+                    <Message {...messages.forDevelopers} />
+                </Link>
 
                 <div className={styles.langTriggerContainer}>
                     <a href="#" className={styles.langTrigger} onClick={this.onLanguageSwitcher}>

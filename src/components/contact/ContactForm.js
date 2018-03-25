@@ -118,6 +118,8 @@ export class ContactForm extends Component {
                         required
                         label={messages.message}
                         skin="light"
+                        minRows={6}
+                        maxRows={6}
                     />
                 </div>
 

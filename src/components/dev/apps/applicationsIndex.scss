@@ -1,0 +1,252 @@
+@import '~components/ui/fonts.scss';
+@import '~components/ui/colors.scss';
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: white;
+    border-bottom: 10px solid #DDD8CE;
+
+    @media (max-width: 540px) {
+        margin: 0 20px;
+    }
+}
+
+.welcomeContainer {
+    padding: 30px;
+    background: #F5F5F5;
+    text-align: center;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+.welcomeTitle {
+    font-size: 30px;
+    font-family: $font-family-title;
+    max-width: 245px;
+    margin: 0 auto 15px;
+    line-height: 1.2;
+}
+
+.welcomeTitleDelimiter {
+    width: 86px;
+    height: 3px;
+    background: $green;
+    margin: 0 auto 15px;
+}
+
+.welcomeParagraph {
+    color: #666666;
+    font-size: 14px;
+    margin-bottom: 15px;
+    line-height: 1.3;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+.emptyState {
+    padding: 30px 30px 50px;
+    text-align: center;
+}
+
+.emptyStateIcon {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+}
+
+@mixin emptyStateAnimation($order) {
+    animation:
+        slide-in-bottom
+        1s // Total animation time
+        .2s + .2s * $order // Increase each next element delay
+        cubic-bezier(0.075, 0.82, 0.165, 1) // easeOutCirc
+        both
+    ;
+}
+
+.emptyStateText {
+    font-family: $font-family-title;
+    color: #666666;
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 20px;
+
+    > div {
+        &:nth-child(1) {
+            @include emptyStateAnimation(0);
+        }
+
+        &:nth-child(2) {
+            @include emptyStateAnimation(1);
+        }
+    }
+}
+
+.emptyStateActionButton {
+    @include emptyStateAnimation(2);
+}
+
+@keyframes slide-in-bottom {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.loadingStateIcon {
+    composes: emptyStateIcon;
+
+    margin-bottom: 130px; // TODO: this is needed to render empty state without height jumping. Maybe it can be done more dynamically?
+}
+
+.appsListTitleContainer {
+    display: flex;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.appsListTitle {
+    font-family: $font-family-title;
+    font-size: 24px;
+    flex-grow: 1;
+}
+
+.appsListAddNewAppBtn {
+
+}
+
+.appsListContainer {
+    margin-bottom: 30px;
+}
+
+.appItemContainer {
+    border-bottom: 1px solid #eee;
+}
+
+.appItemTile {
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color .25s;
+}
+
+.appTileTitle {
+    flex-grow: 1;
+}
+
+.appName {
+    font-family: $font-family-title;
+    font-size: 24px;
+}
+
+.appStats {
+    color: #999;
+    font-size: 14px;
+}
+
+.appItemToggle {
+
+}
+
+.appItemToggleIcon {
+    composes: arrowRight from 'components/ui/icons.scss';
+
+    position: relative;
+    left: 0;
+
+    font-size: 28px;
+    color: #ebe8e1;
+
+    transition: .25s;
+
+    .appItemTile:hover & {
+        color: #777;
+    }
+
+    .appExpanded & {
+        color: #777;
+        transform: rotate(360deg)!important; // Prevent it from hover rotating
+    }
+}
+
+.appDetailsContainer {
+    background: #F5F5F5;
+    border-top: 1px solid #eee;
+    padding: 5px 30px;
+}
+
+.appDetailsInfoField {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.editAppLink {
+    position: absolute;
+    top: 4px;
+    right: 0;
+
+    font-size: 12px;
+    color: #9A9A9A;
+    border-bottom: 0;
+}
+
+.pencilIcon {
+    composes: pencil from 'components/ui/icons.scss';
+
+    font-size: 14px;
+    position: relative;
+    bottom: 2px;
+}
+
+.appDetailsDescription {
+    font-size: 12px;
+    color: #9A9A9A;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+.appActionsButtons {
+
+}
+
+.appActionButton {
+    margin: 0 10px 10px 0;
+
+    &:last-of-type {
+        margin-right: 0;
+    }
+}
+
+.appActionDescription {
+    composes: appDetailsDescription;
+
+    margin-top: 20px;
+}
+
+.continueActionButtonWrapper {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.continueActionLink {
+    composes: textLink from 'index.scss';
+
+    font-family: $font-family-title;
+    font-size: 14px;
+    color: #666;
+}
+
+.performingAction {
+    font-family: $font-family-title;
+    font-size: 14px;
+    color: #666;
+}

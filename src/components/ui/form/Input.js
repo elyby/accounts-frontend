@@ -1,57 +1,56 @@
-import PropTypes from 'prop-types';
+// @flow
 import React from 'react';
 
 import classNames from 'classnames';
 
 import { uniqueId, omit } from 'functions';
+import copy from 'services/copy';
 import icons from 'components/ui/icons.scss';
-import { colors, skins, SKIN_DARK, COLOR_GREEN } from 'components/ui';
+import { SKIN_DARK, COLOR_GREEN } from 'components/ui';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-export default class Input extends FormInputComponent {
-    static displayName = 'Input';
+import type { Skin, Color } from 'components/ui';
+import type { MessageDescriptor } from 'react-intl';
 
-    static propTypes = {
-        placeholder: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]),
-        label: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]),
-        error: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.shape({
-                type: PropTypes.string.isRequired,
-                payload: PropTypes.object.isRequired
-            })
-        ]),
-        icon: PropTypes.string,
-        skin: PropTypes.oneOf(skins),
-        color: PropTypes.oneOf(colors),
-        center: PropTypes.bool
-    };
+let copiedStateTimeout;
+
+export default class Input extends FormInputComponent<{
+    skin: Skin,
+    color: Color,
+    center: bool,
+    disabled: bool,
+    label?: string | MessageDescriptor,
+    placeholder?: string | MessageDescriptor,
+    error?: string | {type: string, payload: string},
+    icon?: string,
+    copy?: bool,
+}, {
+    wasCopied: bool,
+}> {
+    static displayName = 'Input';
 
     static defaultProps = {
         color: COLOR_GREEN,
-        skin: SKIN_DARK
+        skin: SKIN_DARK,
+        center: false,
+        disabled: false,
+    };
+
+    state = {
+        wasCopied: false,
     };
 
     render() {
         const { color, skin, center } = this.props;
-        let { icon, label } = this.props;
+        let { icon, label, copy } = this.props;
+        const { wasCopied } = this.state;
 
         const props = omit({
             type: 'text',
-            ...this.props
-        }, Object.keys(Input.propTypes).filter((prop) => prop !== 'placeholder'));
+            ...this.props,
+        }, ['label', 'error', 'skin', 'color', 'center', 'icon', 'copy']);
 
         if (label) {
             if (!props.id) {
@@ -77,6 +76,19 @@ export default class Input extends FormInputComponent {
             );
         }
 
+        if (copy) {
+            copy = (
+                <div
+                    className={classNames(styles.copyIcon, {
+                        [icons.clipboard]: !wasCopied,
+                        [icons.checkmark]: wasCopied,
+                        [styles.copyCheckmark]: wasCopied,
+                    })}
+                    onClick={this.onCopy}
+                />
+            );
+        }
+
         return (
             <div className={baseClass}>
                 {label}
@@ -92,6 +104,7 @@ export default class Input extends FormInputComponent {
                         {...props}
                     />
                     {icon}
+                    {copy}
                 </div>
                 {this.renderError()}
             </div>
@@ -106,4 +119,15 @@ export default class Input extends FormInputComponent {
         this.el.focus();
         setTimeout(this.el.focus.bind(this.el), 10);
     }
+
+    onCopy = async () => {
+        try {
+            clearTimeout(copiedStateTimeout);
+            await copy(this.getValue());
+            this.setState({wasCopied: true});
+            copiedStateTimeout = setTimeout(() => this.setState({wasCopied: false}), 2000);
+        } catch (err) {
+            // it's okay
+        }
+    };
 }

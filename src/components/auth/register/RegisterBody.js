@@ -7,6 +7,7 @@ import { Input, Checkbox, Captcha } from 'components/ui/form';
 import BaseAuthBody from 'components/auth/BaseAuthBody';
 import passwordMessages from 'components/auth/password/Password.intl.json';
 
+import styles from 'components/auth/auth.scss';
 import messages from './Register.intl.json';
 
 // TODO: password and username can be validate for length and sameness
@@ -56,19 +57,21 @@ export default class RegisterBody extends BaseAuthBody {
 
                 <Captcha {...this.bindField('captcha')} delay={600} />
 
-                <Checkbox {...this.bindField('rulesAgreement')}
-                    color="blue"
-                    required
-                    label={
-                        <Message {...messages.acceptRules} values={{
-                            link: (
-                                <Link to="/rules" target="_blank">
-                                    <Message {...messages.termsOfService} />
-                                </Link>
-                            )
-                        }} />
-                    }
-                />
+                <div className={styles.checkboxInput}>
+                    <Checkbox {...this.bindField('rulesAgreement')}
+                        color="blue"
+                        required
+                        label={
+                            <Message {...messages.acceptRules} values={{
+                                link: (
+                                    <Link to="/rules" target="_blank">
+                                        <Message {...messages.termsOfService} />
+                                    </Link>
+                                )
+                            }} />
+                        }
+                    />
+                </div>
             </div>
         );
     }

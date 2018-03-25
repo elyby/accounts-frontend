@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import AuthPage from 'pages/auth/AuthPage';
 import ProfilePage from 'pages/profile/ProfilePage';
 import RulesPage from 'pages/rules/RulesPage';
+import DevPage from 'pages/dev/DevPage';
 import PageNotFound from 'pages/404/PageNotFound';
 import { ScrollIntoView } from 'components/ui/scroll';
 import PrivateRoute from 'containers/PrivateRoute';
@@ -83,6 +84,7 @@ class RootPage extends Component<{
                             <PrivateRoute path="/profile" component={ProfilePage} />
                             <Route path="/404" component={PageNotFound} />
                             <Route path="/rules" component={RulesPage} />
+                            <Route path="/dev" component={DevPage} />
                             <AuthFlowRoute exact path="/" component={ProfilePage} />
                             <AuthFlowRoute path="/" component={AuthPage} />
                             <Route component={PageNotFound} />

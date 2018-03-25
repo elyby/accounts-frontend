@@ -32,5 +32,7 @@
     "accountNotActivated": "The account is not activated",
     "accountBanned": "Account is blocked",
     "emailNotFound": "Specified E‑mail is not found",
-    "accountAlreadyActivated": "This account is already activated"
+    "accountAlreadyActivated": "This account is already activated",
+    "redirectUriRequired": "Redirect URI is required",
+    "redirectUriInvalid": "Redirect URI is invalid"
 }
