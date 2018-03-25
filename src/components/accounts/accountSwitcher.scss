@@ -24,7 +24,7 @@ $lightBorderColor: #eee;
 .lightAccountSwitcher {
     background: #fff;
     color: #444;
-    width: 205px;
+    min-width: 205px;
 
     $border: 1px solid $lightBorderColor;
     border-left: $border;
@@ -79,6 +79,7 @@ $lightBorderColor: #eee;
     .link {
         font-size: 12px;
         margin-bottom: 3px;
+        white-space: nowrap;
 
         &:last-of-type {
             margin-bottom: 0;
