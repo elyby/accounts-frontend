@@ -65,7 +65,8 @@ function initAnalytics() {
         if (window.GA_ID) {
             // when GA is not available, we will continue to push into array
             // for debug purposes
-            loadScript('https://www.google-analytics.com/analytics.js');
+            // Catch to prevent "unhandled rejection" error
+            loadScript('https://www.google-analytics.com/analytics.js').catch(() => {});
         }
 
         ga('create', window.GA_ID, 'auto');
