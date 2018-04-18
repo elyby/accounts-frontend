@@ -32,7 +32,7 @@ export default class FormModel {
 
         const props: Object = {
             name,
-            ref: (el: ?FormInputComponent) => {
+            ref: (el: ?FormInputComponent<any>) => {
                 if (el) {
                     if (!(el instanceof FormInputComponent)) {
                         throw new Error('Expected FormInputComponent component');

@@ -1,9 +1,12 @@
+// @flow
 import { loadScript } from 'functions';
 import options from 'services/api/options';
 
 let readyPromise;
 let lang = 'en';
 let sitekey;
+
+export opaque type CaptchaID = string;
 
 export default {
     /**
@@ -14,7 +17,10 @@ export default {
      *
      * @return {Promise} - resolves to captchaId
      */
-    render(el, {skin: theme, onSetCode: callback}) {
+    render(el: HTMLElement, {skin: theme, onSetCode: callback}: {
+        skin: 'dark' | 'light',
+        onSetCode: (string) => void,
+    }): Promise<CaptchaID> {
         return this.loadApi().then(() =>
             window.grecaptcha.render(el, {
                 sitekey,
@@ -27,7 +33,7 @@ export default {
     /**
      * @param {string} captchaId - captcha id, returned from render promise
      */
-    reset(captchaId) {
+    reset(captchaId: CaptchaID) {
         this.loadApi().then(() => window.grecaptcha.reset(captchaId));
     },
 
@@ -36,7 +42,7 @@ export default {
      *
      * @see https://developers.google.com/recaptcha/docs/language
      */
-    setLang(newLang) {
+    setLang(newLang: string) {
         lang = newLang;
     },
 
@@ -45,7 +51,7 @@ export default {
      *
      * @see http://www.google.com/recaptcha/admin
      */
-    setApiKey(apiKey) {
+    setApiKey(apiKey: string) {
         sitekey = apiKey;
     },
 
@@ -54,14 +60,14 @@ export default {
      *
      * @return {Promise}
      */
-    loadApi() {
+    loadApi(): Promise<void> {
         if (!readyPromise) {
             readyPromise = Promise.all([
                 new Promise((resolve) => {
                     window.onReCaptchaReady = resolve;
                 }),
                 options.get().then((resp) => this.setApiKey(resp.reCaptchaPublicKey))
-            ]);
+            ]).then(() => {});
 
             loadScript(`https://recaptcha.net/recaptcha/api.js?onload=onReCaptchaReady&render=explicit&hl=${lang}`);
         }
@@ -69,4 +75,3 @@ export default {
         return readyPromise;
     }
 };
-

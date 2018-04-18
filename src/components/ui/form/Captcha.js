@@ -1,35 +1,41 @@
-import PropTypes from 'prop-types';
+// @flow
 import React from 'react';
-
 import classNames from 'classnames';
-
+import type { CaptchaID } from 'services/captcha';
+import type { Skin } from 'components/ui';
 import captcha from 'services/captcha';
 import logger from 'services/logger';
-import { skins, SKIN_DARK } from 'components/ui';
 import { ComponentLoader } from 'components/ui/loader';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-export default class Captcha extends FormInputComponent {
-    static displayName = 'Captcha';
-
-    static propTypes = {
-        skin: PropTypes.oneOf(skins),
-        delay: PropTypes.number
-    };
+export default class Captcha extends FormInputComponent<{
+    delay: number,
+    skin: Skin,
+}, {
+    code: string,
+}> {
+    el: ?HTMLDivElement;
+    captchaId: CaptchaID;
 
     static defaultProps = {
-        skin: SKIN_DARK,
+        skin: 'dark',
         delay: 0
     };
 
     componentDidMount() {
         setTimeout(() => {
-            captcha.render(this.el, {
+            this.el && captcha.render(this.el, {
                 skin: this.props.skin,
                 onSetCode: this.setCode
-            }).then((captchaId) => this.captchaId = captchaId, (error) => logger.error('Error rendering captcha', { error }));
+            })
+                .then((captchaId) => {this.captchaId = captchaId;})
+                .catch((error) => {
+                    logger.error('Failed rendering captcha', {
+                        error
+                    });
+                });
         }, this.props.delay);
     }
 
@@ -64,5 +70,5 @@ export default class Captcha extends FormInputComponent {
         this.reset();
     }
 
-    setCode = (code) => this.setState({code});
+    setCode = (code: string) => this.setState({code});
 }

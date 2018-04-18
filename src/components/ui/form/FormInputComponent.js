@@ -1,15 +1,18 @@
-import PropTypes from 'prop-types';
+// @flow
+import type { MessageDescriptor } from 'react-intl';
 import React from 'react';
 
 import FormComponent from './FormComponent';
 import FormError from './FormError';
 
-export default class FormInputComponent extends FormComponent {
-    static displayName = 'FormInputComponent';
+type Error = string | MessageDescriptor;
 
-    static propTypes = {
-        error: PropTypes.string
-    };
+export default class FormInputComponent<P, S = void> extends FormComponent<P & {
+    error?: Error,
+}, S & {
+    error?: Error,
+}> {
+    el: ?HTMLDivElement;
 
     componentWillReceiveProps() {
         if (this.state && this.state.error) {
@@ -19,7 +22,7 @@ export default class FormInputComponent extends FormComponent {
         }
     }
 
-    setEl = (el) => {
+    setEl = (el: ?HTMLDivElement) => {
         this.el = el;
     };
 
@@ -29,7 +32,7 @@ export default class FormInputComponent extends FormComponent {
         return <FormError error={error} />;
     }
 
-    setError(error) {
+    setError(error: Error) {
         this.setState({error});
     }
 }

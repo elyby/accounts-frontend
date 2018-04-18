@@ -1,10 +1,9 @@
+// @flow
+import type { MessageDescriptor } from 'react-intl';
 import { Component } from 'react';
-
 import { intlShape } from 'react-intl';
 
-export default class FormComponent extends Component {
-    static displayName = 'FormComponent';
-
+export default class FormComponent<P, S = void> extends Component<P, S> {
     static contextTypes = {
         intl: intlShape.isRequired
     };
@@ -16,7 +15,7 @@ export default class FormComponent extends Component {
      *
      * @return {string}
      */
-    formatMessage(message) {
+    formatMessage(message: string | MessageDescriptor) {
         if (message && message.id && this.context && this.context.intl) {
             message = this.context.intl.formatMessage(message);
         }
