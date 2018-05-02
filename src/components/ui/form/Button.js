@@ -1,16 +1,13 @@
 // @flow
-import React from 'react';
+import type { MessageDescriptor } from 'react-intl';
 import type { ComponentType } from 'react';
-
+import type { Color } from 'components/ui';
+import React from 'react';
 import classNames from 'classnames';
-
 import buttons from 'components/ui/buttons.scss';
 import { COLOR_GREEN } from 'components/ui';
 
 import FormComponent from './FormComponent';
-
-import type { Color } from 'components/ui';
-import type { MessageDescriptor } from 'react-intl';
 
 export default class Button extends FormComponent<{
     label: string | MessageDescriptor,
@@ -18,10 +15,10 @@ export default class Button extends FormComponent<{
     small?: bool,
     loading?: bool,
     className?: string,
-    color?: Color,
+    color: Color,
     disabled?: bool,
-    component?: string | ComponentType<any>,
-} | HTMLButtonElement> {
+    component: string | ComponentType<any>,
+}> {
     static defaultProps = {
         color: COLOR_GREEN,
         component: 'button',

@@ -1,3 +1,5 @@
+// @flow
+import type {User} from 'components/user';
 import Raven from 'raven-js';
 
 import abbreviate from './abbreviate';
@@ -5,8 +7,8 @@ import abbreviate from './abbreviate';
 const isTest = process.env.__TEST__; // eslint-disable-line
 const isProduction = process.env.__PROD__; // eslint-disable-line
 
-const logger = {
-    init({sentryCdn}) {
+class Logger {
+    init({ sentryCdn }: { sentryCdn: string }) {
         if (sentryCdn) {
             Raven.config(sentryCdn, {
                 logger: 'accounts-js-app',
@@ -37,54 +39,67 @@ const logger = {
                     message = '';
                 }
 
-                logger.info(`Unhandled rejection${message}`, {
+                this.info(`Unhandled rejection${message}`, {
                     error,
                     event
                 });
             });
         }
-    },
+    }
 
-    setUser(user) {
+    setUser(user: User) {
         Raven.setUserContext({
             username: user.username,
             email: user.email,
             id: user.id
         });
     }
-};
 
-[
-    // 'fatal',
-    'error',
-    'warning',
-    'info',
-    'debug'
-].forEach((level) => {
-    const method = level === 'warning' ? 'warn' : level;
+    error(message: string | Error, context: Object) {
+        log('error', message, context);
+    }
 
-    logger[method] = (message, context) => {
-        if (isTest) {
-            return;
-        }
+    info(message: string | Error, context: Object) {
+        log('info', message, context);
+    }
 
-        if (typeof context !== 'object') {
-            // it would better to always have an object here
-            context = {
-                message: context
-            };
-        }
+    warn(message: string | Error, context: Object) {
+        log('warning', message, context);
+    }
 
-        prepareContext(context).then((context) => {
-            console[method](message, context); // eslint-disable-line
+    getLastEventId(): string | void {
+        return Raven.lastEventId();
+    }
+}
 
-            Raven.captureException(message, {
-                level,
-                extra: context
-            });
+function log(
+    level: 'error' | 'warning' | 'info' | 'debug',
+    message: string | Error,
+    context: Object
+) {
+    const method: 'error' | 'warn' | 'info' | 'debug' = level === 'warning' ? 'warn' : level;
+
+    if (isTest) {
+        return;
+    }
+
+    if (typeof context !== 'object') {
+        // it would better to always have an object here
+        context = {
+            message: context
+        };
+    }
+
+    prepareContext(context).then((context) => {
+        console[method](message, context); // eslint-disable-line
+
+        Raven.captureException(message, {
+            level,
+            extra: context,
+            ...(typeof message === 'string' ? { fingerprint: [message] } : {}),
         });
-    };
-});
+    });
+}
 
 /**
  * prepare data for JSON.stringify
@@ -93,7 +108,7 @@ const logger = {
  *
  * @return {Promise}
  */
-function prepareContext(context) {
+function prepareContext(context: any) {
     if (context instanceof Response) {
         // TODO: rewrite abbreviate to use promises and recursively find Response
         return context.json()
@@ -120,4 +135,4 @@ function prepareContext(context) {
     return Promise.resolve(abbreviate(context));
 }
 
-export default logger;
+export default new Logger();
