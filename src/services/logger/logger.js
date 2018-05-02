@@ -92,6 +92,7 @@ function log(
         Raven.captureException(message, {
             level,
             extra: context,
+            ...(typeof message === 'string' ? { fingerprint: [message] } : {}),
         });
     });
 }
