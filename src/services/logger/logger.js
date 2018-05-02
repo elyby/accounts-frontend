@@ -66,6 +66,10 @@ class Logger {
     warn(message: string | Error, context: Object) {
         log('warning', message, context);
     }
+
+    getLastEventId(): string | void {
+        return Raven.lastEventId();
+    }
 }
 
 function log(
