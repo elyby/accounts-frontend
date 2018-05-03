@@ -16,7 +16,7 @@ import type { User } from 'components/user';
 class Profile extends Component<{
     user: User
 }> {
-    UUID: ?HTMLDivElement;
+    UUID: ?HTMLElement;
 
     render() {
         const { user } = this.props;
@@ -134,11 +134,13 @@ class Profile extends Component<{
         }
     }
 
-    setUUID(el: ?HTMLDivElement) {
+    setUUID(el: ?HTMLElement) {
         this.UUID = el;
     }
 }
 
-export default connect((state) => ({
-    user: state.user,
+export default connect(({ user }): {
+    user: User,
+} => ({
+    user,
 }))(Profile);

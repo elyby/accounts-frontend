@@ -1,5 +1,6 @@
 // @flow
 /* eslint camelcase: off */
+import type { Resp } from 'services/request';
 import request from 'services/request';
 
 export type OauthAppResponse = {
@@ -17,6 +18,28 @@ export type OauthAppResponse = {
     minecraftServerIp?: string,
 };
 
+type OauthRequestData = {
+    client_id: string,
+    redirect_uri: string,
+    response_type: string,
+    description: string,
+    scope: string,
+    prompt: string,
+    login_hint?: string,
+    state?: string,
+};
+
+export type OauthData = {
+    clientId: string,
+    redirectUrl: string,
+    responseType: string,
+    description: string,
+    scope: string,
+    prompt: 'none' | 'consent' | 'select_account',
+    loginHint?: string,
+    state?: string
+};
+
 type FormPayloads = {
     name?: string,
     description?: string,
@@ -26,14 +49,17 @@ type FormPayloads = {
 };
 
 export default {
-    validate(oauthData: Object) {
+    validate(oauthData: OauthData) {
         return request.get(
             '/api/oauth2/v1/validate',
             getOAuthRequest(oauthData)
         ).catch(handleOauthParamsValidation);
     },
 
-    complete(oauthData: Object, params: Object = {}) {
+    complete(oauthData: OauthData, params: {accept?: bool} = {}): Promise<Resp<{
+        success: bool,
+        redirectUri: string,
+    }>> {
         const query = request.buildQuery(getOAuthRequest(oauthData));
 
         return request.post(
@@ -44,7 +70,8 @@ export default {
                 // user declined permissions
                 return {
                     success: false,
-                    redirectUri: resp.redirectUri
+                    redirectUri: resp.redirectUri,
+                    originalResponse: resp.originalResponse,
                 };
             }
 
@@ -64,27 +91,27 @@ export default {
         });
     },
 
-    create(type: string, formParams: FormPayloads): Promise<{success: bool, data: OauthAppResponse}> {
+    create(type: string, formParams: FormPayloads): Promise<Resp<{success: bool, data: OauthAppResponse}>> {
         return request.post(`/api/v1/oauth2/${type}`, formParams);
     },
 
-    update(clientId: string, formParams: FormPayloads): Promise<{success: bool, data: OauthAppResponse}> {
+    update(clientId: string, formParams: FormPayloads): Promise<Resp<{success: bool, data: OauthAppResponse}>> {
         return request.put(`/api/v1/oauth2/${clientId}`, formParams);
     },
 
-    getApp(clientId: string): Promise<OauthAppResponse> {
+    getApp(clientId: string): Promise<Resp<OauthAppResponse>> {
         return request.get(`/api/v1/oauth2/${clientId}`);
     },
 
-    getAppsByUser(userId: number): Promise<Array<OauthAppResponse>> {
+    getAppsByUser(userId: number): Promise<Resp<Array<OauthAppResponse>>> {
         return request.get(`/api/v1/accounts/${userId}/oauth2/clients`);
     },
 
-    reset(clientId: string, regenerateSecret: bool = false): Promise<{success: bool, data: OauthAppResponse}> {
+    reset(clientId: string, regenerateSecret: bool = false): Promise<Resp<{success: bool, data: OauthAppResponse}>> {
         return request.post(`/api/v1/oauth2/${clientId}/reset${regenerateSecret ? '?regenerateSecret' : ''}`);
     },
 
-    delete(clientId: string): Promise<{success: bool}> {
+    delete(clientId: string): Promise<Resp<{success: bool}>> {
         return request.delete(`/api/v1/oauth2/${clientId}`);
     },
 };
@@ -99,7 +126,7 @@ export default {
  *
  * @return {object}
  */
-function getOAuthRequest(oauthData) {
+function getOAuthRequest(oauthData: OauthData): OauthRequestData {
     return {
         client_id: oauthData.clientId,
         redirect_uri: oauthData.redirectUrl,

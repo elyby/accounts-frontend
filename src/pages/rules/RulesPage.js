@@ -143,11 +143,11 @@ export default class RulesPage extends Component<{
         this.props.history.replace(newPath);
     }
 
-    static getTitleHash(sectionIndex) {
+    static getTitleHash(sectionIndex: number) {
         return `rule-${sectionIndex + 1}`;
     }
 
-    static getRuleHash(sectionIndex, ruleIndex) {
+    static getRuleHash(sectionIndex: number, ruleIndex: number) {
         return `${RulesPage.getTitleHash(sectionIndex)}-${ruleIndex + 1}`;
     }
 }

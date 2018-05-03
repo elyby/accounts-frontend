@@ -9,8 +9,8 @@ import copyToClipboard from 'copy-to-clipboard';
  * @return {Promise<*>}
  */
 export default async function copy(content: string): Promise<void> {
+    // $FlowFixMe there is no typing for navigator.clipboard
     if (navigator.clipboard) {
-        // $FlowFixMe there is no typing for navigator.clipboard
         return navigator.clipboard.writeText(content);
     }
 

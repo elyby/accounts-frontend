@@ -139,7 +139,7 @@ class LanguageSwitcher extends Component<{
     };
 
     onFilterKeyPress() {
-        return (event: SyntheticInputEvent<HTMLInputElement>) => {
+        return (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
             if (event.key !== 'Enter' || this.state.filter === '') {
                 return;
             }

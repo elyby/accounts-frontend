@@ -30,7 +30,7 @@ export default class MeasureHeight extends PureComponent<{
 }> {
     static defaultProps = {
         shouldMeasure: (prevState: any, newState: any) => prevState !== newState,
-        onMeasure: (height) => {} // eslint-disable-line
+        onMeasure: (height: number) => {} // eslint-disable-line
     };
 
     el: ?HTMLDivElement;

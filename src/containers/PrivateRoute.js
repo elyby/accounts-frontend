@@ -19,6 +19,8 @@ const PrivateRoute = ({account, component: Component, ...rest}: {
     )}/>
 );
 
-export default connect((state) => ({
+export default connect((state): {
+    account: ?Account,
+} => ({
     account: getActiveAccount(state)
 }))(PrivateRoute);

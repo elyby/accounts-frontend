@@ -59,6 +59,7 @@ export interface AuthContext {
     getState(): Object;
     navigate(route: string): void;
     getRequest(): Request;
+    prevState: AbstractState;
 }
 
 export default class AuthFlow implements AuthContext {

@@ -1,10 +1,10 @@
 // @flow
+import type { AuthContext } from 'services/authFlow';
 import logger from 'services/logger';
 
 import AbstractState from './AbstractState';
 import ActivationState from './ActivationState';
 import RegisterState from './RegisterState';
-import type { AuthContext } from 'services/authFlow';
 
 export default class ResendActivationState extends AbstractState {
     enter(context: AuthContext) {

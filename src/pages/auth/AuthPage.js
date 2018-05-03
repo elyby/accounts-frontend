@@ -99,6 +99,12 @@ function renderPanelTransition(factory) {
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-export default withRouter(connect((state) => ({
+export default withRouter(connect((state): {
+    client: {
+        id: string,
+        name: string,
+        description: string
+    }
+} => ({
     client: state.auth.client
 }))(AuthPage));

@@ -84,4 +84,4 @@ class MultiFactorAuthPage extends Component<{
     };
 }
 
-export default connect(({user}) => ({user}))(MultiFactorAuthPage);
+export default connect(({user}): { user: User } => ({user}))(MultiFactorAuthPage);

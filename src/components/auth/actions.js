@@ -1,6 +1,6 @@
 // @flow
+import type { OauthData } from 'services/api/oauth';
 import { browserHistory } from 'services/history';
-
 import logger from 'services/logger';
 import localStorage from 'services/localStorage';
 import loader from 'services/loader';
@@ -316,16 +316,7 @@ const KNOWN_SCOPES = [
  *
  * @return {Promise}
  */
-export function oAuthValidate(oauthData: {
-    clientId: string,
-    redirectUrl: string,
-    responseType: string,
-    description: string,
-    scope: string,
-    prompt: 'none' | 'consent' | 'select_account',
-    loginHint?: string,
-    state?: string
-}) {
+export function oAuthValidate(oauthData: OauthData) {
     // TODO: move to oAuth actions?
     // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
     return wrapInLoader((dispatch) =>
@@ -370,23 +361,27 @@ export function oAuthValidate(oauthData: {
 export function oAuthComplete(params: {accept?: bool} = {}) {
     return wrapInLoader((dispatch, getState) =>
         oauth.complete(getState().auth.oauth, params)
-            .then((resp: Object) => {
+            .then((resp) => {
                 localStorage.removeItem('oauthData');
 
                 if (resp.redirectUri.startsWith('static_page')) {
-                    resp.code = resp.redirectUri.match(/code=(.+)&/)[1];
-                    resp.redirectUri = resp.redirectUri.match(/^(.+)\?/)[1];
-                    resp.displayCode = resp.redirectUri === 'static_page_with_code';
+                    const code = (resp.redirectUri.match(/code=(.+)&/) || [])[1];
+                    const displayCode = resp.redirectUri === 'static_page_with_code';
+                    resp.redirectUri = (resp.redirectUri.match(/^(.+)\?/) || [])[1];
 
                     dispatch(setOAuthCode({
                         success: resp.success,
-                        code: resp.code,
-                        displayCode: resp.displayCode
+                        code,
+                        displayCode
                     }));
                 }
 
                 return resp;
-            }, (resp) => {
+            }, (resp: {
+                acceptRequired: bool,
+            } | {
+                unauthorized: bool,
+            }) => {
                 if (resp.acceptRequired) {
                     dispatch(requirePermissionsAccept());
 
@@ -398,7 +393,9 @@ export function oAuthComplete(params: {accept?: bool} = {}) {
     );
 }
 
-function handleOauthParamsValidation(resp = {}) {
+function handleOauthParamsValidation(resp: {
+    userMessage?: string,
+} | Object = {}) {
     dispatchBsod();
     localStorage.removeItem('oauthData');
 

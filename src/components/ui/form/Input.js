@@ -112,10 +112,14 @@ export default class Input extends FormInputComponent<{
     }
 
     getValue() {
-        return this.el.value;
+        return this.el || this.el.value;
     }
 
     focus() {
+        if (!this.el) {
+            return;
+        }
+
         this.el.focus();
         setTimeout(this.el.focus.bind(this.el), 10);
     }
