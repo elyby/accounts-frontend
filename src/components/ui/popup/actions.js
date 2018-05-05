@@ -1,3 +1,5 @@
+// @flow
+import type { ElementType } from 'react';
 export const POPUP_CREATE = 'POPUP_CREATE';
 
 /**
@@ -7,7 +9,10 @@ export const POPUP_CREATE = 'POPUP_CREATE';
  *
  * @return {object}
  */
-export function create(payload) {
+export function create(payload: ElementType | {
+    Popup: ElementType,
+    disableOverlayClose?: bool,
+}) {
     if (typeof payload === 'function') {
         payload = {
             Popup: payload
@@ -21,7 +26,7 @@ export function create(payload) {
 }
 
 export const POPUP_DESTROY = 'POPUP_DESTROY';
-export function destroy(popup) {
+export function destroy(popup: ElementType) {
     return {
         type: POPUP_DESTROY,
         payload: popup

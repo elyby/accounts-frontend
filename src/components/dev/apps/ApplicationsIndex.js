@@ -1,17 +1,13 @@
 // @flow
 import type { Node } from 'react';
-import type { Location } from 'react-router';
 import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { create as createPopup } from 'components/ui/popup/actions';
-import ContactForm from 'components/contact/ContactForm';
 import { LinkButton } from 'components/ui/form';
 import { COLOR_GREEN, COLOR_BLUE } from 'components/ui';
 import { restoreScroll } from 'components/ui/scroll/scroll';
+import { ContactLink } from 'components/contact';
 
 import styles from './applicationsIndex.scss';
 import messages from './ApplicationsIndex.intl.json';
@@ -21,11 +17,10 @@ import toolsIcon from './icons/tools.svg';
 import ApplicationItem from './ApplicationItem';
 
 type Props = {
-    location: Location,
+    clientId?: ?string,
     displayForGuest: bool,
     applications: Array<OauthAppResponse>,
     isLoading: bool,
-    createContactPopup: () => void,
     deleteApp: (string) => Promise<any>,
     resetApp: (string, bool) => Promise<any>,
 };
@@ -34,7 +29,7 @@ type State = {
     expandedApp: ?string,
 };
 
-class ApplicationsIndex extends Component<Props, State> {
+export default class ApplicationsIndex extends Component<Props, State> {
     state = {
         expandedApp: null,
     };
@@ -42,13 +37,11 @@ class ApplicationsIndex extends Component<Props, State> {
     appsRefs: {[key: string]: ?HTMLDivElement} = {};
 
     componentDidUpdate(prevProps: Props) {
-        const { applications, isLoading, location } = this.props;
+        const { applications, isLoading, clientId } = this.props;
 
         if (isLoading !== prevProps.isLoading && applications.length) {
-            const hash = location.hash.substr(1);
-
-            if (hash !== '' && applications.some((app) => app.clientId === hash)) {
-                requestAnimationFrame(() => this.onTileClick(hash));
+            if (clientId && applications.some((app) => app.clientId === clientId)) {
+                requestAnimationFrame(() => this.onTileClick(clientId));
             }
         }
     }
@@ -162,9 +155,9 @@ class ApplicationsIndex extends Component<Props, State> {
                     <div className={styles.welcomeParagraph}>
                         <Message {...messages.ifYouHaveAnyTroubles} values={{
                             feedback: (
-                                <a href="#" onClick={this.onContact}>
+                                <ContactLink>
                                     <Message {...messages.feedback} />
-                                </a>
+                                </ContactLink>
                             ),
                         }} />
                     </div>
@@ -185,14 +178,4 @@ class ApplicationsIndex extends Component<Props, State> {
             }
         });
     };
-
-    onContact = (event) => {
-        event.preventDefault();
-
-        this.props.createContactPopup();
-    };
 }
-
-export default withRouter(connect(null, {
-    createContactPopup: () => createPopup(ContactForm),
-})(ApplicationsIndex));

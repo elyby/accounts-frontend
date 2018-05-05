@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-import ContactForm from 'components/contact/ContactForm';
 import LanguageSwitcher from 'components/languageSwitcher';
 import { create as createPopup } from 'components/ui/popup/actions';
+import { ContactLink } from 'components/contact';
 
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
@@ -23,9 +23,9 @@ class FooterMenu extends Component<{
                     <Message {...messages.rules} />
                 </Link>
                 {' | '}
-                <a href="#" onClick={this.onContact}>
+                <ContactLink>
                     <Message {...messages.contactUs} />
-                </a>
+                </ContactLink>
                 {' | '}
                 <Link to="/dev">
                     <Message {...messages.forDevelopers} />
@@ -41,13 +41,9 @@ class FooterMenu extends Component<{
         );
     }
 
-    onContact = (event) => {
+    onLanguageSwitcher = (event: SyntheticMouseEvent<HTMLElement>) => {
         event.preventDefault();
-        this.props.createContactPopup();
-    };
 
-    onLanguageSwitcher = (event) => {
-        event.preventDefault();
         this.props.createLanguageSwitcherPopup();
     };
 }
@@ -55,6 +51,5 @@ class FooterMenu extends Component<{
 // mark this component, as not pure, because it is stateless,
 // but should be re-rendered, if current lang was changed
 export default connect(null, {
-    createContactPopup: () => createPopup(ContactForm),
     createLanguageSwitcherPopup: () => createPopup(LanguageSwitcher),
 }, null, {pure: false})(FooterMenu);
