@@ -55,6 +55,13 @@ class Logger {
         });
     }
 
+    unexpected(message: string | Error, previous: mixed) {
+        // TODO: check whether previous was already handled. Cover with tests
+        this.error(message, {
+            error: previous
+        });
+    }
+
     error(message: string | Error, context: Object) {
         log('error', message, context);
     }

@@ -1,17 +1,15 @@
 // @flow
+import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
+import logger from 'services/logger';
 import { FormModel } from 'components/ui/form';
-
-import ApplicationForm from 'components/dev/apps/applicationForm/ApplicationForm';
-
 import { browserHistory } from 'services/history';
 import oauth from 'services/api/oauth';
 import loader from 'services/loader';
-
 import PageNotFound from 'pages/404/PageNotFound';
-
-import type { OauthAppResponse } from 'services/api/oauth';
+import { getApp, fetchApp } from 'components/dev/apps/actions';
+import ApplicationForm from 'components/dev/apps/applicationForm/ApplicationForm';
 
 type MatchType = {
     match: {
@@ -23,24 +21,23 @@ type MatchType = {
 
 class UpdateApplicationPage extends Component<{
     app: ?OauthAppResponse,
-    fetchApp: (string) => Promise<*>,
+    fetchApp: (string) => Promise<void>,
 } & MatchType, {
     isNotFound: bool,
 }> {
-    static displayName = 'UpdateApplicationPage';
-
-    form = new FormModel();
+    form: FormModel = new FormModel();
 
     state = {
         isNotFound: false,
     };
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.app === null && this.fetchApp();
     }
 
     render() {
         const { app } = this.props;
+
         if (this.state.isNotFound) {
             return (
                 <PageNotFound />
@@ -48,7 +45,8 @@ class UpdateApplicationPage extends Component<{
         }
 
         if (!app) {
-            return (<div/>);
+            // we are loading
+            return null;
         }
 
         return (
@@ -63,11 +61,13 @@ class UpdateApplicationPage extends Component<{
 
     async fetchApp() {
         const { fetchApp, match } = this.props;
+
         try {
             loader.show();
             await fetchApp(match.params.clientId);
         } catch (resp) {
             const { status } = resp.originalResponse;
+
             if (status === 403) {
                 this.goToMainPage();
                 return;
@@ -80,7 +80,7 @@ class UpdateApplicationPage extends Component<{
                 return;
             }
 
-            throw resp;
+            logger.unexpected('Error fetching app', resp);
         } finally {
             loader.hide();
         }
@@ -89,6 +89,7 @@ class UpdateApplicationPage extends Component<{
     onSubmit = async () => {
         const { form } = this;
         const { app } = this.props;
+
         if (!app || !app.clientId) {
             throw new Error('Form has an invalid state');
         }
@@ -102,9 +103,6 @@ class UpdateApplicationPage extends Component<{
 
     goToMainPage = (hash?: string) => browserHistory.push(`/dev/applications${hash ? `#${hash}` : ''}`);
 }
-
-import { connect } from 'react-redux';
-import { getApp, fetchApp } from 'components/dev/apps/actions';
 
 export default connect((state, props: MatchType) => ({
     app: getApp(state, props.match.params.clientId),

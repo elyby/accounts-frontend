@@ -44,10 +44,14 @@ export default class Radio extends FormInputComponent<{
     }
 
     getValue() {
-        return this.el.checked ? 1 : 0;
+        const { el } = this;
+
+        return el && el.checked ? 1 : 0;
     }
 
     focus() {
-        this.el.focus();
+        const { el } = this;
+
+        el && el.focus();
     }
 }

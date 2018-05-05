@@ -1,26 +1,25 @@
 // @flow
+import type { ComponentType } from 'react';
+import type { MessageDescriptor } from 'react-intl';
+import type { OauthAppResponse } from 'services/api/oauth';
+import type { ApplicationType } from 'components/dev/apps';
 import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet';
-
 import { Form, FormModel, Button } from 'components/ui/form';
 import { BackButton } from 'components/profile/ProfileForm';
 import { COLOR_GREEN } from 'components/ui';
-
 import { TYPE_APPLICATION, TYPE_MINECRAFT_SERVER } from 'components/dev/apps';
 import styles from 'components/profile/profileForm.scss';
+import logger from 'services/logger';
 import messages from './ApplicationForm.intl.json';
 
 import ApplicationTypeSwitcher from './ApplicationTypeSwitcher';
 import WebsiteType from './WebsiteType';
 import MinecraftServerType from './MinecraftServerType';
 
-import type { ComponentType } from 'react';
-import type { MessageDescriptor } from 'react-intl';
-import type { OauthAppResponse } from 'services/api/oauth';
-
 const typeToForm: {
-    [key: string]: {
+    [key: ApplicationType]: {
         label: MessageDescriptor,
         component: ComponentType<any>,
     },
@@ -36,9 +35,10 @@ const typeToForm: {
 };
 
 const typeToLabel: {
-    [key: string]: MessageDescriptor,
-} = Object.keys(typeToForm).reduce((result, key: string) => {
+    [key: ApplicationType]: MessageDescriptor,
+} = Object.keys(typeToForm).reduce((result, key: ApplicationType) => {
     result[key] = typeToForm[key].label;
+
     return result;
 }, {});
 
@@ -46,12 +46,10 @@ export default class ApplicationForm extends Component<{
     app: OauthAppResponse,
     form: FormModel,
     displayTypeSwitcher?: bool,
-    type: ?string,
-    setType: (string) => void,
-    onSubmit: (FormModel) => Promise<*>,
+    type: ?ApplicationType,
+    setType: (ApplicationType) => void,
+    onSubmit: (FormModel) => Promise<void>,
 }> {
-    static displayName = 'ApplicationForm';
-
     static defaultProps = {
         setType: () => {},
     };
@@ -87,15 +85,15 @@ export default class ApplicationForm extends Component<{
                                 </div>
                             )}
 
-                            {!FormComponent && (
+                            {FormComponent ? (
+                                <FormComponent form={form} app={app} />
+                            ) : (
                                 <div className={styles.formRow}>
                                     <p className={styles.description}>
                                         <Message {...messages.toDisplayRegistrationFormChooseType} />
                                     </p>
                                 </div>
                             )}
-
-                            {FormComponent && <FormComponent form={form} app={app} />}
                         </div>
                     </div>
 
@@ -123,7 +121,7 @@ export default class ApplicationForm extends Component<{
                 return;
             }
 
-            throw resp;
+            logger.unexpected(new Error('Error submitting application form'), resp);
         }
     };
 }

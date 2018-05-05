@@ -1,12 +1,13 @@
 // @flow
 /* eslint camelcase: off */
 import type { Resp } from 'services/request';
+import type { ApplicationType } from 'components/dev/apps';
 import request from 'services/request';
 
 export type OauthAppResponse = {
     clientId: string,
     clientSecret: string,
-    type: string,
+    type: ApplicationType,
     name: string,
     websiteUrl: string,
     createdAt: number,

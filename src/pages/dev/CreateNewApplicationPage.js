@@ -1,21 +1,18 @@
 // @flow
+import type {OauthAppResponse} from 'services/api/oauth';
+import type { ApplicationType } from 'components/dev/apps';
 import React, { Component } from 'react';
-
 import { FormModel } from 'components/ui/form';
-
 import ApplicationForm from 'components/dev/apps/applicationForm/ApplicationForm';
-
 import oauth from 'services/api/oauth';
 import { browserHistory } from 'services/history';
-
-import type {OauthAppResponse} from 'services/api/oauth';
 
 const app: OauthAppResponse = {
     clientId: '',
     clientSecret: '',
     countUsers: 0,
     createdAt: 0,
-    type: '',
+    type: 'application',
     name: '',
     description: '',
     websiteUrl: '',
@@ -24,15 +21,13 @@ const app: OauthAppResponse = {
 };
 
 export default class CreateNewApplicationPage extends Component<{}, {
-    type: ?string,
+    type: ?ApplicationType,
 }> {
-    static displayName = 'CreateNewApplicationPage';
-
     state = {
         type: null,
     };
 
-    form = new FormModel();
+    form: FormModel = new FormModel();
 
     render() {
         return (
@@ -50,6 +45,7 @@ export default class CreateNewApplicationPage extends Component<{}, {
     onSubmit = async () => {
         const { form } = this;
         const { type } = this.state;
+
         if (!type) {
             throw new Error('Form was submitted without specified type');
         }
@@ -61,7 +57,7 @@ export default class CreateNewApplicationPage extends Component<{}, {
         this.goToMainPage(result.data.clientId);
     };
 
-    setType = (type: string) => {
+    setType = (type: ApplicationType) => {
         this.setState({
             type,
         });

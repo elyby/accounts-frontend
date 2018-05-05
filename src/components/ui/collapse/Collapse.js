@@ -1,12 +1,10 @@
 // @flow
+import type { Node } from 'react';
 import React, { Component } from 'react';
 import { Motion, spring } from 'react-motion';
-
 import MeasureHeight from 'components/MeasureHeight';
 
 import styles from './collapse.scss';
-
-import type { Node } from 'react';
 
 type Props = {
     isOpened?: bool,

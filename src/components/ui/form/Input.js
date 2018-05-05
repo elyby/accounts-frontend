@@ -112,22 +112,26 @@ export default class Input extends FormInputComponent<{
     }
 
     focus() {
-        if (!this.el) {
+        const el = this.el;
+
+        if (!el) {
             return;
         }
 
-        this.el.focus();
-        setTimeout(this.el.focus.bind(this.el), 10);
+        el.focus();
+        setTimeout(el.focus.bind(el), 10);
     }
 
     onCopy = async () => {
-        if (!this.getValue()) {
+        const value = this.getValue();
+
+        if (!value) {
             return;
         }
 
         try {
             clearTimeout(copiedStateTimeout);
-            await copy(this.getValue());
+            await copy(value);
             this.setState({wasCopied: true});
             copiedStateTimeout = setTimeout(() => this.setState({wasCopied: false}), 2000);
         } catch (err) {

@@ -74,11 +74,17 @@ export default class TextArea extends FormInputComponent<{
     }
 
     getValue() {
-        return this.el.value;
+        return this.el && this.el.value;
     }
 
     focus() {
-        this.el.focus();
-        setTimeout(this.el.focus.bind(this.el), 10);
+        const { el } = this;
+
+        if (!el) {
+            return;
+        }
+
+        el.focus();
+        setTimeout(el.focus.bind(el), 10);
     }
 }

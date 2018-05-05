@@ -15,12 +15,16 @@ export default class FormComponent<P, S = void> extends Component<P, S> {
      *
      * @return {string}
      */
-    formatMessage(message: string | MessageDescriptor) {
-        if (message && message.id && this.context && this.context.intl) {
-            message = this.context.intl.formatMessage(message);
+    formatMessage(message: string | MessageDescriptor): string {
+        if (message && message.id) {
+            if (this.context && this.context.intl) {
+                message = this.context.intl.formatMessage(message);
+            } else {
+                return '';
+            }
         }
 
-        return message;
+        return ((message: any): string);
     }
 
     /**
