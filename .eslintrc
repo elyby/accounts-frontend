@@ -78,7 +78,7 @@
         "no-self-compare": "error",
         "no-sequences": "error",
         "no-throw-literal": "error",
-        "no-unused-expressions": ["warn", {"allowShortCircuit": true, "allowTernary": true}],
+        "flowtype/no-unused-expressions": ["warn", {"allowShortCircuit": true, "allowTernary": true}],
         "no-useless-call": "warn",
         "no-useless-concat": "warn",
         "no-void": "error",
