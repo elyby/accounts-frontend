@@ -1,24 +1,19 @@
 // @flow
+import type { Color, Skin } from 'components/ui';
+import type { MessageDescriptor } from 'react-intl';
 import React from 'react';
-
 import classNames from 'classnames';
-
 import { SKIN_DARK, COLOR_GREEN } from 'components/ui';
 import { omit } from 'functions';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-import type { Color, Skin } from 'components/ui';
-import type { MessageDescriptor } from 'react-intl';
-
 export default class Checkbox extends FormInputComponent<{
     color: Color,
     skin: Skin,
     label: string | MessageDescriptor,
 }> {
-    static displayName = 'Checkbox';
-
     static defaultProps = {
         color: COLOR_GREEN,
         skin: SKIN_DARK,

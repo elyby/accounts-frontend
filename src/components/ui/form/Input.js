@@ -1,8 +1,8 @@
 // @flow
+import type { Skin, Color } from 'components/ui';
+import type { MessageDescriptor } from 'react-intl';
 import React from 'react';
-
 import classNames from 'classnames';
-
 import { uniqueId, omit } from 'functions';
 import copy from 'services/copy';
 import icons from 'components/ui/icons.scss';
@@ -11,10 +11,7 @@ import { SKIN_DARK, COLOR_GREEN } from 'components/ui';
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-import type { Skin, Color } from 'components/ui';
-import type { MessageDescriptor } from 'react-intl';
-
-let copiedStateTimeout;
+let copiedStateTimeout: ?TimeoutID;
 
 export default class Input extends FormInputComponent<{
     skin: Skin,
@@ -29,8 +26,6 @@ export default class Input extends FormInputComponent<{
 }, {
     wasCopied: bool,
 }> {
-    static displayName = 'Input';
-
     static defaultProps = {
         color: COLOR_GREEN,
         skin: SKIN_DARK,
@@ -69,6 +64,7 @@ export default class Input extends FormInputComponent<{
         props.placeholder = this.formatMessage(props.placeholder);
 
         let baseClass = styles.formRow;
+
         if (icon) {
             baseClass = styles.formIconRow;
             icon = (

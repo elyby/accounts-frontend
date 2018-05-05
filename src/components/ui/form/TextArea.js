@@ -1,25 +1,22 @@
 // @flow
+import type { Skin, Color } from 'components/ui';
+import type { MessageDescriptor } from 'react-intl';
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-
 import classNames from 'classnames';
-
 import { uniqueId, omit } from 'functions';
 import { SKIN_DARK, COLOR_GREEN } from 'components/ui';
 
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-import type { Skin, Color } from 'components/ui';
-import type { MessageDescriptor } from 'react-intl';
-
 type TextareaAutosizeProps = {
     onHeightChange?: (number, TextareaAutosizeProps) => void,
     useCacheForDOMMeasurements?: bool,
     minRows?: number,
     maxRows?: number,
-    inputRef?: (HTMLTextAreaElement) => void,
-} | HTMLTextAreaElement;
+    inputRef?: (?HTMLTextAreaElement) => void,
+};
 
 export default class TextArea extends FormInputComponent<{
     placeholder?: string | MessageDescriptor,
@@ -27,9 +24,7 @@ export default class TextArea extends FormInputComponent<{
     error?: string,
     skin: Skin,
     color: Color,
-} | TextareaAutosizeProps> {
-    static displayName = 'TextArea';
-
+} & TextareaAutosizeProps> {
     static defaultProps = {
         color: COLOR_GREEN,
         skin: SKIN_DARK,

@@ -33,6 +33,7 @@ export default function storeFactory() {
     const store = createStore(reducers, {}, enhancer);
 
     // Hot reload reducers
+    // $FlowFixMe
     if (module.hot && typeof module.hot.accept === 'function') {
         module.hot.accept('reducers', () =>
             store.replaceReducer(require('reducers').default)

@@ -1,27 +1,27 @@
 // @flow
+import type { Node } from 'react';
+import type { Location } from 'react-router';
+import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { create as createPopup } from 'components/ui/popup/actions';
+import ContactForm from 'components/contact/ContactForm';
+import { LinkButton } from 'components/ui/form';
+import { COLOR_GREEN, COLOR_BLUE } from 'components/ui';
+import { restoreScroll } from 'components/ui/scroll/scroll';
 
 import styles from './applicationsIndex.scss';
 import messages from './ApplicationsIndex.intl.json';
 import cubeIcon from './icons/cube.svg';
 import loadingCubeIcon from './icons/loading-cube.svg';
 import toolsIcon from './icons/tools.svg';
-
 import ApplicationItem from './ApplicationItem';
 
-import { LinkButton } from 'components/ui/form';
-import { COLOR_GREEN, COLOR_BLUE } from 'components/ui';
-import { restoreScroll } from 'components/ui/scroll/scroll';
-
-import type { Node } from 'react';
-import type { OauthAppResponse } from 'services/api/oauth';
-
 type Props = {
-    location: {
-        hash: string,
-    },
+    location: Location,
     displayForGuest: bool,
     applications: Array<OauthAppResponse>,
     isLoading: bool,
@@ -39,12 +39,14 @@ class ApplicationsIndex extends Component<Props, State> {
         expandedApp: null,
     };
 
-    appsRefs = {};
+    appsRefs: {[key: string]: ?HTMLDivElement} = {};
 
     componentDidUpdate(prevProps: Props) {
         const { applications, isLoading, location } = this.props;
+
         if (isLoading !== prevProps.isLoading && applications.length) {
             const hash = location.hash.substr(1);
+
             if (hash !== '' && applications.some((app) => app.clientId === hash)) {
                 requestAnimationFrame(() => this.onTileClick(hash));
             }
@@ -56,6 +58,7 @@ class ApplicationsIndex extends Component<Props, State> {
         const { expandedApp } = this.state;
 
         let content: Node;
+
         if (displayForGuest) {
             content = (
                 <div className={styles.emptyState}>
@@ -174,6 +177,7 @@ class ApplicationsIndex extends Component<Props, State> {
 
     onTileClick = (clientId: string) => {
         const expandedApp = this.state.expandedApp === clientId ? null : clientId;
+
         this.setState({expandedApp}, () => {
             if (expandedApp !== null) {
                 // TODO: @SleepWalker: мб у тебя есть идея, как это сделать более правильно и менее дёргано?
@@ -184,14 +188,10 @@ class ApplicationsIndex extends Component<Props, State> {
 
     onContact = (event) => {
         event.preventDefault();
+
         this.props.createContactPopup();
     };
 }
-
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { create as createPopup } from 'components/ui/popup/actions';
-import ContactForm from 'components/contact/ContactForm';
 
 export default withRouter(connect(null, {
     createContactPopup: () => createPopup(ContactForm),
