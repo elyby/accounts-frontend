@@ -167,6 +167,7 @@ describe('ContactForm', () => {
 
         it('should call send with required data', () => {
             feedback.send.returns(Promise.resolve());
+
             component.onSubmit();
 
             expect(feedback.send, 'to have a call satisfying', [

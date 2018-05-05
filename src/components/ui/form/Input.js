@@ -11,7 +11,7 @@ import { SKIN_DARK, COLOR_GREEN } from 'components/ui';
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-let copiedStateTimeout: ?TimeoutID;
+let copiedStateTimeout: TimeoutID;
 
 export default class Input extends FormInputComponent<{
     skin: Skin,
@@ -108,7 +108,7 @@ export default class Input extends FormInputComponent<{
     }
 
     getValue() {
-        return this.el || this.el.value;
+        return this.el && this.el.value;
     }
 
     focus() {
@@ -121,6 +121,10 @@ export default class Input extends FormInputComponent<{
     }
 
     onCopy = async () => {
+        if (!this.getValue()) {
+            return;
+        }
+
         try {
             clearTimeout(copiedStateTimeout);
             await copy(this.getValue());
