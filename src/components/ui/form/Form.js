@@ -38,10 +38,14 @@ export default class Form extends Component<Props, State> {
 
     formEl: ?HTMLFormElement;
 
-    componentWillMount() {
+    mounted = false;
+
+    componentDidMount() {
         if (this.props.form) {
             this.props.form.addLoadingListener(this.onLoading);
         }
+
+        this.mounted = true;
     }
 
     componentWillReceiveProps(nextProps: Props) {
@@ -73,6 +77,8 @@ export default class Form extends Component<Props, State> {
         if (this.props.form) {
             this.props.form.removeLoadingListener(this.onLoading);
         }
+
+        this.mounted = false;
     }
 
     render() {
@@ -119,7 +125,9 @@ export default class Form extends Component<Props, State> {
 
                 result.catch((errors: {[key: string]: string}) => {
                     this.setErrors(errors);
-                }).finally(() => this.setState({isLoading: false}));
+                }).finally(() =>
+                    this.mounted && this.setState({isLoading: false})
+                );
             }
         } else {
             const invalidEls = form.querySelectorAll(':invalid');
