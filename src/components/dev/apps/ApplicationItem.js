@@ -1,19 +1,16 @@
 // @flow
+import type { Node } from 'react';
+import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
-
 import classNames from 'classnames';
-
 import { SKIN_LIGHT, COLOR_BLACK, COLOR_RED } from 'components/ui';
 import { Input, Button } from 'components/ui/form';
 import Collapse from 'components/ui/collapse';
 
 import styles from './applicationsIndex.scss';
 import messages from './ApplicationsIndex.intl.json';
-
-import type { Node } from 'react';
-import type { OauthAppResponse } from 'services/api/oauth';
 
 const ACTION_REVOKE_TOKENS = 'revoke-tokens';
 const ACTION_RESET_SECRET = 'reset-secret';
@@ -41,7 +38,7 @@ export default class ApplicationItem extends Component<{
         const { selectedAction, isActionPerforming } = this.state;
 
         let actionContent: Node;
-        // eslint-disable-next-line
+
         switch (selectedAction) {
             case ACTION_REVOKE_TOKENS:
             case ACTION_RESET_SECRET:
@@ -111,9 +108,10 @@ export default class ApplicationItem extends Component<{
                     </div>
                 );
                 break;
+            default:
+                actionContent = null;
+                break;
         }
-
-        // TODO: @SleepWalker: нужно сделать так, чтобы форматирование числа пользователей шло через пробел
 
         return (
             <div className={classNames(styles.appItemContainer, {

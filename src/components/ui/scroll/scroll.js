@@ -107,10 +107,13 @@ function normalizeScrollPosition(y: number): number {
  */
 export function restoreScroll(targetEl: ?HTMLElement = null) {
     const { hash } = window.location;
+
     setTimeout(() => {
         isFirstScroll = false;
+
         if (targetEl === null) {
             const id = hash.substr(1);
+
             if (!id) {
                 return;
             }
@@ -119,12 +122,14 @@ export function restoreScroll(targetEl: ?HTMLElement = null) {
         }
 
         const viewPort = document.body;
+
         if (!viewPort) {
             console.log('Can not find viewPort element'); // eslint-disable-line
             return;
         }
 
         let y = 0;
+
         if (targetEl) {
             const { top } = targetEl.getBoundingClientRect();
             y = getScrollTop() + top - SCROLL_ANCHOR_OFFSET;
