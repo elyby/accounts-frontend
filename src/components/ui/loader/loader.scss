@@ -12,11 +12,18 @@
 
     transition: 0.4s ease;
 
+    &.is-first-launch {
+        // if loader is shown for the first time, we will
+        // remove opacity and hide the entire site contents
+        background: #f2efeb;
+    }
+
     &.is-active {
         opacity: 1;
         visibility: visible;
     }
 }
+
 
 .loader {
     position: absolute;
