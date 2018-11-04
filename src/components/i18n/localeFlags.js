@@ -8,6 +8,7 @@ const localeToCountryCode = {
     uk: 'ua',
     vi: 'vn',
     sl: 'si',
+    sr: 'rs',
     zh: 'cn',
 };
 const SUPPORTED_LANGUAGES: Array<string> = Object.keys(supportedLocales);

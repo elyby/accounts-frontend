@@ -17,7 +17,7 @@
         "code": "fr",
         "name": "Français",
         "englishName": "French",
-        "progress": 84.8,
+        "progress": 95.8,
         "isReleased": true
     },
     "id": {
@@ -31,14 +31,14 @@
         "code": "lt",
         "name": "Lietuvių",
         "englishName": "Lithuanian",
-        "progress": 92,
+        "progress": 97,
         "isReleased": false
     },
     "pl": {
         "code": "pl",
         "name": "Polski",
         "englishName": "Polish",
-        "progress": 88.6,
+        "progress": 100,
         "isReleased": false
     },
     "pt": {
@@ -67,6 +67,13 @@
         "name": "Slovenščina",
         "englishName": "Slovenian",
         "progress": 81,
+        "isReleased": false
+    },
+    "sr": {
+        "code": "sr",
+        "name": "Српски",
+        "englishName": "Serbian",
+        "progress": 100,
         "isReleased": false
     },
     "uk": {
