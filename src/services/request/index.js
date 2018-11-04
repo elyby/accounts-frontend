@@ -2,6 +2,7 @@
 export { default } from './request';
 export type { Resp } from './request';
 export { default as InternalServerError } from './InternalServerError';
+export { default as RequestAbortedError } from './RequestAbortedError';
 
 /**
  * Usage: Query<'requeired'|'keys'|'names'>

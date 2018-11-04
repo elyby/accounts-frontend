@@ -33,8 +33,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
     );
 
     beforeEach(() =>
-        localStorage.setItem('redux-storage', JSON.stringify(multiAccount))
-    );
+        localStorage.setItem('redux-storage', JSON.stringify(multiAccount)));
 
     it('should ask for password', () => {
         cy.visit('/');
@@ -52,8 +51,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.url().should('include', '/password');
 
-        cy
-            .get('[data-e2e-toolbar] a')
+        cy.get('[data-e2e-toolbar] a')
             .contains('Ely.by')
             .click();
 
@@ -70,13 +68,11 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.url().should('include', '/choose-account');
 
-        cy
-            .get('[data-e2e-content]')
+        cy.get('[data-e2e-content]')
             .contains(account2.email)
             .should('not.exist');
 
-        cy
-            .get('[data-e2e-content]')
+        cy.get('[data-e2e-content]')
             .contains(account1.username)
             .click();
 
@@ -85,14 +81,9 @@ describe('when user\'s token and refreshToken are invalid', () => {
     });
 
     it('it should redirect to login, when one account and clicking back', () => {
-        cy
-            .url()
-            .should(() =>
-                localStorage.setItem(
-                    'redux-storage',
-                    JSON.stringify(singleAccount)
-                )
-            );
+        cy.url().should(() =>
+            localStorage.setItem('redux-storage', JSON.stringify(singleAccount))
+        );
         cy.visit('/');
 
         cy.url().should('include', '/password');
@@ -107,30 +98,37 @@ describe('when user\'s token and refreshToken are invalid', () => {
     it('should allow logout', () => {
         cy.visit('/');
 
-        cy
-            .get('[data-e2e-toolbar]')
+        cy.get('@fetch', { timeout: 15000 }).should(
+            'be.calledWith',
+            '/api/accounts/current'
+        );
+
+        cy.get('[data-e2e-toolbar]')
             .contains(account2.username)
             .click();
-        cy
-            .get('[data-e2e-toolbar]')
+        cy.get('[data-e2e-toolbar]')
             .contains('Log out')
             .click();
 
-        cy
-            .get('@fetch', { timeout: 15000 })
-            .should('be.calledWith', '/api/authentication/logout');
-        cy
-            .get('[data-e2e-toolbar]')
+        cy.get('@fetch', { timeout: 15000 }).should(
+            'be.calledWith',
+            '/api/authentication/logout'
+        );
+        cy.get('[data-e2e-toolbar]')
             .contains(account2.email)
             .should('not.exist');
-        cy
-            .get('[data-e2e-toolbar]')
+        cy.get('[data-e2e-toolbar]')
             .contains(account2.username)
             .should('not.exist');
     });
 
     it('should allow enter new login from choose account', () => {
         cy.visit('/');
+
+        cy.get('@fetch', { timeout: 15000 }).should(
+            'be.calledWith',
+            '/api/accounts/current'
+        );
 
         cy.url().should('include', '/password');
 
@@ -169,22 +167,19 @@ describe('when user\'s token and refreshToken are invalid', () => {
     });
 
     it('should ask for password if selected account with bad token', () => {
-        cy
-            .url()
-            .should(() =>
-                localStorage.setItem(
-                    'redux-storage',
-                    JSON.stringify(multiAccountWithBadTokens)
-                )
-            );
+        cy.url().should(() =>
+            localStorage.setItem(
+                'redux-storage',
+                JSON.stringify(multiAccountWithBadTokens)
+            )
+        );
         cy.visit('/');
 
         cy.get('[data-e2e-go-back]').click();
 
         cy.url().should('include', '/choose-account');
 
-        cy
-            .get('[data-e2e-content]')
+        cy.get('[data-e2e-content]')
             .contains(account1.username)
             .click();
 
@@ -213,7 +208,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
      *
      * @see https://trello.com/c/iINbZ2l2
      */
-    it('should allow enter register page', () => {
+    it('should allow enter register page during password request for other account with invalid token', () => {
         cy.visit('/');
 
         cy.url().should('contain', '/password');
@@ -222,8 +217,6 @@ describe('when user\'s token and refreshToken are invalid', () => {
         cy.get('[name=password]').should('not.exist'); // wait till panel transition end
         cy.contains('[type=submit]', 'Log into another account').click();
         cy.contains('a', 'Create new account').click();
-
-        cy.get('@fetch').should('be.calledWith', '/api/options');
 
         cy.url().should('contain', '/register');
     });
@@ -241,10 +234,8 @@ describe('when user\'s token and refreshToken are invalid', () => {
      *
      * @see https://trello.com/c/iINbZ2l2
      */
-    it('should allow enter register page', () => {
+    it('should allow enter register page, when current account has invalid token', () => {
         cy.visit('/register');
-
-        cy.get('@fetch').should('be.calledWith', '/api/options');
 
         cy.url().should('contain', '/register');
     });
@@ -260,8 +251,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.url({ timeout: 15000 }).should('contain', '/oauth/choose-account');
 
-        cy
-            .get('[data-e2e-content]')
+        cy.get('[data-e2e-content]')
             .contains(account2.username)
             .click();
 

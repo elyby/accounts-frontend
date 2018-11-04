@@ -1,11 +1,14 @@
 // @flow
-function InternalServerError(error: Error | string | Object, resp?: Response | Object) {
+function InternalServerError(
+    error: Error | string | Object,
+    resp?: Response | Object
+) {
     error = error || {};
 
     this.name = 'InternalServerError';
     this.message = 'InternalServerError';
     this.error = error;
-    this.stack = (new Error()).stack;
+    this.stack = new Error().stack;
 
     if (resp) {
         this.originalResponse = resp;

@@ -1,6 +1,7 @@
 // @flow
 import PromiseMiddlewareLayer from './PromiseMiddlewareLayer';
 import InternalServerError from './InternalServerError';
+import RequestAbortedError from './RequestAbortedError';
 
 const middlewareLayer = new PromiseMiddlewareLayer();
 
@@ -17,10 +18,10 @@ type Middleware = {
 const buildOptions = (method: string, data?: Object, options: Object) => ({
     method,
     headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
     },
     body: buildQuery(data),
-    ...options,
+    ...options
 });
 
 export default {
@@ -31,7 +32,11 @@ export default {
      *
      * @return {Promise}
      */
-    post<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
+    post<T>(
+        url: string,
+        data?: Object,
+        options: Object = {}
+    ): Promise<Resp<T>> {
         return doFetch(url, buildOptions('POST', data, options));
     },
 
@@ -55,7 +60,11 @@ export default {
      *
      * @return {Promise}
      */
-    delete<T>(url: string, data?: Object, options: Object = {}): Promise<Resp<T>> {
+    delete<T>(
+        url: string,
+        data?: Object,
+        options: Object = {}
+    ): Promise<Resp<T>> {
         return doFetch(url, buildOptions('DELETE', data, options));
     },
 
@@ -93,36 +102,40 @@ export default {
      */
     addMiddleware(middleware: Middleware) {
         middlewareLayer.add(middleware);
-    },
+    }
 };
 
-const checkStatus = (resp: Response) => resp.status >= 200 && resp.status < 300
-    ? Promise.resolve(resp)
-    : Promise.reject(resp);
-const toJSON = (resp = {}) => {
-    if (!resp.json) {
-        // e.g. 'TypeError: Failed to fetch' due to CORS
-        throw new InternalServerError(resp);
+const checkStatus = (resp: Response) =>
+    resp.status >= 200 && resp.status < 300
+        ? Promise.resolve(resp)
+        : Promise.reject(resp);
+const toJSON = (resp: Response) => {
+    if (!resp.json || resp.status === 0) {
+        // e.g. 'TypeError: Failed to fetch' due to CORS or request was aborted
+        throw new RequestAbortedError(resp);
     }
 
-    return resp.json().then((json) => {
-        json.originalResponse = resp;
+    return resp.json().then(
+        (json) => {
+            json.originalResponse = resp;
 
-        return json;
-    }, (error) => Promise.reject(
-        new InternalServerError(error, resp)
-    ));
+            return json;
+        },
+        (error) => Promise.reject(new InternalServerError(error, resp))
+    );
 };
-const rejectWithJSON = (resp) => toJSON(resp).then((resp) => {
-    if (resp.originalResponse.status >= 500) {
-        throw new InternalServerError(resp, resp.originalResponse);
-    }
+const rejectWithJSON = (resp: Response) =>
+    toJSON(resp).then((resp) => {
+        if (resp.originalResponse.status >= 500) {
+            throw new InternalServerError(resp, resp.originalResponse);
+        }
 
-    throw resp;
-});
-const handleResponseSuccess = (resp) => resp.success || typeof resp.success === 'undefined'
-    ? Promise.resolve(resp)
-    : Promise.reject(resp);
+        throw resp;
+    });
+const handleResponseSuccess = (resp) =>
+    resp.success || typeof resp.success === 'undefined'
+        ? Promise.resolve(resp)
+        : Promise.reject(resp);
 
 async function doFetch(url, options = {}) {
     // NOTE: we are wrapping fetch, because it is returning
@@ -131,14 +144,21 @@ async function doFetch(url, options = {}) {
     options.headers = options.headers || {};
     options.headers.Accept = 'application/json';
 
-    return middlewareLayer.run('before', {url, options})
-        .then(({url, options}) =>
+    return middlewareLayer
+        .run('before', { url, options })
+        .then(({ url, options }) =>
             fetch(url, options)
                 .then(checkStatus)
                 .then(toJSON, rejectWithJSON)
                 .then(handleResponseSuccess)
-                .then((resp) => middlewareLayer.run('then', resp, {url, options}))
-                .catch((resp) => middlewareLayer.run('catch', resp, {url, options}, () => doFetch(url, options)))
+                .then((resp) =>
+                    middlewareLayer.run('then', resp, { url, options })
+                )
+                .catch((resp) =>
+                    middlewareLayer.run('catch', resp, { url, options }, () =>
+                        doFetch(url, options)
+                    )
+                )
         );
 }
 
@@ -174,11 +194,10 @@ function convertQueryValue(value) {
  */
 function buildQuery(data: Object = {}): string {
     return Object.keys(data)
-        .map(
-            (keyName) =>
-                [keyName, convertQueryValue(data[keyName])]
-                    .map(encodeURIComponent)
-                    .join('=')
+        .map((keyName) =>
+            [keyName, convertQueryValue(data[keyName])]
+                .map(encodeURIComponent)
+                .join('=')
         )
         .join('&');
 }
