@@ -17,11 +17,12 @@ import ApplicationsList from './list';
 
 type Props = {
     clientId?: ?string,
+    resetClientId: () => void, // notify parent to remove clientId from current location.href
     displayForGuest: bool,
     applications: Array<OauthAppResponse>,
     isLoading: bool,
     deleteApp: string => Promise<any>,
-    resetApp: (string, bool) => Promise<any>
+    resetApp: (string, bool) => Promise<any>,
 };
 
 export default class ApplicationsIndex extends Component<Props> {
@@ -81,7 +82,8 @@ export default class ApplicationsIndex extends Component<Props> {
             isLoading,
             resetApp,
             deleteApp,
-            clientId
+            clientId,
+            resetClientId
         } = this.props;
 
         if (displayForGuest) {
@@ -95,6 +97,7 @@ export default class ApplicationsIndex extends Component<Props> {
                     resetApp={resetApp}
                     deleteApp={deleteApp}
                     clientId={clientId}
+                    resetClientId={resetClientId}
                 />
             );
         }

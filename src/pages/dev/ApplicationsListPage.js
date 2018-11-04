@@ -1,24 +1,32 @@
 // @flow
+import type { Location, RouterHistory } from 'react-router';
 import type { User } from 'components/user';
 import type { OauthAppResponse } from 'services/api/oauth';
-import type { Location } from 'react-router';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchAvailableApps, resetApp, deleteApp } from 'components/dev/apps/actions';
+import {
+    fetchAvailableApps,
+    resetApp,
+    deleteApp
+} from 'components/dev/apps/actions';
 import ApplicationsIndex from 'components/dev/apps/ApplicationsIndex';
 
-class ApplicationsListPage extends Component<{
-    location: Location,
-    user: User,
-    apps: Array<OauthAppResponse>,
-    fetchAvailableApps: () => Promise<void>,
-    deleteApp: (string) => Promise<void>,
-    resetApp: (string, bool) => Promise<void>,
-}, {
-    isLoading: bool,
-}> {
+class ApplicationsListPage extends Component<
+    {
+        location: Location,
+        history: RouterHistory,
+        user: User,
+        apps: Array<OauthAppResponse>,
+        fetchAvailableApps: () => Promise<void>,
+        deleteApp: string => Promise<void>,
+        resetApp: (string, bool) => Promise<void>
+    },
+    {
+        isLoading: bool
+    }
+> {
     state = {
-        isLoading: false,
+        isLoading: false
     };
 
     componentDidMount() {
@@ -38,22 +46,34 @@ class ApplicationsListPage extends Component<{
                 deleteApp={deleteApp}
                 resetApp={resetApp}
                 clientId={clientId}
+                resetClientId={this.resetClientId}
             />
         );
     }
 
     loadApplicationsList = async () => {
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
         await this.props.fetchAvailableApps();
-        this.setState({isLoading: false});
+        this.setState({ isLoading: false });
+    };
+
+    resetClientId = () => {
+        const { history, location } = this.props;
+
+        if (location.hash) {
+            history.push({ ...location, hash: '' });
+        }
     };
 }
 
-export default connect((state) => ({
-    user: state.user,
-    apps: state.apps.available,
-}), {
-    fetchAvailableApps,
-    resetApp,
-    deleteApp,
-})(ApplicationsListPage);
+export default connect(
+    (state) => ({
+        user: state.user,
+        apps: state.apps.available
+    }),
+    {
+        fetchAvailableApps,
+        resetApp,
+        deleteApp
+    }
+)(ApplicationsListPage);

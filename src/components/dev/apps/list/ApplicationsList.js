@@ -14,6 +14,7 @@ type Props = {
     applications: Array<OauthAppResponse>,
     deleteApp: string => Promise<any>,
     resetApp: (string, bool) => Promise<any>,
+    resetClientId: () => void,
     clientId: ?string
 };
 
@@ -89,8 +90,13 @@ export default class ApplicationsList extends React.Component<Props, State> {
     }
 
     onTileClick = (clientId: string) => {
+        const { clientId: initialClientId, resetClientId } = this.props;
         const expandedApp
             = this.state.expandedApp === clientId ? null : clientId;
+
+        if (initialClientId !== clientId) {
+            resetClientId();
+        }
 
         this.setState({ expandedApp }, () => {
             if (expandedApp !== null) {
