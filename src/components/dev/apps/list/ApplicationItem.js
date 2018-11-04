@@ -41,18 +41,22 @@ export default class ApplicationItem extends Component<
     {
         selectedAction: ?string,
         isActionPerforming: bool,
-        detailsHeight: number
+        detailsHeight: number,
+        translateY: number
     }
 > {
     state = {
         selectedAction: null,
         isActionPerforming: false,
+        translateY: 0,
         detailsHeight: 0
     };
 
+    actionContainer: ?HTMLDivElement;
+
     render() {
         const { application: app, expand } = this.props;
-        const { selectedAction } = this.state;
+        const { selectedAction, translateY } = this.state;
 
         return (
             <div
@@ -84,7 +88,10 @@ export default class ApplicationItem extends Component<
                 </div>
 
                 <Collapse isOpened={expand} onRest={this.onCollapseRest}>
-                    <div className={styles.appDetailsContainer}>
+                    <div
+                        className={styles.appDetailsContainer}
+                        style={{ transform: `translateY(-${translateY}px)` }}
+                    >
                         <div className={styles.appDetailsInfoField}>
                             <Link
                                 to={`/dev/applications/${app.clientId}`}
@@ -143,7 +150,14 @@ export default class ApplicationItem extends Component<
                             ))}
                         </div>
 
-                        {this.getActionContent()}
+                        <div
+                            className={styles.appActionContainer}
+                            ref={(el) => {
+                                this.actionContainer = el;
+                            }}
+                        >
+                            {this.getActionContent()}
+                        </div>
                     </div>
                 </Collapse>
             </div>
@@ -238,42 +252,63 @@ export default class ApplicationItem extends Component<
         }
     }
 
+    setActiveAction = (type: ?string) => {
+        const { actionContainer } = this;
+
+        if (!actionContainer) {
+            return;
+        }
+
+        this.setState(
+            {
+                selectedAction: type
+            },
+            () => {
+                const translateY = actionContainer.offsetHeight;
+
+                this.setState({ translateY });
+            }
+        );
+    };
+
     onTileToggle = () => {
         const { onTileClick, application } = this.props;
+
         onTileClick(application.clientId);
     };
 
     onCollapseRest = () => {
         if (!this.props.expand && this.state.selectedAction) {
-            this.setState({
-                selectedAction: null
-            });
+            this.setActiveAction(null);
         }
     };
 
     onActionButtonClick = (type: ?string) => () => {
-        this.setState({
-            selectedAction: type === this.state.selectedAction ? null : type
-        });
+        this.setActiveAction(type === this.state.selectedAction ? null : type);
     };
 
     onResetSubmit = (resetClientSecret: bool) => async () => {
         const { onResetSubmit, application } = this.props;
+
         this.setState({
             isActionPerforming: true
         });
+
         await onResetSubmit(application.clientId, resetClientSecret);
+
         this.setState({
-            isActionPerforming: false,
-            selectedAction: null
+            isActionPerforming: false
         });
+        this.setActiveAction(null);
     };
 
     onSubmitDelete = () => {
         const { onDeleteSubmit, application } = this.props;
+
         this.setState({
             isActionPerforming: true
         });
+
         onDeleteSubmit(application.clientId);
     };
 }
