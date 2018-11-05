@@ -178,12 +178,14 @@
     }
 }
 
+$appDetailsContainerRightLeftPadding: 30px;
+
 .appDetailsContainer {
     background: #F5F5F5;
     border-top: 1px solid #eee;
-    padding: 5px 30px;
+    padding: 5px $appDetailsContainerRightLeftPadding;
     position: relative;
-    transition: transform 0.2s ease-in;
+    transition: transform .3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .appDetailsInfoField {
@@ -231,13 +233,15 @@
 .appActionContainer {
     position: absolute;
     top: 100%;
+    left: 0;
+    padding: 0 $appDetailsContainerRightLeftPadding;
     background: #F5F5F5;
 }
 
 .appActionDescription {
     composes: appDetailsDescription;
 
-    margin-top: 20px;
+    margin-top: 6px;
 }
 
 .continueActionButtonWrapper {
