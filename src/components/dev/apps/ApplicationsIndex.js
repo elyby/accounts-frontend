@@ -1,5 +1,4 @@
 // @flow
-import type { Node } from 'react';
 import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
 import { FormattedMessage as Message } from 'react-intl';

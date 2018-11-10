@@ -95,7 +95,7 @@ export default class ApplicationsList extends React.Component<Props, State> {
         const expandedApp
             = this.state.expandedApp === clientId ? null : clientId;
 
-        if (initialClientId !== clientId) {
+        if (initialClientId) {
             resetClientId();
         }
 
