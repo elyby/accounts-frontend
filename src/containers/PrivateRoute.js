@@ -7,7 +7,7 @@ import type { ComponentType } from 'react';
 import type { Account } from 'components/accounts';
 
 const PrivateRoute = ({account, component: Component, ...rest}: {
-    component: ComponentType<*>,
+    component: ComponentType<any>,
     account: ?Account
 }) => (
     <Route {...rest} render={(props: {location: string}) => (

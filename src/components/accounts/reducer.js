@@ -4,19 +4,21 @@ export type Account = {
     username: string,
     email: string,
     token: string,
-    refreshToken: ?string,
+    refreshToken: ?string
 };
 
 export type State = {
     active: ?number,
-    available: Array<Account>,
+    available: Array<Account>
 };
 
-
-export type AddAction = { type: 'accounts:add', payload: Account};
-export type RemoveAction = { type: 'accounts:remove', payload: Account};
-export type ActivateAction = { type: 'accounts:activate', payload: Account};
-export type UpdateTokenAction = { type: 'accounts:updateToken', payload: string };
+export type AddAction = { type: 'accounts:add', payload: Account };
+export type RemoveAction = { type: 'accounts:remove', payload: Account };
+export type ActivateAction = { type: 'accounts:activate', payload: Account };
+export type UpdateTokenAction = {
+    type: 'accounts:updateToken',
+    payload: string
+};
 export type ResetAction = { type: 'accounts:reset' };
 
 type Action =
@@ -27,14 +29,14 @@ type Action =
     | ResetAction;
 
 export function getActiveAccount(state: { accounts: State }): ?Account {
-    const activeAccount = state.accounts.active;
-    // TODO: remove activeAccount.id, when will be sure, that magor part of users have migrated to new state structure
-    const accountId: number | void = typeof activeAccount === 'number' ? activeAccount : (activeAccount || {}).id;
+    const accountId = state.accounts.active;
 
     return state.accounts.available.find((account) => account.id === accountId);
 }
 
-export function getAvailableAccounts(state: { accounts: State }): Array<Account> {
+export function getAvailableAccounts(state: {
+    accounts: State
+}): Array<Account> {
     return state.accounts.available;
 }
 
@@ -47,8 +49,14 @@ export default function accounts(
 ): State {
     switch (action.type) {
         case 'accounts:add': {
-            if (!action.payload || !action.payload.id || !action.payload.token) {
-                throw new Error('Invalid or empty payload passed for accounts.add');
+            if (
+                !action.payload
+                || !action.payload.id
+                || !action.payload.token
+            ) {
+                throw new Error(
+                    'Invalid or empty payload passed for accounts.add'
+                );
             }
             const { payload } = action;
 
@@ -68,8 +76,14 @@ export default function accounts(
         }
 
         case 'accounts:activate': {
-            if (!action.payload || !action.payload.id || !action.payload.token) {
-                throw new Error('Invalid or empty payload passed for accounts.add');
+            if (
+                !action.payload
+                || !action.payload.id
+                || !action.payload.token
+            ) {
+                throw new Error(
+                    'Invalid or empty payload passed for accounts.add'
+                );
             }
 
             const { payload } = action;
@@ -77,10 +91,10 @@ export default function accounts(
             return {
                 available: state.available.map((account) => {
                     if (account.id === payload.id) {
-                        return {...payload};
+                        return { ...payload };
                     }
 
-                    return {...account};
+                    return { ...account };
                 }),
                 active: payload.id
             };
@@ -94,14 +108,18 @@ export default function accounts(
 
         case 'accounts:remove': {
             if (!action.payload || !action.payload.id) {
-                throw new Error('Invalid or empty payload passed for accounts.remove');
+                throw new Error(
+                    'Invalid or empty payload passed for accounts.remove'
+                );
             }
 
             const { payload } = action;
 
             return {
                 ...state,
-                available: state.available.filter((account) => account.id !== payload.id)
+                available: state.available.filter(
+                    (account) => account.id !== payload.id
+                )
             };
         }
 
@@ -118,12 +136,12 @@ export default function accounts(
                     if (account.id === state.active) {
                         return {
                             ...account,
-                            token: payload,
+                            token: payload
                         };
                     }
 
-                    return {...account};
-                }),
+                    return { ...account };
+                })
             };
         }
 

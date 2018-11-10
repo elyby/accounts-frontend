@@ -22,7 +22,7 @@ type Props = {
     applications: Array<OauthAppResponse>,
     isLoading: bool,
     deleteApp: string => Promise<any>,
-    resetApp: (string, bool) => Promise<any>,
+    resetApp: (string, bool) => Promise<any>
 };
 
 export default class ApplicationsIndex extends Component<Props> {
@@ -139,7 +139,7 @@ function Guest() {
 
 function NoApps() {
     return (
-        <div className={styles.emptyState}>
+        <div data-e2e="noApps" className={styles.emptyState}>
             <img src={cubeIcon} className={styles.emptyStateIcon} />
             <div className={styles.emptyStateText}>
                 <div>
@@ -152,6 +152,7 @@ function NoApps() {
 
             <LinkButton
                 to="/dev/applications/new"
+                data-e2e="newApp"
                 label={messages.addNew}
                 color={COLOR_GREEN}
                 className={styles.emptyStateActionButton}

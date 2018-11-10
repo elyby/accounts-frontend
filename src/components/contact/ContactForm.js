@@ -48,7 +48,7 @@ export class ContactForm extends Component {
         const {onClose} = this.props;
 
         return (
-            <div className={isSuccessfullySent ? styles.successState : styles.contactForm}>
+            <div data-e2e="feedbackPopup" className={isSuccessfullySent ? styles.successState : styles.contactForm}>
                 <div className={popupStyles.popup}>
                     <div className={popupStyles.header}>
                         <h2 className={popupStyles.headerTitle}>

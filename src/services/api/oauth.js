@@ -49,7 +49,7 @@ type FormPayloads = {
     minecraftServerIp?: string,
 };
 
-export default {
+const api = {
     validate(oauthData: OauthData) {
         return request.get(
             '/api/oauth2/v1/validate',
@@ -116,6 +116,13 @@ export default {
         return request.delete(`/api/v1/oauth2/${clientId}`);
     },
 };
+
+if (window.Cypress) {
+    window.oauthApi = api;
+}
+
+export default api;
+
 /**
  * @param {object} oauthData
  * @param {string} oauthData.clientId

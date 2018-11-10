@@ -63,6 +63,8 @@ export default class ApplicationItem extends Component<
                 className={classNames(styles.appItemContainer, {
                     [styles.appExpanded]: expand
                 })}
+                data-e2e="appItem"
+                data-e2e-app={app.clientId}
             >
                 <div className={styles.appItemTile} onClick={this.onTileToggle}>
                     <div className={styles.appTileTitle}>

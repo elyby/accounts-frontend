@@ -49,6 +49,7 @@ export default class ApplicationsList extends React.Component<Props, State> {
                     </div>
                     <LinkButton
                         to="/dev/applications/new"
+                        data-e2e="newApp"
                         label={messages.addNew}
                         color={COLOR_GREEN}
                         className={styles.appsListAddNewAppBtn}
