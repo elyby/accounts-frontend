@@ -68,7 +68,7 @@ describe('refreshTokenMiddleware', () => {
                 };
                 getState.returns({
                     accounts: {
-                        active: account,
+                        active: account.id,
                         available: [account]
                     },
                     auth: {
@@ -143,7 +143,7 @@ describe('refreshTokenMiddleware', () => {
                 };
                 getState.returns({
                     accounts: {
-                        active: account,
+                        active: account.id,
                         available: [account]
                     },
                     auth: {
