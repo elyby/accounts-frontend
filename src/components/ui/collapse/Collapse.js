@@ -34,12 +34,11 @@ export default class Collapse extends Component<Props, {
     }
 
     render() {
-        // TODO: @SleepWalker сейчас при первой отрисовке можно увидеть дёргание родительского блока. Надо пофиксить.
         const { isOpened, children, onRest } = this.props;
         const { height, wasInitialized } = this.state;
 
         return (
-            <div className={styles.overflow}>
+            <div className={styles.overflow} style={wasInitialized ? {} : { height: 0 }}>
                 <MeasureHeight
                     state={this.shouldMeasureHeight()}
                     onMeasure={this.onUpdateHeight}
@@ -56,7 +55,6 @@ export default class Collapse extends Component<Props, {
                                 style={{
                                     marginTop: top,
                                     visibility: wasInitialized ? 'inherit' : 'hidden',
-                                    // height: wasInitialized ? 'auto' : 0,
                                 }}
                             >
                                 {children}
