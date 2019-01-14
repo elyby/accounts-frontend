@@ -1,6 +1,7 @@
 // @flow
 import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { LinkButton } from 'components/ui/form';
@@ -85,11 +86,7 @@ export default class ApplicationsIndex extends Component<Props> {
             resetClientId
         } = this.props;
 
-        if (displayForGuest) {
-            return <Guest />;
-        } else if (isLoading) {
-            return <Loader />;
-        } else if (applications.length > 0) {
+        if (applications.length > 0) {
             return (
                 <ApplicationsList
                     applications={applications}
@@ -99,16 +96,42 @@ export default class ApplicationsIndex extends Component<Props> {
                     resetClientId={resetClientId}
                 />
             );
+        } else if (displayForGuest) {
+            return <Guest />;
         }
 
-        return <NoApps />;
+        return <Loader noApps={!isLoading} />;
     }
 }
 
-function Loader() {
+function Loader({ noApps }: { noApps: bool }) {
     return (
-        <div className={styles.emptyState}>
-            <img src={loadingCubeIcon} className={styles.loadingStateIcon} />
+        <div className={styles.emptyState} data-e2e={noApps ? 'noApps' : 'loading'}>
+            <img
+                src={noApps ? cubeIcon : loadingCubeIcon}
+                className={styles.emptyStateIcon}
+            />
+
+            <div className={classNames(styles.noAppsContainer, {
+                [styles.noAppsAnimating]: noApps
+            })}>
+                <div className={styles.emptyStateText}>
+                    <div>
+                        <Message {...messages.youDontHaveAnyApplication} />
+                    </div>
+                    <div>
+                        <Message {...messages.shallWeStart} />
+                    </div>
+                </div>
+
+                <LinkButton
+                    to="/dev/applications/new"
+                    data-e2e="newApp"
+                    label={messages.addNew}
+                    color={COLOR_GREEN}
+                    className={styles.emptyStateActionButton}
+                />
+            </div>
         </div>
     );
 }
@@ -130,30 +153,6 @@ function Guest() {
                 to="/login"
                 label={messages.authorization}
                 color={COLOR_BLUE}
-                className={styles.emptyStateActionButton}
-            />
-        </div>
-    );
-}
-
-function NoApps() {
-    return (
-        <div data-e2e="noApps" className={styles.emptyState}>
-            <img src={cubeIcon} className={styles.emptyStateIcon} />
-            <div className={styles.emptyStateText}>
-                <div>
-                    <Message {...messages.youDontHaveAnyApplication} />
-                </div>
-                <div>
-                    <Message {...messages.shallWeStart} />
-                </div>
-            </div>
-
-            <LinkButton
-                to="/dev/applications/new"
-                data-e2e="newApp"
-                label={messages.addNew}
-                color={COLOR_GREEN}
                 className={styles.emptyStateActionButton}
             />
         </div>
