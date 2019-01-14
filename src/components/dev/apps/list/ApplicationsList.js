@@ -86,16 +86,16 @@ export default class ApplicationsList extends React.Component<Props, State> {
             && expandedApp !== clientId
             && applications.some((app) => app.clientId === clientId)
         ) {
-            requestAnimationFrame(() => this.onTileClick(clientId));
+            requestAnimationFrame(() => this.onTileClick(clientId, {noReset: true}));
         }
     }
 
-    onTileClick = (clientId: string) => {
+    onTileClick = (clientId: string, { noReset = false }: { noReset?: bool } = {}) => {
         const { clientId: initialClientId, resetClientId } = this.props;
         const expandedApp
             = this.state.expandedApp === clientId ? null : clientId;
 
-        if (initialClientId) {
+        if (initialClientId && noReset !== true) {
             resetClientId();
         }
 
