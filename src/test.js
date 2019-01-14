@@ -1,7 +1,10 @@
 import 'polyfills';
-
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import expect from 'unexpected';
+
 expect.use(require('unexpected-sinon'));
+configure({ adapter: new Adapter() });
 
 if (!window.localStorage) {
     window.localStorage = {

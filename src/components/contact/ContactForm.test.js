@@ -148,9 +148,9 @@ describe('ContactForm', () => {
                 </IntlProvider>
             );
 
-            wrapper.find('[name="email"]').node.value = requestData.email;
-            wrapper.find('[name="subject"]').node.value = requestData.subject;
-            wrapper.find('[name="message"]').node.value = requestData.message;
+            wrapper.find('input[name="email"]').getDOMNode().value = requestData.email;
+            wrapper.find('input[name="subject"]').getDOMNode().value = requestData.subject;
+            wrapper.find('textarea[name="message"]').getDOMNode().value = requestData.message;
         });
 
         afterEach(() => {

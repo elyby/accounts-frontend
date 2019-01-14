@@ -14,7 +14,7 @@ describe('Input', () => {
             </IntlProvider>
         );
 
-        expect(wrapper.find('input[name="test"]').node.value, 'to equal', 'foo');
+        expect(wrapper.find('input[name="test"]').getDOMNode().value, 'to equal', 'foo');
         expect(component.getValue(), 'to equal', 'foo');
     });
 });

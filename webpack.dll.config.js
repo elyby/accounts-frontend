@@ -21,7 +21,6 @@ const webpackConfig = {
     entry: {
         vendor: vendor.concat([
             'core-js/library',
-            'react-addons-perf',
             'redux-devtools',
             'redux-devtools-dock-monitor',
             'redux-devtools-log-monitor',

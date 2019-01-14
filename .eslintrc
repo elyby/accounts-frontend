@@ -22,6 +22,12 @@
         "plugin:flowtype/recommended"
     ],
 
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+
     // @see: http://eslint.org/docs/rules/
     "rules": {
         // possible errors (including eslint:recommended)
