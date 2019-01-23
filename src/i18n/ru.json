@@ -120,7 +120,7 @@
     "components.dev.apps.authorization": "Авторизация",
     "components.dev.apps.cancel": "Отменить",
     "components.dev.apps.continue": "Продолжить",
-    "components.dev.apps.countUsers": "{count, plural, =0 {Нет пользователей} one {# пользователь} {# пользователя} other {# пользователей}}",
+    "components.dev.apps.countUsers": "{count, plural, =0 {Нет пользователей} one {# пользователь} few {# пользователя} other {# пользователей}}",
     "components.dev.apps.delete": "Удалить",
     "components.dev.apps.editDescription": "{icon} Изменить описание",
     "components.dev.apps.feedback": "обратную связь",
