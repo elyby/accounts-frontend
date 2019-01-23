@@ -96,7 +96,9 @@ export default class ApplicationsIndex extends Component<Props> {
                     resetClientId={resetClientId}
                 />
             );
-        } else if (displayForGuest) {
+        }
+
+        if (displayForGuest) {
             return <Guest />;
         }
 

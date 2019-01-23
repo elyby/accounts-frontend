@@ -11,37 +11,48 @@ import {
 } from 'components/dev/apps/actions';
 import ApplicationsIndex from 'components/dev/apps/ApplicationsIndex';
 
-class ApplicationsListPage extends Component<
-    {
-        location: Location,
-        history: RouterHistory,
-        user: User,
-        apps: Array<OauthAppResponse>,
-        fetchAvailableApps: () => Promise<void>,
-        deleteApp: string => Promise<void>,
-        resetApp: (string, bool) => Promise<void>
-    },
-    {
-        isLoading: bool
-    }
-> {
+interface Props {
+    location: Location;
+    history: RouterHistory;
+    user: User;
+    apps: Array<OauthAppResponse>;
+    fetchAvailableApps: () => Promise<void>;
+    deleteApp: string => Promise<void>;
+    resetApp: (string, bool) => Promise<void>;
+}
+
+interface State {
+    isLoading: bool;
+    forceUpdate: bool;
+}
+
+class ApplicationsListPage extends Component<Props, State> {
     state = {
-        isLoading: false
+        isLoading: false,
+        forceUpdate: false,
     };
 
     componentDidMount() {
         !this.props.user.isGuest && this.loadApplicationsList();
     }
 
+    componentDidUpdate({ user }) {
+        if (this.props.user !== user) {
+            // eslint-disable-next-line react/no-did-update-set-state
+            this.setState({ forceUpdate: true });
+            this.loadApplicationsList();
+        }
+    }
+
     render() {
         const { user, apps, resetApp, deleteApp, location } = this.props;
-        const { isLoading } = this.state;
+        const { isLoading, forceUpdate } = this.state;
         const clientId = location.hash.substr(1) || null;
 
         return (
             <ApplicationsIndex
                 displayForGuest={user.isGuest}
-                applications={apps}
+                applications={forceUpdate ? [] : apps}
                 isLoading={isLoading}
                 deleteApp={deleteApp}
                 resetApp={resetApp}
@@ -54,7 +65,10 @@ class ApplicationsListPage extends Component<
     loadApplicationsList = async () => {
         this.setState({ isLoading: true });
         await this.props.fetchAvailableApps();
-        this.setState({ isLoading: false });
+        this.setState({
+            isLoading: false,
+            forceUpdate: false,
+        });
     };
 
     resetClientId = () => {
@@ -66,14 +80,11 @@ class ApplicationsListPage extends Component<
     };
 }
 
-export default connect(
-    (state) => ({
-        user: state.user,
-        apps: state.apps.available
-    }),
-    {
-        fetchAvailableApps,
-        resetApp,
-        deleteApp
-    }
-)(ApplicationsListPage);
+export default connect((state) => ({
+    user: state.user,
+    apps: state.apps.available,
+}), {
+    fetchAvailableApps,
+    resetApp,
+    deleteApp,
+})(ApplicationsListPage);
