@@ -3,7 +3,7 @@
         "code": "be",
         "name": "Беларуская",
         "englishName": "Belarusian",
-        "progress": 100,
+        "progress": 84,
         "isReleased": true
     },
     "en": {
@@ -17,43 +17,36 @@
         "code": "fr",
         "name": "Français",
         "englishName": "French",
-        "progress": 95.8,
+        "progress": 80.5,
         "isReleased": true
     },
     "id": {
         "code": "id",
         "name": "Bahasa Indonesia",
         "englishName": "Indonesian",
-        "progress": 100,
+        "progress": 84,
         "isReleased": true
     },
     "lt": {
         "code": "lt",
         "name": "Lietuvių",
         "englishName": "Lithuanian",
-        "progress": 97,
+        "progress": 81.6,
         "isReleased": false
     },
     "pl": {
         "code": "pl",
         "name": "Polski",
         "englishName": "Polish",
-        "progress": 100,
+        "progress": 84,
         "isReleased": false
     },
     "pt": {
         "code": "pt",
         "name": "Português do Brasil",
         "englishName": "Portuguese, Brazilian",
-        "progress": 100,
+        "progress": 84,
         "isReleased": true
-    },
-    "ro": {
-        "code": "ro",
-        "name": "Română",
-        "englishName": "Romanian",
-        "progress": 81,
-        "isReleased": false
     },
     "ru": {
         "code": "ru",
@@ -62,39 +55,32 @@
         "progress": 100,
         "isReleased": true
     },
-    "sl": {
-        "code": "sl",
-        "name": "Slovenščina",
-        "englishName": "Slovenian",
-        "progress": 81,
-        "isReleased": false
-    },
     "sr": {
         "code": "sr",
         "name": "Српски",
         "englishName": "Serbian",
-        "progress": 100,
+        "progress": 84,
         "isReleased": false
     },
     "uk": {
         "code": "uk",
         "name": "Українська",
         "englishName": "Ukrainian",
-        "progress": 100,
+        "progress": 84,
         "isReleased": true
     },
     "vi": {
         "code": "vi",
         "name": "Tiếng Việt",
         "englishName": "Vietnamese",
-        "progress": 100,
+        "progress": 84,
         "isReleased": true
     },
     "zh": {
         "code": "zh",
         "name": "简体中文",
         "englishName": "Simplified Chinese",
-        "progress": 100,
+        "progress": 84,
         "isReleased": false
     }
 }
