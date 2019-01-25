@@ -1,7 +1,8 @@
 // @flow
+import type { UserResponse } from 'services/api/accounts';
 import logger from 'services/logger';
 import request, { InternalServerError } from 'services/request';
-import accounts from 'services/api/accounts';
+import { getInfo as getInfoEndpoint } from 'services/api/accounts';
 
 const authentication = {
     login({
@@ -70,35 +71,38 @@ const authentication = {
     /**
      * Resolves if token is valid
      *
-     * @param {object} options
-     * @param {string} options.token
-     * @param {string} options.refreshToken
+     * @param {string} token
+     * @param {string} refreshToken
      *
      * @return {Promise} - resolves with options.token or with a new token
      *                     if it was refreshed. As a side effect the response
      *                     will have a `user` field with current user data
+     *
      */
-    validateToken({token, refreshToken}: {
+    async validateToken(token: string, refreshToken: ?string): Promise<{
         token: string,
-        refreshToken: ?string
-    }) {
-        return new Promise((resolve) => {
-            if (typeof token !== 'string') {
-                throw new Error('token must be a string');
-            }
+        refreshToken: ?string,
+        user: UserResponse,
+    }> {
+        if (typeof token !== 'string') {
+            throw new Error('token must be a string');
+        }
 
-            resolve();
-        })
-            .then(() => accounts.current({token}))
-            .then((user) => ({token, refreshToken, user}))
-            .catch((resp) =>
-                this.handleTokenError(resp, refreshToken)
-                    // TODO: use recursion here
-                    .then(({token}) =>
-                        accounts.current({token})
-                            .then((user) => ({token, refreshToken, user}))
-                    )
-            );
+        // TODO: decode token to extract information about user id
+
+        let user: UserResponse;
+        try {
+            user = await getInfoEndpoint(0, { token });
+        } catch (resp) {
+            const { token } = await this.handleTokenError(resp, refreshToken);
+            user = await getInfoEndpoint(0, { token }); // TODO: replace with recursive call
+        }
+
+        return {
+            token,
+            refreshToken,
+            user,
+        };
     },
 
     handleTokenError(resp: Error | { message: string }, refreshToken: ?string): Promise<{

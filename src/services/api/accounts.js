@@ -1,7 +1,7 @@
 // @flow
 import request from 'services/request';
 
-type UserResponse = {
+export type UserResponse = {
     elyProfileLink: string,
     email: string,
     hasMojangUsernameCollision: bool,
@@ -16,6 +16,79 @@ type UserResponse = {
     uuid: string,
 };
 
+export function getInfo(id: number, options: { token?: ?string } = {}): Promise<UserResponse> {
+    return request.get(`/api/v1/accounts/${id}`, {}, {
+        token: options.token,
+    });
+}
+
+export function changePassword({
+    password = '',
+    newPassword = '',
+    newRePassword = '',
+    logoutAll = true,
+}: {
+    password?: string,
+    newPassword?: string,
+    newRePassword?: string,
+    logoutAll?: bool,
+}) {
+    return request.post('/api/accounts/change-password', {
+        password,
+        newPassword,
+        newRePassword,
+        logoutAll,
+    });
+}
+
+export function acceptRules() {
+    return request.post('/api/accounts/accept-rules');
+}
+
+export function changeUsername({
+    username = '',
+    password = '',
+}: {
+    username?: string,
+    password?: string,
+}) {
+    return request.post('/api/accounts/change-username', {
+        username,
+        password,
+    });
+}
+
+export function changeLang(lang: string) {
+    return request.post('/api/accounts/change-lang', {
+        lang,
+    });
+}
+
+export function requestEmailChange({ password = '' }: { password?: string }) {
+    return request.post('/api/accounts/change-email/initialize', {
+        password,
+    });
+}
+
+export function setNewEmail({
+    email = '',
+    key = '',
+}: {
+    email?: string,
+    key?: string,
+}) {
+    return request.post('/api/accounts/change-email/submit-new-email', {
+        email,
+        key,
+    });
+}
+
+export function confirmNewEmail({ key }: { key: string }) {
+    return request.post('/api/accounts/change-email/confirm-new-email', {
+        key,
+    });
+}
+
 export default {
     /**
      * @param {object} options
@@ -25,76 +98,8 @@ export default {
      * @return {Promise<UserResponse>}
      */
     current(options: { token?: ?string } = {}): Promise<UserResponse> {
-        return request.get('/api/accounts/current', {}, {
-            token: options.token
-        });
+        return getInfo(0, options);
     },
 
-    changePassword({
-        password = '',
-        newPassword = '',
-        newRePassword = '',
-        logoutAll = true
-    }: {
-        password?: string,
-        newPassword?: string,
-        newRePassword?: string,
-        logoutAll?: bool,
-    }) {
-        return request.post(
-            '/api/accounts/change-password',
-            {password, newPassword, newRePassword, logoutAll}
-        );
-    },
 
-    acceptRules() {
-        return request.post('/api/accounts/accept-rules');
-    },
-
-    changeUsername({
-        username = '',
-        password = ''
-    }: {
-        username?: string,
-        password?: string,
-    }) {
-        return request.post(
-            '/api/accounts/change-username',
-            {username, password}
-        );
-    },
-
-    changeLang(lang: string) {
-        return request.post(
-            '/api/accounts/change-lang',
-            {lang}
-        );
-    },
-
-    requestEmailChange({password = ''}: { password?: string }) {
-        return request.post(
-            '/api/accounts/change-email/initialize',
-            {password}
-        );
-    },
-
-    setNewEmail({
-        email = '',
-        key = ''
-    }: {
-        email?: string,
-        key?: string,
-    }) {
-        return request.post(
-            '/api/accounts/change-email/submit-new-email',
-            {email, key}
-        );
-    },
-
-    confirmNewEmail({key}: { key: string }) {
-        return request.post(
-            '/api/accounts/change-email/confirm-new-email',
-            {key}
-        );
-    }
 };

@@ -1,4 +1,8 @@
-import accounts from 'services/api/accounts';
+import {
+    getInfo as getInfoEndpoint,
+    changeLang as changeLangEndpoint,
+    acceptRules as acceptRulesEndpoint,
+} from 'services/api/accounts';
 import { setLocale } from 'components/i18n/actions';
 
 export const UPDATE = 'USER_UPDATE';
@@ -36,7 +40,7 @@ export function changeLang(lang) {
             const {user: {isGuest, lang: oldLang}} = getState();
 
             if (oldLang !== lang) {
-                !isGuest && accounts.changeLang(lang);
+                !isGuest && changeLangEndpoint(lang);
 
                 dispatch({
                     type: CHANGE_LANG,
@@ -59,7 +63,7 @@ export function setGuest() {
 
 export function fetchUserData() {
     return (dispatch) =>
-        accounts.current()
+        getInfoEndpoint(0)
             .then((resp) => {
                 dispatch(updateUser({
                     isGuest: false,
@@ -72,7 +76,7 @@ export function fetchUserData() {
 
 export function acceptRules() {
     return (dispatch) =>
-        accounts.acceptRules().then((resp) => {
+        acceptRulesEndpoint().then((resp) => {
             dispatch(updateUser({
                 shouldAcceptRules: false
             }));
