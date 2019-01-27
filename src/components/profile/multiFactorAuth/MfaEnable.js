@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import { Button, FormModel } from 'components/ui/form';
 import styles from 'components/profile/profileForm.scss';
@@ -7,7 +8,7 @@ import Stepper from 'components/ui/stepper';
 import { SlideMotion } from 'components/ui/motion';
 import { ScrollIntoView } from 'components/ui/scroll';
 import logger from 'services/logger';
-import mfa from 'services/api/mfa';
+import { getSecret, enable as enableMFA } from 'services/api/mfa';
 
 import Instructions from './instructions';
 import KeyForm from './keyForm';
@@ -24,25 +25,31 @@ type Props = {
     confirmationForm: FormModel,
     onSubmit: (form: FormModel, sendData: () => Promise<*>) => Promise<*>,
     onComplete: Function,
-    step: MfaStep
+    step: MfaStep,
 };
 
-export default class MfaEnable extends Component<Props, {
-    isLoading: bool,
-    activeStep: MfaStep,
-    secret: string,
-    qrCodeSrc: string
-}> {
+interface State {
+    isLoading: bool;
+    activeStep: MfaStep;
+    secret: string;
+    qrCodeSrc: string;
+}
+
+export default class MfaEnable extends Component<Props, State> {
     static defaultProps = {
         confirmationForm: new FormModel(),
-        step: 0
+        step: 0,
+    };
+
+    static contextTypes = {
+        userId: PropTypes.number.isRequired,
     };
 
     state = {
         isLoading: false,
         activeStep: this.props.step,
         qrCodeSrc: '',
-        secret: ''
+        secret: '',
     };
 
     confirmationFormEl: ?Form;
@@ -124,7 +131,7 @@ export default class MfaEnable extends Component<Props, {
         if (props.step === 1) {
             this.setState({isLoading: true});
 
-            mfa.getSecret().then((resp) => {
+            getSecret(this.context.userId).then((resp) => {
                 this.setState({
                     isLoading: false,
                     secret: resp.secret,
@@ -154,7 +161,7 @@ export default class MfaEnable extends Component<Props, {
             () => {
                 const data = form.serialize();
 
-                return mfa.enable(data);
+                return enableMFA(this.context.userId, data.totp, data.password);
             }
         )
             .then(() => this.props.onComplete())

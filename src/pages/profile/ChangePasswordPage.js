@@ -1,20 +1,23 @@
+// @flow
+import type { User } from 'components/user';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import accounts from 'services/api/accounts';
+import { changePassword } from 'services/api/accounts';
 import { FormModel } from 'components/ui/form';
 import ChangePassword from 'components/profile/changePassword/ChangePassword';
 
-class ChangePasswordPage extends Component {
+interface Props {
+    updateUser: (fields: $Shape<User>) => void;
+}
+
+class ChangePasswordPage extends Component<Props> {
     static displayName = 'ChangePasswordPage';
 
-    static propTypes = {
-        updateUser: PropTypes.func.isRequired
-    };
-
     static contextTypes = {
+        userId: PropTypes.number.isRequired,
         onSubmit: PropTypes.func.isRequired,
-        goToProfile: PropTypes.func.isRequired
+        goToProfile: PropTypes.func.isRequired,
     };
 
     form = new FormModel();
@@ -29,7 +32,7 @@ class ChangePasswordPage extends Component {
         const {form} = this;
         return this.context.onSubmit({
             form,
-            sendData: () => accounts.changePassword(form.serialize())
+            sendData: () => changePassword(this.context.userId, form.serialize()),
         }).then(() => {
             this.props.updateUser({
                 passwordChangedAt: Date.now() / 1000
@@ -43,5 +46,5 @@ import { connect } from 'react-redux';
 import { updateUser } from 'components/user/actions';
 
 export default connect(null, {
-    updateUser
+    updateUser,
 })(ChangePasswordPage);

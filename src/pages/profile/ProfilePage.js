@@ -20,19 +20,24 @@ import styles from './profile.scss';
 
 import type { FormModel } from 'components/ui/form';
 
-class ProfilePage extends Component<{
-    onSubmit: ({form: FormModel, sendData: () => Promise<*>}) => void,
-    fetchUserData: () => Promise<*>
-}> {
+interface Props {
+    userId: number;
+    onSubmit: ({form: FormModel, sendData: () => Promise<*>}) => void;
+    fetchUserData: () => Promise<*>;
+}
+
+class ProfilePage extends Component<Props> {
     static childContextTypes = {
+        userId: PropTypes.number,
         onSubmit: PropTypes.func,
-        goToProfile: PropTypes.func
+        goToProfile: PropTypes.func,
     };
 
     getChildContext() {
         return {
+            userId: this.props.userId,
             onSubmit: this.props.onSubmit,
-            goToProfile: () => this.props.fetchUserData().then(this.goToProfile)
+            goToProfile: () => this.props.fetchUserData().then(this.goToProfile),
         };
     }
 
@@ -60,7 +65,9 @@ class ProfilePage extends Component<{
     goToProfile = () => browserHistory.push('/');
 }
 
-export default connect(null, {
+export default connect((state) => ({
+    userId: state.user.id,
+}), {
     fetchUserData,
     onSubmit: ({form, sendData}: {
         form: FormModel,

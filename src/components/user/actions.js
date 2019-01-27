@@ -1,9 +1,13 @@
+// @flow
+import type { User, State } from './reducer';
 import {
     getInfo as getInfoEndpoint,
     changeLang as changeLangEndpoint,
     acceptRules as acceptRulesEndpoint,
 } from 'services/api/accounts';
 import { setLocale } from 'components/i18n/actions';
+
+type Dispatch = (action: Object) => Promise<*>;
 
 export const UPDATE = 'USER_UPDATE';
 /**
@@ -12,10 +16,10 @@ export const UPDATE = 'USER_UPDATE';
  * @param {object} payload
  * @return {object} - action definition
  */
-export function updateUser(payload) {
+export function updateUser(payload: $Shape<User>) { // Temp workaround
     return {
         type: UPDATE,
-        payload
+        payload,
     };
 }
 
@@ -26,61 +30,69 @@ export const SET = 'USER_SET';
  * @param {User} payload
  * @return {object} - action definition
  */
-export function setUser(payload) {
+export function setUser(payload: $Shape<User>) {
     return {
         type: SET,
-        payload
+        payload,
     };
 }
 
 export const CHANGE_LANG = 'USER_CHANGE_LANG';
-export function changeLang(lang) {
-    return (dispatch, getState) => dispatch(setLocale(lang))
+export function changeLang(lang: string) {
+    return (dispatch: Dispatch, getState: () => State) => dispatch(setLocale(lang))
         .then((lang) => {
-            const {user: {isGuest, lang: oldLang}} = getState();
-
-            if (oldLang !== lang) {
-                !isGuest && changeLangEndpoint(lang);
-
-                dispatch({
-                    type: CHANGE_LANG,
-                    payload: {
-                        lang
-                    }
-                });
+            const { id, isGuest, lang: oldLang } = getState().user;
+            if (oldLang === lang) {
+                return;
             }
+
+            !isGuest && changeLangEndpoint(((id: any): number), lang); // hack to tell Flow that it's defined
+
+            dispatch({
+                type: CHANGE_LANG,
+                payload: {
+                    lang,
+                },
+            });
         });
 }
 
 export function setGuest() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch, getState: () => Object) => {
         dispatch(setUser({
             lang: getState().user.lang,
-            isGuest: true
+            isGuest: true,
         }));
     };
 }
 
 export function fetchUserData() {
-    return (dispatch) =>
-        getInfoEndpoint(0)
-            .then((resp) => {
-                dispatch(updateUser({
-                    isGuest: false,
-                    ...resp
-                }));
+    return async (dispatch: Dispatch, getState: () => State) => {
+        // $FlowFixMe
+        const resp = await getInfoEndpoint(getState().user.id);
+        dispatch(updateUser({
+            isGuest: false,
+            ...resp,
+        }));
+        dispatch(changeLang(resp.lang));
 
-                return dispatch(changeLang(resp.lang));
-            });
+        return resp;
+    };
 }
 
 export function acceptRules() {
-    return (dispatch) =>
-        acceptRulesEndpoint().then((resp) => {
+    return (dispatch: Dispatch, getState: () => State) => {
+        const { id } = getState().user;
+        if (!id) {
+            throw new Error('user id is should be set at the moment when this action is called');
+        }
+
+        return acceptRulesEndpoint(id).then((resp) => {
             dispatch(updateUser({
-                shouldAcceptRules: false
+                shouldAcceptRules: false,
             }));
 
             return resp;
         });
+    };
 }

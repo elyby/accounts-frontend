@@ -1,7 +1,8 @@
 // @flow
+import type { Account, State as AccountsState } from './reducer';
 import { getJwtPayload } from 'functions';
 import { sessionStorage } from 'services/localStorage';
-import authentication from 'services/api/authentication';
+import { validateToken, requestToken, logout } from 'services/api/authentication';
 import { relogin as navigateToLogin } from 'components/auth/actions';
 import { updateUser, setGuest } from 'components/user/actions';
 import { setLocale } from 'components/i18n/actions';
@@ -9,7 +10,6 @@ import { setAccountSwitcher } from 'components/auth/actions';
 import { getActiveAccount } from 'components/accounts/reducer';
 import logger from 'services/logger';
 
-import type { Account, State as AccountsState } from './reducer';
 import {
     add,
     remove,
@@ -42,73 +42,93 @@ export function authenticate(account: Account | {
     token: string,
     refreshToken: ?string,
 }) {
-    const {token, refreshToken} = account;
+    const { token, refreshToken } = account;
     const email = account.email || null;
 
-    return (dispatch: Dispatch, getState: () => State): Promise<Account> => {
-        const accountId: number | null = typeof account.id === 'number' ? account.id : null;
-        const knownAccount: ?Account = accountId
-            ? getState().accounts.available.find((item) => item.id === accountId)
-            : null;
+    return async (dispatch: Dispatch, getState: () => State): Promise<Account> => {
+        let accountId: number;
+        if (typeof account.id === 'number') {
+            accountId = account.id;
+        } else {
+            accountId = findAccountIdFromToken(token);
+        }
 
+        const knownAccount = getState().accounts.available.find((item) => item.id === accountId);
         if (knownAccount) {
             // this account is already available
             // activate it before validation
             dispatch(activate(knownAccount));
         }
 
-        return authentication.validateToken({token, refreshToken})
-            .catch((resp = {}) => {
-                // all the logic to get the valid token was failed,
-                // looks like we have some problems with token
-                // lets redirect to login page
-                if (typeof email === 'string') {
-                    // TODO: we should somehow try to find email by token
-                    dispatch(relogin(email));
-                }
+        try {
+            const {
+                token: newToken,
+                refreshToken: newRefreshToken,
+                user,
+                // $FlowFixMe have no idea why it's causes error about missing properties
+            } = await validateToken(accountId, token, refreshToken);
+            const { auth } = getState();
+            const account: Account = {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                token: newToken,
+                refreshToken: newRefreshToken,
+            };
+            dispatch(add(account));
+            dispatch(activate(account));
+            dispatch(updateUser({
+                isGuest: false,
+                ...user,
+            }));
 
-                return Promise.reject(resp);
-            })
-            .then(({token, refreshToken, user}) => ({
-                user: {
-                    isGuest: false,
-                    ...user
-                },
-                account: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    token,
-                    refreshToken
-                }
-            }))
-            .then(({user, account}) => {
-                const {auth} = getState();
+            // TODO: probably should be moved from here, because it is a side effect
+            logger.setUser(user);
 
-                dispatch(add(account));
-                dispatch(activate(account));
-                dispatch(updateUser(user));
+            if (!newRefreshToken) {
+                // mark user as stranger (user does not want us to remember his account)
+                sessionStorage.setItem(`stranger${account.id}`, 1);
+            }
 
-                // TODO: probably should be moved from here, because it is a side effect
-                logger.setUser(user);
+            if (auth && auth.oauth && auth.oauth.clientId) {
+                // if we authenticating during oauth, we disable account chooser
+                // because user probably has made his choise now
+                // this may happen, when user registers, logs in or uses account
+                // chooser panel during oauth
+                dispatch(setAccountSwitcher(false));
+            }
 
-                if (!account.refreshToken) {
-                    // mark user as stranger (user does not want us to remember his account)
-                    sessionStorage.setItem(`stranger${account.id}`, 1);
-                }
+            await dispatch(setLocale(user.lang));
 
-                if (auth && auth.oauth && auth.oauth.clientId) {
-                    // if we authenticating during oauth, we disable account chooser
-                    // because user probably has made his choise now
-                    // this may happen, when user registers, logs in or uses account
-                    // chooser panel during oauth
-                    dispatch(setAccountSwitcher(false));
-                }
+            return account;
+        } catch (resp) {
+            // all the logic to get the valid token was failed,
+            // looks like we have some problems with token
+            // lets redirect to login page
+            if (typeof email === 'string') {
+                // TODO: we should somehow try to find email by token
+                dispatch(relogin(email));
+            }
 
-                return dispatch(setLocale(user.lang))
-                    .then(() => account);
-            });
+            throw resp;
+        }
     };
+}
+
+function findAccountIdFromToken(token: string): number {
+    const encodedPayloads = token.split('.')[1];
+    const { sub, jti }: { sub: string, jti: number } = JSON.parse(atob(encodedPayloads));
+    // sub has the format "ely|{accountId}", so we must trim "ely|" part
+    if (sub) {
+        return parseInt(sub.substr(4), 10);
+    }
+
+    // In older backend versions identity was stored in jti claim. Some users still have such tokens
+    if (jti) {
+        return jti;
+    }
+
+    throw new Error('payloads is not contains any identity claim');
 }
 
 /**
@@ -203,8 +223,8 @@ export function requestNewToken() {
             return Promise.resolve();
         }
 
-        return authentication.requestToken(refreshToken)
-            .then(({ token }) => {
+        return requestToken(refreshToken)
+            .then((token) => {
                 dispatch(updateToken(token));
             })
             .catch((resp) => {
@@ -234,7 +254,7 @@ export function revoke(account: Account) {
                 .finally(() => {
                     // we need to logout user, even in case, when we can
                     // not authenticate him with new account
-                    authentication.logout(account)
+                    logout(account.token)
                         .catch(() => {
                             // we don't care
                         });
@@ -268,7 +288,7 @@ export function logoutAll() {
         const {accounts: {available}} = getState();
 
         available.forEach((account) =>
-            authentication.logout(account)
+            logout(account.token)
                 .catch(() => {
                     // we don't care
                 })
@@ -303,7 +323,7 @@ export function logoutStrangers() {
                 available.filter(isStranger)
                     .forEach((account) => {
                         dispatch(remove(account));
-                        authentication.logout(account);
+                        logout(account.token);
                     });
 
                 if (activeAccount && isStranger(activeAccount)) {

@@ -16,13 +16,13 @@ export type UserResponse = {
     uuid: string,
 };
 
-export function getInfo(id: number, options: { token?: ?string } = {}): Promise<UserResponse> {
+export function getInfo(id: number, token?: string): Promise<UserResponse> {
     return request.get(`/api/v1/accounts/${id}`, {}, {
-        token: options.token,
+        token,
     });
 }
 
-export function changePassword({
+export function changePassword(id: number, {
     password = '',
     newPassword = '',
     newRePassword = '',
@@ -32,8 +32,8 @@ export function changePassword({
     newPassword?: string,
     newRePassword?: string,
     logoutAll?: bool,
-}) {
-    return request.post('/api/accounts/change-password', {
+}): Promise<{ success: bool }> {
+    return request.post(`/api/v1/accounts/${id}/password`, {
         password,
         newPassword,
         newRePassword,
@@ -41,65 +41,38 @@ export function changePassword({
     });
 }
 
-export function acceptRules() {
-    return request.post('/api/accounts/accept-rules');
+export function acceptRules(id: number) {
+    return request.post(`/api/v1/accounts/${id}/rules`);
 }
 
-export function changeUsername({
-    username = '',
-    password = '',
-}: {
-    username?: string,
-    password?: string,
-}) {
-    return request.post('/api/accounts/change-username', {
+export function changeUsername(id: number, username: ?string, password: ?string) {
+    return request.post(`/api/v1/accounts/${id}/username`, {
         username,
         password,
     });
 }
 
-export function changeLang(lang: string) {
-    return request.post('/api/accounts/change-lang', {
+export function changeLang(id: number, lang: string) {
+    return request.post(`/api/v1/accounts/${id}/language`, {
         lang,
     });
 }
 
-export function requestEmailChange({ password = '' }: { password?: string }) {
-    return request.post('/api/accounts/change-email/initialize', {
+export function requestEmailChange(id: number, password: string) {
+    return request.post(`/api/v1/accounts/${id}/email-verification`, {
         password,
     });
 }
 
-export function setNewEmail({
-    email = '',
-    key = '',
-}: {
-    email?: string,
-    key?: string,
-}) {
-    return request.post('/api/accounts/change-email/submit-new-email', {
+export function setNewEmail(id: number, email: string, key: string) {
+    return request.post(`/api/v1/accounts/${id}/new-email-verification`, {
         email,
         key,
     });
 }
 
-export function confirmNewEmail({ key }: { key: string }) {
-    return request.post('/api/accounts/change-email/confirm-new-email', {
+export function confirmNewEmail(id: number, key: string) {
+    return request.post(`/api/v1/accounts/${id}/email`, {
         key,
     });
 }
-
-export default {
-    /**
-     * @param {object} options
-     * @param {object} [options.token] - an optional token to overwrite headers
-     *                                   in middleware and disable token auto-refresh
-     *
-     * @return {Promise<UserResponse>}
-     */
-    current(options: { token?: ?string } = {}): Promise<UserResponse> {
-        return getInfo(0, options);
-    },
-
-
-};
