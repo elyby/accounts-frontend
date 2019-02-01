@@ -96,7 +96,12 @@ export default class AuthFlow implements AuthContext {
          * @param {object} options.replace
          */
         this.navigate = (route: string, options: {replace?: bool} = {}) => {
-            if (this.getRequest().path !== route) {
+            const { path: currentPath } = this.getRequest();
+            if (currentPath !== route) {
+                if (currentPath.startsWith('/oauth2/v1') && options.replace === undefined) {
+                    options.replace = true;
+                }
+
                 this.currentRequest = {
                     path: route,
                     params: {},
