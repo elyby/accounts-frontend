@@ -1,11 +1,34 @@
+/* eslint-disable camelcase */
 import expect from 'unexpected';
 import sinon from 'sinon';
 
 import request from 'services/request';
-import authentication from 'services/api/authentication';
-import accounts from 'services/api/accounts';
+import * as authentication from 'services/api/authentication';
+import * as accounts from 'services/api/accounts';
 
 describe('authentication api', () => {
+    let server;
+
+    beforeEach(() => {
+        server = sinon.createFakeServer({
+            autoRespond: true
+        });
+
+        ['get', 'post'].forEach((method) => {
+            server[method] = (url, resp = {}, status = 200, headers = {}) => {
+                server.respondWith(method, url, [
+                    status,
+                    { 'Content-Type': 'application/json', ...headers },
+                    JSON.stringify(resp)
+                ]);
+            };
+        });
+    });
+
+    afterEach(() => {
+        server.restore();
+    });
+
     describe('#login', () => {
         const params = {
             login: 'foo',
@@ -41,50 +64,53 @@ describe('authentication api', () => {
     });
 
     describe('#validateToken()', () => {
-        const validTokens = {token: 'foo', refreshToken: 'bar'};
-        const user = {id: 1};
+        const validToken = 'foo';
+        const validRefreshToken = 'bar';
+        const user = { id: 1 };
+        const validateTokenArgs = [user.id, validToken, validRefreshToken];
 
         beforeEach(() => {
-            sinon.stub(accounts, 'current');
-
-            accounts.current.returns(Promise.resolve(user));
+            sinon.stub(accounts, 'getInfo');
+            accounts.getInfo.returns(Promise.resolve(user));
         });
 
         afterEach(() => {
-            accounts.current.restore();
+            accounts.getInfo.restore();
         });
 
-        it('should request accounts.current', () =>
-            expect(authentication.validateToken(validTokens), 'to be fulfilled')
+        it('should request accounts.getInfo', () =>
+            expect(authentication.validateToken(...validateTokenArgs), 'to be fulfilled')
                 .then(() => {
-                    expect(accounts.current, 'to have a call satisfying', [
-                        {token: 'foo'}
+                    expect(accounts.getInfo, 'to have a call satisfying', [
+                        user.id,
+                        validToken,
                     ]);
                 })
         );
 
         it('should resolve with both tokens and user object', () =>
-            expect(authentication.validateToken(validTokens), 'to be fulfilled with', {
-                ...validTokens,
-                user
+            expect(authentication.validateToken(...validateTokenArgs), 'to be fulfilled with', {
+                token: validToken,
+                refreshToken: validRefreshToken,
+                user,
             })
         );
 
         it('rejects if token has a bad type', () =>
-            expect(authentication.validateToken({token: {}}),
+            expect(authentication.validateToken(user.id, {}),
                 'to be rejected with', 'token must be a string'
             )
         );
 
         it('should allow empty refreshToken', () =>
-            expect(authentication.validateToken({token: 'foo', refreshToken: null}), 'to be fulfilled')
+            expect(authentication.validateToken(user.id, 'foo', null), 'to be fulfilled')
         );
 
-        it('rejects if accounts.current request is unexpectedly failed', () => {
+        it('rejects if accounts.getInfo request is unexpectedly failed', () => {
             const error = 'Something wrong';
-            accounts.current.returns(Promise.reject(error));
+            accounts.getInfo.returns(Promise.reject(error));
 
-            return expect(authentication.validateToken(validTokens),
+            return expect(authentication.validateToken(...validateTokenArgs),
                 'to be rejected with', error
             );
         });
@@ -95,32 +121,42 @@ describe('authentication api', () => {
                 message: 'Token expired',
                 code: 0,
                 status: 401,
-                type: 'yii\\web\\UnauthorizedHttpException'
+                type: 'yii\\web\\UnauthorizedHttpException',
             };
             const newToken = 'baz';
 
             beforeEach(() => {
                 sinon.stub(authentication, 'requestToken');
 
-                accounts.current.onCall(0).returns(Promise.reject(expiredResponse));
-                authentication.requestToken.returns(Promise.resolve({token: newToken}));
+                accounts.getInfo.onCall(0).returns(Promise.reject(expiredResponse));
+                authentication.requestToken.returns(Promise.resolve(newToken));
             });
 
             afterEach(() => {
                 authentication.requestToken.restore();
             });
 
-            it('resolves with new token and user object', () =>
-                expect(authentication.validateToken(validTokens),
-                    'to be fulfilled with', {...validTokens, token: newToken, user}
-                )
-            );
+            it('resolves with new token and user object', async () => {
+                server.post('/api/authentication/refresh-token', {
+                    access_token: newToken,
+                    refresh_token: validRefreshToken,
+                    success: true,
+                    expires_in: 50000
+                });
+
+
+                await expect(authentication.validateToken(...validateTokenArgs),
+                    'to be fulfilled with', {token: newToken, refreshToken: validRefreshToken, user}
+                );
+
+                expect(server.requests[0].requestBody, 'to equal', `refresh_token=${validRefreshToken}`);
+            });
 
             it('rejects if token request failed', () => {
-                const error = 'Something wrong';
-                authentication.requestToken.returns(Promise.reject(error));
+                const error = {error: 'Unexpected error example'};
+                server.post('/api/authentication/refresh-token', error, 500);
 
-                return expect(authentication.validateToken(validTokens),
+                return expect(authentication.validateToken(...validateTokenArgs),
                     'to be rejected with', error
                 );
             });
@@ -132,32 +168,35 @@ describe('authentication api', () => {
                 message: 'Incorrect token',
                 code: 0,
                 status: 401,
-                type: 'yii\\web\\UnauthorizedHttpException'
+                type: 'yii\\web\\UnauthorizedHttpException',
             };
             const newToken = 'baz';
 
             beforeEach(() => {
-                sinon.stub(authentication, 'requestToken');
-
-                accounts.current.onCall(0).returns(Promise.reject(expiredResponse));
-                authentication.requestToken.returns(Promise.resolve({token: newToken}));
+                accounts.getInfo.onCall(0).returns(Promise.reject(expiredResponse));
             });
 
-            afterEach(() => {
-                authentication.requestToken.restore();
-            });
+            it('resolves with new token and user object', async () => {
+                server.post('/api/authentication/refresh-token', {
+                    access_token: newToken,
+                    refresh_token: validRefreshToken,
+                    success: true,
+                    expires_in: 50000
+                });
 
-            it('resolves with new token and user object', () =>
-                expect(authentication.validateToken(validTokens),
-                    'to be fulfilled with', {...validTokens, token: newToken, user}
-                )
-            );
+
+                await expect(authentication.validateToken(...validateTokenArgs),
+                    'to be fulfilled with', {token: newToken, refreshToken: validRefreshToken, user}
+                );
+
+                expect(server.requests[0].requestBody, 'to equal', `refresh_token=${validRefreshToken}`);
+            });
 
             it('rejects if token request failed', () => {
-                const error = 'Something wrong';
-                authentication.requestToken.returns(Promise.reject(error));
+                const error = {error: 'Unexpected error example'};
+                server.post('/api/authentication/refresh-token', error, 500);
 
-                return expect(authentication.validateToken(validTokens),
+                return expect(authentication.validateToken(...validateTokenArgs),
                     'to be rejected with', error
                 );
             });
@@ -190,7 +229,7 @@ describe('authentication api', () => {
         it('overrides token if provided', () => {
             const token = 'foo';
 
-            authentication.logout({token});
+            authentication.logout(token);
 
             expect(request.post, 'to have a call satisfying', [
                 '/api/authentication/logout', {}, {token}
@@ -241,7 +280,7 @@ describe('authentication api', () => {
             }));
 
             return expect(authentication.requestToken(refreshToken),
-                'to be fulfilled with', {token}
+                'to be fulfilled with', token,
             );
         });
     });

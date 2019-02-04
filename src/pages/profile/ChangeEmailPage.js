@@ -1,34 +1,36 @@
+// @flow
+import type { RouterHistory, Match } from 'react-router';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import ChangeEmail from 'components/profile/changeEmail/ChangeEmail';
 
-import accounts from 'services/api/accounts';
+import { requestEmailChange, setNewEmail, confirmNewEmail } from 'services/api/accounts';
 
-class ChangeEmailPage extends Component {
+interface Props {
+    lang: string;
+    email: string;
+    history: RouterHistory;
+    match: {
+        ...Match;
+        params: {
+            step: 'step1' | 'step2' | 'step3';
+            code: string;
+        };
+    };
+}
+
+class ChangeEmailPage extends Component<Props> {
     static displayName = 'ChangeEmailPage';
 
-    static propTypes = {
-        email: PropTypes.string.isRequired,
-        lang: PropTypes.string.isRequired,
-        history: PropTypes.shape({
-            push: PropTypes.func
-        }).isRequired,
-        match: PropTypes.shape({
-            params: PropTypes.shape({
-                step: PropTypes.oneOf(['step1', 'step2', 'step3']),
-                code: PropTypes.string
-            })
-        })
-    };
-
     static contextTypes = {
+        userId: PropTypes.number.isRequired,
         onSubmit: PropTypes.func.isRequired,
-        goToProfile: PropTypes.func.isRequired
+        goToProfile: PropTypes.func.isRequired,
     };
 
     componentWillMount() {
-        const step = this.props.match.params.step;
+        const { step } = this.props.match.params;
 
         if (step && !/^step[123]$/.test(step)) {
             // wrong param value
@@ -37,14 +39,14 @@ class ChangeEmailPage extends Component {
     }
 
     render() {
-        const {step = 'step1', code} = this.props.match.params;
+        const { step = 'step1', code } = this.props.match.params;
 
         return (
             <ChangeEmail
                 onSubmit={this.onSubmit}
                 email={this.props.email}
                 lang={this.props.lang}
-                step={step.slice(-1) * 1 - 1}
+                step={((step.slice(-1): any): number) * 1 - 1}
                 onChangeStep={this.onChangeStep}
                 code={code}
             />
@@ -55,19 +57,20 @@ class ChangeEmailPage extends Component {
         this.props.history.push(`/profile/change-email/step${++step}`);
     };
 
-    onSubmit = (step, form) => {
+    onSubmit = (step: number, form) => {
         return this.context.onSubmit({
             form,
             sendData: () => {
+                const { userId } = this.context;
                 const data = form.serialize();
 
                 switch (step) {
                     case 0:
-                        return accounts.requestEmailChange(data).catch(handleErrors());
+                        return requestEmailChange(userId, data.password).catch(handleErrors());
                     case 1:
-                        return accounts.setNewEmail(data).catch(handleErrors('/profile/change-email'));
+                        return setNewEmail(userId, data.email, data.key).catch(handleErrors('/profile/change-email'));
                     case 2:
-                        return accounts.confirmNewEmail(data).catch(handleErrors('/profile/change-email'));
+                        return confirmNewEmail(userId, data.key).catch(handleErrors('/profile/change-email'));
                     default:
                         throw new Error(`Unsupported step ${step}`);
                 }

@@ -16,7 +16,7 @@ export default function Stepper({
 }: {
     totalSteps: number,
     activeStep: number,
-    color: Color
+    color?: Color,
 }) {
     return (
         <div className={classNames(styles.steps, styles[`${color}Steps`])}>

@@ -1,5 +1,6 @@
 // @flow
 import type { OauthData } from 'services/api/oauth';
+import type { OAuthResponse } from 'services/api/authentication';
 import { browserHistory } from 'services/history';
 import logger from 'services/logger';
 import localStorage from 'services/localStorage';
@@ -8,7 +9,11 @@ import history from 'services/history';
 import { updateUser, acceptRules as userAcceptRules } from 'components/user/actions';
 import { authenticate, logoutAll } from 'components/accounts/actions';
 import { getActiveAccount } from 'components/accounts/reducer';
-import authentication from 'services/api/authentication';
+import {
+    login as loginEndpoint,
+    forgotPassword as forgotPasswordEndpoint,
+    recoverPassword as recoverPasswordEndpoint,
+} from 'services/api/authentication';
 import oauth from 'services/api/oauth';
 import signup from 'services/api/signup';
 import dispatchBsod from 'components/ui/bsod/dispatchBsod';
@@ -76,9 +81,7 @@ export function login({
     rememberMe?: bool
 }) {
     return wrapInLoader((dispatch) =>
-        authentication.login(
-            {login, password, totp, rememberMe}
-        )
+        loginEndpoint({login, password, totp, rememberMe})
             .then(authHandler(dispatch))
             .catch((resp) => {
                 if (resp.errors) {
@@ -120,9 +123,9 @@ export function forgotPassword({
     captcha: string
 }) {
     return wrapInLoader((dispatch, getState) =>
-        authentication.forgotPassword({login, captcha})
+        forgotPasswordEndpoint(login, captcha)
             .then(({data = {}}) => dispatch(updateUser({
-                maskedEmail: data.emailMask || getState().user.email
+                maskedEmail: data.emailMask || getState().user.email,
             })))
             .catch(validationErrorsHandler(dispatch))
     );
@@ -138,7 +141,7 @@ export function recoverPassword({
     newRePassword: string
 }) {
     return wrapInLoader((dispatch) =>
-        authentication.recoverPassword({key, newPassword, newRePassword})
+        recoverPasswordEndpoint(key, newPassword, newRePassword)
             .then(authHandler(dispatch))
             .catch(validationErrorsHandler(dispatch, '/forgot-password'))
     );
@@ -544,9 +547,9 @@ function needActivation() {
 }
 
 function authHandler(dispatch) {
-    return (resp) => dispatch(authenticate({
+    return (resp: OAuthResponse) => dispatch(authenticate({
         token: resp.access_token,
-        refreshToken: resp.refresh_token
+        refreshToken: resp.refresh_token,
     })).then((resp) => {
         dispatch(setLogin(null));
 

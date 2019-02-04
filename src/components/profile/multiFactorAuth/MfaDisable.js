@@ -1,8 +1,9 @@
 // @flow
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import logger from 'services/logger';
-import mfa from 'services/api/mfa';
+import { disable as disableMFA } from 'services/api/mfa';
 
 import MfaDisableForm from './disableForm/MfaDisableForm';
 import MfaStatus from './status/MfaStatus';
@@ -15,6 +16,10 @@ export default class MfaDisable extends Component<{
 }, {
     showForm?: bool
 }> {
+    static contextTypes = {
+        userId: PropTypes.number.isRequired,
+    };
+
     state = {};
 
     render() {
@@ -35,7 +40,7 @@ export default class MfaDisable extends Component<{
             () => {
                 const data = form.serialize();
 
-                return mfa.disable(data);
+                return disableMFA(this.context.userId, data);
             }
         )
             .then(() => this.props.onComplete())

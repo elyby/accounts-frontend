@@ -3,7 +3,7 @@ import sinon from 'sinon';
 
 import refreshTokenMiddleware from 'components/user/middlewares/refreshTokenMiddleware';
 import { browserHistory } from 'services/history';
-import authentication from 'services/api/authentication';
+import * as authentication from 'services/api/authentication';
 import { InternalServerError } from 'services/request';
 import { updateToken } from 'components/accounts/actions';
 
@@ -86,7 +86,7 @@ describe('refreshTokenMiddleware', () => {
                     }
                 };
 
-                authentication.requestToken.returns(Promise.resolve({token: validToken}));
+                authentication.requestToken.returns(Promise.resolve(validToken));
 
                 return middleware.before(data).then((resp) => {
                     expect(resp, 'to satisfy', data);
@@ -126,7 +126,7 @@ describe('refreshTokenMiddleware', () => {
                     }
                 };
 
-                authentication.requestToken.returns(Promise.resolve({token: validToken}));
+                authentication.requestToken.returns(Promise.resolve(validToken));
 
                 return middleware.before(data).then(() =>
                     expect(dispatch, 'to have a call satisfying', [
@@ -251,7 +251,7 @@ describe('refreshTokenMiddleware', () => {
 
             restart = sinon.stub().named('restart');
 
-            authentication.requestToken.returns(Promise.resolve({token: validToken}));
+            authentication.requestToken.returns(Promise.resolve(validToken));
         });
 
         function assertNewTokenRequest() {

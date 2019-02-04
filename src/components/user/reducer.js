@@ -18,6 +18,10 @@ export type User = {|
     shouldAcceptRules?: bool,
 |};
 
+export type State = {
+    user: User, // TODO: replace with centralized global state
+};
+
 const defaults: User = {
     id: null,
     uuid: null,

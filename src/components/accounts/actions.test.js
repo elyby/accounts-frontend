@@ -5,30 +5,33 @@ import { browserHistory } from 'services/history';
 
 import { InternalServerError } from 'services/request';
 import { sessionStorage } from 'services/localStorage';
-import authentication from 'services/api/authentication';
+import * as authentication from 'services/api/authentication';
 import {
     authenticate,
     revoke,
     logoutAll,
-    logoutStrangers
+    logoutStrangers,
 } from 'components/accounts/actions';
 import {
     add, ADD,
     activate, ACTIVATE,
     remove,
-    reset
+    reset,
 } from 'components/accounts/actions/pure-actions';
 import { SET_LOCALE } from 'components/i18n/actions';
 
 import { updateUser, setUser } from 'components/user/actions';
 import { setLogin, setAccountSwitcher } from 'components/auth/actions';
 
+const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbHl8MSJ9.pRJ7vakt2eIscjqwG__KhSxKb3qwGsdBBeDbBffJs_I';
+const legacyToken = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOjF9.cRF-sQNrwWQ94xCb3vWioVdjxAZeefEE7GMGwh7708o';
+
 const account = {
     id: 1,
     username: 'username',
     email: 'email@test.com',
-    token: 'foo',
-    refreshToken: 'bar'
+    token,
+    refreshToken: 'bar',
 };
 
 const user = {
@@ -67,7 +70,7 @@ describe('components/accounts/actions', () => {
         authentication.validateToken.returns(Promise.resolve({
             token: account.token,
             refreshToken: account.refreshToken,
-            user
+            user,
         }));
     });
 
@@ -81,7 +84,29 @@ describe('components/accounts/actions', () => {
         it('should request user state using token', () =>
             authenticate(account)(dispatch, getState).then(() =>
                 expect(authentication.validateToken, 'to have a call satisfying', [
-                    {token: account.token, refreshToken: account.refreshToken}
+                    account.id,
+                    account.token,
+                    account.refreshToken,
+                ])
+            )
+        );
+
+        it('should request user by extracting id from token', () =>
+            authenticate({ token })(dispatch, getState).then(() =>
+                expect(authentication.validateToken, 'to have a call satisfying', [
+                    1,
+                    token,
+                    undefined,
+                ])
+            )
+        );
+
+        it('should request user by extracting id from legacy token', () =>
+            authenticate({ token: legacyToken })(dispatch, getState).then(() =>
+                expect(authentication.validateToken, 'to have a call satisfying', [
+                    1,
+                    legacyToken,
+                    undefined,
                 ])
             )
         );
@@ -142,7 +167,7 @@ describe('components/accounts/actions', () => {
         it('rejects when 5xx without logouting', () => {
             const resp = new InternalServerError(null, {status: 500});
 
-            authentication.validateToken.returns(Promise.reject(resp));
+            authentication.validateToken.rejects(resp);
 
             return expect(authenticate(account)(dispatch, getState), 'to be rejected with', resp)
                 .then(() => expect(dispatch, 'to have no calls satisfying', [
@@ -152,10 +177,10 @@ describe('components/accounts/actions', () => {
 
         it('marks user as stranger, if there is no refreshToken', () => {
             const expectedKey = `stranger${account.id}`;
-            authentication.validateToken.returns(Promise.resolve({
+            authentication.validateToken.resolves({
                 token: account.token,
-                user
-            }));
+                user,
+            });
 
             sessionStorage.removeItem(expectedKey);
 
@@ -247,7 +272,7 @@ describe('components/accounts/actions', () => {
             it('should call logout api method in background', () =>
                 revoke(account)(dispatch, getState).then(() =>
                     expect(authentication.logout, 'to have a call satisfying', [
-                        account
+                        account.token
                     ])
                 )
             );
@@ -298,7 +323,7 @@ describe('components/accounts/actions', () => {
             it('should call logout api method in background', () =>
                 revoke(account2)(dispatch, getState).then(() =>
                     expect(authentication.logout, 'to have a call satisfying', [
-                        account2
+                        account2.token
                     ])
                 )
             );
@@ -325,8 +350,8 @@ describe('components/accounts/actions', () => {
             logoutAll()(dispatch, getState);
 
             expect(authentication.logout, 'to have calls satisfying', [
-                [account],
-                [account2]
+                [account.token],
+                [account2.token]
             ]);
         });
 
@@ -395,8 +420,8 @@ describe('components/accounts/actions', () => {
             logoutStrangers()(dispatch, getState);
 
             expect(authentication.logout, 'to have calls satisfying', [
-                [foreignAccount],
-                [foreignAccount2]
+                [foreignAccount.token],
+                [foreignAccount2.token]
             ]);
         });
 
@@ -458,8 +483,8 @@ describe('components/accounts/actions', () => {
 
             it('logouts all accounts', () => {
                 expect(authentication.logout, 'to have calls satisfying', [
-                    [foreignAccount],
-                    [foreignAccount2],
+                    [foreignAccount.token],
+                    [foreignAccount2.token],
                 ]);
 
                 expect(dispatch, 'to have a call satisfying', [
