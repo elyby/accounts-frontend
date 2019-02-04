@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import expect from 'unexpected';
 import sinon from 'sinon';
 
@@ -6,6 +7,28 @@ import * as authentication from 'services/api/authentication';
 import * as accounts from 'services/api/accounts';
 
 describe('authentication api', () => {
+    let server;
+
+    beforeEach(() => {
+        server = sinon.createFakeServer({
+            autoRespond: true
+        });
+
+        ['get', 'post'].forEach((method) => {
+            server[method] = (url, resp = {}, status = 200, headers = {}) => {
+                server.respondWith(method, url, [
+                    status,
+                    { 'Content-Type': 'application/json', ...headers },
+                    JSON.stringify(resp)
+                ]);
+            };
+        });
+    });
+
+    afterEach(() => {
+        server.restore();
+    });
+
     describe('#login', () => {
         const params = {
             login: 'foo',
@@ -113,15 +136,25 @@ describe('authentication api', () => {
                 authentication.requestToken.restore();
             });
 
-            it('resolves with new token and user object', () =>
-                expect(authentication.validateToken(...validateTokenArgs),
+            it('resolves with new token and user object', async () => {
+                server.post('/api/authentication/refresh-token', {
+                    access_token: newToken,
+                    refresh_token: validRefreshToken,
+                    success: true,
+                    expires_in: 50000
+                });
+
+
+                await expect(authentication.validateToken(...validateTokenArgs),
                     'to be fulfilled with', {token: newToken, refreshToken: validRefreshToken, user}
-                )
-            );
+                );
+
+                expect(server.requests[0].requestBody, 'to equal', `refresh_token=${validRefreshToken}`);
+            });
 
             it('rejects if token request failed', () => {
-                const error = 'Something wrong';
-                authentication.requestToken.returns(Promise.reject(error));
+                const error = {error: 'Unexpected error example'};
+                server.post('/api/authentication/refresh-token', error, 500);
 
                 return expect(authentication.validateToken(...validateTokenArgs),
                     'to be rejected with', error
@@ -140,25 +173,28 @@ describe('authentication api', () => {
             const newToken = 'baz';
 
             beforeEach(() => {
-                sinon.stub(authentication, 'requestToken');
-
                 accounts.getInfo.onCall(0).returns(Promise.reject(expiredResponse));
-                authentication.requestToken.returns(Promise.resolve(newToken));
             });
 
-            afterEach(() => {
-                authentication.requestToken.restore();
-            });
+            it('resolves with new token and user object', async () => {
+                server.post('/api/authentication/refresh-token', {
+                    access_token: newToken,
+                    refresh_token: validRefreshToken,
+                    success: true,
+                    expires_in: 50000
+                });
 
-            it('resolves with new token and user object', () =>
-                expect(authentication.validateToken(...validateTokenArgs),
+
+                await expect(authentication.validateToken(...validateTokenArgs),
                     'to be fulfilled with', {token: newToken, refreshToken: validRefreshToken, user}
-                )
-            );
+                );
+
+                expect(server.requests[0].requestBody, 'to equal', `refresh_token=${validRefreshToken}`);
+            });
 
             it('rejects if token request failed', () => {
-                const error = 'Something wrong';
-                authentication.requestToken.returns(Promise.reject(error));
+                const error = {error: 'Unexpected error example'};
+                server.post('/api/authentication/refresh-token', error, 500);
 
                 return expect(authentication.validateToken(...validateTokenArgs),
                     'to be rejected with', error

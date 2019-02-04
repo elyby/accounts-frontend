@@ -92,7 +92,7 @@ export async function validateToken(id: number, token: string, refreshToken: ?st
     try {
         user = await getInfoEndpoint(id, token);
     } catch (resp) {
-        const token = await handleTokenError(resp, refreshToken);
+        token = await handleTokenError(resp, refreshToken);
         user = await getInfoEndpoint(id, token); // TODO: replace with recursive call
     }
 
