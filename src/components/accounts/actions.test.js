@@ -272,7 +272,7 @@ describe('components/accounts/actions', () => {
             it('should call logout api method in background', () =>
                 revoke(account)(dispatch, getState).then(() =>
                     expect(authentication.logout, 'to have a call satisfying', [
-                        account
+                        account.token
                     ])
                 )
             );
@@ -323,7 +323,7 @@ describe('components/accounts/actions', () => {
             it('should call logout api method in background', () =>
                 revoke(account2)(dispatch, getState).then(() =>
                     expect(authentication.logout, 'to have a call satisfying', [
-                        account2
+                        account2.token
                     ])
                 )
             );
@@ -350,8 +350,8 @@ describe('components/accounts/actions', () => {
             logoutAll()(dispatch, getState);
 
             expect(authentication.logout, 'to have calls satisfying', [
-                [account],
-                [account2]
+                [account.token],
+                [account2.token]
             ]);
         });
 
@@ -420,8 +420,8 @@ describe('components/accounts/actions', () => {
             logoutStrangers()(dispatch, getState);
 
             expect(authentication.logout, 'to have calls satisfying', [
-                [foreignAccount],
-                [foreignAccount2]
+                [foreignAccount.token],
+                [foreignAccount2.token]
             ]);
         });
 
@@ -483,8 +483,8 @@ describe('components/accounts/actions', () => {
 
             it('logouts all accounts', () => {
                 expect(authentication.logout, 'to have calls satisfying', [
-                    [foreignAccount],
-                    [foreignAccount2],
+                    [foreignAccount.token],
+                    [foreignAccount2.token],
                 ]);
 
                 expect(dispatch, 'to have a call satisfying', [
