@@ -45,7 +45,7 @@ export default class ApplicationsIndex extends Component<Props> {
                             values={{
                                 ourDocumentation: (
                                     <a
-                                        href="http://docs.ely.by/oauth.html"
+                                        href="https://docs.ely.by/en/oauth.html"
                                         target="_blank"
                                     >
                                         <Message
