@@ -1,9 +1,9 @@
 {
     "components.accounts.addAccount": "Adicionar conta",
     "components.accounts.goToEly": "Ir para o perfil Ely.by",
-    "components.accounts.logout": "Deslogar",
+    "components.accounts.logout": "Sair",
     "components.auth.acceptRules.accept": "Aceitar",
-    "components.auth.acceptRules.declineAndLogout": "Recusar e deslogar",
+    "components.auth.acceptRules.declineAndLogout": "Recusar e sair",
     "components.auth.acceptRules.description1": "Nós atualizamos os nossos {link}.",
     "components.auth.acceptRules.description2": "Para continuar o serviço {name}, você deve aceitá-los.",
     "components.auth.acceptRules.termsOfService": "termos de serviço",

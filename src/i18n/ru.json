@@ -116,7 +116,7 @@
     "components.dev.apps.applicationForm.website": "Веб-сайт",
     "components.dev.apps.applicationForm.websiteLink": "Ссылка на сайт:",
     "components.dev.apps.applicationForm.websiteLinkWillBeUsedAsAdditionalId": "Ссылка на сайт также не обязательна, но она будет использоваться в качестве дополнительного идентификатора вашего приложения.",
-    "components.dev.apps.applicationForm.youCanAlsoSpecifyServerSite": "Вы также можете указать ссылку на сайт сервера или его сообщетсво в какой-либо социальной сети.",
+    "components.dev.apps.applicationForm.youCanAlsoSpecifyServerSite": "Вы также можете указать ссылку на сайт сервера или его сообщество в какой-либо социальной сети.",
     "components.dev.apps.authorization": "Авторизация",
     "components.dev.apps.cancel": "Отменить",
     "components.dev.apps.continue": "Продолжить",

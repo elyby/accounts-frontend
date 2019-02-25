@@ -3,7 +3,7 @@
         "code": "be",
         "name": "Беларуская",
         "englishName": "Belarusian",
-        "progress": 84,
+        "progress": 100,
         "isReleased": true
     },
     "en": {
@@ -24,7 +24,7 @@
         "code": "id",
         "name": "Bahasa Indonesia",
         "englishName": "Indonesian",
-        "progress": 84,
+        "progress": 100,
         "isReleased": true
     },
     "lt": {
@@ -66,21 +66,21 @@
         "code": "uk",
         "name": "Українська",
         "englishName": "Ukrainian",
-        "progress": 84,
+        "progress": 100,
         "isReleased": true
     },
     "vi": {
         "code": "vi",
         "name": "Tiếng Việt",
         "englishName": "Vietnamese",
-        "progress": 84,
+        "progress": 85.8,
         "isReleased": true
     },
     "zh": {
         "code": "zh",
         "name": "简体中文",
         "englishName": "Simplified Chinese",
-        "progress": 84,
+        "progress": 100,
         "isReleased": false
     }
 }
