@@ -11,8 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^1.1.3",
+    "crowdin-api": "erickskrauch/crowdin-api#add_missed_methods_and_fix_files_uploading",
+    "iso-639-1": "^2.0.3",
+    "multi-progress": "^2.0.0",
     "node-babel": "^0.1.2",
-    "onesky-utils": "^1.2",
     "prompt": "^1.0.0"
   }
 }

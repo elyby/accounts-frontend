@@ -8,8 +8,8 @@
     },
     "en": {
         "code": "en",
-        "name": "English, UK",
-        "englishName": "English, UK",
+        "name": "English",
+        "englishName": "English",
         "progress": 100,
         "isReleased": true
     },
@@ -17,7 +17,7 @@
         "code": "fr",
         "name": "Français",
         "englishName": "French",
-        "progress": 80.5,
+        "progress": 73.8,
         "isReleased": true
     },
     "id": {
@@ -31,14 +31,14 @@
         "code": "lt",
         "name": "Lietuvių",
         "englishName": "Lithuanian",
-        "progress": 81.6,
+        "progress": 81,
         "isReleased": false
     },
     "pl": {
         "code": "pl",
         "name": "Polski",
         "englishName": "Polish",
-        "progress": 84,
+        "progress": 83,
         "isReleased": false
     },
     "pt": {
@@ -47,6 +47,13 @@
         "englishName": "Portuguese, Brazilian",
         "progress": 100,
         "isReleased": true
+    },
+    "ro": {
+        "code": "ro",
+        "name": "Română",
+        "englishName": "Romanian",
+        "progress": 81.1,
+        "isReleased": false
     },
     "ru": {
         "code": "ru",
@@ -59,7 +66,7 @@
         "code": "sr",
         "name": "Српски",
         "englishName": "Serbian",
-        "progress": 84,
+        "progress": 83.3,
         "isReleased": false
     },
     "uk": {
@@ -73,7 +80,7 @@
         "code": "vi",
         "name": "Tiếng Việt",
         "englishName": "Vietnamese",
-        "progress": 85.8,
+        "progress": 83.6,
         "isReleased": true
     },
     "zh": {
@@ -81,6 +88,6 @@
         "name": "简体中文",
         "englishName": "Simplified Chinese",
         "progress": 100,
-        "isReleased": false
+        "isReleased": true
     }
 }
