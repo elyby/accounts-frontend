@@ -11,7 +11,7 @@ import styles from './languageSwitcher.scss';
 import messages from './languageSwitcher.intl.json';
 import LanguageList from './LanguageList';
 
-const improveTranslationUrl = 'http://ely.by/erickskrauch/posts/174943';
+const translateUrl = 'https://translate.ely.by/project/elyby/invite';
 
 export type LocaleData = {
     code: string,
@@ -92,13 +92,11 @@ class LanguageSwitcher extends Component<{
                                     <Message {...messages.improveTranslates} />
                                 </div>
                                 <div className={styles.improveTranslatesText}>
-                                    <Message {...messages.improveTranslatesDescription} values={{
-                                        articleLink: (
-                                            <a href={improveTranslationUrl} target="_blank">
-                                                <Message {...messages.improveTranslatesArticleLink} />
-                                            </a>
-                                        ),
-                                    }} />
+                                    <Message {...messages.improveTranslatesDescription} />
+                                    {' '}
+                                    <a href={translateUrl} target="_blank">
+                                        <Message {...messages.improveTranslatesParticipate} />
+                                    </a>
                                 </div>
                             </div>
                         </div>
