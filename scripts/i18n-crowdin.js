@@ -18,6 +18,7 @@ if (!fs.existsSync(CONFIG_PATH)) {
 }
 
 const PROJECT_ID = 'elyby';
+// $FlowFixMe this will be missing on CI server
 const PROJECT_KEY = require('./../config/env.js').crowdinApiKey;
 const CROWDIN_FILE_PATH = 'accounts/site.json';
 const SOURCE_LANG = 'en';
