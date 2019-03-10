@@ -7,10 +7,23 @@ cache: yarn
 addons:
   ssh_known_hosts: account.ely.by
 
+env:
+  - GA_ID=UA-45299905-3
+  - SENTRY_CDN="https://088e7718236a4f91937a81fb319a93f6@sentry.ely.by/2"
+
 script:
   - yarn lint
   - yarn flow
   - yarn test
+  - export VERSION="${TRAVIS_TAG:-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}}"
+  - |
+    echo "
+      module.exports = {
+        version: '$VERSION',
+        ga: {id: '$GA_ID'},
+        sentryCdn: '$SENTRY_CDN',
+      };
+    " > config/env.js
   - yarn build:quiet
 
 before_deploy:
@@ -22,6 +35,9 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: scp -rp $TRAVIS_BUILD_DIR/dist/* deploy@account.ely.by:/var/deploy/accounts-frontend/
+  script: |
+    sftp deploy@account.ely.by << EOL
+      put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/
+    EOL
   on:
     branch: master
