@@ -1,0 +1,15 @@
+language: node
+cache: yarn
+
+jobs:
+  include:
+    - stage: Test
+      name: Lint
+      script: yarn lint
+    - name: Flow
+      script: yarn flow
+    - name: Test
+      script: yarn test
+
+    - stage: Build
+      script: yarn build
