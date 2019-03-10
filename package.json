@@ -1,11 +1,20 @@
 {
-  "name": "ely-by-account",
+  "name": "@elyby/accounts-frontend",
   "description": "",
-  "main": "index.js",
-  "author": "ErickSkrauch <erickskrauch@ely.by>",
-  "public": false,
-  "license": "UNLICENSED",
-  "repository": "git@gitlab.ely.by:elyby/accounts.git",
+  "main": "src/index.js",
+  "author": "SleepWalker <mybox@udf.su>",
+  "maintainers": [
+    {
+      "name": "ErickSkrauch",
+      "email": "erickskrauch@ely.by"
+    },
+    {
+      "name": "SleepWalker",
+      "email": "mybox@udf.su"
+    }
+  ],
+  "license": "Apache-2.0",
+  "repository": "https://github.com/elyby/accounts-frontend",
   "engines": {
     "node": ">=8.0.0"
   },
