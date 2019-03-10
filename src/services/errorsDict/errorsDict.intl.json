@@ -1,8 +1,8 @@
 {
     "captchaRequired": "Please, solve the captcha",
     "invalidPassword": "You have entered wrong account password.",
-    "suggestResetPassword": "Have you {forgottenYourPassword}?",
-    "forgottenYourPassword": "forgotten your password",
+    "suggestResetPassword": "Have you {forgotYourPassword}?",
+    "forgotYourPassword": "forgot your password",
     "loginRequired": "Please enter E‑mail or username",
     "loginNotExist": "Sorry, Ely doesn't recognise your login.",
     "passwordRequired": "Please enter password",

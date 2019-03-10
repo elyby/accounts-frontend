@@ -93,9 +93,9 @@ const errorsMap = {
         <span>
             <br/>
             <Message {...messages.suggestResetPassword} values={{
-                forgottenYourPassword: (
+                forgotYourPassword: (
                     <Link to="/forgot-password">
-                        <Message {...messages.forgottenYourPassword} />
+                        <Message {...messages.forgotYourPassword} />
                     </Link>
                 )
             }} />
