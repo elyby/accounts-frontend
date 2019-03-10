@@ -1,4 +1,4 @@
-language: node
+language: node_js
 cache: yarn
 
 jobs:
@@ -12,4 +12,5 @@ jobs:
       script: yarn test
 
     - stage: Build
+      name: Build production assets
       script: yarn build
