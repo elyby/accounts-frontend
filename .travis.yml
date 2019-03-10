@@ -37,8 +37,6 @@ deploy:
   provider: script
   skip_cleanup: true
   script: |
-    sftp deploy@account.ely.by << EOL
-      put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/
-    EOL
+    sftp deploy@account.ely.by <<< "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/"
   on:
     branch: master
