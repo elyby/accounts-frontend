@@ -2,7 +2,10 @@ language: node_js
 node_js:
   - "11"
 
-cache: yarn
+cache:
+  yarn: true
+  directories:
+    - node_modules
 
 addons:
   ssh_known_hosts: account.ely.by
@@ -36,7 +39,6 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: |
-    sftp deploy@account.ely.by <<< "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/"
+  script: echo "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/" | sftp deploy@account.ely.by
   on:
     branch: master
