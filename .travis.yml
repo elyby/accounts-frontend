@@ -37,8 +37,17 @@ before_deploy:
   - ssh-add /tmp/deploy_rsa
 
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: echo "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/" | sftp deploy@account.ely.by
-  on:
-    branch: master
+  - provider: releases
+    api_key: "$GITHUB_TOKEN"
+    file_glob: true
+    file: dist/**/*
+    skip_cleanup: true
+    draft: true
+    on:
+      branch: master
+
+  - provider: script
+    skip_cleanup: true
+    script: echo "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/" | sftp deploy@account.ely.by
+    on:
+      tags: true
