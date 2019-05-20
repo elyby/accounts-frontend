@@ -40,9 +40,9 @@ function addApp(app: OauthAppResponse): AddAppAction {
 export function fetchAvailableApps() {
     return async (dispatch: Dispatch<any>, getState: () => {user: User}): Promise<void> => {
         const { id } = getState().user;
-
         if (!id) {
-            throw new Error('store.user.id is required for this action');
+            dispatch(setAppsList([]));
+            return;
         }
 
         const apps = await oauth.getAppsByUser(id);
