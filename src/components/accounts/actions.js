@@ -1,6 +1,6 @@
 // @flow
 import type { Account, State as AccountsState } from './reducer';
-import { getJwtPayload } from 'functions';
+import { getJwtPayloads } from 'functions';
 import { sessionStorage } from 'services/localStorage';
 import { validateToken, requestToken, logout } from 'services/api/authentication';
 import { relogin as navigateToLogin } from 'components/auth/actions';
@@ -116,8 +116,7 @@ export function authenticate(account: Account | {
 }
 
 function findAccountIdFromToken(token: string): number {
-    const encodedPayloads = token.split('.')[1];
-    const { sub, jti }: { sub: string, jti: number } = JSON.parse(atob(encodedPayloads));
+    const { sub, jti } = getJwtPayloads(token);
     // sub has the format "ely|{accountId}", so we must trim "ely|" part
     if (sub) {
         return parseInt(sub.substr(4), 10);
@@ -144,10 +143,10 @@ export function ensureToken() {
         const {token} = getActiveAccount(getState()) || {};
 
         try {
-            const SAFETY_FACTOR = 300; // ask new token earlier to overcome time dissynchronization problem
-            const jwt = getJwtPayload(token);
+            const SAFETY_FACTOR = 300; // ask new token earlier to overcome time desynchronization problem
+            const { exp } = getJwtPayloads(token);
 
-            if (jwt.exp - SAFETY_FACTOR < Date.now() / 1000) {
+            if (exp - SAFETY_FACTOR < Date.now() / 1000) {
                 return dispatch(requestNewToken());
             }
         } catch (err) {

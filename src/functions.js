@@ -66,9 +66,12 @@ export { default as debounce } from 'debounce';
  *
  * @return {object} - decoded jwt payload
  */
-export function getJwtPayload(jwt: string): Object {
+export function getJwtPayloads(jwt: string): {
+    sub: string;
+    jti: number;
+    exp: number;
+} {
     const parts = (jwt || '').split('.');
-
     if (parts.length !== 3) {
         throw new Error('Invalid jwt token');
     }
