@@ -24,7 +24,7 @@
         "code": "id",
         "name": "Bahasa Indonesia",
         "englishName": "Indonesian",
-        "progress": 98.8,
+        "progress": 100,
         "isReleased": true
     },
     "lt": {
@@ -59,7 +59,7 @@
         "code": "sr",
         "name": "Српски",
         "englishName": "Serbian",
-        "progress": 81.8,
+        "progress": 100,
         "isReleased": false
     },
     "uk": {
@@ -73,14 +73,14 @@
         "code": "vi",
         "name": "Tiếng Việt",
         "englishName": "Vietnamese",
-        "progress": 82.4,
+        "progress": 100,
         "isReleased": true
     },
     "zh": {
         "code": "zh",
         "name": "简体中文",
         "englishName": "Simplified Chinese",
-        "progress": 98.7,
+        "progress": 100,
         "isReleased": true
     }
 }

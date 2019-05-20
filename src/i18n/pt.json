@@ -212,7 +212,7 @@
     "components.ui.bsod.criticalErrorHappened": "Ocorreu um erro crítico. Assim, o aplicativo não pode continuar com sua operação normal.",
     "components.ui.bsod.reloadPageOrContactUs": "Por favor recarregue esta página e tente novamente. Se o problema ocorrer novamente, diga aos desenvolvedores enviando um email para",
     "components.userbar.login": "Logar",
-    "components.userbar.register": "Entrar",
+    "components.userbar.register": "Registrar",
     "pages.404.homePage": "página principal",
     "pages.404.nothingHere": "Esse não é o lugar que você está procurando",
     "pages.404.returnToTheHomePage": "Tente voltar e ir para a {link}",
