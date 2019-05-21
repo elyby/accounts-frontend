@@ -18,14 +18,14 @@ import type { LocalesMap } from './LanguageSwitcher';
 const itemHeight = 51;
 
 export default class LanguageList extends React.Component<{
-    userLang: string,
+    selectedLocale: string,
     langs: LocalesMap,
     onChangeLang: (lang: string) => void,
 }> {
     emptyListStateInner: ?HTMLDivElement;
 
     render() {
-        const { userLang, langs } = this.props;
+        const { selectedLocale, langs } = this.props;
         const isListEmpty = Object.keys(langs).length === 0;
         const firstLocale = Object.keys(langs)[0] || null;
         const emptyCaption = this.getEmptyCaption();
@@ -67,7 +67,7 @@ export default class LanguageList extends React.Component<{
                                 key={locale}
                                 style={style}
                                 className={classNames(styles.languageItem, {
-                                    [styles.activeLanguageItem]: locale === userLang,
+                                    [styles.activeLanguageItem]: locale === selectedLocale,
                                     [styles.firstLanguageItem]: locale === firstLocale,
                                 })}
                                 onClick={this.onChangeLang(locale)}

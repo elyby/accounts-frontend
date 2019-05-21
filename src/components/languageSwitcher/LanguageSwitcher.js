@@ -11,7 +11,7 @@ import styles from './languageSwitcher.scss';
 import messages from './languageSwitcher.intl.json';
 import LanguageList from './LanguageList';
 
-const translateUrl = 'https://translate.ely.by/project/elyby/invite';
+const translateUrl = 'http://ely.by/translate';
 
 export type LocaleData = {
     code: string,
@@ -25,7 +25,7 @@ export type LocalesMap = {[code: string]: LocaleData};
 
 class LanguageSwitcher extends Component<{
     onClose: Function,
-    userLang: string,
+    selectedLocale: string,
     changeLang: (lang: string) => void,
     langs: LocalesMap,
     emptyCaptions: Array<{
@@ -51,7 +51,7 @@ class LanguageSwitcher extends Component<{
     };
 
     render() {
-        const { userLang, onClose } = this.props;
+        const { selectedLocale, onClose } = this.props;
         const { filteredLangs } = this.state;
 
         return (
@@ -80,7 +80,7 @@ class LanguageSwitcher extends Component<{
                         </div>
 
                         <LanguageList
-                            userLang={userLang}
+                            selectedLocale={selectedLocale}
                             langs={filteredLangs}
                             onChangeLang={this.onChangeLang}
                         />
@@ -157,7 +157,7 @@ import { connect } from 'react-redux';
 import { changeLang } from 'components/user/actions';
 
 export default connect((state) => ({
-    userLang: state.user.lang,
+    selectedLocale: state.i18n.locale,
 }), {
     changeLang,
 })(LanguageSwitcher);

@@ -14,12 +14,13 @@ import RulesPage from 'pages/rules/RulesPage';
 import type { User } from 'components/user';
 
 class Profile extends Component<{
-    user: User
+    user: User;
+    interfaceLocale: string;
 }> {
     UUID: ?HTMLElement;
 
     render() {
-        const { user } = this.props;
+        const { user, interfaceLocale } = this.props;
 
         return (
             <div>
@@ -85,6 +86,16 @@ class Profile extends Component<{
                             <ProfileField
                                 label={<Message {...messages.siteLanguage} />}
                                 value={<ChangeLanguageLink />}
+                                warningMessage={user.lang === interfaceLocale ? '' : (
+                                    <Message {...messages.languageIsUnavailableWarning} values={{
+                                        locale: user.lang,
+                                        participateInTheTranslation: (
+                                            <a href="http://ely.by/translate" target="_blank">
+                                                <Message {...messages.participateInTheTranslation} />
+                                            </a>
+                                        ),
+                                    }}/>
+                                )}
                             />
 
                             <ProfileField
@@ -139,8 +150,10 @@ class Profile extends Component<{
     }
 }
 
-export default connect(({ user }): {
-    user: User,
+export default connect(({ user, i18n }): {
+    user: User;
+    interfaceLocale: string;
 } => ({
     user,
+    interfaceLocale: i18n.locale,
 }))(Profile);

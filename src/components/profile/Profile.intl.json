@@ -12,6 +12,8 @@
     "email": "E‑mail:",
     "password": "Password:",
     "siteLanguage": "Site language:",
+    "languageIsUnavailableWarning": "The locale \"{locale}\" you've used earlier isn't currently translated enough. If you want to continue using the selected language, please {participateInTheTranslation} of the project.",
+    "participateInTheTranslation": "participate in the translation",
     "twoFactorAuth": "Two‑factor auth:",
     "uuid": "UUID:"
 }

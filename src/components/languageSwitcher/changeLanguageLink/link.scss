@@ -1,9 +1,23 @@
+@import '~components/ui/colors.scss';
+
 .languageLink {
+    position: relative;
+
     color: #666;
     border-bottom: 1px dotted #666;
     text-decoration: none;
     transition: .25s;
     cursor: pointer;
+
+    &.mark {
+        &:after {
+            position: absolute;
+            content: '*';
+            color: $red;
+            font-size: 75%;
+            top: -0.20em;
+        }
+    }
 }
 
 .languageIcon {
