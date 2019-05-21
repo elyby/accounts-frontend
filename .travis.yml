@@ -59,4 +59,4 @@ deploy:
     skip_cleanup: true
     script: echo "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/" | sftp deploy@account.ely.by
     on:
-      tags: true
+      branch: master
