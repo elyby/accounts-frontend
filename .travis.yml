@@ -40,7 +40,7 @@ before_deploy:
   - rm -rf dist/messages
   - rm -rf dist/*.css.map
   # Move all source maps to it's own directory
-  - mkdir source-maps
+  - mkdir -p source-maps
   - mv dist/*.js.map source-maps/
   - cp dist/*.js source-maps/
   # Creating tar.gz and zip archives
