@@ -38,6 +38,11 @@ before_deploy:
   - ssh-add /tmp/deploy_rsa
   # Removing unneeded files
   - rm -rf dist/messages
+  - rm -rf dist/*.css.map
+  # Move all source maps to it's own directory
+  - mkdir source-maps
+  - mv dist/*.js.map source-maps/
+  - cp dist/*.js source-maps/
   # Creating tar.gz and zip archives
   - cd dist
   - tar -zcf ../dist.tar.gz --exclude="*.map" *
@@ -67,6 +72,7 @@ deploy:
       curl -sL https://sentry.io/get-cli/ | bash &&
       sentry-cli releases new -p $SENTRY_PROJECT $VERSION &&
       sentry-cli releases set-commits --auto $VERSION &&
+      sentry-cli releases files $VERSION upload-sourcemaps source-maps &&
       sentry-cli releases deploys $VERSION new -e "Production"
     on:
       branch: master
