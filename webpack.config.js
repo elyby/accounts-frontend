@@ -276,7 +276,7 @@ if (isProduction) {
         })
     );
 
-    webpackConfig.devtool = false;
+    webpackConfig.devtool = 'hidden-source-map';
 
     const ignoredPlugins = [
         'flag-icon-css',

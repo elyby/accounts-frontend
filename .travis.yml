@@ -40,8 +40,8 @@ before_deploy:
   - rm -rf dist/messages
   # Creating tar.gz and zip archives
   - cd dist
-  - tar -zcf ../dist.tar.gz *
-  - zip -rq ../dist.zip *
+  - tar -zcf ../dist.tar.gz --exclude="*.map" *
+  - zip -rq ../dist.zip * -x "*.map"
   - cd ..
   # Install sentry-cli
   - curl -sL https://sentry.io/get-cli/ | bash
