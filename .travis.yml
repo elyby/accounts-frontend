@@ -43,8 +43,6 @@ before_deploy:
   - tar -zcf ../dist.tar.gz --exclude="*.map" *
   - zip -rq ../dist.zip * -x "*.map"
   - cd ..
-  # Install sentry-cli
-  - curl -sL https://sentry.io/get-cli/ | bash
 
 deploy:
   - provider: releases
@@ -66,6 +64,7 @@ deploy:
   - provider: script
     skip_cleanup: true
     script: >
+      curl -sL https://sentry.io/get-cli/ | bash &&
       sentry-cli releases new -p $SENTRY_PROJECT $VERSION &&
       sentry-cli releases set-commits --auto $VERSION &&
       sentry-cli releases deploys $VERSION new -e "Production"
