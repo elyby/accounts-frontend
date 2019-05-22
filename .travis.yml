@@ -13,13 +13,13 @@ addons:
 env:
   global:
     - GA_ID=UA-45299905-3
-    - SENTRY_CDN="https://088e7718236a4f91937a81fb319a93f6@sentry.ely.by/2"
+    - SENTRY_CDN="https://95461d4ce6734b088c34fc4272d0a9e6@sentry.io/1463318"
+    - VERSION="${TRAVIS_TAG:-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}}"
 
 script:
   - yarn lint
   - yarn flow
   - yarn test
-  - export VERSION="${TRAVIS_TAG:-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}}"
   - |
     echo "
       module.exports = {
@@ -43,6 +43,8 @@ before_deploy:
   - tar -zcf ../dist.tar.gz *
   - zip -rq ../dist.zip *
   - cd ..
+  # Install sentry-cli
+  - curl -sL https://sentry.io/get-cli/ | bash
 
 deploy:
   - provider: releases
@@ -58,5 +60,14 @@ deploy:
   - provider: script
     skip_cleanup: true
     script: echo "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/" | sftp deploy@account.ely.by
+    on:
+      branch: master
+
+  - provider: script
+    skip_cleanup: true
+    script: >
+      sentry-cli releases new -p $SENTRY_PROJECT $VERSION &&
+      sentry-cli releases set-commits --auto $VERSION &&
+      sentry-cli releases deploys $VERSION new -e "Production"
     on:
       branch: master
