@@ -122,7 +122,7 @@
     "unexpected-sinon": "^10.5.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0",
+    "webpack-dev-server": "^3.1.11",
     "webpack-utils": "file:./webpack-utils"
   }
 }
