@@ -10,8 +10,8 @@ import { omit, debounce } from 'functions';
  * On each component update the `shouldMeasure` prop is being called and depending of
  * the value returned will be decided whether to call `onMeasure`.
  * By default `shouldMeasure` will compare the old and new values of the `state` prop.
- * Both `shouldMeasure` and `state` can be used to reduce the amount of meausres, which
- * will recude the count of forced reflows in browser.
+ * Both `shouldMeasure` and `state` can be used to reduce the amount of measures, which
+ * will reduce the count of forced reflows in browser.
  *
  * Usage:
  * <MeasureHeight
@@ -23,10 +23,10 @@ import { omit, debounce } from 'functions';
  * </MeasureHeight>
  */
 
-type ChildState = { [key: string]: any };
+type ChildState = mixed;
 
 export default class MeasureHeight extends PureComponent<{
-    shouldMeasure: (prevState: any, newState: any) => bool,
+    shouldMeasure: (prevState: ChildState, newState: ChildState) => bool,
     onMeasure: (height: number) => void,
     state: ChildState
 }> {
