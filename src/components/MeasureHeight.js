@@ -23,13 +23,15 @@ import { omit, debounce } from 'functions';
  * </MeasureHeight>
  */
 
+type ChildState = { [key: string]: any };
+
 export default class MeasureHeight extends PureComponent<{
     shouldMeasure: (prevState: any, newState: any) => bool,
     onMeasure: (height: number) => void,
-    state: any
+    state: ChildState
 }> {
     static defaultProps = {
-        shouldMeasure: (prevState: any, newState: any) => prevState !== newState,
+        shouldMeasure: (prevState: ChildState, newState: ChildState) => prevState !== newState,
         onMeasure: (height: number) => {} // eslint-disable-line
     };
 

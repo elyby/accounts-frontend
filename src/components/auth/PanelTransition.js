@@ -339,8 +339,17 @@ class PanelTransition extends Component {
     }
 
     shouldMeasureHeight() {
+        const errorString = Object.values(this.props.auth.error || {})
+            .reduce((acc, item) => {
+                if (typeof item === 'string') {
+                    return acc + item;
+                }
+
+                return acc + item.type;
+            }, '');
+
         return [
-            this.props.auth.error,
+            errorString,
             this.state.isHeightDirty,
             this.props.user.lang,
             this.props.accounts.available.length
