@@ -1,3 +1,7 @@
+// @flow
+import type { User } from 'components/user';
+import type { AccountsState } from 'components/accounts';
+import type { Node, Element } from 'react';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -56,7 +60,64 @@ if (process.env.NODE_ENV !== 'production') {
     }, {});
 }
 
-class PanelTransition extends Component {
+type ValidationError = string | {
+    type: string,
+    payload: { [key: string]: any },
+};
+
+type AnimationProps = {|
+    opacitySpring: number,
+    transformSpring: number,
+|};
+
+type AnimationContext = {
+    key: string,
+    style: AnimationProps,
+    data: {
+        Title: Node,
+        Body: Element<any>,
+        Footer: Node,
+        Links: Node,
+        hasBackButton: bool,
+    }
+};
+
+type Props = {
+    // context props
+    auth: {
+        error: string | {
+            type: string,
+            payload: {[key: string]: any},
+        },
+        isLoading: bool,
+        login: string,
+    },
+    user: User,
+    accounts: AccountsState,
+    setErrors: ({ [key: string]: ValidationError }) => void,
+    clearErrors: () => void,
+    resolve: () => void,
+    reject: () => void,
+
+
+    // local props
+    Title: Node,
+    Body: typeof Component,
+    Footer: Node,
+    Links: Node,
+    children: Node
+};
+
+type State = {
+    contextHeight: number,
+    panelId: string | void,
+    prevPanelId: string | void,
+    isHeightDirty: bool,
+    forceHeight: 1 | 0,
+    direction: 'X' | 'Y',
+};
+
+class PanelTransition extends Component<Props, State> {
     static displayName = 'PanelTransition';
 
     static propTypes = {
@@ -106,8 +167,19 @@ class PanelTransition extends Component {
 
     state = {
         contextHeight: 0,
-        panelId: this.props.Body && this.props.Body.type.panelId
+        panelId: this.props.Body && (this.props.Body: any).type.panelId,
+        isHeightDirty: false,
+        forceHeight: 0,
+        direction: 'X',
+        prevPanelId: undefined,
     };
+
+    isHeightMeasured: bool = false;
+    wasAutoFocused: bool = false;
+    body: null | {
+        autoFocus: () => void,
+        onFormSubmit: () => void,
+    } = null;
 
     timerIds = []; // this is a list of a probably running timeouts to clean on unmount
 
@@ -136,8 +208,8 @@ class PanelTransition extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const nextPanel = nextProps.Body && nextProps.Body.type.panelId;
-        const prevPanel = this.props.Body && this.props.Body.type.panelId;
+        const nextPanel = nextProps.Body && (nextProps.Body: any).type.panelId;
+        const prevPanel = this.props.Body && (this.props.Body: any).type.panelId;
 
         if (nextPanel !== prevPanel) {
             const direction = this.getDirection(nextPanel, prevPanel);
@@ -177,7 +249,10 @@ class PanelTransition extends Component {
             throw new Error('Title, Body, Footer and Links are required');
         }
 
-        const {panelId, hasGoBack} = Body.type;
+        const {panelId, hasGoBack}: {
+            panelId: string,
+            hasGoBack: bool,
+        } = (Body: any).type;
 
         const formHeight = this.state[`formHeight${panelId}`] || 0;
 
@@ -255,7 +330,10 @@ class PanelTransition extends Component {
 
     onFormSubmit = () => {
         this.props.clearErrors();
-        this.body.onFormSubmit();
+
+        if (this.body) {
+            this.body.onFormSubmit();
+        }
     };
 
     onFormInvalid = (errors) => this.props.setErrors(errors);
@@ -271,7 +349,10 @@ class PanelTransition extends Component {
      *
      * @return {object}
      */
-    getTransitionStyles({key}, options = {}) {
+    getTransitionStyles({key}, options = {}): {|
+        transformSpring: number,
+        opacitySpring: number,
+    |} {
         const {isLeave = false} = options;
         const {panelId, prevPanelId} = this.state;
 
@@ -279,6 +360,11 @@ class PanelTransition extends Component {
         const fromRight = 1;
 
         const currentContext = contexts.find((context) => context.includes(key));
+
+        if (!currentContext) {
+            throw new Error(`Can not find settings for ${key} panel`);
+        }
+
         let sign = currentContext.indexOf(panelId) > currentContext.indexOf(prevPanelId)
             ? fromRight
             : fromLeft;
@@ -294,8 +380,14 @@ class PanelTransition extends Component {
         };
     }
 
-    getDirection(next, prev) {
-        return contexts.find((context) => context.includes(prev)).includes(next) ? 'X' : 'Y';
+    getDirection(next, prev): 'X' | 'Y' {
+        const context = contexts.find((context) => context.includes(prev));
+
+        if (!context) {
+            throw new Error(`Can not find context for transition ${prev} -> ${next}`);
+        }
+
+        return context.includes(next) ? 'X' : 'Y';
     }
 
     onUpdateHeight = (height, key) => {
@@ -339,15 +431,28 @@ class PanelTransition extends Component {
     }
 
     shouldMeasureHeight() {
+        const errorString = Object.values(this.props.auth.error || {})
+            .reduce(
+                // $FlowFixMe
+                (acc, item: ValidationError) => {
+                    if (typeof item === 'string') {
+                        return acc + item;
+                    }
+
+                    return acc + item.type;
+                },
+                ''
+            );
+
         return [
-            this.props.auth.error,
+            errorString,
             this.state.isHeightDirty,
             this.props.user.lang,
             this.props.accounts.available.length
         ].join('');
     }
 
-    getHeader({key, style, data}) {
+    getHeader({key, style, data}: AnimationContext) {
         const {Title} = data;
         const {transformSpring} = style;
 
@@ -357,7 +462,7 @@ class PanelTransition extends Component {
             hasBackButton = hasBackButton(this.props);
         }
 
-        style = {
+        const transitionStyle = {
             ...this.getDefaultTransitionStyles(key, style),
             opacity: 1 // reset default
         };
@@ -382,7 +487,7 @@ class PanelTransition extends Component {
         );
 
         return (
-            <div key={`header/${key}`} style={style}>
+            <div key={`header/${key}`} style={transitionStyle}>
                 {hasBackButton ? backButton : null}
                 <div style={scrollStyle}>
                     {Title}
@@ -391,19 +496,20 @@ class PanelTransition extends Component {
         );
     }
 
-    getBody({key, style, data}) {
+    getBody({key, style, data}: AnimationContext) {
         const {Body} = data;
         const {transformSpring} = style;
         const {direction} = this.state;
 
         let transform = this.translate(transformSpring, direction);
         let verticalOrigin = 'top';
+
         if (direction === 'Y') {
             verticalOrigin = 'bottom';
             transform = {};
         }
 
-        style = {
+        const transitionStyle = {
             ...this.getDefaultTransitionStyles(key, style),
             top: 'auto', // reset default
             [verticalOrigin]: 0,
@@ -413,7 +519,7 @@ class PanelTransition extends Component {
         return (
             <MeasureHeight
                 key={`body/${key}`}
-                style={style}
+                style={transitionStyle}
                 state={this.shouldMeasureHeight()}
                 onMeasure={(height) => this.onUpdateHeight(height, key)}
             >
@@ -426,25 +532,25 @@ class PanelTransition extends Component {
         );
     }
 
-    getFooter({key, style, data}) {
+    getFooter({key, style, data}: AnimationContext) {
         const {Footer} = data;
 
-        style = this.getDefaultTransitionStyles(key, style);
+        const transitionStyle = this.getDefaultTransitionStyles(key, style);
 
         return (
-            <div key={`footer/${key}`} style={style}>
+            <div key={`footer/${key}`} style={transitionStyle}>
                 {Footer}
             </div>
         );
     }
 
-    getLinks({key, style, data}) {
+    getLinks({key, style, data}: AnimationContext) {
         const {Links} = data;
 
-        style = this.getDefaultTransitionStyles(key, style);
+        const transitionStyle = this.getDefaultTransitionStyles(key, style);
 
         return (
-            <div key={`links/${key}`} style={style}>
+            <div key={`links/${key}`} style={transitionStyle}>
                 {Links}
             </div>
         );
@@ -457,7 +563,14 @@ class PanelTransition extends Component {
      *
      * @return {object}
      */
-    getDefaultTransitionStyles(key, {opacitySpring}) {
+    getDefaultTransitionStyles(key: string, {opacitySpring}: $ReadOnly<AnimationProps>): {|
+        position: string,
+        top: number,
+        left: number,
+        width: string,
+        opacity: number,
+        pointerEvents: string,
+    |} {
         return {
             position: 'absolute',
             top: 0,

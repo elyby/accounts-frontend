@@ -1,4 +1,5 @@
 // @flow
+import type { Node } from 'react';
 import React, { Component } from 'react';
 
 import classNames from 'classnames';
@@ -9,9 +10,9 @@ import styles from './panel.scss';
 import icons from './icons.scss';
 
 export function Panel(props: {
-    title: string,
-    icon: string,
-    children: *
+    title?: string,
+    icon?: string,
+    children: Node,
 }) {
     let { title, icon } = props;
 
