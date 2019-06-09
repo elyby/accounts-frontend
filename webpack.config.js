@@ -6,6 +6,7 @@ const path = require('path');
 
 const webpack = require('webpack');
 const loaderUtils = require('loader-utils');
+const chalk = require('chalk');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const cssUrl = require('webpack-utils/cssUrl');
@@ -24,7 +25,11 @@ let config = {};
 try {
     config = require('./config/env.js');
 } catch (err) {
-    console.error('\n\n===\nCan not find config/env.js. Running with defaults\n===\n\n', err);
+    console.log(chalk.yellow('\nCan not find config/env.js. Running with defaults\n\n'));
+
+    if (err.code !== 'MODULE_NOT_FOUND') {
+        console.error(err);
+    }
 }
 
 /**
