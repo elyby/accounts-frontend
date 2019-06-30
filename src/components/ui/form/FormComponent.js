@@ -5,7 +5,7 @@ import { intlShape } from 'react-intl';
 
 export default class FormComponent<P, S = void> extends Component<P, S> {
     static contextTypes = {
-        intl: intlShape.isRequired
+        intl: intlShape,
     };
 
     /**

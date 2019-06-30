@@ -2,7 +2,7 @@
  * A helper wrapper service around window.history
  */
 
-import createBrowserHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 
 export const browserHistory = createBrowserHistory();
 
@@ -11,9 +11,9 @@ browserHistory.listen(() => {
 });
 
 function patchHistory(history) {
-    Object.assign(history.location,
-        {query: new URLSearchParams(history.location.search)}
-    );
+    Object.assign(history.location, {
+        query: new URLSearchParams(history.location.search)
+    });
 }
 
 patchHistory(browserHistory);
@@ -27,7 +27,10 @@ export default {
      * @return {bool} - whether history.back() can be safetly called
      */
     canGoBack() {
-        return document.referrer.includes(`${location.protocol}//${location.host}`)
-            || this.initialLength < window.history.length;
+        return (
+            document.referrer.includes(
+                `${location.protocol}//${location.host}`
+            ) || this.initialLength < window.history.length
+        );
     }
 };

@@ -1,5 +1,5 @@
 // @flow
-import type { RouterHistory, Match } from 'react-router';
+import type { RouterHistory, Match } from 'react-router-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -9,8 +9,7 @@ import type { MfaStep } from 'components/profile/multiFactorAuth';
 import type { FormModel } from 'components/ui/form';
 import type { User } from 'components/user';
 
-interface Props {
-    user: User;
+type OwnProps = {|
     history: RouterHistory;
     match: {
         ...Match;
@@ -18,6 +17,11 @@ interface Props {
             step?: '1' | '2' | '3';
         };
     };
+|};
+
+type Props = {
+    ...OwnProps,
+    user: User;
 }
 
 class MultiFactorAuthPage extends Component<Props> {
@@ -86,4 +90,6 @@ class MultiFactorAuthPage extends Component<Props> {
     };
 }
 
-export default connect(({user}): { user: User } => ({user}))(MultiFactorAuthPage);
+export default connect<Props, OwnProps, _, _, _, _>(
+    ({user}) => ({user})
+)(MultiFactorAuthPage);

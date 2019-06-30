@@ -18,6 +18,8 @@ import ForgotPassword from 'components/auth/forgotPassword/ForgotPassword';
 import RecoverPassword from 'components/auth/recoverPassword/RecoverPassword';
 import Mfa from 'components/auth/mfa/Mfa';
 import Finish from 'components/auth/finish/Finish';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import styles from './auth.scss';
 
@@ -27,13 +29,19 @@ import styles from './auth.scss';
 // so that it persist disregarding remounts
 let isSidebarHiddenCache = false;
 
-class AuthPage extends Component<{
+type OwnProps = {|
+|};
+
+type Props = {
+    ...OwnProps,
     client: {
         id: string,
         name: string,
         description: string
     }
-}, {
+};
+
+class AuthPage extends Component<Props, {
     isSidebarHidden: bool
 }> {
     state = {
@@ -91,20 +99,10 @@ function renderPanelTransition(factory) {
             Body={<Body {...props} />}
             Footer={<Footer />}
             Links={<Links />}
-            {...props}
         />
     );
 }
 
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-
-export default withRouter(connect((state): {
-    client: {
-        id: string,
-        name: string,
-        description: string
-    }
-} => ({
+export default withRouter(connect<Props, OwnProps, _, _, _, _>((state) => ({
     client: state.auth.client
 }))(AuthPage));

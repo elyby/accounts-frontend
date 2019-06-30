@@ -20,7 +20,11 @@ import styles from './profile.scss';
 
 import type { FormModel } from 'components/ui/form';
 
-interface Props {
+type OwnProps = {|
+|};
+
+type Props = {
+    ...OwnProps,
     userId: number;
     onSubmit: ({form: FormModel, sendData: () => Promise<*>}) => void;
     fetchUserData: () => Promise<*>;
@@ -65,7 +69,7 @@ class ProfilePage extends Component<Props> {
     goToProfile = () => browserHistory.push('/');
 }
 
-export default connect((state) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state) => ({
     userId: state.user.id,
 }), {
     fetchUserData,

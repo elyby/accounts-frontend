@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 
 import React from 'react';
 

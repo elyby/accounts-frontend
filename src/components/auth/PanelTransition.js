@@ -1,7 +1,7 @@
 // @flow
 import type { User } from 'components/user';
 import type { AccountsState } from 'components/accounts';
-import type { Node, Element } from 'react';
+import type { Element } from 'react';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -24,6 +24,8 @@ const opacitySpringConfig = {stiffness: 300, damping: 20};
 const transformSpringConfig = {stiffness: 500, damping: 50, precision: 0.5};
 const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
 
+type PanelId = string;
+
 /**
  * Definition of relation between contexts and panels
  *
@@ -35,7 +37,7 @@ const changeContextSpringConfig = {stiffness: 500, damping: 20, precision: 0.5};
  * - Panel index defines the direction of X transition of both panels
  * (e.g. the panel with lower index will slide from left side, and with greater from right side)
  */
-const contexts = [
+const contexts: Array<PanelId[]> = [
     ['login', 'password', 'forgotPassword', 'mfa', 'recoverPassword'],
     ['register', 'activation', 'resendActivation'],
     ['acceptRules'],
@@ -71,18 +73,27 @@ type AnimationProps = {|
 |};
 
 type AnimationContext = {
-    key: string,
+    key: PanelId,
     style: AnimationProps,
     data: {
-        Title: Node,
+        Title: Element<any>,
         Body: Element<any>,
-        Footer: Node,
-        Links: Node,
+        Footer: Element<any>,
+        Links: Element<any>,
         hasBackButton: bool,
     }
 };
 
+type OwnProps = {|
+    Title: Element<any>,
+    Body: Element<any>,
+    Footer: Element<any>,
+    Links: Element<any>,
+    children?: Element<any>
+|};
+
 type Props = {
+    ...OwnProps,
     // context props
     auth: {
         error: string | {
@@ -98,20 +109,12 @@ type Props = {
     clearErrors: () => void,
     resolve: () => void,
     reject: () => void,
-
-
-    // local props
-    Title: Node,
-    Body: typeof Component,
-    Footer: Node,
-    Links: Node,
-    children: Node
 };
 
 type State = {
     contextHeight: number,
-    panelId: string | void,
-    prevPanelId: string | void,
+    panelId: PanelId | void,
+    prevPanelId: PanelId | void,
     isHeightDirty: bool,
     forceHeight: 1 | 0,
     direction: 'X' | 'Y',
@@ -187,7 +190,7 @@ class PanelTransition extends Component<Props, State> {
         return {
             auth: this.props.auth,
             user: this.props.user,
-            requestRedraw: () =>
+            requestRedraw: (): Promise<void> =>
                 new Promise((resolve) =>
                     this.setState(
                         {isHeightDirty: true},
@@ -207,9 +210,9 @@ class PanelTransition extends Component<Props, State> {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        const nextPanel = nextProps.Body && (nextProps.Body: any).type.panelId;
-        const prevPanel = this.props.Body && (this.props.Body: any).type.panelId;
+    componentWillReceiveProps(nextProps: Props) {
+        const nextPanel: PanelId = nextProps.Body && (nextProps.Body: any).type.panelId;
+        const prevPanel: PanelId = this.props.Body && (this.props.Body: any).type.panelId;
 
         if (nextPanel !== prevPanel) {
             const direction = this.getDirection(nextPanel, prevPanel);
@@ -250,7 +253,7 @@ class PanelTransition extends Component<Props, State> {
         }
 
         const {panelId, hasGoBack}: {
-            panelId: string,
+            panelId: PanelId,
             hasGoBack: bool,
         } = (Body: any).type;
 
@@ -336,10 +339,10 @@ class PanelTransition extends Component<Props, State> {
         }
     };
 
-    onFormInvalid = (errors) => this.props.setErrors(errors);
+    onFormInvalid = (errors: { [key: string]: ValidationError }) => this.props.setErrors(errors);
 
-    willEnter = (config) => this.getTransitionStyles(config);
-    willLeave = (config) => this.getTransitionStyles(config, {isLeave: true});
+    willEnter = (config: AnimationContext) => this.getTransitionStyles(config);
+    willLeave = (config: AnimationContext) => this.getTransitionStyles(config, {isLeave: true});
 
     /**
      * @param {object} config
@@ -349,7 +352,7 @@ class PanelTransition extends Component<Props, State> {
      *
      * @return {object}
      */
-    getTransitionStyles({key}, options = {}): {|
+    getTransitionStyles({key}: AnimationContext, options: { isLeave?: bool } = {}): {|
         transformSpring: number,
         opacitySpring: number,
     |} {
@@ -380,7 +383,7 @@ class PanelTransition extends Component<Props, State> {
         };
     }
 
-    getDirection(next, prev): 'X' | 'Y' {
+    getDirection(next: PanelId, prev: PanelId): 'X' | 'Y' {
         const context = contexts.find((context) => context.includes(prev));
 
         if (!context) {
@@ -390,7 +393,7 @@ class PanelTransition extends Component<Props, State> {
         return context.includes(next) ? 'X' : 'Y';
     }
 
-    onUpdateHeight = (height, key) => {
+    onUpdateHeight = (height: number, key: PanelId) => {
         const heightKey = `formHeight${key}`;
 
         this.setState({
@@ -398,13 +401,13 @@ class PanelTransition extends Component<Props, State> {
         });
     };
 
-    onUpdateContextHeight = (height) => {
+    onUpdateContextHeight = (height: number) => {
         this.setState({
             contextHeight: height
         });
     };
 
-    onGoBack = (event) => {
+    onGoBack = (event: SyntheticEvent<HTMLElement>) => {
         event.preventDefault();
 
         authFlow.goBack();
@@ -415,7 +418,7 @@ class PanelTransition extends Component<Props, State> {
      *
      * @param {number} length number of panels transitioned
      */
-    tryToAutoFocus(length) {
+    tryToAutoFocus(length: number) {
         if (!this.body) {
             return;
         }
@@ -588,7 +591,7 @@ class PanelTransition extends Component<Props, State> {
      *
      * @return {object}
      */
-    translate(value, direction = 'X', unit = '%') {
+    translate(value: number, direction: 'X' | 'Y' = 'X', unit: '%' | 'px' = '%') {
         return {
             WebkitTransform: `translate${direction}(${value}${unit})`,
             transform: `translate${direction}(${value}${unit})`
@@ -596,7 +599,7 @@ class PanelTransition extends Component<Props, State> {
     }
 }
 
-export default connect((state) => {
+export default connect<Props, OwnProps, _, _, _, _>((state) => {
     const login = getLogin(state);
     let user = {
         ...state.user

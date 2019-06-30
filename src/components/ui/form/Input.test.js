@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import { IntlProvider } from 'react-intl';
 
 import Input from './Input';

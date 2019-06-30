@@ -1,10 +1,12 @@
 // @flow
 import FormInputComponent from './FormInputComponent';
 
+type LoadingListener = (isLoading: bool) => void;
+
 export default class FormModel {
     fields = {};
     errors = {};
-    handlers = [];
+    handlers: LoadingListener[] = [];
     renderErrors: bool;
     _isLoading: bool;
 
@@ -145,7 +147,7 @@ export default class FormModel {
      *
      * @return {object}
      */
-    serialize() {
+    serialize(): {[key: string]: any} {
         return Object.keys(this.fields).reduce((acc, fieldId) => {
             const field = this.fields[fieldId];
 
@@ -164,7 +166,7 @@ export default class FormModel {
      *
      * @param {function} fn
      */
-    addLoadingListener(fn: Function) {
+    addLoadingListener(fn: LoadingListener) {
         this.removeLoadingListener(fn);
         this.handlers.push(fn);
     }
@@ -174,7 +176,7 @@ export default class FormModel {
      *
      * @param {function} fn
      */
-    removeLoadingListener(fn: Function) {
+    removeLoadingListener(fn: LoadingListener) {
         this.handlers = this.handlers.filter((handler) => handler !== fn);
     }
 

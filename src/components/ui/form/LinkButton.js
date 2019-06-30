@@ -1,12 +1,15 @@
 // @flow
-import type { ElementProps } from 'react';
+import type { ElementConfig } from 'react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 import Button from './Button';
 
 export default function LinkButton(
-    props: ElementProps<typeof Button> & ElementProps<typeof Link>
+    props: {
+        ...$Exact<ElementConfig<typeof Button>>,
+        ...$Exact<ElementConfig<typeof Link>>
+    }
 ) {
     const { to, ...restProps } = props;
 

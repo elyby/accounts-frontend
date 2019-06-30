@@ -3,17 +3,27 @@ import React from 'react';
 import classNames from 'classnames';
 import { localeFlags } from 'components/i18n';
 import LANGS from 'i18n/index.json';
+import { connect } from 'react-redux';
+import { create as createPopup } from 'components/ui/popup/actions';
+import LanguageSwitcher from 'components/languageSwitcher';
+
 import styles from './link.scss';
+
+type OwnProps = {|
+|};
+
+type Props = {
+    ...OwnProps,
+    userLang: string;
+    interfaceLocale: string;
+    showLanguageSwitcherPopup: Function;
+};
 
 function LanguageLink({
     userLang,
     interfaceLocale,
     showLanguageSwitcherPopup,
-}: {
-    userLang: string;
-    interfaceLocale: string;
-    showLanguageSwitcherPopup: Function;
-}) {
+}: Props) {
     const localeDefinition = LANGS[userLang] || LANGS[interfaceLocale];
 
     return (
@@ -31,13 +41,9 @@ function LanguageLink({
     );
 }
 
-import { connect } from 'react-redux';
-import { create as createPopup } from 'components/ui/popup/actions';
-import LanguageSwitcher from 'components/languageSwitcher';
-
-export default connect((state) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state) => ({
     userLang: state.user.lang,
     interfaceLocale: state.i18n.locale,
 }), {
-    showLanguageSwitcherPopup: () => createPopup(LanguageSwitcher),
+    showLanguageSwitcherPopup: () => createPopup({ Popup: LanguageSwitcher }),
 })(LanguageLink);

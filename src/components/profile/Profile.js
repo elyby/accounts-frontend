@@ -13,10 +13,16 @@ import RulesPage from 'pages/rules/RulesPage';
 
 import type { User } from 'components/user';
 
-class Profile extends Component<{
+type OwnProps = {|
+|};
+
+type Props = {
+    ...OwnProps,
     user: User;
     interfaceLocale: string;
-}> {
+};
+
+class Profile extends Component<Props> {
     UUID: ?HTMLElement;
 
     render() {
@@ -150,10 +156,7 @@ class Profile extends Component<{
     }
 }
 
-export default connect(({ user, i18n }): {
-    user: User;
-    interfaceLocale: string;
-} => ({
+export default connect<Props, OwnProps, _, _, _, _>(({ user, i18n }) => ({
     user,
     interfaceLocale: i18n.locale,
 }))(Profile);

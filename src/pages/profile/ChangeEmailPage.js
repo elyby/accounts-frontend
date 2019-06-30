@@ -1,15 +1,13 @@
 // @flow
-import type { RouterHistory, Match } from 'react-router';
+import type { RouterHistory, Match } from 'react-router-dom';
+import type FormModel from 'components/ui/form/FormModel';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
 import ChangeEmail from 'components/profile/changeEmail/ChangeEmail';
-
 import { requestEmailChange, setNewEmail, confirmNewEmail } from 'services/api/accounts';
 
-interface Props {
-    lang: string;
-    email: string;
+type OwnProps = {|
     history: RouterHistory;
     match: {
         ...Match;
@@ -18,6 +16,12 @@ interface Props {
             code: string;
         };
     };
+|};
+
+type Props = {
+    ...OwnProps,
+    lang: string;
+    email: string;
 }
 
 class ChangeEmailPage extends Component<Props> {
@@ -53,11 +57,11 @@ class ChangeEmailPage extends Component<Props> {
         );
     }
 
-    onChangeStep = (step) => {
+    onChangeStep = (step: number) => {
         this.props.history.push(`/profile/change-email/step${++step}`);
     };
 
-    onSubmit = (step: number, form) => {
+    onSubmit = (step: number, form: FormModel) => {
         return this.context.onSubmit({
             form,
             sendData: () => {
@@ -102,10 +106,7 @@ function handleErrors(repeatUrl) {
     };
 }
 
-import { connect } from 'react-redux';
-
-export default connect((state) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state) => ({
     email: state.user.email,
     lang: state.user.lang
-}), {
-})(ChangeEmailPage);
+}))(ChangeEmailPage);

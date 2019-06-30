@@ -1,4 +1,4 @@
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 
 import auth from 'components/auth/reducer';
 import {

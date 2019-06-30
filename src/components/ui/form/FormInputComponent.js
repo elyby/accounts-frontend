@@ -12,8 +12,6 @@ export default class FormInputComponent<P, S = void> extends FormComponent<P & {
 }, S & {
     error?: Error,
 }> {
-    el: ?HTMLDivElement;
-
     componentWillReceiveProps() {
         if (this.state && this.state.error) {
             Reflect.deleteProperty(this.state, 'error');
@@ -21,10 +19,6 @@ export default class FormInputComponent<P, S = void> extends FormComponent<P & {
             this.setState(this.state);
         }
     }
-
-    setEl = (el: ?HTMLDivElement) => {
-        this.el = el;
-    };
 
     renderError() {
         const error = this.state && this.state.error || this.props.error;

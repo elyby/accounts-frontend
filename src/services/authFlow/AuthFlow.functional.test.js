@@ -1,4 +1,4 @@
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import sinon from 'sinon';
 
 import AuthFlow from 'services/authFlow/AuthFlow';

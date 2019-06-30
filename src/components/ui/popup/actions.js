@@ -1,5 +1,6 @@
 // @flow
 import type { ElementType } from 'react';
+
 export const POPUP_CREATE = 'POPUP_CREATE';
 
 /**
@@ -9,16 +10,10 @@ export const POPUP_CREATE = 'POPUP_CREATE';
  *
  * @return {object}
  */
-export function create(payload: ElementType | {
+export function create(payload: {
     Popup: ElementType,
-    disableOverlayClose?: bool,
+    disableOverlayClose?: bool
 }) {
-    if (typeof payload === 'function') {
-        payload = {
-            Popup: payload
-        };
-    }
-
     return {
         type: POPUP_CREATE,
         payload

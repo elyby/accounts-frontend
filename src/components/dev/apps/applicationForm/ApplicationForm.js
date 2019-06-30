@@ -97,7 +97,7 @@ export default class ApplicationForm extends Component<{
                         </div>
                     </div>
 
-                    {FormComponent && (
+                    {!!FormComponent && (
                         <Button
                             color={COLOR_GREEN}
                             block

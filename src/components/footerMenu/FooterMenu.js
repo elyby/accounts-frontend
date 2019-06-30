@@ -10,10 +10,16 @@ import { ContactLink } from 'components/contact';
 import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
 
-class FooterMenu extends Component<{
+type OwnProps = {|
     createContactPopup: () => void,
+|};
+
+type Props = {
+    ...OwnProps,
     createLanguageSwitcherPopup: () => void,
-}> {
+};
+
+class FooterMenu extends Component<Props> {
     static displayName = 'FooterMenu';
 
     render() {
@@ -50,6 +56,6 @@ class FooterMenu extends Component<{
 
 // mark this component, as not pure, because it is stateless,
 // but should be re-rendered, if current lang was changed
-export default connect(null, {
-    createLanguageSwitcherPopup: () => createPopup(LanguageSwitcher),
+export default connect<Props, OwnProps, _, _, _, _>(null, {
+    createLanguageSwitcherPopup: () => createPopup({ Popup: LanguageSwitcher }),
 }, null, {pure: false})(FooterMenu);

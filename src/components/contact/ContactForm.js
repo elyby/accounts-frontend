@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { FormattedMessage as Message } from 'react-intl';
-
 import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'components/ui/form';
 import feedback from 'services/api/feedback';
 import icons from 'components/ui/icons.scss';
@@ -173,8 +172,6 @@ export class ContactForm extends Component {
             .finally(() => this.setState({isLoading: false}));
     };
 }
-
-import { connect } from 'react-redux';
 
 export default connect((state) => ({
     user: state.user

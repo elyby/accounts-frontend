@@ -30,6 +30,8 @@ export default class TextArea extends FormInputComponent<{
         skin: SKIN_DARK,
     };
 
+    elRef = React.createRef<HTMLTextAreaElement>();
+
     render() {
         const { color, skin } = this.props;
         let { label } = this.props;
@@ -59,7 +61,7 @@ export default class TextArea extends FormInputComponent<{
             <div className={styles.formRow}>
                 {label}
                 <div className={styles.textAreaContainer}>
-                    <TextareaAutosize inputRef={this.setEl}
+                    <TextareaAutosize inputRef={this.elRef}
                         className={classNames(
                             styles.textArea,
                             styles[`${skin}TextField`],
@@ -74,11 +76,13 @@ export default class TextArea extends FormInputComponent<{
     }
 
     getValue() {
-        return this.el && this.el.value;
+        const { current: el } = this.elRef;
+
+        return el && el.value;
     }
 
     focus() {
-        const { el } = this;
+        const { current: el } = this.elRef;
 
         if (!el) {
             return;

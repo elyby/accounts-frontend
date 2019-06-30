@@ -1,4 +1,4 @@
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import sinon from 'sinon';
 
 import { browserHistory } from 'services/history';
@@ -445,8 +445,9 @@ describe('components/accounts/actions', () => {
 
             return logoutStrangers()(dispatch, getState)
                 .then(() =>
-                    expect(dispatch, 'was always called with',
-                        expect.it('not to satisfy', activate(account)))
+                    expect(dispatch, 'not to have calls satisfying',
+                        [activate(account)]
+                    )
                 );
         });
 
@@ -511,8 +512,8 @@ describe('components/accounts/actions', () => {
             });
 
             it('should not log out', () =>
-                expect(dispatch, 'was always called with',
-                    expect.it('not to equal', {payload: foreignAccount})
+                expect(dispatch, 'not to have calls satisfying',
+                    [{payload: foreignAccount}]
                 )
             );
         });

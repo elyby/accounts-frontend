@@ -2,11 +2,13 @@
 import React, { Component } from 'react';
 import { FormattedMessage as Message, intlShape } from 'react-intl';
 import classNames from 'classnames';
-
+import { connect } from 'react-redux';
+import { changeLang } from 'components/user/actions';
 import LANGS from 'i18n/index.json';
 import formStyles from 'components/ui/form/form.scss';
 import popupStyles from 'components/ui/popup/popup.scss';
 import icons from 'components/ui/icons.scss';
+
 import styles from './languageSwitcher.scss';
 import messages from './languageSwitcher.intl.json';
 import LanguageList from './LanguageList';
@@ -23,21 +25,27 @@ export type LocaleData = {
 
 export type LocalesMap = {[code: string]: LocaleData};
 
-class LanguageSwitcher extends Component<{
-    onClose: Function,
-    selectedLocale: string,
-    changeLang: (lang: string) => void,
+type OwnProps = {|
+    onClose: () => void,
     langs: LocalesMap,
     emptyCaptions: Array<{
         src: string,
         caption: string,
     }>,
-}, {
+|};
+
+type Props = {
+    ...OwnProps,
+    selectedLocale: string,
+    changeLang: (lang: string) => void,
+};
+
+class LanguageSwitcher extends Component<Props, {
     filter: string,
     filteredLangs: LocalesMap,
 }> {
     static contextTypes = {
-        intl: intlShape.isRequired,
+        intl: intlShape,
     };
 
     state = {
@@ -108,7 +116,7 @@ class LanguageSwitcher extends Component<{
 
     onChangeLang = this.changeLang.bind(this);
 
-    changeLang(lang) {
+    changeLang(lang: string) {
         this.props.changeLang(lang);
 
         setTimeout(this.props.onClose, 300);
@@ -153,10 +161,7 @@ class LanguageSwitcher extends Component<{
     }
 }
 
-import { connect } from 'react-redux';
-import { changeLang } from 'components/user/actions';
-
-export default connect((state) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state) => ({
     selectedLocale: state.i18n.locale,
 }), {
     changeLang,

@@ -41,37 +41,37 @@ export function changePassword(id: number, {
     });
 }
 
-export function acceptRules(id: number) {
+export function acceptRules(id: number): Promise<{ success: bool }> {
     return request.post(`/api/v1/accounts/${id}/rules`);
 }
 
-export function changeUsername(id: number, username: ?string, password: ?string) {
+export function changeUsername(id: number, username: ?string, password: ?string): Promise<{ success: bool }> {
     return request.post(`/api/v1/accounts/${id}/username`, {
         username,
         password,
     });
 }
 
-export function changeLang(id: number, lang: string) {
+export function changeLang(id: number, lang: string): Promise<{ success: bool }> {
     return request.post(`/api/v1/accounts/${id}/language`, {
         lang,
     });
 }
 
-export function requestEmailChange(id: number, password: string) {
+export function requestEmailChange(id: number, password: string): Promise<{ success: bool }> {
     return request.post(`/api/v1/accounts/${id}/email-verification`, {
         password,
     });
 }
 
-export function setNewEmail(id: number, email: string, key: string) {
+export function setNewEmail(id: number, email: string, key: string): Promise<{ success: bool }> {
     return request.post(`/api/v1/accounts/${id}/new-email-verification`, {
         email,
         key,
     });
 }
 
-export function confirmNewEmail(id: number, key: string) {
+export function confirmNewEmail(id: number, key: string): Promise<{ success: bool }> {
     return request.post(`/api/v1/accounts/${id}/email`, {
         key,
     });

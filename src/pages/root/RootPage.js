@@ -4,7 +4,7 @@ import type { Account } from 'components/accounts/reducer';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { resetAuth } from 'components/auth/actions';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
 import Helmet from 'react-helmet';

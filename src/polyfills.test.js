@@ -1,4 +1,4 @@
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 
 describe('promise.prototype.finally', () => {
     it('should be invoked after promise resolved', () =>

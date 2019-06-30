@@ -1,5 +1,5 @@
 import React from 'react';
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import sinon from 'sinon';
 
 import { shallow } from 'enzyme';

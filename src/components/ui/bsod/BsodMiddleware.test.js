@@ -1,4 +1,4 @@
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import sinon from 'sinon';
 
 import BsodMiddleware from 'components/ui/bsod/BsodMiddleware';

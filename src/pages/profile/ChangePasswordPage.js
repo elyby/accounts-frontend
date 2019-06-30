@@ -7,7 +7,11 @@ import { changePassword } from 'services/api/accounts';
 import { FormModel } from 'components/ui/form';
 import ChangePassword from 'components/profile/changePassword/ChangePassword';
 
-interface Props {
+type OwnProps = {|
+|};
+
+type Props = {
+    ...OwnProps,
     updateUser: (fields: $Shape<User>) => void;
 }
 
@@ -45,6 +49,6 @@ class ChangePasswordPage extends Component<Props> {
 import { connect } from 'react-redux';
 import { updateUser } from 'components/user/actions';
 
-export default connect(null, {
+export default connect<Props, OwnProps, _, _, _, _>(null, {
     updateUser,
 })(ChangePasswordPage);

@@ -16,7 +16,7 @@ export default class Captcha extends FormInputComponent<{
 }, {
     code: string,
 }> {
-    el: ?HTMLDivElement;
+    elRef = React.createRef<HTMLDivElement>();
     captchaId: CaptchaID;
 
     static defaultProps = {
@@ -26,7 +26,9 @@ export default class Captcha extends FormInputComponent<{
 
     componentDidMount() {
         setTimeout(() => {
-            this.el && captcha.render(this.el, {
+            const {current: el} = this.elRef;
+
+            el && captcha.render(el, {
                 skin: this.props.skin,
                 onSetCode: this.setCode
             })
@@ -48,7 +50,7 @@ export default class Captcha extends FormInputComponent<{
                     <ComponentLoader />
                 </div>
 
-                <div ref={this.setEl} className={classNames(
+                <div ref={this.elRef} className={classNames(
                     styles.captcha,
                     styles[`${skin}Captcha`]
                 )} />

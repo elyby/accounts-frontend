@@ -1,10 +1,11 @@
 // @flow
 import type { OauthAppResponse } from 'services/api/oauth';
+
 import type { Action } from './actions';
 
-export type Apps = {
-    +available: Array<OauthAppResponse>,
-};
+export type Apps = {|
+    +available: OauthAppResponse[],
+|};
 
 const defaults: Apps = {
     available: [],
@@ -13,7 +14,7 @@ const defaults: Apps = {
 export default function apps(
     state: Apps = defaults,
     action: Action
-) {
+): Apps {
     switch (action.type) {
         case 'apps:setAvailable':
             return {
@@ -23,7 +24,7 @@ export default function apps(
 
         case 'apps:addApp': {
             const { payload } = action;
-            const available: Array<OauthAppResponse> = [...state.available];
+            const available = [...state.available];
             let index = available.findIndex((app) => app.clientId === payload.clientId);
 
             if (index === -1) {

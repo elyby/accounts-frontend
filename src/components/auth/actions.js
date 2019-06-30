@@ -1,5 +1,5 @@
 // @flow
-import type { OauthData } from 'services/api/oauth';
+import type { OauthData, Client, Scope } from 'services/api/oauth';
 import type { OAuthResponse } from 'services/api/authentication';
 import { browserHistory } from 'services/history';
 import logger from 'services/logger';
@@ -19,7 +19,13 @@ import signup from 'services/api/signup';
 import dispatchBsod from 'components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'components/ui/popup/actions';
 import ContactForm from 'components/contact/ContactForm';
+
 import { getCredentials } from './reducer';
+
+type ValidationError = string | {
+    type: string,
+    payload: { [key: string]: any },
+};
 
 export { updateUser } from 'components/user/actions';
 export {
@@ -212,7 +218,7 @@ export function resendActivation({
 }
 
 export function contactUs() {
-    return createPopup(ContactForm);
+    return createPopup({ Popup: ContactForm });
 }
 
 export const SET_CREDENTIALS = 'auth:setCredentials';
@@ -283,7 +289,7 @@ export function setAccountSwitcher(isOn: bool) {
 }
 
 export const ERROR = 'auth:error';
-export function setErrors(errors: ?{[key: string]: string}) {
+export function setErrors(errors: ?{[key: string]: ValidationError}) {
     return {
         type: ERROR,
         payload: errors,
@@ -413,11 +419,7 @@ export function setClient({
     id,
     name,
     description
-}: {
-    id: string,
-    name: string,
-    description: string
-}) {
+}: Client) {
     return {
         type: SET_CLIENT,
         payload: {id, name, description}
@@ -502,7 +504,7 @@ export function requirePermissionsAccept() {
 }
 
 export const SET_SCOPES = 'set_scopes';
-export function setScopes(scopes: Array<string>) {
+export function setScopes(scopes: Scope[]) {
     if (!(scopes instanceof Array)) {
         throw new Error('Scopes must be array');
     }

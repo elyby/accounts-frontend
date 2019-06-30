@@ -1,22 +1,20 @@
 // @flow
+import type { Node } from 'react';
 import React, { Component } from 'react';
-
 import classNames from 'classnames';
-
 import logger from 'services/logger';
 
+import type FormModel from './FormModel';
 import styles from './form.scss';
 
-import type FormModel from './FormModel';
-
-type Props = {
+type Props = {|
     id: string,
     isLoading: bool,
     form?: FormModel,
-    onSubmit: Function,
+    onSubmit: (form: FormModel | FormData) => void | Promise<void>,
     onInvalid: (errors: {[errorKey: string]: string}) => void,
-    children: *
-};
+    children: Node
+|};
 type State = {
     isTouched: bool,
     isLoading: bool
@@ -130,7 +128,7 @@ export default class Form extends Component<Props, State> {
                 );
             }
         } else {
-            const invalidEls = form.querySelectorAll(':invalid');
+            const invalidEls: NodeList<InputElement> = (form.querySelectorAll(':invalid'): any);
             const errors = {};
             invalidEls[0].focus(); // focus on first error
 

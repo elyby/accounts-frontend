@@ -1,5 +1,5 @@
 // @flow
-import type { Location, RouterHistory } from 'react-router';
+import type { Location, RouterHistory } from 'react-router-dom';
 import type { User } from 'components/user';
 import type { OauthAppResponse } from 'services/api/oauth';
 import React, { Component } from 'react';
@@ -11,17 +11,21 @@ import {
 } from 'components/dev/apps/actions';
 import ApplicationsIndex from 'components/dev/apps/ApplicationsIndex';
 
-interface Props {
+type OwnProps = {|
     location: Location;
     history: RouterHistory;
+|};
+
+type Props = {
+    ...OwnProps,
     user: User;
-    apps: Array<OauthAppResponse>;
+    apps: OauthAppResponse[];
     fetchAvailableApps: () => Promise<void>;
     deleteApp: string => Promise<void>;
     resetApp: (string, bool) => Promise<void>;
 }
 
-interface State {
+type State = {
     isLoading: bool;
     forceUpdate: bool;
 }
@@ -36,7 +40,7 @@ class ApplicationsListPage extends Component<Props, State> {
         !this.props.user.isGuest && this.loadApplicationsList();
     }
 
-    componentDidUpdate({ user }) {
+    componentDidUpdate({ user }: Props) {
         if (this.props.user !== user) {
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState({ forceUpdate: true });
@@ -80,10 +84,12 @@ class ApplicationsListPage extends Component<Props, State> {
     };
 }
 
-export default connect((state) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state) => ({
     user: state.user,
     apps: state.apps.available,
-}), {
+}),
+// $FlowFixMe: we need a better action typings for thunks
+{
     fetchAvailableApps,
     resetApp,
     deleteApp,

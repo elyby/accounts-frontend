@@ -141,7 +141,7 @@ $popupInitPosition: translateY(10%) rotateX(-8deg);
     }
 }
 
-.trLeave {
+.trExit {
     opacity: 1;
     overflow: hidden;
 
@@ -163,7 +163,7 @@ $popupInitPosition: translateY(10%) rotateX(-8deg);
 }
 
 .trEnter,
-.trLeave {
+.trExit {
     .close {
         // do not show close during transition, because transform forces position: fixed
         // to layout relative container, instead of body

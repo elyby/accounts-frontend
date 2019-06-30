@@ -1,4 +1,4 @@
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 
 import reducer from 'components/ui/popup/reducer';
 import {create, destroy} from 'components/ui/popup/actions';
@@ -22,14 +22,6 @@ describe('popup/reducer', () => {
             });
         });
 
-        it('should support shortcut popup creation', () => {
-            const actual = reducer(undefined, create(FakeComponent));
-
-            expect(actual.popups[0], 'to equal', {
-                Popup: FakeComponent
-            });
-        });
-
         it('should create multiple popups', () => {
             let actual = reducer(undefined, create({
                 Popup: FakeComponent
@@ -44,7 +36,7 @@ describe('popup/reducer', () => {
         });
 
         it('throws when no type provided', () => {
-            expect(() => reducer(undefined, create()), 'to throw', 'Popup is required');
+            expect(() => reducer(undefined, create({})), 'to throw', 'Popup is required');
         });
     });
 
@@ -53,7 +45,7 @@ describe('popup/reducer', () => {
         let popup;
 
         beforeEach(() => {
-            state = reducer(state, create(FakeComponent));
+            state = reducer(state, create({ Popup: FakeComponent }));
             popup = state.popups[0];
         });
 

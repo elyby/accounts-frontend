@@ -1,10 +1,11 @@
 // @flow
+import type { Location } from 'react-router-dom';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { restoreScroll } from './scroll';
 
-class ScrollIntoView extends React.Component<{
-    location: string,
+class ScrollIntoView extends React.PureComponent<{
+    location: Location,
     top?: bool, // do not touch any DOM and simply scroll to top on location change
 }> {
     componentDidMount() {

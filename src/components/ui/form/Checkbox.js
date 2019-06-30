@@ -19,6 +19,8 @@ export default class Checkbox extends FormInputComponent<{
         skin: SKIN_DARK,
     };
 
+    elRef = React.createRef<HTMLInputElement>();
+
     render() {
         const { color, skin } = this.props;
         let { label } = this.props;
@@ -30,7 +32,7 @@ export default class Checkbox extends FormInputComponent<{
         return (
             <div className={classNames(styles[`${color}MarkableRow`], styles[`${skin}MarkableRow`])}>
                 <label className={styles.markableContainer}>
-                    <input ref={this.setEl}
+                    <input ref={this.elRef}
                         className={styles.markableInput}
                         type="checkbox"
                         {...props}
@@ -44,13 +46,13 @@ export default class Checkbox extends FormInputComponent<{
     }
 
     getValue() {
-        const { el } = this;
+        const { current: el } = this.elRef;
 
         return el && el.checked ? 1 : 0;
     }
 
     focus() {
-        const { el } = this;
+        const { current: el } = this.elRef;
 
         el && el.focus();
     }

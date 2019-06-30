@@ -6,8 +6,9 @@ import RequestAbortedError from './RequestAbortedError';
 const middlewareLayer = new PromiseMiddlewareLayer();
 
 export type Resp<T> = {
+    ...$Exact<T>,
     originalResponse: Response
-} & T;
+};
 
 type Middleware = {
     before?: () => Promise<*>,

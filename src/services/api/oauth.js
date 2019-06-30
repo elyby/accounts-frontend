@@ -4,6 +4,18 @@ import type { Resp } from 'services/request';
 import type { ApplicationType } from 'components/dev/apps';
 import request from 'services/request';
 
+export type Scope =
+    | 'minecraft_server_session'
+    | 'offline_access'
+    | 'account_info'
+    | 'account_email';
+
+export type Client = {|
+    id: string,
+    name: string,
+    description: string
+|};
+
 export type OauthAppResponse = {
     clientId: string,
     clientSecret: string,
@@ -24,7 +36,7 @@ type OauthRequestData = {
     redirect_uri: string,
     response_type: string,
     description: string,
-    scope: string,
+    scope: Scope,
     prompt: string,
     login_hint?: string,
     state?: string,
@@ -35,7 +47,7 @@ export type OauthData = {
     redirectUrl: string,
     responseType: string,
     description: string,
-    scope: string,
+    scope: Scope,
     prompt: 'none' | 'consent' | 'select_account',
     loginHint?: string,
     state?: string
@@ -51,19 +63,28 @@ type FormPayloads = {
 
 const api = {
     validate(oauthData: OauthData) {
-        return request.get(
+        return request.get<{|
+            session: {|
+                scopes: Scope[],
+            |},
+            client: Client,
+            oAuth: {||},
+        |}>(
             '/api/oauth2/v1/validate',
             getOAuthRequest(oauthData)
         ).catch(handleOauthParamsValidation);
     },
 
-    complete(oauthData: OauthData, params: {accept?: bool} = {}): Promise<Resp<{
+    complete(oauthData: OauthData, params: {accept?: bool} = {}): Promise<{
         success: bool,
         redirectUri: string,
-    }>> {
+    }> {
         const query = request.buildQuery(getOAuthRequest(oauthData));
 
-        return request.post(
+        return request.post<{
+            success: bool,
+            redirectUri: string,
+        }>(
             `/api/oauth2/v1/complete?${query}`,
             typeof params.accept === 'undefined' ? {} : {accept: params.accept}
         ).catch((resp = {}) => {
@@ -92,28 +113,28 @@ const api = {
         });
     },
 
-    create(type: string, formParams: FormPayloads): Promise<Resp<{success: bool, data: OauthAppResponse}>> {
-        return request.post(`/api/v1/oauth2/${type}`, formParams);
+    create(type: string, formParams: FormPayloads) {
+        return request.post<{success: bool, data: OauthAppResponse}>(`/api/v1/oauth2/${type}`, formParams);
     },
 
-    update(clientId: string, formParams: FormPayloads): Promise<Resp<{success: bool, data: OauthAppResponse}>> {
-        return request.put(`/api/v1/oauth2/${clientId}`, formParams);
+    update(clientId: string, formParams: FormPayloads) {
+        return request.put<{success: bool, data: OauthAppResponse}>(`/api/v1/oauth2/${clientId}`, formParams);
     },
 
-    getApp(clientId: string): Promise<Resp<OauthAppResponse>> {
-        return request.get(`/api/v1/oauth2/${clientId}`);
+    getApp(clientId: string) {
+        return request.get<OauthAppResponse>(`/api/v1/oauth2/${clientId}`);
     },
 
-    getAppsByUser(userId: number): Promise<Resp<Array<OauthAppResponse>>> {
+    getAppsByUser(userId: number): Promise<OauthAppResponse[]> {
         return request.get(`/api/v1/accounts/${userId}/oauth2/clients`);
     },
 
-    reset(clientId: string, regenerateSecret: bool = false): Promise<Resp<{success: bool, data: OauthAppResponse}>> {
-        return request.post(`/api/v1/oauth2/${clientId}/reset${regenerateSecret ? '?regenerateSecret' : ''}`);
+    reset(clientId: string, regenerateSecret: bool = false) {
+        return request.post<{success: bool, data: OauthAppResponse}>(`/api/v1/oauth2/${clientId}/reset${regenerateSecret ? '?regenerateSecret' : ''}`);
     },
 
-    delete(clientId: string): Promise<Resp<{success: bool}>> {
-        return request.delete(`/api/v1/oauth2/${clientId}`);
+    delete(clientId: string) {
+        return request.delete<{success: bool}>(`/api/v1/oauth2/${clientId}`);
     },
 };
 

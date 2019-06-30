@@ -1,19 +1,20 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-import { CSSTransitionGroup } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { browserHistory } from 'services/history';
+import { connect } from 'react-redux';
+import { destroy } from 'components/ui/popup/actions';
 
 import styles from './popup.scss';
 
 export class PopupStack extends Component {
-    static displayName = 'PopupStack';
-
     static propTypes = {
-        popups: PropTypes.arrayOf(PropTypes.shape({
-            type: PropTypes.func,
-            props: PropTypes.oneOfType([PropTypes.object, PropTypes.func])
-        })),
+        popups: PropTypes.arrayOf(
+            PropTypes.shape({
+                type: PropTypes.func,
+                props: PropTypes.oneOfType([PropTypes.object, PropTypes.func])
+            })
+        ),
         destroy: PropTypes.func.isRequired
     };
 
@@ -28,31 +29,34 @@ export class PopupStack extends Component {
     }
 
     render() {
-        const {popups} = this.props;
+        const { popups } = this.props;
 
         return (
-            <CSSTransitionGroup
-                transitionName={{
-                    enter: styles.trEnter,
-                    enterActive: styles.trEnterActive,
-                    leave: styles.trLeave,
-                    leaveActive: styles.trLeaveActive
-                }}
-                transitionEnterTimeout={500}
-                transitionLeaveTimeout={500}
-            >
+            <TransitionGroup>
                 {popups.map((popup, index) => {
-                    const {Popup} = popup;
+                    const { Popup } = popup;
 
                     return (
-                        <div className={styles.overlay} key={index}
-                            onClick={this.onOverlayClick(popup)}
+                        <CSSTransition
+                            key={index}
+                            classNames={{
+                                enter: styles.trEnter,
+                                enterActive: styles.trEnterActive,
+                                exit: styles.trExit,
+                                exitActive: styles.trExitActive
+                            }}
+                            timeout={500}
                         >
-                            <Popup onClose={this.onClose(popup)} />
-                        </div>
+                            <div
+                                className={styles.overlay}
+                                onClick={this.onOverlayClick(popup)}
+                            >
+                                <Popup onClose={this.onClose(popup)} />
+                            </div>
+                        </CSSTransition>
                     );
                 })}
-            </CSSTransitionGroup>
+            </TransitionGroup>
         );
     }
 
@@ -62,7 +66,10 @@ export class PopupStack extends Component {
 
     onOverlayClick(popup) {
         return (event) => {
-            if (event.target !== event.currentTarget || popup.disableOverlayClose) {
+            if (
+                event.target !== event.currentTarget
+                || popup.disableOverlayClose
+            ) {
                 return;
             }
 
@@ -81,7 +88,8 @@ export class PopupStack extends Component {
     }
 
     onKeyPress = (event) => {
-        if (event.which === 27) { // ESC key
+        if (event.which === 27) {
+            // ESC key
             this.popStack();
         }
     };
@@ -93,11 +101,11 @@ export class PopupStack extends Component {
     };
 }
 
-import { connect } from 'react-redux';
-import { destroy } from 'components/ui/popup/actions';
-
-export default connect((state) => ({
-    ...state.popup
-}), {
-    destroy
-})(PopupStack);
+export default connect(
+    (state) => ({
+        ...state.popup
+    }),
+    {
+        destroy
+    }
+)(PopupStack);

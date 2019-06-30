@@ -11,18 +11,21 @@ import PageNotFound from 'pages/404/PageNotFound';
 import { getApp, fetchApp } from 'components/dev/apps/actions';
 import ApplicationForm from 'components/dev/apps/applicationForm/ApplicationForm';
 
-type MatchType = {
+type OwnProps = {|
     match: {
         params: {
             clientId: string,
         },
     },
-};
+|}
 
-class UpdateApplicationPage extends Component<{
+type Props = {
+    ...OwnProps,
     app: ?OauthAppResponse,
     fetchApp: (string) => Promise<void>,
-} & MatchType, {
+}
+
+class UpdateApplicationPage extends Component<Props, {
     isNotFound: bool,
 }> {
     form: FormModel = new FormModel();
@@ -104,7 +107,7 @@ class UpdateApplicationPage extends Component<{
     goToMainPage = (hash?: string) => browserHistory.push(`/dev/applications${hash ? `#${hash}` : ''}`);
 }
 
-export default connect((state, props: MatchType) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state, props) => ({
     app: getApp(state, props.match.params.clientId),
 }), {
     fetchApp,

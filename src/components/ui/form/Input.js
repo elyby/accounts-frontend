@@ -37,6 +37,8 @@ export default class Input extends FormInputComponent<{
         wasCopied: false,
     };
 
+    elRef = React.createRef<HTMLInputElement>();
+
     render() {
         const { color, skin, center } = this.props;
         let { icon, label, copy } = this.props;
@@ -89,7 +91,7 @@ export default class Input extends FormInputComponent<{
             <div className={baseClass}>
                 {label}
                 <div className={styles.textFieldContainer}>
-                    <input ref={this.setEl}
+                    <input ref={this.elRef}
                         className={classNames(
                             styles[`${skin}TextField`],
                             styles[`${color}TextField`],
@@ -108,11 +110,13 @@ export default class Input extends FormInputComponent<{
     }
 
     getValue() {
-        return this.el && this.el.value;
+        const { current: el } = this.elRef;
+
+        return el && el.value;
     }
 
     focus() {
-        const el = this.el;
+        const { current: el } = this.elRef;
 
         if (!el) {
             return;

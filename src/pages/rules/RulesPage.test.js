@@ -1,7 +1,7 @@
 import React from 'react';
 
 import sinon from 'sinon';
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import {shallow} from 'enzyme';
 
 import RulesPage from './RulesPage';

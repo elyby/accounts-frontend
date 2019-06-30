@@ -1,7 +1,6 @@
 import React from 'react';
-
 import sinon from 'sinon';
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import { mount } from 'enzyme';
 
 import authFlow from 'services/authFlow';
@@ -18,15 +17,13 @@ describe('AuthFlowRouteContents', () => {
     });
 
     function Component() {
-        return (
-            <div />
-        );
+        return <div />;
     }
 
     it('should render component if route allowed', () => {
         const request = {
             path: '/path',
-            params: {foo: 1},
+            params: { foo: 1 },
             query: new URLSearchParams()
         };
 
@@ -36,23 +33,25 @@ describe('AuthFlowRouteContents', () => {
                 query: request.query
             },
             match: {
-                params: request.params,
+                params: request.params
             }
         };
 
         authFlow.handleRequest.callsArg(2);
 
-        const wrapper = mount(<AuthFlowRouteContents
-            routerProps={routerProps}
-            component={Component}
-        />);
+        const wrapper = mount(
+            <AuthFlowRouteContents
+                routerProps={routerProps}
+                component={Component}
+            />
+        );
 
         const component = wrapper.find(Component);
 
         expect(authFlow.handleRequest, 'to have a call satisfying', [
             request,
-            function() {},
-            function() {}
+            expect.it('to be a function'),
+            expect.it('to be a function')
         ]);
 
         expect(component.exists(), 'to be true');

@@ -6,14 +6,15 @@ import { changeUsername } from 'services/api/accounts';
 import { FormModel } from 'components/ui/form';
 import ChangeUsername from 'components/profile/changeUsername/ChangeUsername';
 
-interface Props {
+type OwnProps = {|
+|};
+
+type Props = {
     username: string;
     updateUsername: (username: string) => void;
-}
+};
 
 class ChangeUsernamePage extends Component<Props> {
-    static displayName = 'ChangeUsernamePage';
-
     static contextTypes = {
         userId: PropTypes.number.isRequired,
         onSubmit: PropTypes.func.isRequired,
@@ -42,7 +43,7 @@ class ChangeUsernamePage extends Component<Props> {
         );
     }
 
-    onUsernameChange = (username) => {
+    onUsernameChange = (username: string) => {
         this.props.updateUsername(username);
     };
 
@@ -70,7 +71,7 @@ class ChangeUsernamePage extends Component<Props> {
 import { connect } from 'react-redux';
 import { updateUser } from 'components/user/actions';
 
-export default connect((state) => ({
+export default connect<Props, OwnProps, _, _, _, _>((state) => ({
     username: state.user.username,
 }), {
     updateUsername: (username) => updateUser({username}),

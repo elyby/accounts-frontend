@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import expect from 'unexpected';
+import expect from 'test/unexpected';
 import sinon from 'sinon';
 
 import request from 'services/request';

@@ -19,10 +19,10 @@ type Credentials = {
     rememberMe?: bool,
     returnUrl?: string,
     isRelogin?: bool,
-    isTotpRequired?: bool,
+    isTotpRequired?: bool
 };
 
-export default combineReducers({
+export default combineReducers<_, { action: string, payload?: mixed }>({
     credentials,
     error,
     isLoading,
@@ -32,10 +32,7 @@ export default combineReducers({
     scopes
 });
 
-function error(
-    state = null,
-    {type, payload = null, error = false}
-) {
+function error(state = null, { type, payload = null, error = false }) {
     switch (type) {
         case ERROR:
             if (!error) {
@@ -51,15 +48,16 @@ function error(
 
 function credentials(
     state = {},
-    {type, payload}: {
+    {
+        type,
+        payload
+    }: {
         type: string,
         payload: ?Credentials
     }
 ) {
     if (type === SET_CREDENTIALS) {
-        if (payload
-            && typeof payload === 'object'
-        ) {
+        if (payload && typeof payload === 'object') {
             return {
                 ...payload
             };
@@ -71,10 +69,7 @@ function credentials(
     return state;
 }
 
-function isSwitcherEnabled(
-    state = true,
-    {type, payload = false}
-) {
+function isSwitcherEnabled(state = true, { type, payload = false }) {
     switch (type) {
         case SET_SWITCHER:
             if (typeof payload !== 'boolean') {
@@ -88,10 +83,7 @@ function isSwitcherEnabled(
     }
 }
 
-function isLoading(
-    state = false,
-    {type, payload = null}
-) {
+function isLoading(state = false, { type, payload = null }) {
     switch (type) {
         case SET_LOADING_STATE:
             return !!payload;
@@ -101,10 +93,7 @@ function isLoading(
     }
 }
 
-function client(
-    state = null,
-    {type, payload = {}}
-) {
+function client(state = null, { type, payload = {} }) {
     switch (type) {
         case SET_CLIENT:
             return {
@@ -118,10 +107,7 @@ function client(
     }
 }
 
-function oauth(
-    state = null,
-    {type, payload = {}}
-) {
+function oauth(state = null, { type, payload = {} }) {
     switch (type) {
         case SET_OAUTH:
             return {
@@ -153,10 +139,7 @@ function oauth(
     }
 }
 
-function scopes(
-    state = [],
-    {type, payload = []}
-) {
+function scopes(state = [], { type, payload = [] }) {
     switch (type) {
         case SET_SCOPES:
             return payload;
