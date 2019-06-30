@@ -6,10 +6,10 @@ const multiAccount = createState();
 const multiAccountWithBadTokens = createState();
 const singleAccount = createState();
 singleAccount.accounts.available = singleAccount.accounts.available.filter(
-    (account) => account.id === singleAccount.accounts.active
+    account => account.id === singleAccount.accounts.active
 );
 
-describe('when user\'s token and refreshToken are invalid', () => {
+describe("when user's token and refreshToken are invalid", () => {
     before(() =>
         // ensure we always have one account with correct token
         cy.visit('/').then(() =>
@@ -21,10 +21,10 @@ describe('when user\'s token and refreshToken are invalid', () => {
                 },
                 body: `login=${account1.login}&password=${account1.password}`
             })
-                .then((resp) => resp.json())
-                .then((resp) => {
+                .then(resp => resp.json())
+                .then(resp => {
                     const account = multiAccount.accounts.available.find(
-                        (account) => account.username === account1.username
+                        account => account.username === account1.username
                     );
 
                     account.token = resp.access_token;
@@ -33,7 +33,8 @@ describe('when user\'s token and refreshToken are invalid', () => {
     );
 
     beforeEach(() =>
-        localStorage.setItem('redux-storage', JSON.stringify(multiAccount)));
+        localStorage.setItem('redux-storage', JSON.stringify(multiAccount))
+    );
 
     it('should ask for password', () => {
         cy.visit('/');
@@ -100,7 +101,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.get('@fetch', { timeout: 15000 }).should(
             'be.calledWith',
-            '/api/accounts/current'
+            `/api/v1/accounts/${account2.id}`
         );
 
         cy.get('[data-e2e-toolbar]')
@@ -127,7 +128,7 @@ describe('when user\'s token and refreshToken are invalid', () => {
 
         cy.get('@fetch', { timeout: 15000 }).should(
             'be.calledWith',
-            '/api/accounts/current'
+            `/api/v1/accounts/${account2.id}`
         );
 
         cy.url().should('include', '/password');

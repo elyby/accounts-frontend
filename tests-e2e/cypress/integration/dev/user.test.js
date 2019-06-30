@@ -37,6 +37,6 @@ describe('/dev/applications - user', () => {
 
         cy.url().should('include', '/dev/applications#the-foo');
 
-        cy.get('[data-e2e-app="the-foo"]').should('exist');
+        cy.get('[data-e2e-app-name="The Foo"]').should('exist');
     });
 });
