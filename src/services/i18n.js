@@ -33,15 +33,14 @@ export default {
         locale: string;
         messages: { [string]: string };
     }> {
-        const promises: Array<Promise<*>> = [
-            new Promise(require(`bundle-loader?name=[name]!react-intl/locale-data/${locale}.js`)),
-            new Promise(require(`bundle-loader?name=[name]!i18n/${locale}.json`))
+        const promises: Array<Promise<any>> = [
+            import(/* webpackChunkName: "[request]-locale" */`react-intl/locale-data/${locale}.js`),
+            import(/* webpackChunkName: "[request]-locale" */`i18n/${locale}.json`),
         ];
 
         if (needPolyfill) {
-            // $FlowFixMe
-            promises.push(new Promise(require('bundle-loader?name=intl!intl')));
-            promises.push(new Promise(require(`bundle-loader?name=[name]-polyfill-data!intl/locale-data/jsonp/${locale}.js`)));
+            promises.push(import(/* webpackChunkName: "[request]-intl-polyfill" */ 'intl'));
+            promises.push(import(/* webpackChunkName: "[request]-intl-polyfill" */`intl/locale-data/jsonp/${locale}.js`));
         }
 
         return Promise.all(promises)

@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-require('babel-register');
+require('@babel/register');
 
 const path = require('path');
 
@@ -190,7 +190,15 @@ const webpackConfig = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader?cacheDirectory=true'
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            envName: 'webpack',
+                            cacheDirectory: true
+                        }
+                    }
+                ]
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
@@ -274,7 +282,6 @@ if (isProduction) {
 if (!isProduction && !isTest) {
     webpackConfig.plugins.push(
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin()
     );
 
     if (config.apiHost) {
