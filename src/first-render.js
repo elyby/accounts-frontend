@@ -13,7 +13,7 @@ export default `
     </script>
 
     <style>
-        ${require('!!css!postcss!sass!index.scss')[0][1]}
-        ${require('!!css!postcss!sass!components/ui/loader/loader.scss')[0][1]}
+        ${require('!!css-loader!postcss-loader!sass-loader!index.scss')[0][1]}
+        ${require('!!css-loader!postcss-loader!sass-loader!components/ui/loader/loader.scss')[0][1]}
     </style>
 `;

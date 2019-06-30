@@ -101,8 +101,8 @@ const webpackConfig = {
     },
 
     resolve: {
-        root: rootPath,
-        extensions: ['', '.js', '.jsx']
+        modules: [rootPath, 'node_modules'],
+        extensions: ['.js', '.jsx', '.json']
     },
 
     externals: isTest ? {
@@ -167,27 +167,41 @@ const webpackConfig = {
     ],
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.scss$/,
-                extractInProduction: true,
-                loader: `style!css?${ JSON.stringify(cssLoaderQuery) }!sass!postcss?syntax=postcss-scss`
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: cssLoaderQuery
+                    },
+                    'sass-loader',
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            syntax: 'postcss-scss',
+                            ident: 'postcss',
+                            plugins: postcss
+                        }
+                    }
+                ]
             },
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel?cacheDirectory=true'
+                loader: 'babel-loader?cacheDirectory=true'
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
-                loader: 'file',
+                loader: 'file-loader',
                 query: {
                     name: 'assets/[name].[ext]?[hash]'
                 }
             },
             {
                 test: /\.(woff|woff2|ttf)$/,
-                loader: 'file',
+                loader: 'file-loader',
                 query: {
                     name: 'assets/fonts/[name].[ext]?[hash]'
                 }
@@ -196,19 +210,19 @@ const webpackConfig = {
             {
                 test: /\.json$/,
                 exclude: /(intl|font)\.json/,
-                loader: 'json'
+                loader: 'json-loader'
             },
             {
                 test: /\.html$/,
-                loader: 'html'
+                loader: 'html-loader'
             },
             {
                 test: /\.intl\.json$/,
-                loader: 'babel!intl'
+                loader: 'babel-loader!intl'
             },
             {
                 test: /\.font\.(js|json)$/,
-                loader: 'raw!fontgen'
+                loader: 'raw-loader!fontgen-loader'
             }
         ]
     },
@@ -218,62 +232,21 @@ const webpackConfig = {
             intl: path.resolve('webpack-utils/intl-loader')
         }
     },
-
-    postcss() {
-        return [
-            cssImport({
-                path: rootPath,
-
-                resolve: ((defaultResolve) =>
-                    (url, basedir, importOptions) =>
-                        defaultResolve(loaderUtils.urlToRequest(url), basedir, importOptions)
-                )(require('postcss-import/lib/resolve-id')),
-
-                load: ((defaultLoad) =>
-                    (filename, importOptions) => {
-                        if (/\.font.(js|json)$/.test(filename)) {
-                            if (!fileCache[filename] || !isProduction) {
-                                // do not execute loader on the same file twice
-                                // this is an overcome for a bug with ExtractTextPlugin, for isProduction === true
-                                // when @imported files may be processed mutiple times
-                                fileCache[filename] = new Promise((resolve, reject) =>
-                                    this.loadModule(filename, (err, source) =>
-                                        err ? reject(err) : resolve(this.exec(source, rootPath))
-                                    )
-                                );
-                            }
-
-                            return fileCache[filename];
-                        }
-
-                        return defaultLoad(filename, importOptions);
-                    }
-                )(require('postcss-import/lib/load-content'))
-            }),
-
-            cssUrl(this)
-        ];
-    }
 };
 
 if (isProduction) {
     webpackConfig.module.loaders.forEach((loader) => {
-        if (loader.extractInProduction) {
+        if (loader.use && loader.use[0] === 'style') {
             // remove style-loader from chain and pass through ExtractTextPlugin
-            const parts = loader.loader.split('!');
-
-            loader.loader = ExtractTextPlugin.extract(
-                parts[0], // style-loader
-                parts.slice(1) // css-loader and rest
-                    .join('!')
-                    .replace(/[&?]sourcemap/, '')
-            );
+            loader.use = ExtractTextPlugin.extract({
+                fallbackLoader: loader.use[0], // style-loader
+                loader: loader.use,
+            });
         }
     });
 
     webpackConfig.plugins.push(
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]'),
-        new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin(),
         new ExtractTextPlugin('styles.css?[hash]', {
@@ -369,6 +342,43 @@ if (isSilent) {
         warnings: false,
         publicPath: false
     };
+}
+
+
+function postcss() {
+    return [
+        cssImport({
+            path: rootPath,
+
+            resolve: ((defaultResolve) =>
+                (url, basedir, importOptions) =>
+                    defaultResolve(loaderUtils.urlToRequest(url), basedir, importOptions)
+            )(require('postcss-import/lib/resolve-id')),
+
+            load: ((defaultLoad) =>
+                (filename, importOptions) => {
+                    if (/\.font.(js|json)$/.test(filename)) {
+                        if (!fileCache[filename] || !isProduction) {
+                            // do not execute loader on the same file twice
+                            // this is an overcome for a bug with ExtractTextPlugin, for isProduction === true
+                            // when @imported files may be processed mutiple times
+                            fileCache[filename] = new Promise((resolve, reject) =>
+                                this.loadModule(filename, (err, source) =>
+                                    err ? reject(err) : resolve(this.exec(source, rootPath))
+                                )
+                            );
+                        }
+
+                        return fileCache[filename];
+                    }
+
+                    return defaultLoad(filename, importOptions);
+                }
+            )(require('postcss-import/lib/load-content'))
+        }),
+
+        cssUrl(this)
+    ];
 }
 
 module.exports = webpackConfig;
