@@ -9,13 +9,13 @@
 }
 
 .languageSwitcher {
-    composes: popupWrapper from 'components/ui/popup/popup.scss';
+    composes: popupWrapper from '~components/ui/popup/popup.scss';
 
     @include popupBounding(400px);
 }
 
 .languageSwitcherBody {
-    composes: body from 'components/ui/popup/popup.scss';
+    composes: body from '~components/ui/popup/popup.scss';
 
     display: flex;
     flex-direction: column;
@@ -32,7 +32,7 @@
 }
 
 .searchIcon {
-    composes: search from 'components/ui/icons.scss';
+    composes: search from '~components/ui/icons.scss';
 
     position: absolute;
     top: 14px;
@@ -126,7 +126,7 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
 
 // Реализация радио кнопки. Когда у нас будет нормальный компонент радио кнопок, нужно будет перейти на него
 .languageCircle {
-    composes: checkmark from 'components/ui/icons.scss';
+    composes: checkmark from '~components/ui/icons.scss';
 
     position: relative;
     box-sizing: border-box;
@@ -209,7 +209,7 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
 }
 
 .improveTranslatesIcon {
-    composes: translate from 'components/ui/icons.scss';
+    composes: translate from '~components/ui/icons.scss';
 
     color: lighter($blue);
     font-size: 22px;

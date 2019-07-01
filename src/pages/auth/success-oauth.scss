@@ -52,7 +52,7 @@
 }
 
 .checkmark {
-    composes: checkmark from 'components/ui/icons.scss';
+    composes: checkmark from '~components/ui/icons.scss';
 
     color: lighter($green);
     font-size: 66px;

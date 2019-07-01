@@ -55,7 +55,7 @@ $dropdownPadding: 15px;
 }
 
 .toggleIcon {
-    composes: selecter from 'components/ui/icons.scss';
+    composes: selecter from '~components/ui/icons.scss';
 
     position: absolute;
     right: $dropdownPadding;

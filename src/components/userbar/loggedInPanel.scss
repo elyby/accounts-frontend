@@ -13,7 +13,7 @@
 }
 
 .activeAccountButton {
-    composes: green from 'components/ui/buttons.scss';
+    composes: green from '~components/ui/buttons.scss';
 }
 
 .activeAccountExpanded {
@@ -31,7 +31,7 @@
 }
 
 .userIcon {
-    composes: user from 'components/ui/icons.scss';
+    composes: user from '~components/ui/icons.scss';
 
     position: relative;
     bottom: 2px;
@@ -40,7 +40,7 @@
 }
 
 .expandIcon {
-    composes: caret from 'components/ui/icons.scss';
+    composes: caret from '~components/ui/icons.scss';
 
     margin-left: 4px;
     font-size: 6px;

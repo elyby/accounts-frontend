@@ -5,6 +5,7 @@ import {sync as globSync} from 'glob';
 import {sync as mkdirpSync} from 'mkdirp';
 import chalk from 'chalk';
 import prompt from 'prompt';
+
 import localesMap from './../src/i18n/index.json';
 
 const MESSAGES_PATTERN = `${__dirname}/../dist/messages/**/*.json`;

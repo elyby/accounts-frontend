@@ -151,7 +151,7 @@ $lightBorderColor: #eee;
 }
 
 .accountIcon {
-    composes: minecraft-character from 'components/ui/icons.scss';
+    composes: minecraft-character from '~components/ui/icons.scss';
 
     float: left;
 
@@ -185,7 +185,7 @@ $lightBorderColor: #eee;
 }
 
 .addIcon {
-    composes: plus from 'components/ui/icons.scss';
+    composes: plus from '~components/ui/icons.scss';
 
     color: $green;
     position: relative;
@@ -194,7 +194,7 @@ $lightBorderColor: #eee;
 }
 
 .nextIcon {
-    composes: arrowRight from 'components/ui/icons.scss';
+    composes: arrowRight from '~components/ui/icons.scss';
 
     position: relative;
     float: right;
@@ -213,7 +213,7 @@ $lightBorderColor: #eee;
 }
 
 .logoutIcon {
-    composes: exit from 'components/ui/icons.scss';
+    composes: exit from '~components/ui/icons.scss';
 
     color: #cdcdcd;
     float: right;

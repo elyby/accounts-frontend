@@ -14,7 +14,7 @@
 }
 
 .langTriggerIcon {
-    composes: globe from 'components/ui/icons.scss';
+    composes: globe from '~components/ui/icons.scss';
 
     position: relative;
     bottom: 1px;

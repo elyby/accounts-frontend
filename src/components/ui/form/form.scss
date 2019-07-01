@@ -284,7 +284,7 @@
 
 .mark {
     composes: markPosition;
-    composes: checkmark from 'components/ui/icons.scss';
+    composes: checkmark from '~components/ui/icons.scss';
 
     border: 2px #dcd8cd solid;
 

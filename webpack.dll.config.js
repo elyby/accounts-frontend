@@ -1,23 +1,26 @@
 /* eslint-env node */
-
 const path = require('path');
-
 const webpack = require('webpack');
-
 const vendor = Object.keys(require('./package.json').dependencies);
-
 const isProduction = process.argv.some((arg) => arg === '-p');
-
+const supportedLocales = require('./src/i18n/index.json');
 const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
 
 process.env.NODE_ENV = 'development';
+
 if (isTest) {
     process.env.NODE_ENV = 'test';
+}
+
+if (isProduction) {
+    throw new Error('Dll plugin should be used for dev mode only');
 }
 
 const outputPath = path.join(__dirname, 'dll');
 
 const webpackConfig = {
+    mode: 'development',
+
     entry: {
         vendor: vendor.concat([
             'core-js/library',
@@ -26,12 +29,10 @@ const webpackConfig = {
             'redux-devtools-log-monitor',
             'react-transform-hmr',
             'react-transform-catch-errors',
-            'redbox-react',
-            'react-intl/locale-data/en.js',
-            'react-intl/locale-data/ru.js',
-            'react-intl/locale-data/be.js',
-            'react-intl/locale-data/uk.js'
-        ])
+        ]).concat(
+            Object.keys(supportedLocales)
+                .map((locale) => `react-intl/locale-data/${locale}.js`)
+        )
     },
 
     output: {
@@ -54,11 +55,7 @@ const webpackConfig = {
             name: '[name]',
             path: path.join(outputPath, '[name].json')
         })
-    ].concat(isProduction ? [
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.OccurenceOrderPlugin(true),
-        new webpack.optimize.UglifyJsPlugin()
-    ] : [])
+    ]
 };
 
 module.exports = webpackConfig;

@@ -162,7 +162,7 @@
 }
 
 .appItemToggleIcon {
-    composes: arrowRight from 'components/ui/icons.scss';
+    composes: arrowRight from '~components/ui/icons.scss';
 
     position: relative;
     left: 0;
@@ -208,7 +208,7 @@ $appDetailsContainerRightLeftPadding: 30px;
 }
 
 .pencilIcon {
-    composes: pencil from 'components/ui/icons.scss';
+    composes: pencil from '~components/ui/icons.scss';
 
     font-size: 14px;
     position: relative;
@@ -254,7 +254,7 @@ $appDetailsContainerRightLeftPadding: 30px;
 }
 
 .continueActionLink {
-    composes: textLink from 'index.scss';
+    composes: textLink from '~index.scss';
 
     font-family: $font-family-title;
     font-size: 14px;

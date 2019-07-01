@@ -5,7 +5,7 @@
 /* Form state */
 
 .contactForm {
-    composes: popupWrapper from 'components/ui/popup/popup.scss';
+    composes: popupWrapper from '~components/ui/popup/popup.scss';
 
     @include popupBounding(500px);
 }
@@ -46,13 +46,13 @@
 /* Success State */
 
 .successState {
-    composes: popupWrapper from 'components/ui/popup/popup.scss';
+    composes: popupWrapper from '~components/ui/popup/popup.scss';
 
     @include popupBounding(320px);
 }
 
 .successBody {
-    composes: body from 'components/ui/popup/popup.scss';
+    composes: body from '~components/ui/popup/popup.scss';
 
     text-align: center;
 }
@@ -64,7 +64,7 @@
 }
 
 .successIcon {
-    composes: checkmark from 'components/ui/icons.scss';
+    composes: checkmark from '~components/ui/icons.scss';
 
     font-size: 90px;
     color: #AAA;

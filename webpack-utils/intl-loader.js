@@ -3,19 +3,28 @@ module.exports = function(content) {
     content = JSON.parse(content);
 
     const moduleId = this.context
-        .replace(this.options.resolve.root, '')
+        .replace(this.rootContext, '')
+        // TODO: can't find the way to strip out this path part programmatically
+        // this is a directory from resolve.modules config
+        // may be this may work: .replace(this._compiler.options.resolve.root, '')
+        .replace('src/', '')
         .replace(/^\/|\/$/g, '')
         .replace(/\//g, '.');
 
-    content = JSON.stringify(Object.keys(content).reduce(function(translations, key) {
-        translations[key] = {
-            id: moduleId + '.' + key,
-            defaultMessage: content[key]
-        };
+    content = JSON.stringify(
+        Object.keys(content).reduce(
+            (translations, key) => ({
+                ...translations,
+                [key]: {
+                    id: `${moduleId}.${key}`,
+                    defaultMessage: content[key]
+                }
+            }),
+            {}
+        )
+    );
 
-        return translations;
-    }, {}));
+    return `import { defineMessages } from 'react-intl';
 
-    return 'import { defineMessages } from \'react-intl\';'
-        + 'export default defineMessages(' + content + ')';
+export default defineMessages(${content})`;
 };

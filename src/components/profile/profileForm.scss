@@ -27,7 +27,7 @@
 }
 
 .backIcon {
-    composes: arrowLeft from 'components/ui/icons.scss';
+    composes: arrowLeft from '~components/ui/icons.scss';
 
     position: relative;
 }

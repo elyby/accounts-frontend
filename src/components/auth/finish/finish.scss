@@ -20,12 +20,12 @@
 }
 
 .successBackground {
-    composes: checkmark from 'components/ui/icons.scss';
+    composes: checkmark from '~components/ui/icons.scss';
     @extend .iconBackground;
 }
 
 .failBackground {
-    composes: close from 'components/ui/icons.scss';
+    composes: close from '~components/ui/icons.scss';
     @extend .iconBackground;
 }
 

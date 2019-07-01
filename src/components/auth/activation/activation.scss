@@ -5,7 +5,7 @@
 }
 
 .descriptionImage {
-    composes: envelope from 'components/ui/icons.scss';
+    composes: envelope from '~components/ui/icons.scss';
 
     font-size: 100px;
     color: $blue;

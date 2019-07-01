@@ -34,17 +34,17 @@ export default {
         messages: { [string]: string };
     }> {
         const promises: Array<Promise<any>> = [
-            import(/* webpackChunkName: "[request]-locale" */`react-intl/locale-data/${locale}.js`),
-            import(/* webpackChunkName: "[request]-locale" */`i18n/${locale}.json`),
+            import(/* webpackChunkName: "locale-[request]" */`react-intl/locale-data/${locale}.js`),
+            import(/* webpackChunkName: "locale-[request]" */`i18n/${locale}.json`),
         ];
 
         if (needPolyfill) {
-            promises.push(import(/* webpackChunkName: "[request]-intl-polyfill" */ 'intl'));
-            promises.push(import(/* webpackChunkName: "[request]-intl-polyfill" */`intl/locale-data/jsonp/${locale}.js`));
+            promises.push(import(/* webpackChunkName: "intl-polyfill" */'intl'));
+            promises.push(import(/* webpackChunkName: "intl-polyfill-[request]" */`intl/locale-data/jsonp/${locale}.js`));
         }
 
         return Promise.all(promises)
-            .then(([localeData, messages]) => {
+            .then(([localeData, {default: messages}]) => {
                 addLocaleData(localeData);
 
                 return {locale, messages};

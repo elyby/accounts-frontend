@@ -3,29 +3,26 @@
 require('@babel/register');
 
 const path = require('path');
-
 const webpack = require('webpack');
-const loaderUtils = require('loader-utils');
 const chalk = require('chalk');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const cssUrl = require('webpack-utils/cssUrl');
-const cssImport = require('postcss-import');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const CSPPlugin = require('csp-webpack-plugin');
-const localeFlags = require('./src/components/i18n/localeFlags').default;
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
+const localeFlags = require('./src/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
-
 const packageJson = require('./package.json');
 
 let config = {};
 try {
     config = require('./config/env.js');
 } catch (err) {
-    console.log(chalk.yellow('\nCan not find config/env.js. Running with defaults\n\n'));
+    console.log(
+        chalk.yellow('\nCan not find config/env.js. Running with defaults\n\n')
+    );
 
     if (err.code !== 'MODULE_NOT_FOUND') {
         console.error(err);
@@ -55,37 +52,10 @@ const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
 const isCspEnabled = false;
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
+
 if (isTest) {
     process.env.NODE_ENV = 'test';
 }
-
-const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
-
-const fileCache = {};
-
-const cssLoaderQuery = {
-    modules: true,
-    importLoaders: 2,
-    url: false,
-    localIdentName: CSS_CLASS_TEMPLATE,
-
-    /**
-     * cssnano options
-     */
-    sourcemap: !isProduction,
-    autoprefixer: {
-        add: true,
-        remove: true,
-        browsers: ['last 2 versions']
-    },
-    safe: true,
-    // отключаем минификацию цветов, что бы она не ломала такие выражения:
-    // composes: black from './buttons.scss';
-    colormin: false,
-    discardComments: {
-        removeAll: true
-    }
-};
 
 const webpackConfig = {
     cache: true,
@@ -105,24 +75,33 @@ const webpackConfig = {
         extensions: ['.js', '.jsx', '.json']
     },
 
-    externals: isTest ? {
-        sinon: 'sinon',
-        // http://airbnb.io/enzyme/docs/guides/webpack.html
-        cheerio: 'window',
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': true,
-        'react/addons': true
-    } : {},
+    externals: isTest
+        ? {
+            sinon: 'sinon',
+            // http://airbnb.io/enzyme/docs/guides/webpack.html
+            cheerio: 'window',
+            'react/lib/ExecutionEnvironment': true,
+            'react/lib/ReactContext': true,
+            'react/addons': true
+        }
+        : {},
 
     devtool: 'cheap-module-source-map',
 
     plugins: [
         new webpack.DefinePlugin({
-            'window.SENTRY_CDN': config.sentryCdn ? JSON.stringify(config.sentryCdn) : undefined,
-            'window.GA_ID': config.ga && config.ga.id ? JSON.stringify(config.ga.id) : undefined,
+            'window.SENTRY_CDN': config.sentryCdn
+                ? JSON.stringify(config.sentryCdn)
+                : undefined,
+            'window.GA_ID':
+                config.ga && config.ga.id
+                    ? JSON.stringify(config.ga.id)
+                    : undefined,
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                APP_ENV: JSON.stringify(config.environment || process.env.NODE_ENV),
+                APP_ENV: JSON.stringify(
+                    config.environment || process.env.NODE_ENV
+                ),
                 __VERSION__: JSON.stringify(config.version || ''),
                 __DEV__: !isProduction,
                 __TEST__: isTest,
@@ -139,31 +118,37 @@ const webpackConfig = {
             minify: {
                 collapseWhitespace: isProduction
             },
-            isCspEnabled,
+            isCspEnabled
         }),
-        new SitemapPlugin('https://account.ely.by', [
-            '/',
-            '/register',
-            '/resend-activation',
-            '/activation',
-            '/forgot-password',
-            '/rules',
-        ], {
-            lastMod: true,
-            changeFreq: 'weekly',
-        }),
+        new SitemapPlugin(
+            'https://account.ely.by',
+            [
+                '/',
+                '/register',
+                '/resend-activation',
+                '/activation',
+                '/forgot-password',
+                '/rules'
+            ],
+            {
+                lastMod: true,
+                changeFreq: 'weekly'
+            }
+        ),
         new webpack.ProvidePlugin({
             React: 'react'
         }),
         // restrict webpack import context, to create chunks only for supported locales
         // @see services/i18n.js
         new webpack.ContextReplacementPlugin(
-            /locale-data/, new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js`)
+            /locale-data/,
+            new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js`)
         ),
         // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
-            /flag-icon-css\/flags\/4x3/, new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`)
-        ),
+            /flag-icon-css\/flags\/4x3/,
+            new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`)
+        )
     ],
 
     module: {
@@ -174,15 +159,28 @@ const webpackConfig = {
                     'style-loader',
                     {
                         loader: 'css-loader',
-                        options: cssLoaderQuery
+                        options: {
+                            modules: {
+                                localIdentName: isProduction
+                                    ? '[hash:base64:5]'
+                                    : '[path][name]-[local]'
+                            },
+                            importLoaders: 2,
+                            sourceMap: !isProduction
+                        }
                     },
-                    'sass-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !isProduction
+                        }
+                    },
                     {
                         loader: 'postcss-loader',
                         options: {
-                            syntax: 'postcss-scss',
                             ident: 'postcss',
-                            plugins: postcss
+                            sourceMap: !isProduction,
+                            config: { path: __dirname }
                         }
                     }
                 ]
@@ -213,12 +211,6 @@ const webpackConfig = {
                 query: {
                     name: 'assets/fonts/[name].[ext]?[hash]'
                 }
-
-            },
-            {
-                test: /\.json$/,
-                exclude: /(intl|font)\.json/,
-                loader: 'json-loader'
             },
             {
                 test: /\.html$/,
@@ -226,20 +218,25 @@ const webpackConfig = {
             },
             {
                 test: /\.intl\.json$/,
-                loader: 'babel-loader!intl'
+                type: 'javascript/auto',
+                use: ['babel-loader', 'intl-loader']
             },
             {
+                // this is consumed by postcss-import
+                // @see postcss.config.js
                 test: /\.font\.(js|json)$/,
-                loader: 'raw-loader!fontgen-loader'
+                type: 'javascript/auto',
+                use: ['fontgen-loader']
             }
         ]
     },
 
     resolveLoader: {
         alias: {
-            intl: path.resolve('webpack-utils/intl-loader')
+            'intl-loader': path.resolve('./webpack-utils/intl-loader'),
+            'fontgen-loader': path.resolve('./webpack-utils/fontgen-loader')
         }
-    },
+    }
 };
 
 if (isProduction) {
@@ -248,7 +245,7 @@ if (isProduction) {
             // remove style-loader from chain and pass through ExtractTextPlugin
             loader.use = ExtractTextPlugin.extract({
                 fallbackLoader: loader.use[0], // style-loader
-                loader: loader.use,
+                loader: loader.use
             });
         }
     });
@@ -264,12 +261,11 @@ if (isProduction) {
 
     webpackConfig.devtool = 'hidden-source-map';
 
-    const ignoredPlugins = [
-        'flag-icon-css',
-    ];
+    const ignoredPlugins = ['flag-icon-css'];
 
-    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies)
-        .filter((module) => !ignoredPlugins.includes(module));
+    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies).filter(
+        (module) => !ignoredPlugins.includes(module)
+    );
 } else {
     webpackConfig.plugins.push(
         new webpack.DllReferencePlugin({
@@ -280,50 +276,51 @@ if (isProduction) {
 }
 
 if (!isProduction && !isTest) {
-    webpackConfig.plugins.push(
-        new webpack.HotModuleReplacementPlugin(),
-    );
+    webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
-    if (config.apiHost) {
-        webpackConfig.devServer = {
-            host: 'localhost',
-            port: 8080,
-            proxy: {
-                '/api': {
-                    target: config.apiHost,
-                    changeOrigin: true, // add host http-header, based on target
-                    secure: false // allow self-signed certs
-                }
-            },
-            hot: true,
-            inline: true,
-            historyApiFallback: true
-        };
-    }
+    webpackConfig.devServer = {
+        host: 'localhost',
+        port: 8080,
+        proxy: config.apiHost && {
+            '/api': {
+                target: config.apiHost,
+                changeOrigin: true, // add host http-header, based on target
+                secure: false // allow self-signed certs
+            }
+        },
+        hot: true,
+        inline: true,
+        historyApiFallback: true
+    };
 }
 
 if (isCspEnabled) {
-    webpackConfig.plugins.push(new CSPPlugin({
-        'default-src': '\'none\'',
-        'style-src': ['\'self\'', '\'unsafe-inline\''],
-        'script-src': [
-            '\'self\'',
-            '\'nonce-edge-must-die\'',
-            '\'unsafe-inline\'',
-            'https://www.google-analytics.com',
-            'https://recaptcha.net/recaptcha/',
-            'https://www.gstatic.com/recaptcha/',
-            'https://www.gstatic.cn/recaptcha/',
-        ],
-        'img-src': ['\'self\'', 'data:', 'www.google-analytics.com'],
-        'font-src': ['\'self\'', 'data:'],
-        'connect-src': ['\'self\'', 'https://sentry.ely.by'].concat(isProduction ? [] : ['ws://localhost:8080']),
-        'frame-src': [
-            'https://www.google.com/recaptcha/',
-            'https://recaptcha.net/recaptcha/',
-        ],
-        'report-uri': 'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
-    }));
+    webpackConfig.plugins.push(
+        new CSPPlugin({
+            'default-src': '\'none\'',
+            'style-src': ['\'self\'', '\'unsafe-inline\''],
+            'script-src': [
+                '\'self\'',
+                '\'nonce-edge-must-die\'',
+                '\'unsafe-inline\'',
+                'https://www.google-analytics.com',
+                'https://recaptcha.net/recaptcha/',
+                'https://www.gstatic.com/recaptcha/',
+                'https://www.gstatic.cn/recaptcha/'
+            ],
+            'img-src': ['\'self\'', 'data:', 'www.google-analytics.com'],
+            'font-src': ['\'self\'', 'data:'],
+            'connect-src': ['\'self\'', 'https://sentry.ely.by'].concat(
+                isProduction ? [] : ['ws://localhost:8080']
+            ),
+            'frame-src': [
+                'https://www.google.com/recaptcha/',
+                'https://recaptcha.net/recaptcha/'
+            ],
+            'report-uri':
+                'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6'
+        })
+    );
 }
 
 if (isDockerized) {
@@ -349,43 +346,6 @@ if (isSilent) {
         warnings: false,
         publicPath: false
     };
-}
-
-
-function postcss() {
-    return [
-        cssImport({
-            path: rootPath,
-
-            resolve: ((defaultResolve) =>
-                (url, basedir, importOptions) =>
-                    defaultResolve(loaderUtils.urlToRequest(url), basedir, importOptions)
-            )(require('postcss-import/lib/resolve-id')),
-
-            load: ((defaultLoad) =>
-                (filename, importOptions) => {
-                    if (/\.font.(js|json)$/.test(filename)) {
-                        if (!fileCache[filename] || !isProduction) {
-                            // do not execute loader on the same file twice
-                            // this is an overcome for a bug with ExtractTextPlugin, for isProduction === true
-                            // when @imported files may be processed mutiple times
-                            fileCache[filename] = new Promise((resolve, reject) =>
-                                this.loadModule(filename, (err, source) =>
-                                    err ? reject(err) : resolve(this.exec(source, rootPath))
-                                )
-                            );
-                        }
-
-                        return fileCache[filename];
-                    }
-
-                    return defaultLoad(filename, importOptions);
-                }
-            )(require('postcss-import/lib/load-content'))
-        }),
-
-        cssUrl(this)
-    ];
 }
 
 module.exports = webpackConfig;
