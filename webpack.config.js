@@ -5,7 +5,7 @@ require('@babel/register');
 const path = require('path');
 const webpack = require('webpack');
 const chalk = require('chalk');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const CSPPlugin = require('csp-webpack-plugin');
@@ -28,6 +28,9 @@ try {
         console.error(err);
     }
 }
+
+// TODO: add progress plugin
+// TODO: configure bundle analyzer
 
 /**
  * TODO: https://babeljs.io/docs/plugins/
@@ -96,17 +99,15 @@ const webpackConfig = {
             'window.GA_ID':
                 config.ga && config.ga.id
                     ? JSON.stringify(config.ga.id)
-                    : undefined,
-            'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                APP_ENV: JSON.stringify(
-                    config.environment || process.env.NODE_ENV
-                ),
-                __VERSION__: JSON.stringify(config.version || ''),
-                __DEV__: !isProduction,
-                __TEST__: isTest,
-                __PROD__: isProduction
-            }
+                    : undefined
+        }),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: process.env.NODE_ENV,
+            APP_ENV: config.environment || process.env.NODE_ENV,
+            __VERSION__: config.version || '',
+            __DEV__: !isProduction,
+            __TEST__: isTest,
+            __PROD__: isProduction
         }),
         new HtmlWebpackPlugin({
             template: 'src/index.ejs',
@@ -135,6 +136,8 @@ const webpackConfig = {
                 changeFreq: 'weekly'
             }
         ),
+        // TODO: remove this in future. We should explicitly import:
+        // `import React from 'react'` in each file, where it is required
         new webpack.ProvidePlugin({
             React: 'react'
         }),
@@ -240,32 +243,33 @@ const webpackConfig = {
 };
 
 if (isProduction) {
-    webpackConfig.module.loaders.forEach((loader) => {
-        if (loader.use && loader.use[0] === 'style') {
-            // remove style-loader from chain and pass through ExtractTextPlugin
-            loader.use = ExtractTextPlugin.extract({
-                fallbackLoader: loader.use[0], // style-loader
-                loader: loader.use
-            });
+    webpackConfig.module.rules.forEach((rule) => {
+        if (rule.use && rule.use[0] === 'style-loader') {
+            // replace `style-loader` with `MiniCssExtractPlugin`
+            rule.use[0] = MiniCssExtractPlugin.loader;
         }
     });
 
     webpackConfig.plugins.push(
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]'),
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin('styles.css?[hash]', {
-            allChunks: true
+        // TODO: configure optimisations
+        // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]'),
+        // new webpack.optimize.DedupePlugin(),
+        // new webpack.optimize.UglifyJsPlugin(),
+        new MiniCssExtractPlugin({
+            filename: '[name].css?[hash]',
+            chunkFilename: '[id].css?[hash]',
         })
     );
 
     webpackConfig.devtool = 'hidden-source-map';
 
-    const ignoredPlugins = ['flag-icon-css'];
+    // TODO: remove me after migration
+    // With this code we have tried to configure which deps have go into the 'vendor.js' chunk
+    // const ignoredPlugins = ['flag-icon-css'];
 
-    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies).filter(
-        (module) => !ignoredPlugins.includes(module)
-    );
+    // webpackConfig.entry.vendor = Object.keys(packageJson.dependencies).filter(
+    //     (module) => !ignoredPlugins.includes(module)
+    // );
 } else {
     webpackConfig.plugins.push(
         new webpack.DllReferencePlugin({
@@ -276,6 +280,7 @@ if (isProduction) {
 }
 
 if (!isProduction && !isTest) {
+    // TODO: review HMR integration
     webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
     webpackConfig.devServer = {
