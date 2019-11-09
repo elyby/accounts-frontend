@@ -9,6 +9,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const CSPPlugin = require('csp-webpack-plugin');
+const WebpackBar = require('webpackbar');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const localeFlags = require('./src/components/i18n/localeFlags').default;
@@ -28,21 +30,9 @@ try {
     }
 }
 
-// TODO: add progress plugin
-// TODO: configure bundle analyzer
+const smp = new SpeedMeasurePlugin();
 
-/**
- * TODO: https://babeljs.io/docs/plugins/
- * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
- * TODO: dev tools https://github.com/freeqaz/redux-simple-router-example/blob/master/index.jsx
- * https://github.com/glenjamin/ultimate-hot-reloading-example ( обратить внимание на плагины babel )
- * https://github.com/gajus/react-css-modules ( + BrowserSync)
- * https://github.com/reactuate/reactuate
- * https://github.com/insin/nwb
- *
- * Inspiration projects:
- * https://github.com/davezuko/react-redux-starter-kit
- */
+// TODO: configure bundle analyzer
 
 const isProduction = process.argv.some((arg) => arg === '-p');
 
@@ -90,7 +80,24 @@ const webpackConfig = {
 
     devtool: 'cheap-module-source-map',
 
+    stats: {
+        hash: false,
+        version: false,
+        timings: true,
+        assets: false,
+        chunks: false,
+        modules: false,
+        reasons: false,
+        children: false,
+        source: false,
+        errors: true,
+        errorDetails: true,
+        warnings: false,
+        publicPath: false
+    },
+
     plugins: [
+        new WebpackBar(),
         new webpack.DefinePlugin({
             'window.SENTRY_CDN': config.sentryCdn
                 ? JSON.stringify(config.sentryCdn)
@@ -349,4 +356,4 @@ if (isSilent) {
     };
 }
 
-module.exports = webpackConfig;
+module.exports = smp.wrap(webpackConfig);
