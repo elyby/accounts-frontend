@@ -136,11 +136,6 @@ const webpackConfig = {
                 changeFreq: 'weekly'
             }
         ),
-        // TODO: remove this in future. We should explicitly import:
-        // `import React from 'react'` in each file, where it is required
-        new webpack.ProvidePlugin({
-            React: 'react'
-        }),
         // restrict webpack import context, to create chunks only for supported locales
         // @see services/i18n.js
         new webpack.ContextReplacementPlugin(
