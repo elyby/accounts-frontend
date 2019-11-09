@@ -282,7 +282,7 @@ if (isProduction) {
 
 if (!isProduction && !isTest) {
     // TODO: review HMR integration
-    webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+    // webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
     webpackConfig.devServer = {
         host: 'localhost',
@@ -294,7 +294,7 @@ if (!isProduction && !isTest) {
                 secure: false // allow self-signed certs
             }
         },
-        hot: true,
+        // hot: true,
         inline: true,
         historyApiFallback: true
     };

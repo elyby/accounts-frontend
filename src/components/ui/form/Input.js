@@ -135,9 +135,10 @@ export default class Input extends FormInputComponent<{
 
         try {
             clearTimeout(copiedStateTimeout);
+            copiedStateTimeout = setTimeout(() => this.setState({wasCopied: false}), 2000);
+
             await copy(value);
             this.setState({wasCopied: true});
-            copiedStateTimeout = setTimeout(() => this.setState({wasCopied: false}), 2000);
         } catch (err) {
             // it's okay
         }

@@ -5,8 +5,8 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "glob": "^7.1.6",
     "loader-utils": "^1.0.0",
-    "webfonts-generator": "^0.3.2",
-    "glob": "^6.0.2"
+    "webfonts-generator": "0.3.5"
   }
 }
