@@ -4,7 +4,6 @@ require('@babel/register');
 
 const path = require('path');
 const webpack = require('webpack');
-const chalk = require('chalk');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
@@ -13,24 +12,13 @@ const WebpackBar = require('webpackbar');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const config = require('./config');
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const localeFlags = require('./src/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
 
-let config = {};
-try {
-    config = require('./config/env.js');
-} catch (err) {
-    console.log(
-        chalk.yellow('\nCan not find config/env.js. Running with defaults\n\n')
-    );
-
-    if (err.code !== 'MODULE_NOT_FOUND') {
-        console.error(err);
-    }
-}
 
 const isProduction = process.argv.some((arg) => arg === '-p');
 const isAnalyze = process.argv.some((arg) => arg === '--analyze');

@@ -4,22 +4,21 @@
 
 import fs from 'fs';
 import path from 'path';
-
 import CrowdinApi from 'crowdin-api';
 import MultiProgress from 'multi-progress';
 import ch from 'chalk';
 import iso639 from 'iso-639-1';
 import prompt from 'prompt';
 
-const CONFIG_PATH = path.resolve(`${__dirname}/../config/env.js`);
-if (!fs.existsSync(CONFIG_PATH)) {
-    console.error('To use this scripts please create config/env.js file first');
+import config from '../config';
+
+if (!config.crowdinApiKey) {
+    console.error(ch.red`crowdinApiKey is required`);
     process.exit(126);
 }
 
 const PROJECT_ID = 'elyby';
-// $FlowFixMe this will be missing on CI server
-const PROJECT_KEY = require('./../config/env.js').crowdinApiKey;
+const PROJECT_KEY = config.crowdinApiKey;
 const CROWDIN_FILE_PATH = 'accounts/site.json';
 const SOURCE_LANG = 'en';
 const LANG_DIR = path.resolve(`${__dirname}/../src/i18n`);
