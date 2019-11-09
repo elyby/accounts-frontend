@@ -39,6 +39,8 @@ if (isTest) {
 const smp = new SpeedMeasurePlugin();
 
 const webpackConfig = {
+    mode: isProduction ? 'production' : 'development',
+
     cache: true,
 
     entry: {
@@ -53,7 +55,10 @@ const webpackConfig = {
 
     resolve: {
         modules: [rootPath, 'node_modules'],
-        extensions: ['.js', '.jsx', '.json']
+        extensions: ['.js', '.jsx', '.json'],
+        alias: {
+            'react-dom': '@hot-loader/react-dom'
+        }
     },
 
     externals: isTest
@@ -281,9 +286,6 @@ if (isProduction) {
 }
 
 if (!isProduction && !isTest) {
-    // TODO: review HMR integration
-    // webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-
     webpackConfig.devServer = {
         host: 'localhost',
         port: 8080,
@@ -294,7 +296,7 @@ if (!isProduction && !isTest) {
                 secure: false // allow self-signed certs
             }
         },
-        // hot: true,
+        hot: true,
         inline: true,
         historyApiFallback: true
     };

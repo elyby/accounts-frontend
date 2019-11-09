@@ -1,13 +1,9 @@
 import 'polyfills';
+import 'react-hot-loader';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import { Provider as ReduxProvider } from 'react-redux';
-import { Router, Route, Switch } from 'react-router-dom';
-
 import { factory as userFactory } from 'components/user/factory';
-import { IntlProvider } from 'components/i18n';
 import authFlow from 'services/authFlow';
 import storeFactory from 'storeFactory';
 import bsodFactory from 'components/ui/bsod/factory';
@@ -15,9 +11,9 @@ import loader from 'services/loader';
 import logger from 'services/logger';
 import font from 'services/font';
 import history, { browserHistory } from 'services/history';
-import AuthFlowRoute from 'containers/AuthFlowRoute';
-import RootPage from 'pages/root/RootPage';
-import SuccessOauthPage from 'pages/auth/SuccessOauthPage';
+import { loadScript, debounce } from 'functions';
+
+import App from './App';
 
 history.init();
 
@@ -33,27 +29,15 @@ authFlow.setStore(store);
 Promise.all([
     userFactory(store),
     font.load(['Roboto', 'Roboto Condensed'])
-])
-    .then(() => {
-        ReactDOM.render(
-            <ReduxProvider store={store}>
-                <IntlProvider>
-                    <Router history={browserHistory}>
-                        <Switch>
-                            <Route path="/oauth2/code/success" component={SuccessOauthPage} />
-                            <AuthFlowRoute path="/oauth2/:version(v\d+)/:clientId?" component={() => null} />
-                            <Route path="/" component={RootPage} />
-                        </Switch>
-                    </Router>
-                </IntlProvider>
-            </ReduxProvider>,
-            document.getElementById('app')
-        );
+]).then(() => {
+    ReactDOM.render(
+        <App store={store} browserHistory={browserHistory} />,
+        document.getElementById('app')
+    );
 
-        initAnalytics();
-    });
+    initAnalytics();
+});
 
-import { loadScript, debounce } from 'functions';
 const trackPageView = debounce(_trackPageView);
 function initAnalytics() {
     if (!window.ga) {
