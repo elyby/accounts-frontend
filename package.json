@@ -24,16 +24,17 @@
     "scripts"
   ],
   "scripts": {
-    "start": "yarn run clean && yarn run build:dll && NODE_PATH=./src webpack-dev-server --progress --colors",
-    "clean": "rm -rf dist/",
+    "start": "yarn run clean && yarn run build:dll && NODE_PATH=./src webpack-dev-server --colors",
+    "clean": "rm -rf ./dist && mkdir ./dist",
     "e2e": "yarn --cwd ./tests-e2e test",
     "test": "yarn run build:dll && NODE_PATH=./src karma start ./karma.conf.js",
+    "analyze": "yarn run clean && yarn run build:webpack --analyze",
     "lint": "eslint ./src",
     "flow": "flow",
     "i18n:collect": "babel-node ./scripts/i18n-collect.js",
     "i18n:push": "babel-node ./scripts/i18n-crowdin.js push",
     "i18n:pull": "babel-node ./scripts/i18n-crowdin.js pull",
-    "build": "yarn run clean && yarn run build:webpack --progress",
+    "build": "yarn run clean && yarn run build:webpack",
     "build:install": "yarn install && check-node-version",
     "build:webpack": "NODE_PATH=./src webpack --colors -p --bail",
     "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
@@ -137,6 +138,7 @@
     "unexpected-sinon": "^10.5.1",
     "url-loader": "^2.0.1",
     "webpack": "^4.35.0",
+    "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.5",
     "webpack-dev-server": "^3.7.2",
     "webpackbar": "^4.0.0"

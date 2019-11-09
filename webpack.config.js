@@ -12,6 +12,7 @@ const CSPPlugin = require('csp-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const localeFlags = require('./src/components/i18n/localeFlags').default;
@@ -31,11 +32,8 @@ try {
     }
 }
 
-const smp = new SpeedMeasurePlugin();
-
-// TODO: configure bundle analyzer
-
 const isProduction = process.argv.some((arg) => arg === '-p');
+const isAnalyze = process.argv.some((arg) => arg === '--analyze');
 
 const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
 
@@ -49,6 +47,8 @@ process.env.NODE_ENV = isProduction ? 'production' : 'development';
 if (isTest) {
     process.env.NODE_ENV = 'test';
 }
+
+const smp = new SpeedMeasurePlugin();
 
 const webpackConfig = {
     cache: true,
@@ -243,6 +243,10 @@ const webpackConfig = {
         }
     }
 };
+
+if (isAnalyze) {
+    webpackConfig.plugins.push(new BundleAnalyzerPlugin());
+}
 
 if (isProduction) {
     webpackConfig.module.rules.forEach((rule) => {
