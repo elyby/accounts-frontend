@@ -11,6 +11,7 @@ const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const CSPPlugin = require('csp-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 
 const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const localeFlags = require('./src/components/i18n/localeFlags').default;
@@ -275,6 +276,11 @@ if (isProduction) {
     };
 } else {
     webpackConfig.plugins.push(
+        // force webpack to use mode: eager chunk imports in dev mode
+        // this will improve build performance
+        // this mode will be default for dev builds in webpack 5
+        new EagerImportsPlugin(),
+
         new webpack.DllReferencePlugin({
             context: __dirname,
             manifest: require('./dll/vendor.json')

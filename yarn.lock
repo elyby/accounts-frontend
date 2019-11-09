@@ -3417,6 +3417,11 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
+eager-imports-webpack-plugin@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/eager-imports-webpack-plugin/-/eager-imports-webpack-plugin-1.0.0.tgz#c78d0ab0309909330b14618fdd5942aa2c835d38"
+  integrity sha512-CyqTedChn2zYuqscxtr2e491lL3Gw+1Mgoy4R+TiX8S2x2DtWkdCjqmhrmq2+82EuKAdONZW4FpLZOdo64Jwhw==
+
 ecc-jsbn@~0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/ecc-jsbn/-/ecc-jsbn-0.1.2.tgz#3a83a904e54353287874c564b7549386849a98c9"
