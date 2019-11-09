@@ -14,7 +14,6 @@ const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
 const localeFlags = require('./src/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
-const packageJson = require('./package.json');
 
 let config = {};
 try {
@@ -246,10 +245,6 @@ if (isProduction) {
     });
 
     webpackConfig.plugins.push(
-        // TODO: configure optimisations
-        // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]'),
-        // new webpack.optimize.DedupePlugin(),
-        // new webpack.optimize.UglifyJsPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css?[hash]',
             chunkFilename: '[id].css?[hash]',
@@ -258,13 +253,19 @@ if (isProduction) {
 
     webpackConfig.devtool = 'hidden-source-map';
 
-    // TODO: remove me after migration
-    // With this code we have tried to configure which deps have go into the 'vendor.js' chunk
-    // const ignoredPlugins = ['flag-icon-css'];
-
-    // webpackConfig.entry.vendor = Object.keys(packageJson.dependencies).filter(
-    //     (module) => !ignoredPlugins.includes(module)
-    // );
+    webpackConfig.optimization = {
+        moduleIds: 'hashed',
+        runtimeChunk: 'single',
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: (m) => String(m.context).includes('node_modules') && !String(m.context).includes('flag-icon-css'),
+                    name: 'vendors',
+                    chunks: 'all',
+                },
+            },
+        }
+    };
 } else {
     webpackConfig.plugins.push(
         new webpack.DllReferencePlugin({
