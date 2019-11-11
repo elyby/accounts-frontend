@@ -11,6 +11,7 @@ import loader from 'services/loader';
 import logger from 'services/logger';
 import font from 'services/font';
 import history, { browserHistory } from 'services/history';
+import i18n from 'services/i18n';
 import { loadScript, debounce } from 'functions';
 
 import App from './App';
@@ -28,7 +29,8 @@ authFlow.setStore(store);
 
 Promise.all([
     userFactory(store),
-    font.load(['Roboto', 'Roboto Condensed'])
+    font.load(['Roboto', 'Roboto Condensed']),
+    i18n.ensureIntl(), // ensure, that intl is polyfilled before any rendering
 ]).then(() => {
     ReactDOM.render(
         <App store={store} browserHistory={browserHistory} />,

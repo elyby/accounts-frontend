@@ -37,3 +37,5 @@ export const SKIN_DARK: Skin = 'dark';
 export const SKIN_LIGHT: Skin = 'light';
 
 export const skins: Array<Skin> = [SKIN_DARK, SKIN_LIGHT];
+
+export {default as RelativeTime} from './RelativeTime';

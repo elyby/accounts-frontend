@@ -40,13 +40,16 @@ export function setUser(payload: $Shape<User>) {
 export const CHANGE_LANG = 'USER_CHANGE_LANG';
 export function changeLang(lang: string) {
     return (dispatch: Dispatch, getState: () => State) => dispatch(setLocale(lang))
-        .then((lang) => {
+        .then((lang: string) => {
             const { id, isGuest, lang: oldLang } = getState().user;
+
             if (oldLang === lang) {
                 return;
             }
 
-            !isGuest && changeLangEndpoint(((id: any): number), lang); // hack to tell Flow that it's defined
+            if (!isGuest && id) {
+                changeLangEndpoint(id, lang);
+            }
 
             dispatch({
                 type: CHANGE_LANG,

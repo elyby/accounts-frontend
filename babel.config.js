@@ -4,6 +4,8 @@ module.exports = {
         '@babel/plugin-syntax-dynamic-import',
         '@babel/plugin-proposal-function-bind',
         '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-proposal-optional-chaining',
+        '@babel/plugin-proposal-nullish-coalescing-operator',
         [
             '@babel/plugin-transform-runtime',
             {

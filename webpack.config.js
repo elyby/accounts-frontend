@@ -57,7 +57,7 @@ const webpackConfig = {
         modules: [rootPath, 'node_modules'],
         extensions: ['.js', '.jsx', '.json'],
         alias: {
-            'react-dom': '@hot-loader/react-dom'
+            'react-dom': isProduction ? 'react-dom' : '@hot-loader/react-dom'
         }
     },
 
@@ -137,10 +137,10 @@ const webpackConfig = {
             }
         ),
         // restrict webpack import context, to create chunks only for supported locales
-        // @see services/i18n.js
+        // @see services/i18n/intlPolyfill.js
         new webpack.ContextReplacementPlugin(
             /locale-data/,
-            new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js`)
+            new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js$`)
         ),
         // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
@@ -264,7 +264,10 @@ if (isProduction) {
         splitChunks: {
             cacheGroups: {
                 vendor: {
-                    test: (m) => String(m.context).includes('node_modules') && !String(m.context).includes('flag-icon-css'),
+                    test: (m) => String(m.context).includes('node_modules')
+                      // icons and intl with relateed polyfills are allowed
+                      // to be splitted to other chunks
+                      && !/\/(flag-icon-css|intl|@formatjs)\//.test(String(m.context)),
                     name: 'vendors',
                     chunks: 'all',
                 },

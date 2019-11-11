@@ -1,6 +1,7 @@
 // @flow
+import type { IntlShape } from 'react-intl';
 import React, { Component } from 'react';
-import { FormattedMessage as Message, intlShape } from 'react-intl';
+import { FormattedMessage as Message, injectIntl } from 'react-intl';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { changeLang } from 'components/user/actions';
@@ -36,6 +37,7 @@ type OwnProps = {|
 
 type Props = {
     ...OwnProps,
+    intl: IntlShape,
     selectedLocale: string,
     changeLang: (lang: string) => void,
 };
@@ -44,10 +46,6 @@ class LanguageSwitcher extends Component<Props, {
     filter: string,
     filteredLangs: LocalesMap,
 }> {
-    static contextTypes = {
-        intl: intlShape,
-    };
-
     state = {
         filter: '',
         filteredLangs: this.props.langs,
@@ -59,7 +57,7 @@ class LanguageSwitcher extends Component<Props, {
     };
 
     render() {
-        const { selectedLocale, onClose } = this.props;
+        const { selectedLocale, onClose, intl } = this.props;
         const { filteredLangs } = this.state;
 
         return (
@@ -79,7 +77,7 @@ class LanguageSwitcher extends Component<Props, {
                                     formStyles.lightTextField,
                                     formStyles.greenTextField,
                                 )}
-                                placeholder={this.context.intl.formatMessage(messages.startTyping)}
+                                placeholder={intl.formatMessage(messages.startTyping)}
                                 onChange={this.onFilterUpdate}
                                 onKeyPress={this.onFilterKeyPress()}
                                 autoFocus
@@ -161,8 +159,10 @@ class LanguageSwitcher extends Component<Props, {
     }
 }
 
-export default connect<Props, OwnProps, _, _, _, _>((state) => ({
-    selectedLocale: state.i18n.locale,
-}), {
-    changeLang,
-})(LanguageSwitcher);
+export default injectIntl(
+    connect<Props, OwnProps, _, _, _, _>((state) => ({
+        selectedLocale: state.i18n.locale,
+    }), {
+        changeLang,
+    })(LanguageSwitcher)
+);

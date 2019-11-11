@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
+import { FormattedMessage as Message } from 'react-intl';
+import { RelativeTime } from 'components/ui';
 import { Link } from 'react-router-dom';
 
 import messages from './errorsDict.intl.json';
@@ -76,7 +77,7 @@ const errorsMap = {
     'error.recently_sent_message': (props) => (
         <Message {...messages.emailFrequency} values={{
             // for msLeft @see AuthError.jsx
-            time: <Relative value={props.msLeft} updateInterval={1000} />
+            time: <RelativeTime value={props.msLeft} />
         }} />
     ),
 

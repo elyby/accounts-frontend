@@ -1,10 +1,12 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FormattedMessage as Message, FormattedRelative as Relative } from 'react-intl';
+import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import { ChangeLanguageLink } from 'components/languageSwitcher';
+import { RelativeTime } from 'components/ui';
+
 import ProfileField from './ProfileField';
 import styles from './profile.scss';
 import profileForm from './profileForm.scss';
@@ -85,7 +87,7 @@ class Profile extends Component<Props> {
                                 link="/profile/change-password"
                                 label={<Message {...messages.password} />}
                                 value={<Message {...messages.changedAt} values={{
-                                    at: (<Relative value={user.passwordChangedAt * 1000} updateInterval={1000} />)
+                                    at: (<RelativeTime timestamp={user.passwordChangedAt * 1000} />),
                                 }} />}
                             />
 

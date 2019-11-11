@@ -42,7 +42,9 @@ declare module "react-intl" {
   declare type $npm$ReactIntl$IntlFormat = {
     formatDate: (value: any, options?: Object) => string,
     formatTime: (value: any, options?: Object) => string,
-    formatRelative: (value: any, options?: Object) => string,
+    formatRelativeTime: (value: number, options?: $npm$ReactIntl$RelativeFormatOptions & {
+      format: string
+    }) => string,
     formatNumber: (value: any, options?: Object) => string,
     formatPlural: (value: any, options?: Object) => string,
     formatMessage: (
@@ -77,8 +79,9 @@ declare module "react-intl" {
   };
 
   declare type $npm$ReactIntl$RelativeFormatOptions = {
-    style?: "best fit" | "numeric",
-    units?: "second" | "minute" | "hour" | "day" | "month" | "year"
+    numeric?: "auto" | "always",
+    style?: "short" | "narrow" | "numeric",
+    unit?: "second" | "minute" | "hour" | "day" | "month" | "year"
   };
 
   declare type $npm$ReactIntl$NumberFormatOptions = {
@@ -161,6 +164,15 @@ declare module "react-intl" {
     $Diff<React$ElementConfig<Component>, InjectIntlVoidProps>
   >;
 
+  declare type IntlCache = any;
+
+  declare function createIntlCache(): IntlCache;
+
+  declare function createIntl(options: {
+    locale: string,
+    messages?: {[key: string]: string}
+  }, cache?: IntlCache): IntlShape;
+
   declare function formatMessage(
     messageDescriptor: $npm$ReactIntl$MessageDescriptor,
     values?: Object
@@ -177,11 +189,10 @@ declare module "react-intl" {
     value: any,
     options?: $npm$ReactIntl$DateTimeFormatOptions & { format: string }
   ): string;
-  declare function formatRelative(
-    value: any,
+  declare function formatRelativeTime(
+    value: number, // delta
     options?: $npm$ReactIntl$RelativeFormatOptions & {
-      format: string,
-      now: any
+      format: string
     }
   ): string;
   declare function formatNumber(
@@ -223,12 +234,11 @@ declare module "react-intl" {
       children?: (formattedDate: string) => React$Node
     }
   > {}
-  declare class FormattedRelative extends React$Component<
+  declare class FormattedRelativeTime extends React$Component<
     $npm$ReactIntl$RelativeFormatOptions & {
-      value: $npm$ReactIntl$DateParseable,
+      value: number, // delta
       format?: string,
-      updateInterval?: number,
-      initialNow?: $npm$ReactIntl$DateParseable,
+      updateIntervalInSeconds?: number,
       children?: (formattedDate: string) => React$Node
     }
   > {}
@@ -256,6 +266,12 @@ declare module "react-intl" {
       children?: React$Node,
       initialNow?: $npm$ReactIntl$DateParseable
     }
+  > {}
+  declare class RawIntlProvider extends React$Component<
+    {|
+      children?: React$Node,
+      value?: IntlShape
+    |}
   > {}
   declare type IntlShape = $npm$ReactIntl$IntlShape;
   declare type MessageDescriptor = $npm$ReactIntl$MessageDescriptor;

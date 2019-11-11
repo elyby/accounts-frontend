@@ -1,13 +1,10 @@
 // @flow
 import type { MessageDescriptor } from 'react-intl';
+import type { Element } from 'react';
 import { Component } from 'react';
-import { intlShape } from 'react-intl';
+import i18n from 'services/i18n';
 
-export default class FormComponent<P, S = void> extends Component<P, S> {
-    static contextTypes = {
-        intl: intlShape,
-    };
-
+class FormComponent<P, S = void> extends Component<P, S> {
     /**
      * Formats message resolving intl translations
      *
@@ -15,16 +12,16 @@ export default class FormComponent<P, S = void> extends Component<P, S> {
      *
      * @return {string}
      */
-    formatMessage(message: string | MessageDescriptor): string {
-        if (message && message.id) {
-            if (this.context && this.context.intl) {
-                message = this.context.intl.formatMessage(message);
-            } else {
-                return '';
-            }
+    formatMessage(message: string | MessageDescriptor | Element<any>): string | Element<any> {
+        if (typeof message === 'string') {
+            return message;
         }
 
-        return ((message: any): string);
+        if (message && message.id) {
+            return i18n.getIntl().formatMessage(message);
+        }
+
+        return ((message: any): Element<any>);
     }
 
     /**
@@ -40,3 +37,5 @@ export default class FormComponent<P, S = void> extends Component<P, S> {
     onFormInvalid() {
     }
 }
+
+export default FormComponent;
