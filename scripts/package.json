@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/node": "^7.7.0",
+    "@babel/node": "^7.7.4",
     "chalk": "^3.0.0",
     "crowdin-api": "erickskrauch/crowdin-api#add_missed_methods_and_fix_files_uploading",
     "glob": "^7.1.6",
