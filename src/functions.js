@@ -1,23 +1,23 @@
 // @flow
 let lastId = 0;
 export function uniqueId(prefix: string = 'id'): string {
-    return `${prefix}${++lastId}`;
+  return `${prefix}${++lastId}`;
 }
 
 /**
  * @param {object} obj
- * @param {array} keys
+ * @param {Array} keys
  *
- * @return {object}
+ * @returns {object}
  */
 export function omit(obj: Object, keys: Array<string>): Object {
-    const newObj = {...obj};
+  const newObj = { ...obj };
 
-    keys.forEach((key) => {
-        Reflect.deleteProperty(newObj, key);
-    });
+  keys.forEach(key => {
+    Reflect.deleteProperty(newObj, key);
+  });
 
-    return newObj;
+  return newObj;
 }
 
 /**
@@ -25,23 +25,23 @@ export function omit(obj: Object, keys: Array<string>): Object {
  *
  * @param {string} src
  *
- * @return {Promise}
+ * @returns {Promise}
  */
 export function loadScript(src: string): Promise<*> {
-    const script = document.createElement('script');
+  const script = document.createElement('script');
 
-    script.async = true;
-    script.defer = true;
-    script.src = src;
+  script.async = true;
+  script.defer = true;
+  script.src = src;
 
-    return new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
+  return new Promise((resolve, reject) => {
+    script.onload = resolve;
+    script.onerror = reject;
 
-        if (document && document.body) {
-            document.body.appendChild(script);
-        }
-    });
+    if (document && document.body) {
+      document.body.appendChild(script);
+    }
+  });
 }
 
 /**
@@ -53,7 +53,7 @@ export function loadScript(src: string): Promise<*> {
  *
  * @source https://github.com/component/debounce
  *
- * @param {function} function - function to wrap
+ * @param {Function} function - function to wrap
  * @param {number} [timeout=100] - timeout in ms
  * @param {bool} [immediate=false] - whether to execute at the beginning
  */
@@ -64,21 +64,24 @@ export { default as debounce } from 'debounce';
  *
  * @throws {Error} If can not decode token
  *
- * @return {object} - decoded jwt payload
+ * @returns {object} - decoded jwt payload
  */
-export function getJwtPayloads(jwt: string): {
-    sub: string;
-    jti: number;
-    exp: number;
+export function getJwtPayloads(
+  jwt: string,
+): {
+  sub: string,
+  jti: number,
+  exp: number,
 } {
-    const parts = (jwt || '').split('.');
-    if (parts.length !== 3) {
-        throw new Error('Invalid jwt token');
-    }
+  const parts = (jwt || '').split('.');
 
-    try {
-        return JSON.parse(atob(parts[1]));
-    } catch (err) {
-        throw new Error('Can not decode jwt token');
-    }
+  if (parts.length !== 3) {
+    throw new Error('Invalid jwt token');
+  }
+
+  try {
+    return JSON.parse(atob(parts[1]));
+  } catch (err) {
+    throw new Error('Can not decode jwt token');
+  }
 }

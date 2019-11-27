@@ -1,11 +1,11 @@
 // @flow
 import type {
-    Account,
-    AddAction,
-    RemoveAction,
-    ActivateAction,
-    UpdateTokenAction,
-    ResetAction
+  Account,
+  AddAction,
+  RemoveAction,
+  ActivateAction,
+  UpdateTokenAction,
+  ResetAction,
 } from '../reducer';
 
 export const ADD = 'accounts:add';
@@ -14,13 +14,13 @@ export const ADD = 'accounts:add';
  *
  * @param {Account} account
  *
- * @return {object} - action definition
+ * @returns {object} - action definition
  */
 export function add(account: Account): AddAction {
-    return {
-        type: ADD,
-        payload: account
-    };
+  return {
+    type: ADD,
+    payload: account,
+  };
 }
 
 export const REMOVE = 'accounts:remove';
@@ -29,13 +29,13 @@ export const REMOVE = 'accounts:remove';
  *
  * @param {Account} account
  *
- * @return {object} - action definition
+ * @returns {object} - action definition
  */
 export function remove(account: Account): RemoveAction {
-    return {
-        type: REMOVE,
-        payload: account
-    };
+  return {
+    type: REMOVE,
+    payload: account,
+  };
 }
 
 export const ACTIVATE = 'accounts:activate';
@@ -44,36 +44,36 @@ export const ACTIVATE = 'accounts:activate';
  *
  * @param {Account} account
  *
- * @return {object} - action definition
+ * @returns {object} - action definition
  */
 export function activate(account: Account): ActivateAction {
-    return {
-        type: ACTIVATE,
-        payload: account
-    };
+  return {
+    type: ACTIVATE,
+    payload: account,
+  };
 }
 
 export const RESET = 'accounts:reset';
 /**
  * @api private
  *
- * @return {object} - action definition
+ * @returns {object} - action definition
  */
 export function reset(): ResetAction {
-    return {
-        type: RESET
-    };
+  return {
+    type: RESET,
+  };
 }
 
 export const UPDATE_TOKEN = 'accounts:updateToken';
 /**
  * @param {string} token
  *
- * @return {object} - action definition
+ * @returns {object} - action definition
  */
 export function updateToken(token: string): UpdateTokenAction {
-    return {
-        type: UPDATE_TOKEN,
-        payload: token
-    };
+  return {
+    type: UPDATE_TOKEN,
+    payload: token,
+  };
 }

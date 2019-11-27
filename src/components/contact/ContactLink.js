@@ -8,31 +8,25 @@ import ContactForm from './ContactForm';
 type OwnProps = $Exact<ElementConfig<'a'>>;
 
 type Props = {
-    ...OwnProps,
-    createContactPopup: () => void,
+  ...OwnProps,
+  createContactPopup: () => void,
 };
 
-function ContactLink({
-    createContactPopup,
-    ...props
-}: Props) {
-    return (
-        <a
-            href="#"
-            data-e2e-button="feedbackPopup"
-            onClick={(event) => {
-                event.preventDefault();
+function ContactLink({ createContactPopup, ...props }: Props) {
+  return (
+    <a
+      href="#"
+      data-e2e-button="feedbackPopup"
+      onClick={event => {
+        event.preventDefault();
 
-                createContactPopup();
-            }}
-            {...props}
-        />
-    );
+        createContactPopup();
+      }}
+      {...props}
+    />
+  );
 }
 
-export default connect<Props, OwnProps, _, _, _, _>(
-    null,
-    {
-        createContactPopup: () => createPopup({ Popup: ContactForm })
-    }
-)(ContactLink);
+export default connect<Props, OwnProps, _, _, _, _>(null, {
+  createContactPopup: () => createPopup({ Popup: ContactForm }),
+})(ContactLink);

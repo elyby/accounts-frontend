@@ -10,48 +10,41 @@ import styles from './userbar.scss';
 import LoggedInPanel from './LoggedInPanel';
 
 export default class Userbar extends Component<{
-    account: ?Account,
-    guestAction: 'register' | 'login',
+  account: ?Account,
+  guestAction: 'register' | 'login',
 }> {
-    static displayName = 'Userbar';
+  static displayName = 'Userbar';
 
-    static defaultProps = {
-        guestAction: 'register'
-    };
+  static defaultProps = {
+    guestAction: 'register',
+  };
 
-    render() {
-        const { account } = this.props;
-        let { guestAction } = this.props;
+  render() {
+    const { account } = this.props;
+    let { guestAction } = this.props;
 
-        switch (guestAction) {
-            case 'login':
-                guestAction = (
-                    <Link to="/login" className={buttons.blue}>
-                        <Message {...messages.login} />
-                    </Link>
-                );
-                break;
-            case 'register':
-            default:
-                guestAction = (
-                    <Link to="/register" className={buttons.blue}>
-                        <Message {...messages.register} />
-                    </Link>
-                );
-                break;
-        }
-
-        return (
-            <div className={styles.userbar}>
-                {account
-                    ? (
-                        <LoggedInPanel username={account.username} />
-                    )
-                    : (
-                        guestAction
-                    )
-                }
-            </div>
+    switch (guestAction) {
+      case 'login':
+        guestAction = (
+          <Link to="/login" className={buttons.blue}>
+            <Message {...messages.login} />
+          </Link>
         );
+        break;
+      case 'register':
+      default:
+        guestAction = (
+          <Link to="/register" className={buttons.blue}>
+            <Message {...messages.register} />
+          </Link>
+        );
+        break;
     }
+
+    return (
+      <div className={styles.userbar}>
+        {account ? <LoggedInPanel username={account.username} /> : guestAction}
+      </div>
+    );
+  }
 }

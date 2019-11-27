@@ -11,84 +11,90 @@ import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
 type TextareaAutosizeProps = {
-    onHeightChange?: (number, TextareaAutosizeProps) => void,
-    useCacheForDOMMeasurements?: bool,
-    minRows?: number,
-    maxRows?: number,
-    inputRef?: (?HTMLTextAreaElement) => void,
+  onHeightChange?: (number, TextareaAutosizeProps) => void,
+  useCacheForDOMMeasurements?: boolean,
+  minRows?: number,
+  maxRows?: number,
+  inputRef?: (?HTMLTextAreaElement) => void,
 };
 
-export default class TextArea extends FormInputComponent<{
+export default class TextArea extends FormInputComponent<
+  {
     placeholder?: string | MessageDescriptor,
     label?: string | MessageDescriptor,
     error?: string,
     skin: Skin,
     color: Color,
-} & TextareaAutosizeProps> {
-    static defaultProps = {
-        color: COLOR_GREEN,
-        skin: SKIN_DARK,
-    };
+  } & TextareaAutosizeProps,
+> {
+  static defaultProps = {
+    color: COLOR_GREEN,
+    skin: SKIN_DARK,
+  };
 
-    elRef = React.createRef<HTMLTextAreaElement>();
+  elRef = React.createRef<HTMLTextAreaElement>();
 
-    render() {
-        const { color, skin } = this.props;
-        let { label } = this.props;
+  render() {
+    const { color, skin } = this.props;
+    let { label } = this.props;
 
-        const props = omit({
-            type: 'text',
-            ...this.props,
-        }, ['label', 'error', 'skin', 'color']);
+    const props = omit(
+      {
+        type: 'text',
+        ...this.props,
+      },
+      ['label', 'error', 'skin', 'color'],
+    );
 
-        if (label) {
-            if (!props.id) {
-                props.id = uniqueId('textarea');
-            }
+    if (label) {
+      if (!props.id) {
+        props.id = uniqueId('textarea');
+      }
 
-            label = this.formatMessage(label);
+      label = this.formatMessage(label);
 
-            label = (
-                <label className={styles.textFieldLabel} htmlFor={props.id}>
-                    {label}
-                </label>
-            );
-        }
-
-        props.placeholder = this.formatMessage(props.placeholder);
-
-        return (
-            <div className={styles.formRow}>
-                {label}
-                <div className={styles.textAreaContainer}>
-                    <TextareaAutosize inputRef={this.elRef}
-                        className={classNames(
-                            styles.textArea,
-                            styles[`${skin}TextField`],
-                            styles[`${color}TextField`]
-                        )}
-                        {...props}
-                    />
-                </div>
-                {this.renderError()}
-            </div>
-        );
+      label = (
+        <label className={styles.textFieldLabel} htmlFor={props.id}>
+          {label}
+        </label>
+      );
     }
 
-    getValue() {
-        const { current: el } = this.elRef;
+    props.placeholder = this.formatMessage(props.placeholder);
 
-        return el && el.value;
+    return (
+      <div className={styles.formRow}>
+        {label}
+        <div className={styles.textAreaContainer}>
+          <TextareaAutosize
+            inputRef={this.elRef}
+            className={classNames(
+              styles.textArea,
+              styles[`${skin}TextField`],
+              styles[`${color}TextField`],
+            )}
+            {...props}
+          />
+        </div>
+        {this.renderError()}
+      </div>
+    );
+  }
+
+  getValue() {
+    const { current: el } = this.elRef;
+
+    return el && el.value;
+  }
+
+  focus() {
+    const { current: el } = this.elRef;
+
+    if (!el) {
+      return;
     }
 
-    focus() {
-        const { current: el } = this.elRef;
-
-        if (!el) {
-            return;
-        }
-
-        el.focus();
-        setTimeout(el.focus.bind(el), 10);
-    }
+    el.focus();
+    setTimeout(el.focus.bind(el), 10);
+  }
 }

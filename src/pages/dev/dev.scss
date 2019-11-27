@@ -1,18 +1,18 @@
 .container {
-    padding: 55px 0 65px;
+  padding: 55px 0 65px;
 }
 
 .footer {
-    width: 100%;
-    position: absolute;
-    bottom: 10px;
-    left: 0;
+  width: 100%;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
 
-    text-align: center;
+  text-align: center;
 }
 
 @media (max-width: 720px) {
-    .container {
-        padding-top: 20px;
-    }
+  .container {
+    padding-top: 20px;
+  }
 }

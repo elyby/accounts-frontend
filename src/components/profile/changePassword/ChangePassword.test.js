@@ -7,19 +7,18 @@ import { shallow } from 'enzyme';
 import ChangePassword from 'components/profile/changePassword/ChangePassword';
 
 describe('<ChangePassword />', () => {
-    it('renders two <Input /> components', () => {
-        const component = shallow(<ChangePassword onSubmit={() => {}} />);
+  it('renders two <Input /> components', () => {
+    const component = shallow(<ChangePassword onSubmit={() => {}} />);
 
-        expect(component.find('Input'), 'to satisfy', {length: 2});
-    });
+    expect(component.find('Input'), 'to satisfy', { length: 2 });
+  });
 
+  it('should call onSubmit if passwords entered', () => {
+    const onSubmit = sinon.spy(() => ({ catch: () => {} })).named('onSubmit');
+    const component = shallow(<ChangePassword onSubmit={onSubmit} />);
 
-    it('should call onSubmit if passwords entered', () => {
-        const onSubmit = sinon.spy(() => ({catch: () => {}})).named('onSubmit');
-        const component = shallow(<ChangePassword onSubmit={onSubmit} />);
+    component.find('Form').simulate('submit');
 
-        component.find('Form').simulate('submit');
-
-        expect(onSubmit, 'was called');
-    });
+    expect(onSubmit, 'was called');
+  });
 });

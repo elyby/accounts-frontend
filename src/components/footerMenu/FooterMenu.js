@@ -11,51 +11,60 @@ import styles from './footerMenu.scss';
 import messages from './footerMenu.intl.json';
 
 type OwnProps = {|
-    createContactPopup: () => void,
+  createContactPopup: () => void,
 |};
 
 type Props = {
-    ...OwnProps,
-    createLanguageSwitcherPopup: () => void,
+  ...OwnProps,
+  createLanguageSwitcherPopup: () => void,
 };
 
 class FooterMenu extends Component<Props> {
-    static displayName = 'FooterMenu';
+  static displayName = 'FooterMenu';
 
-    render() {
-        return (
-            <div className={styles.footerMenu}>
-                <Link to="/rules">
-                    <Message {...messages.rules} />
-                </Link>
-                {' | '}
-                <ContactLink>
-                    <Message {...messages.contactUs} />
-                </ContactLink>
-                {' | '}
-                <Link to="/dev">
-                    <Message {...messages.forDevelopers} />
-                </Link>
+  render() {
+    return (
+      <div className={styles.footerMenu}>
+        <Link to="/rules">
+          <Message {...messages.rules} />
+        </Link>
+        {' | '}
+        <ContactLink>
+          <Message {...messages.contactUs} />
+        </ContactLink>
+        {' | '}
+        <Link to="/dev">
+          <Message {...messages.forDevelopers} />
+        </Link>
 
-                <div className={styles.langTriggerContainer}>
-                    <a href="#" className={styles.langTrigger} onClick={this.onLanguageSwitcher}>
-                        <span className={styles.langTriggerIcon} />
-                        <Message {...messages.siteLanguage} />
-                    </a>
-                </div>
-            </div>
-        );
-    }
+        <div className={styles.langTriggerContainer}>
+          <a
+            href="#"
+            className={styles.langTrigger}
+            onClick={this.onLanguageSwitcher}
+          >
+            <span className={styles.langTriggerIcon} />
+            <Message {...messages.siteLanguage} />
+          </a>
+        </div>
+      </div>
+    );
+  }
 
-    onLanguageSwitcher = (event: SyntheticMouseEvent<HTMLElement>) => {
-        event.preventDefault();
+  onLanguageSwitcher = (event: SyntheticMouseEvent<HTMLElement>) => {
+    event.preventDefault();
 
-        this.props.createLanguageSwitcherPopup();
-    };
+    this.props.createLanguageSwitcherPopup();
+  };
 }
 
 // mark this component, as not pure, because it is stateless,
 // but should be re-rendered, if current lang was changed
-export default connect<Props, OwnProps, _, _, _, _>(null, {
+export default connect<Props, OwnProps, _, _, _, _>(
+  null,
+  {
     createLanguageSwitcherPopup: () => createPopup({ Popup: LanguageSwitcher }),
-}, null, {pure: false})(FooterMenu);
+  },
+  null,
+  { pure: false },
+)(FooterMenu);

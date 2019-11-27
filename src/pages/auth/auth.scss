@@ -1,49 +1,49 @@
-@import "~components/ui/colors.scss";
+@import '~components/ui/colors.scss';
 
 $sidebar-width: 320px;
 
 .sidebar {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    top: 50px;
-    z-index: 10;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 50px;
+  z-index: 10;
 
-    background: $black;
+  background: $black;
 }
 
 .hiddenSidebar {
-    composes: sidebar;
+  composes: sidebar;
 
-    display: none;
+  display: none;
 }
 
 .content {
-    text-align: center;
-    max-width: 340px;
-    margin: 0 auto;
+  text-align: center;
+  max-width: 340px;
+  margin: 0 auto;
 }
 
 @media (min-width: 350px) {
-    .content {
-        padding: 55px 0;
-    }
+  .content {
+    padding: 55px 0;
+  }
 }
 
 @media (min-width: 720px) {
-    .content {
-        padding: 55px 50px;
-        margin-left: $sidebar-width;
-    }
+  .content {
+    padding: 55px 50px;
+    margin-left: $sidebar-width;
+  }
 
-    .sidebar {
-        right: auto;
+  .sidebar {
+    right: auto;
 
-        width: $sidebar-width;
-    }
+    width: $sidebar-width;
+  }
 
-    .hiddenSidebar {
-        display: block;
-    }
+  .hiddenSidebar {
+    display: block;
+  }
 }

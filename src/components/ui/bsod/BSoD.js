@@ -11,64 +11,68 @@ import messages from './BSoD.intl.json';
 
 // TODO: probably it is better to render this view from the App view
 // to remove dependencies from store and IntlProvider
-export default class BSoD extends React.Component<{
-    store: Object
-}, {
+export default class BSoD extends React.Component<
+  {
+    store: Object,
+  },
+  {
     lastEventId?: string,
-}> {
-    state = {};
+  },
+> {
+  state = {};
 
-    componentDidMount() {
-        // poll for event id
-        const timer = setInterval(() => {
-            if (!logger.getLastEventId()) {
-                return;
-            }
+  componentDidMount() {
+    // poll for event id
+    const timer = setInterval(() => {
+      if (!logger.getLastEventId()) {
+        return;
+      }
 
-            clearInterval(timer);
+      clearInterval(timer);
 
-            this.setState({
-                lastEventId: logger.getLastEventId()
-            });
-        }, 500);
+      this.setState({
+        lastEventId: logger.getLastEventId(),
+      });
+    }, 500);
+  }
+
+  render() {
+    const { store } = this.props;
+    const { lastEventId } = this.state;
+
+    let emailUrl = 'mailto:support@ely.by';
+
+    if (lastEventId) {
+      emailUrl += `?subject=Bug report for #${lastEventId}`;
     }
 
-    render() {
-        const {store} = this.props;
-        const {lastEventId} = this.state;
+    return (
+      <IntlProvider store={store}>
+        <div className={styles.body}>
+          <canvas
+            className={styles.canvas}
+            ref={(el: ?HTMLCanvasElement) => el && new BoxesField(el)}
+          />
 
-        let emailUrl = 'mailto:support@ely.by';
-
-        if (lastEventId) {
-            emailUrl += `?subject=Bug report for #${lastEventId}`;
-        }
-
-        return (
-            <IntlProvider store={store}>
-                <div className={styles.body}>
-                    <canvas className={styles.canvas}
-                        ref={(el: ?HTMLCanvasElement) => el && new BoxesField(el)}
-                    />
-
-                    <div className={styles.wrapper}>
-                        <div className={styles.title}>
-                            <Message {...appInfo.appName} />
-                        </div>
-                        <div className={styles.lineWithMargin}>
-                            <Message {...messages.criticalErrorHappened} />
-                        </div>
-                        <div className={styles.line}>
-                            <Message {...messages.reloadPageOrContactUs} />
-                        </div>
-                        <a href={emailUrl} className={styles.support}>
-                            support@ely.by
-                        </a>
-                        <div className={styles.easterEgg}>
-                            <Message {...messages.alsoYouCanInteractWithBackground}/>
-                        </div>
-                    </div>
-                </div>
-            </IntlProvider>
-        );
-    }
+          <div className={styles.wrapper}>
+            <div className={styles.title}>
+              <Message {...appInfo.appName} />
+            </div>
+            <div className={styles.lineWithMargin}>
+              <Message {...messages.criticalErrorHappened} />
+            </div>
+            <div className={styles.line}>
+              <Message {...messages.reloadPageOrContactUs} />
+            </div>
+            <a href={emailUrl} className={styles.support}>
+              support@ely.by
+            </a>
+            <div className={styles.easterEgg}>
+              <Message {...messages.alsoYouCanInteractWithBackground} />
+            </div>
+          </div>
+        </div>
+      </IntlProvider>
+    );
+  }
 }

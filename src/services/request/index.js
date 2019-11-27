@@ -9,6 +9,6 @@ export { default as RequestAbortedError } from './RequestAbortedError';
  * TODO: find a way to make it more friendly with URLSearchParams type
  */
 export type Query<T: string> = {
-    get: (key: T) => ?string,
-    set: (key: T, value: any) => void,
+  get: (key: T) => ?string,
+  set: (key: T, value: any) => void,
 };

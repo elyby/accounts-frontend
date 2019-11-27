@@ -14,71 +14,76 @@ import androidLogo from './images/android.svg';
 import appleLogo from './images/apple.svg';
 import windowsLogo from './images/windows.svg';
 
-export default class Instructions extends Component<{}, {
-    activeOs: null | 'android' | 'ios' | 'windows'
-}> {
-    state: {
-        activeOs: null | 'android' | 'ios' | 'windows'
-    } = {
-        activeOs: null
-    };
+export default class Instructions extends Component<
+  {},
+  {
+    activeOs: null | 'android' | 'ios' | 'windows',
+  },
+> {
+  state: {
+    activeOs: null | 'android' | 'ios' | 'windows',
+  } = {
+    activeOs: null,
+  };
 
-    render() {
-        const {activeOs} = this.state;
+  render() {
+    const { activeOs } = this.state;
 
-        return (
-            <div className={profileForm.formBody}>
-                <div className={profileForm.formRow}>
-                    <p className={profileForm.description}>
-                        <Message {...messages.mfaIntroduction} />
-                    </p>
-                </div>
+    return (
+      <div className={profileForm.formBody}>
+        <div className={profileForm.formRow}>
+          <p className={profileForm.description}>
+            <Message {...messages.mfaIntroduction} />
+          </p>
+        </div>
 
-                <div className={profileForm.formRow}>
-                    <div className={classNames(styles.instructionContainer, {
-                        [styles.instructionActive]: !!activeOs
-                    })}>
-                        <div className={classNames(styles.osList, {
-                            [styles.androidActive]: activeOs === 'android',
-                            [styles.appleActive]: activeOs === 'ios',
-                            [styles.windowsActive]: activeOs === 'windows'
-                        })}>
-                            <OsTile
-                                className={styles.androidTile}
-                                logo={androidLogo}
-                                label="Google Play"
-                                onClick={(event) => this.onChangeOs(event, 'android')}
-                            />
-                            <OsTile
-                                className={styles.appleTile}
-                                logo={appleLogo}
-                                label="App Store"
-                                onClick={(event) => this.onChangeOs(event, 'ios')}
-                            />
-                            <OsTile
-                                className={styles.windowsTile}
-                                logo={windowsLogo}
-                                label="Windows Store"
-                                onClick={(event) => this.onChangeOs(event, 'windows')}
-                            />
-                        </div>
-
-                        <div className={styles.osInstructionContainer}>
-                            {activeOs ? (
-                                <OsInstruction os={activeOs} />
-                            ) : null}
-                        </div>
-                    </div>
-                </div>
+        <div className={profileForm.formRow}>
+          <div
+            className={classNames(styles.instructionContainer, {
+              [styles.instructionActive]: !!activeOs,
+            })}
+          >
+            <div
+              className={classNames(styles.osList, {
+                [styles.androidActive]: activeOs === 'android',
+                [styles.appleActive]: activeOs === 'ios',
+                [styles.windowsActive]: activeOs === 'windows',
+              })}
+            >
+              <OsTile
+                className={styles.androidTile}
+                logo={androidLogo}
+                label="Google Play"
+                onClick={event => this.onChangeOs(event, 'android')}
+              />
+              <OsTile
+                className={styles.appleTile}
+                logo={appleLogo}
+                label="App Store"
+                onClick={event => this.onChangeOs(event, 'ios')}
+              />
+              <OsTile
+                className={styles.windowsTile}
+                logo={windowsLogo}
+                label="Windows Store"
+                onClick={event => this.onChangeOs(event, 'windows')}
+              />
             </div>
-        );
-    }
 
-    onChangeOs(event: MouseEvent, osName: 'android' | 'ios' | 'windows') {
-        event.preventDefault();
+            <div className={styles.osInstructionContainer}>
+              {activeOs ? <OsInstruction os={activeOs} /> : null}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-        this.setState({
-            activeOs: this.state.activeOs === osName ? null : osName
-        });
-    }
+  onChangeOs(event: MouseEvent, osName: 'android' | 'ios' | 'windows') {
+    event.preventDefault();
+
+    this.setState({
+      activeOs: this.state.activeOs === osName ? null : osName,
+    });
+  }
 }

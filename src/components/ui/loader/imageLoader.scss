@@ -1,25 +1,25 @@
 .container {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .loader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-    opacity: 0;
-    transition: 0.4s ease-in;
+  opacity: 0;
+  transition: 0.4s ease-in;
 }
 
 .imageLoaded {
-    opacity: 1;
+  opacity: 1;
 }

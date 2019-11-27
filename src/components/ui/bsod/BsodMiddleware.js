@@ -7,31 +7,30 @@ import type { logger as Logger } from 'services/logger';
 const ABORT_ERR = 20;
 
 export default function BsodMiddleware(dispatchBsod: Function, logger: Logger) {
-    return {
-        catch<T: Resp<any> | InternalServerError | Error>(resp?: T): Promise<T> {
-            const originalResponse: Object = (resp && resp.originalResponse) || {};
+  return {
+    catch<T: Resp<any> | InternalServerError | Error>(resp?: T): Promise<T> {
+      const originalResponse: Object = (resp && resp.originalResponse) || {};
 
-            if (
-                resp
-                && ((resp instanceof InternalServerError
-                    && resp.error.code !== ABORT_ERR)
-                    || (originalResponse
-                        && /5\d\d/.test((originalResponse.status: string))))
-            ) {
-                dispatchBsod();
+      if (
+        resp &&
+        ((resp instanceof InternalServerError &&
+          resp.error.code !== ABORT_ERR) ||
+          (originalResponse && /5\d\d/.test((originalResponse.status: string))))
+      ) {
+        dispatchBsod();
 
-                if (!resp.message || !/NetworkError/.test(resp.message)) {
-                    let message = 'Unexpected response (BSoD)';
+        if (!resp.message || !/NetworkError/.test(resp.message)) {
+          let message = 'Unexpected response (BSoD)';
 
-                    if (resp.message) {
-                        message = `BSoD: ${resp.message}`;
-                    }
+          if (resp.message) {
+            message = `BSoD: ${resp.message}`;
+          }
 
-                    logger.warn(message, { resp });
-                }
-            }
-
-            return Promise.reject(resp);
+          logger.warn(message, { resp });
         }
-    };
+      }
+
+      return Promise.reject(resp);
+    },
+  };
 }

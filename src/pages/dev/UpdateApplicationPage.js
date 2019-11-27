@@ -12,103 +12,110 @@ import { getApp, fetchApp } from 'components/dev/apps/actions';
 import ApplicationForm from 'components/dev/apps/applicationForm/ApplicationForm';
 
 type OwnProps = {|
-    match: {
-        params: {
-            clientId: string,
-        },
+  match: {
+    params: {
+      clientId: string,
     },
-|}
+  },
+|};
 
 type Props = {
-    ...OwnProps,
-    app: ?OauthAppResponse,
-    fetchApp: (string) => Promise<void>,
+  ...OwnProps,
+  app: ?OauthAppResponse,
+  fetchApp: string => Promise<void>,
+};
+
+class UpdateApplicationPage extends Component<
+  Props,
+  {
+    isNotFound: boolean,
+  },
+> {
+  form: FormModel = new FormModel();
+
+  state = {
+    isNotFound: false,
+  };
+
+  componentDidMount() {
+    this.props.app === null && this.fetchApp();
+  }
+
+  render() {
+    const { app } = this.props;
+
+    if (this.state.isNotFound) {
+      return <PageNotFound />;
+    }
+
+    if (!app) {
+      // we are loading
+      return null;
+    }
+
+    return (
+      <ApplicationForm
+        form={this.form}
+        onSubmit={this.onSubmit}
+        app={app}
+        type={app.type}
+      />
+    );
+  }
+
+  async fetchApp() {
+    const { fetchApp, match } = this.props;
+
+    try {
+      loader.show();
+      await fetchApp(match.params.clientId);
+    } catch (resp) {
+      const { status } = resp.originalResponse;
+
+      if (status === 403) {
+        this.goToMainPage();
+
+        return;
+      }
+
+      if (status === 404) {
+        this.setState({
+          isNotFound: true,
+        });
+
+        return;
+      }
+
+      logger.unexpected('Error fetching app', resp);
+    } finally {
+      loader.hide();
+    }
+  }
+
+  onSubmit = async () => {
+    const { form } = this;
+    const { app } = this.props;
+
+    if (!app || !app.clientId) {
+      throw new Error('Form has an invalid state');
+    }
+
+    form.beginLoading();
+    const result = await oauth.update(app.clientId, form.serialize());
+    form.endLoading();
+
+    this.goToMainPage(result.data.clientId);
+  };
+
+  goToMainPage = (hash?: string) =>
+    browserHistory.push(`/dev/applications${hash ? `#${hash}` : ''}`);
 }
 
-class UpdateApplicationPage extends Component<Props, {
-    isNotFound: bool,
-}> {
-    form: FormModel = new FormModel();
-
-    state = {
-        isNotFound: false,
-    };
-
-    componentDidMount() {
-        this.props.app === null && this.fetchApp();
-    }
-
-    render() {
-        const { app } = this.props;
-
-        if (this.state.isNotFound) {
-            return (
-                <PageNotFound />
-            );
-        }
-
-        if (!app) {
-            // we are loading
-            return null;
-        }
-
-        return (
-            <ApplicationForm
-                form={this.form}
-                onSubmit={this.onSubmit}
-                app={app}
-                type={app.type}
-            />
-        );
-    }
-
-    async fetchApp() {
-        const { fetchApp, match } = this.props;
-
-        try {
-            loader.show();
-            await fetchApp(match.params.clientId);
-        } catch (resp) {
-            const { status } = resp.originalResponse;
-
-            if (status === 403) {
-                this.goToMainPage();
-                return;
-            }
-
-            if (status === 404) {
-                this.setState({
-                    isNotFound: true,
-                });
-                return;
-            }
-
-            logger.unexpected('Error fetching app', resp);
-        } finally {
-            loader.hide();
-        }
-    }
-
-    onSubmit = async () => {
-        const { form } = this;
-        const { app } = this.props;
-
-        if (!app || !app.clientId) {
-            throw new Error('Form has an invalid state');
-        }
-
-        form.beginLoading();
-        const result = await oauth.update(app.clientId, form.serialize());
-        form.endLoading();
-
-        this.goToMainPage(result.data.clientId);
-    };
-
-    goToMainPage = (hash?: string) => browserHistory.push(`/dev/applications${hash ? `#${hash}` : ''}`);
-}
-
-export default connect<Props, OwnProps, _, _, _, _>((state, props) => ({
+export default connect<Props, OwnProps, _, _, _, _>(
+  (state, props) => ({
     app: getApp(state, props.match.params.clientId),
-}), {
+  }),
+  {
     fetchApp,
-})(UpdateApplicationPage);
+  },
+)(UpdateApplicationPage);

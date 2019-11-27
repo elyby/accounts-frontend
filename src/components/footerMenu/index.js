@@ -1,5 +1,3 @@
 import FooterMenu from './FooterMenu';
 
-export {
-    FooterMenu
-};
+export { FooterMenu };

@@ -6,13 +6,13 @@ import copyToClipboard from 'copy-to-clipboard';
  * for the new navigator.clipboard API.
  *
  * @param {string} content
- * @return {Promise<*>}
+ * @returns {Promise<*>}
  */
 export default async function copy(content: string): Promise<void> {
-    // $FlowFixMe there is no typing for navigator.clipboard
-    if (navigator.clipboard) {
-        return navigator.clipboard.writeText(content);
-    }
+  // $FlowFixMe there is no typing for navigator.clipboard
+  if (navigator.clipboard) {
+    return navigator.clipboard.writeText(content);
+  }
 
-    return copyToClipboard(content);
+  return copyToClipboard(content);
 }

@@ -26,81 +26,89 @@ import styles from './root.scss';
 import messages from './RootPage.intl.json';
 
 class RootPage extends Component<{
-    account: ?Account,
-    user: User,
-    isPopupActive: bool,
-    onLogoClick: Function,
-    location: {
-        pathname: string
-    }
+  account: ?Account,
+  user: User,
+  isPopupActive: boolean,
+  onLogoClick: Function,
+  location: {
+    pathname: string,
+  },
 }> {
-    componentDidMount() {
-        this.onPageUpdate();
+  componentDidMount() {
+    this.onPageUpdate();
+  }
+
+  componentDidUpdate() {
+    this.onPageUpdate();
+  }
+
+  onPageUpdate() {
+    loader.hide();
+  }
+
+  render() {
+    const { props } = this;
+    const { user, account, isPopupActive, onLogoClick } = this.props;
+    const isRegisterPage = props.location.pathname === '/register';
+
+    if (document && document.body) {
+      document.body.style.overflow = isPopupActive ? 'hidden' : '';
     }
 
-    componentDidUpdate() {
-        this.onPageUpdate();
-    }
+    return (
+      <div className={styles.root}>
+        <Helmet>
+          <html lang={user.lang} />
+        </Helmet>
 
-    onPageUpdate() {
-        loader.hide();
-    }
+        <ScrollIntoView top />
 
-    render() {
-        const props = this.props;
-        const {user, account, isPopupActive, onLogoClick} = this.props;
-        const isRegisterPage = props.location.pathname === '/register';
-
-        if (document && document.body) {
-            document.body.style.overflow = isPopupActive ? 'hidden' : '';
-        }
-
-        return (
-            <div className={styles.root}>
-                <Helmet>
-                    <html lang={user.lang} />
-                </Helmet>
-
-                <ScrollIntoView top />
-
-                <div id="view-port" className={classNames(styles.viewPort, {
-                    [styles.isPopupActive]: isPopupActive
-                })}>
-                    <div className={styles.header} data-e2e-toolbar>
-                        <div className={styles.headerContent}>
-                            <Link to="/" className={styles.logo} onClick={onLogoClick}>
-                                <Message {...messages.siteName} />
-                            </Link>
-                            <div className={styles.userbar}>
-                                <Userbar
-                                    account={account}
-                                    guestAction={isRegisterPage ? 'login' : 'register'}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className={styles.body}>
-                        <Switch>
-                            <PrivateRoute path="/profile" component={ProfilePage} />
-                            <Route path="/404" component={PageNotFound} />
-                            <Route path="/rules" component={RulesPage} />
-                            <Route path="/dev" component={DevPage} />
-                            <AuthFlowRoute exact path="/" component={ProfilePage} />
-                            <AuthFlowRoute path="/" component={AuthPage} />
-                            <Route component={PageNotFound} />
-                        </Switch>
-                    </div>
-                </div>
-                <PopupStack />
+        <div
+          id="view-port"
+          className={classNames(styles.viewPort, {
+            [styles.isPopupActive]: isPopupActive,
+          })}
+        >
+          <div className={styles.header} data-e2e-toolbar>
+            <div className={styles.headerContent}>
+              <Link to="/" className={styles.logo} onClick={onLogoClick}>
+                <Message {...messages.siteName} />
+              </Link>
+              <div className={styles.userbar}>
+                <Userbar
+                  account={account}
+                  guestAction={isRegisterPage ? 'login' : 'register'}
+                />
+              </div>
             </div>
-        );
-    }
+          </div>
+          <div className={styles.body}>
+            <Switch>
+              <PrivateRoute path="/profile" component={ProfilePage} />
+              <Route path="/404" component={PageNotFound} />
+              <Route path="/rules" component={RulesPage} />
+              <Route path="/dev" component={DevPage} />
+              <AuthFlowRoute exact path="/" component={ProfilePage} />
+              <AuthFlowRoute path="/" component={AuthPage} />
+              <Route component={PageNotFound} />
+            </Switch>
+          </div>
+        </div>
+        <PopupStack />
+      </div>
+    );
+  }
 }
 
-export default withRouter(connect((state) => ({
-    user: state.user,
-    account: getActiveAccount(state),
-    isPopupActive: state.popup.popups.length > 0
-}), {
-    onLogoClick: resetAuth
-})(RootPage));
+export default withRouter(
+  connect(
+    state => ({
+      user: state.user,
+      account: getActiveAccount(state),
+      isPopupActive: state.popup.popups.length > 0,
+    }),
+    {
+      onLogoClick: resetAuth,
+    },
+  )(RootPage),
+);

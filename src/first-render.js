@@ -14,6 +14,8 @@ export default `
 
     <style>
         ${require('!!css-loader!postcss-loader!sass-loader!index.scss')[0][1]}
-        ${require('!!css-loader!postcss-loader!sass-loader!components/ui/loader/loader.scss')[0][1]}
+        ${
+          require('!!css-loader!postcss-loader!sass-loader!components/ui/loader/loader.scss')[0][1]
+        }
     </style>
 `;

@@ -1,6 +1,6 @@
 {
-    "changeUsernameTitle": "Change nickname",
-    "changeUsernameDescription": "You can change your nickname to any arbitrary value. Remember that it is not recommended to take a nickname of already existing Mojang account.",
-    "changeUsernameWarning": "Be careful: if you playing on the server with nickname binding, then after changing nickname you may lose all your progress.",
-    "changeUsernameButton": "Change nickname"
+  "changeUsernameTitle": "Change nickname",
+  "changeUsernameDescription": "You can change your nickname to any arbitrary value. Remember that it is not recommended to take a nickname of already existing Mojang account.",
+  "changeUsernameWarning": "Be careful: if you playing on the server with nickname binding, then after changing nickname you may lose all your progress.",
+  "changeUsernameButton": "Change nickname"
 }

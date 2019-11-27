@@ -7,26 +7,26 @@ import { RawIntlProvider } from 'react-intl';
 import i18n from 'services/i18n';
 
 type OwnProps = {|
-  children: Node
+  children: Node,
 |};
 
 type Props = {
   ...OwnProps,
-  locale: string
+  locale: string,
 };
 
 function IntlProvider({ children, locale }: Props) {
-    const [intl, setIntl] = useState<IntlShape>(i18n.getIntl());
+  const [intl, setIntl] = useState<IntlShape>(i18n.getIntl());
 
-    useEffect(() => {
-        (async () => {
-            setIntl(await i18n.changeLocale(locale));
-        })();
-    }, [locale]);
+  useEffect(() => {
+    (async () => {
+      setIntl(await i18n.changeLocale(locale));
+    })();
+  }, [locale]);
 
-    return <RawIntlProvider value={intl}>{children}</RawIntlProvider>;
+  return <RawIntlProvider value={intl}>{children}</RawIntlProvider>;
 }
 
 export default connect<Props, OwnProps, _, _, _, _>(({ i18n }) => i18n)(
-    IntlProvider
+  IntlProvider,
 );

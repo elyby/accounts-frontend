@@ -1,6 +1,6 @@
 /* eslint-env node */
-const path = require("path");
-const { transform } = require("../../webpack-utils/intl-loader");
+const path = require('path');
+const { transform } = require('../../webpack-utils/intl-loader');
 
 module.exports = {
   /**
@@ -9,14 +9,10 @@ module.exports = {
    * @param {{[key: string]: any}} config - jest config
    * @param {{instrument: boolean}} options - additional options
    *
-   * @return {string}
+   * @returns {string}
    */
   // eslint-disable-next-line no-unused-vars
   process(src, filename, config, options) {
-    return transform(
-      src,
-      filename,
-      path.resolve(`${__dirname}/../../..`)
-    );
-  }
+    return transform(src, filename, path.resolve(`${__dirname}/../../..`));
+  },
 };

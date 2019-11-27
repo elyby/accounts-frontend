@@ -10,46 +10,50 @@ import { COLOR_GREEN } from 'components/ui';
 import FormComponent from './FormComponent';
 
 export default class Button extends FormComponent<{
-    label: string | MessageDescriptor,
-    block?: bool,
-    small?: bool,
-    loading?: bool,
-    className?: string,
-    color: Color,
-    disabled?: bool,
-    component: string | ComponentType<any>,
+  label: string | MessageDescriptor,
+  block?: boolean,
+  small?: boolean,
+  loading?: boolean,
+  className?: string,
+  color: Color,
+  disabled?: boolean,
+  component: string | ComponentType<any>,
 }> {
-    static defaultProps = {
-        color: COLOR_GREEN,
-        component: 'button',
-    };
+  static defaultProps = {
+    color: COLOR_GREEN,
+    component: 'button',
+  };
 
-    render() {
-        const {
-            color,
-            block,
-            small,
-            disabled,
-            className,
-            loading,
-            label,
-            component: ComponentProp,
-            ...restProps
-        } = this.props;
+  render() {
+    const {
+      color,
+      block,
+      small,
+      disabled,
+      className,
+      loading,
+      label,
+      component: ComponentProp,
+      ...restProps
+    } = this.props;
 
-        return (
-            <ComponentProp
-                className={classNames(buttons[color], {
-                    [buttons.loading]: loading,
-                    [buttons.block]: block,
-                    [buttons.smallButton]: small,
-                    [buttons.disabled]: disabled,
-                }, className)}
-                disabled={disabled}
-                {...restProps}
-            >
-                {this.formatMessage(label)}
-            </ComponentProp>
-        );
-    }
+    return (
+      <ComponentProp
+        className={classNames(
+          buttons[color],
+          {
+            [buttons.loading]: loading,
+            [buttons.block]: block,
+            [buttons.smallButton]: small,
+            [buttons.disabled]: disabled,
+          },
+          className,
+        )}
+        disabled={disabled}
+        {...restProps}
+      >
+        {this.formatMessage(label)}
+      </ComponentProp>
+    );
+  }
 }

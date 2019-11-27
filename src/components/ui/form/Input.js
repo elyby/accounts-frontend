@@ -13,134 +13,142 @@ import FormInputComponent from './FormInputComponent';
 
 let copiedStateTimeout: TimeoutID;
 
-export default class Input extends FormInputComponent<{
+export default class Input extends FormInputComponent<
+  {
     skin: Skin,
     color: Color,
-    center: bool,
-    disabled: bool,
+    center: boolean,
+    disabled: boolean,
     label?: string | MessageDescriptor,
     placeholder?: string | MessageDescriptor,
-    error?: string | {type: string, payload: string},
+    error?: string | { type: string, payload: string },
     icon?: string,
-    copy?: bool,
-}, {
-    wasCopied: bool,
-}> {
-    static defaultProps = {
-        color: COLOR_GREEN,
-        skin: SKIN_DARK,
-        center: false,
-        disabled: false,
-    };
+    copy?: boolean,
+  },
+  {
+    wasCopied: boolean,
+  },
+> {
+  static defaultProps = {
+    color: COLOR_GREEN,
+    skin: SKIN_DARK,
+    center: false,
+    disabled: false,
+  };
 
-    state = {
-        wasCopied: false,
-    };
+  state = {
+    wasCopied: false,
+  };
 
-    elRef = React.createRef<HTMLInputElement>();
+  elRef = React.createRef<HTMLInputElement>();
 
-    render() {
-        const { color, skin, center } = this.props;
-        let { icon, label, copy } = this.props;
-        const { wasCopied } = this.state;
+  render() {
+    const { color, skin, center } = this.props;
+    let { icon, label, copy } = this.props;
+    const { wasCopied } = this.state;
 
-        const props = omit({
-            type: 'text',
-            ...this.props,
-        }, ['label', 'error', 'skin', 'color', 'center', 'icon', 'copy']);
+    const props = omit(
+      {
+        type: 'text',
+        ...this.props,
+      },
+      ['label', 'error', 'skin', 'color', 'center', 'icon', 'copy'],
+    );
 
-        if (label) {
-            if (!props.id) {
-                props.id = uniqueId('input');
-            }
+    if (label) {
+      if (!props.id) {
+        props.id = uniqueId('input');
+      }
 
-            label = this.formatMessage(label);
+      label = this.formatMessage(label);
 
-            label = (
-                <label className={styles.textFieldLabel} htmlFor={props.id}>
-                    {label}
-                </label>
-            );
-        }
-
-        props.placeholder = this.formatMessage(props.placeholder);
-
-        let baseClass = styles.formRow;
-
-        if (icon) {
-            baseClass = styles.formIconRow;
-            icon = (
-                <span className={classNames(styles.textFieldIcon, icons[icon])} />
-            );
-        }
-
-        if (copy) {
-            copy = (
-                <div
-                    className={classNames(styles.copyIcon, {
-                        [icons.clipboard]: !wasCopied,
-                        [icons.checkmark]: wasCopied,
-                        [styles.copyCheckmark]: wasCopied,
-                    })}
-                    onClick={this.onCopy}
-                />
-            );
-        }
-
-        return (
-            <div className={baseClass}>
-                {label}
-                <div className={styles.textFieldContainer}>
-                    <input ref={this.elRef}
-                        className={classNames(
-                            styles[`${skin}TextField`],
-                            styles[`${color}TextField`],
-                            {
-                                [styles.textFieldCenter]: center
-                            }
-                        )}
-                        {...props}
-                    />
-                    {icon}
-                    {copy}
-                </div>
-                {this.renderError()}
-            </div>
-        );
+      label = (
+        <label className={styles.textFieldLabel} htmlFor={props.id}>
+          {label}
+        </label>
+      );
     }
 
-    getValue() {
-        const { current: el } = this.elRef;
+    props.placeholder = this.formatMessage(props.placeholder);
 
-        return el && el.value;
+    let baseClass = styles.formRow;
+
+    if (icon) {
+      baseClass = styles.formIconRow;
+      icon = <span className={classNames(styles.textFieldIcon, icons[icon])} />;
     }
 
-    focus() {
-        const { current: el } = this.elRef;
-
-        if (!el) {
-            return;
-        }
-
-        el.focus();
-        setTimeout(el.focus.bind(el), 10);
+    if (copy) {
+      copy = (
+        <div
+          className={classNames(styles.copyIcon, {
+            [icons.clipboard]: !wasCopied,
+            [icons.checkmark]: wasCopied,
+            [styles.copyCheckmark]: wasCopied,
+          })}
+          onClick={this.onCopy}
+        />
+      );
     }
 
-    onCopy = async () => {
-        const value = this.getValue();
+    return (
+      <div className={baseClass}>
+        {label}
+        <div className={styles.textFieldContainer}>
+          <input
+            ref={this.elRef}
+            className={classNames(
+              styles[`${skin}TextField`],
+              styles[`${color}TextField`],
+              {
+                [styles.textFieldCenter]: center,
+              },
+            )}
+            {...props}
+          />
+          {icon}
+          {copy}
+        </div>
+        {this.renderError()}
+      </div>
+    );
+  }
 
-        if (!value) {
-            return;
-        }
+  getValue() {
+    const { current: el } = this.elRef;
 
-        try {
-            clearTimeout(copiedStateTimeout);
-            copiedStateTimeout = setTimeout(() => this.setState({wasCopied: false}), 2000);
+    return el && el.value;
+  }
 
-            await copy(value);
-            this.setState({wasCopied: true});
-        } catch (err) {
-            // it's okay
-        }
-    };
+  focus() {
+    const { current: el } = this.elRef;
+
+    if (!el) {
+      return;
+    }
+
+    el.focus();
+    setTimeout(el.focus.bind(el), 10);
+  }
+
+  onCopy = async () => {
+    const value = this.getValue();
+
+    if (!value) {
+      return;
+    }
+
+    try {
+      clearTimeout(copiedStateTimeout);
+      copiedStateTimeout = setTimeout(
+        () => this.setState({ wasCopied: false }),
+        2000,
+      );
+
+      await copy(value);
+      this.setState({ wasCopied: true });
+    } catch (err) {
+      // it's okay
+    }
+  };
 }

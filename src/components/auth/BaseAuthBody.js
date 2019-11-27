@@ -9,51 +9,57 @@ import { userShape } from 'components/user/User';
 import { FormModel } from 'components/ui/form';
 
 export default class BaseAuthBody extends Component {
-    static contextTypes = {
-        clearErrors: PropTypes.func.isRequired,
-        resolve: PropTypes.func.isRequired,
-        requestRedraw: PropTypes.func.isRequired,
-        auth: PropTypes.shape({
-            error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({
-                type: PropTypes.string,
-                payload: PropTypes.object
-            })]),
-            scopes: PropTypes.array
-        }).isRequired,
-        user: userShape
-    };
+  static contextTypes = {
+    clearErrors: PropTypes.func.isRequired,
+    resolve: PropTypes.func.isRequired,
+    requestRedraw: PropTypes.func.isRequired,
+    auth: PropTypes.shape({
+      error: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({
+          type: PropTypes.string,
+          payload: PropTypes.object,
+        }),
+      ]),
+      scopes: PropTypes.array,
+    }).isRequired,
+    user: userShape,
+  };
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        if (nextContext.auth.error !== this.context.auth.error) {
-            this.form.setErrors(nextContext.auth.error || {});
-        }
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (nextContext.auth.error !== this.context.auth.error) {
+      this.form.setErrors(nextContext.auth.error || {});
     }
+  }
 
-    renderErrors() {
-        return this.form.hasErrors()
-            ? <AuthError error={this.form.getFirstError()} onClose={this.onClearErrors} />
-            : null;
-    }
+  renderErrors() {
+    return this.form.hasErrors() ? (
+      <AuthError
+        error={this.form.getFirstError()}
+        onClose={this.onClearErrors}
+      />
+    ) : null;
+  }
 
-    onFormSubmit() {
-        this.context.resolve(this.serialize());
-    }
+  onFormSubmit() {
+    this.context.resolve(this.serialize());
+  }
 
-    onClearErrors = this.context.clearErrors;
+  onClearErrors = this.context.clearErrors;
 
-    form = new FormModel({
-        renderErrors: false
-    });
+  form = new FormModel({
+    renderErrors: false,
+  });
 
-    bindField = this.form.bindField.bind(this.form);
+  bindField = this.form.bindField.bind(this.form);
 
-    serialize() {
-        return this.form.serialize();
-    }
+  serialize() {
+    return this.form.serialize();
+  }
 
-    autoFocus() {
-        const fieldId = this.autoFocusField;
+  autoFocus() {
+    const fieldId = this.autoFocusField;
 
-        fieldId && this.form.focus(fieldId);
-    }
+    fieldId && this.form.focus(fieldId);
+  }
 }

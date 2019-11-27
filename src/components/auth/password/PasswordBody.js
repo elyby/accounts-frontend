@@ -9,45 +9,46 @@ import styles from './password.scss';
 import messages from './Password.intl.json';
 
 export default class PasswordBody extends BaseAuthBody {
-    static displayName = 'PasswordBody';
-    static panelId = 'password';
-    static hasGoBack = true;
+  static displayName = 'PasswordBody';
+  static panelId = 'password';
+  static hasGoBack = true;
 
-    autoFocusField = 'password';
+  autoFocusField = 'password';
 
-    render() {
-        const {user} = this.context;
+  render() {
+    const { user } = this.context;
 
-        return (
-            <div>
-                {this.renderErrors()}
+    return (
+      <div>
+        {this.renderErrors()}
 
-                <div className={styles.miniProfile}>
-                    <div className={styles.avatar}>
-                        {user.avatar
-                            ? <img src={user.avatar} />
-                            : <span className={icons.user} />
-                        }
-                    </div>
-                    <div className={styles.email}>
-                        {user.email || user.username}
-                    </div>
-                </div>
+        <div className={styles.miniProfile}>
+          <div className={styles.avatar}>
+            {user.avatar ? (
+              <img src={user.avatar} />
+            ) : (
+              <span className={icons.user} />
+            )}
+          </div>
+          <div className={styles.email}>{user.email || user.username}</div>
+        </div>
 
-                <Input {...this.bindField('password')}
-                    icon="key"
-                    type="password"
-                    required
-                    placeholder={messages.accountPassword}
-                />
+        <Input
+          {...this.bindField('password')}
+          icon="key"
+          type="password"
+          required
+          placeholder={messages.accountPassword}
+        />
 
-                <div className={authStyles.checkboxInput}>
-                    <Checkbox {...this.bindField('rememberMe')}
-                        defaultChecked
-                        label={messages.rememberMe}
-                    />
-                </div>
-            </div>
-        );
-    }
+        <div className={authStyles.checkboxInput}>
+          <Checkbox
+            {...this.bindField('rememberMe')}
+            defaultChecked
+            label={messages.rememberMe}
+          />
+        </div>
+      </div>
+    );
+  }
 }

@@ -11,211 +11,215 @@ import ChooseAccountState from 'services/authFlow/ChooseAccountState';
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
 describe('PasswordState', () => {
-    let state;
-    let context;
-    let mock;
+  let state;
+  let context;
+  let mock;
 
-    beforeEach(() => {
-        state = new PasswordState();
+  beforeEach(() => {
+    state = new PasswordState();
 
-        const data = bootstrap();
-        context = data.context;
-        mock = data.mock;
+    const data = bootstrap();
+    context = data.context;
+    mock = data.mock;
+  });
+
+  afterEach(() => {
+    mock.verify();
+  });
+
+  describe('#enter', () => {
+    it('should navigate to /password', () => {
+      context.getState.returns({
+        user: { isGuest: true },
+        auth: {
+          credentials: { login: 'foo' },
+        },
+      });
+
+      expectNavigate(mock, '/password');
+
+      state.enter(context);
     });
 
-    afterEach(() => {
-        mock.verify();
+    it('should transition to complete if not guest', () => {
+      context.getState.returns({
+        user: { isGuest: false },
+        auth: {
+          credentials: { login: null },
+        },
+      });
+
+      expectState(mock, CompleteState);
+
+      state.enter(context);
+    });
+  });
+
+  describe('#resolve', () => {
+    it('should call login with login and password', () => {
+      const expectedLogin = 'foo';
+      const expectedPassword = 'bar';
+      const expectedRememberMe = true;
+
+      context.getState.returns({
+        auth: {
+          credentials: {
+            login: expectedLogin,
+          },
+        },
+      });
+
+      expectRun(
+        mock,
+        'login',
+        sinon.match({
+          login: expectedLogin,
+          password: expectedPassword,
+          rememberMe: expectedRememberMe,
+        }),
+      ).returns(Promise.resolve());
+      expectState(mock, CompleteState);
+
+      const payload = {
+        password: expectedPassword,
+        rememberMe: expectedRememberMe,
+      };
+
+      return expect(state.resolve(context, payload), 'to be fulfilled');
     });
 
-    describe('#enter', () => {
-        it('should navigate to /password', () => {
-            context.getState.returns({
-                user: {isGuest: true},
-                auth: {
-                    credentials: {login: 'foo'}
-                }
-            });
+    it('should go to MfaState if totp required', () => {
+      const expectedLogin = 'foo';
+      const expectedPassword = 'bar';
+      const expectedRememberMe = true;
 
-            expectNavigate(mock, '/password');
+      context.getState.returns({
+        auth: {
+          credentials: {
+            login: expectedLogin,
+            isTotpRequired: true,
+          },
+        },
+      });
 
-            state.enter(context);
-        });
+      expectRun(
+        mock,
+        'login',
+        sinon.match({
+          login: expectedLogin,
+          password: expectedPassword,
+          rememberMe: expectedRememberMe,
+        }),
+      ).returns(Promise.resolve());
+      expectState(mock, MfaState);
 
-        it('should transition to complete if not guest', () => {
-            context.getState.returns({
-                user: {isGuest: false},
-                auth: {
-                    credentials: {login: null}
-                }
-            });
+      const payload = {
+        password: expectedPassword,
+        rememberMe: expectedRememberMe,
+      };
 
-            expectState(mock, CompleteState);
-
-            state.enter(context);
-        });
+      return expect(state.resolve(context, payload), 'to be fulfilled');
     });
 
-    describe('#resolve', () => {
-        it('should call login with login and password', () => {
-            const expectedLogin = 'foo';
-            const expectedPassword = 'bar';
-            const expectedRememberMe = true;
+    it('should navigate to returnUrl if any', () => {
+      const expectedLogin = 'foo';
+      const expectedPassword = 'bar';
+      const expectedReturnUrl = '/returnUrl';
+      const expectedRememberMe = true;
 
-            context.getState.returns({
-                auth: {
-                    credentials: {
-                        login: expectedLogin
-                    }
-                }
-            });
+      context.getState.returns({
+        auth: {
+          credentials: {
+            login: expectedLogin,
+            returnUrl: expectedReturnUrl,
+          },
+        },
+      });
 
-            expectRun(
-                mock,
-                'login',
-                sinon.match({
-                    login: expectedLogin,
-                    password: expectedPassword,
-                    rememberMe: expectedRememberMe,
-                })
-            ).returns(Promise.resolve());
-            expectState(mock, CompleteState);
+      expectRun(
+        mock,
+        'login',
+        sinon.match({
+          login: expectedLogin,
+          password: expectedPassword,
+          rememberMe: expectedRememberMe,
+        }),
+      ).returns(Promise.resolve());
+      expectNavigate(mock, expectedReturnUrl);
 
-            const payload = {password: expectedPassword, rememberMe: expectedRememberMe};
+      const payload = {
+        password: expectedPassword,
+        rememberMe: expectedRememberMe,
+      };
 
-            return expect(state.resolve(context, payload), 'to be fulfilled');
-        });
+      return expect(state.resolve(context, payload), 'to be fulfilled');
+    });
+  });
 
-        it('should go to MfaState if totp required', () => {
-            const expectedLogin = 'foo';
-            const expectedPassword = 'bar';
-            const expectedRememberMe = true;
+  describe('#reject', () => {
+    it('should transition to forgot password state', () => {
+      expectState(mock, ForgotPasswordState);
 
-            context.getState.returns({
-                auth: {
-                    credentials: {
-                        login: expectedLogin,
-                        isTotpRequired: true,
-                    }
-                }
-            });
+      state.reject(context);
+    });
+  });
 
-            expectRun(
-                mock,
-                'login',
-                sinon.match({
-                    login: expectedLogin,
-                    password: expectedPassword,
-                    rememberMe: expectedRememberMe,
-                })
-            ).returns(Promise.resolve());
-            expectState(mock, MfaState);
+  describe('#goBack', () => {
+    it('should transition to login state', () => {
+      context.getState.returns({
+        auth: {
+          credentials: {
+            login: 'foo',
+          },
+        },
+      });
 
-            const payload = {password: expectedPassword, rememberMe: expectedRememberMe};
+      expectRun(mock, 'setLogin', null);
+      expectState(mock, LoginState);
 
-            return expect(state.resolve(context, payload), 'to be fulfilled');
-        });
-
-        it('should navigate to returnUrl if any', () => {
-            const expectedLogin = 'foo';
-            const expectedPassword = 'bar';
-            const expectedReturnUrl = '/returnUrl';
-            const expectedRememberMe = true;
-
-            context.getState.returns({
-                auth: {
-                    credentials: {
-                        login: expectedLogin,
-                        returnUrl: expectedReturnUrl,
-                    }
-                }
-            });
-
-            expectRun(
-                mock,
-                'login',
-                sinon.match({
-                    login: expectedLogin,
-                    password: expectedPassword,
-                    rememberMe: expectedRememberMe,
-                })
-            ).returns(Promise.resolve());
-            expectNavigate(mock, expectedReturnUrl);
-
-            const payload = {password: expectedPassword, rememberMe: expectedRememberMe};
-
-            return expect(state.resolve(context, payload), 'to be fulfilled');
-        });
+      state.goBack(context);
     });
 
-    describe('#reject', () => {
-        it('should transition to forgot password state', () => {
-            expectState(mock, ForgotPasswordState);
+    it('should transition to ChooseAccountState if this is relogin', () => {
+      context.getState.returns({
+        accounts: {
+          active: 1,
+          available: [{ id: 1 }, { id: 2 }],
+        },
+        auth: {
+          credentials: {
+            login: 'foo',
+            isRelogin: true,
+          },
+        },
+      });
 
-            state.reject(context);
-        });
+      expectRun(mock, 'activateAccount', { id: 2 });
+      expectRun(mock, 'removeAccount', { id: 1 });
+      expectState(mock, ChooseAccountState);
+
+      state.goBack(context);
     });
 
-    describe('#goBack', () => {
-        it('should transition to login state', () => {
-            context.getState.returns({
-                auth: {
-                    credentials: {
-                        login: 'foo'
-                    }
-                }
-            });
+    it('should transition to LoginState if this is relogin and only one account available', () => {
+      context.getState.returns({
+        accounts: {
+          active: 1,
+          available: [{ id: 1 }],
+        },
+        auth: {
+          credentials: {
+            login: 'foo',
+            isRelogin: true,
+          },
+        },
+      });
 
-            expectRun(mock, 'setLogin', null);
-            expectState(mock, LoginState);
+      expectRun(mock, 'logout');
+      expectRun(mock, 'setLogin', null);
+      expectState(mock, LoginState);
 
-            state.goBack(context);
-        });
-
-        it('should transition to ChooseAccountState if this is relogin', () => {
-            context.getState.returns({
-                accounts: {
-                    active: 1,
-                    available: [
-                        {id: 1},
-                        {id: 2}
-                    ]
-                },
-                auth: {
-                    credentials: {
-                        login: 'foo',
-                        isRelogin: true,
-                    }
-                }
-            });
-
-            expectRun(mock, 'activateAccount', { id: 2 });
-            expectRun(mock, 'removeAccount', { id: 1 });
-            expectState(mock, ChooseAccountState);
-
-            state.goBack(context);
-        });
-
-        it('should transition to LoginState if this is relogin and only one account available', () => {
-            context.getState.returns({
-                accounts: {
-                    active: 1,
-                    available: [
-                        {id: 1},
-                    ]
-                },
-                auth: {
-                    credentials: {
-                        login: 'foo',
-                        isRelogin: true,
-                    }
-                }
-            });
-
-            expectRun(mock, 'logout');
-            expectRun(mock, 'setLogin', null);
-            expectState(mock, LoginState);
-
-            state.goBack(context);
-        });
+      state.goBack(context);
     });
+  });
 });

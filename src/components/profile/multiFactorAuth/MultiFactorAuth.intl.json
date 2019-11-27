@@ -1,25 +1,25 @@
 {
-    "mfaTitle": "Two‑factor authentication",
-    "mfaDescription": "Two‑factor authentication is an extra layer of security designed to ensure you that you're the only person who can access your account, even if the password gets stolen.",
+  "mfaTitle": "Two‑factor authentication",
+  "mfaDescription": "Two‑factor authentication is an extra layer of security designed to ensure you that you're the only person who can access your account, even if the password gets stolen.",
 
-    "mfaIntroduction": "First of all, you need to install one of our suggested apps on your phone. This app will generate login codes for you. Please choose your OS to get corresponding installation links.",
-    "installOnOfTheApps": "Install one of the following apps:",
-    "findAlternativeApps": "Find alternative apps",
-    "theAppIsInstalled": "App has been installed",
+  "mfaIntroduction": "First of all, you need to install one of our suggested apps on your phone. This app will generate login codes for you. Please choose your OS to get corresponding installation links.",
+  "installOnOfTheApps": "Install one of the following apps:",
+  "findAlternativeApps": "Find alternative apps",
+  "theAppIsInstalled": "App has been installed",
 
-    "scanQrCode": "Open your favorite QR scanner app and scan the following QR code:",
-    "or": "OR",
-    "enterKeyManually": "If you can't scan QR code, try entering your secret key manually:",
-    "whenKeyEntered": "If a temporary code appears in your two‑factor auth app, then you may proceed to the next step.",
-    "ready": "Ready",
+  "scanQrCode": "Open your favorite QR scanner app and scan the following QR code:",
+  "or": "OR",
+  "enterKeyManually": "If you can't scan QR code, try entering your secret key manually:",
+  "whenKeyEntered": "If a temporary code appears in your two‑factor auth app, then you may proceed to the next step.",
+  "ready": "Ready",
 
-    "codePlaceholder": "Enter the code here",
-    "enterCodeFromApp": "In order to finish two‑factor auth setup, please enter the code received in the mobile app:",
-    "enable": "Enable",
+  "codePlaceholder": "Enter the code here",
+  "enterCodeFromApp": "In order to finish two‑factor auth setup, please enter the code received in the mobile app:",
+  "enable": "Enable",
 
-    "disable": "Disable",
-    "mfaEnabledForYourAcc": "Two‑factor authentication for your account is active now",
-    "mfaLoginFlowDesc": "Additional code will be requested next time you log in. Please note, that Minecraft authorization won't work when two‑factor auth is enabled.",
-    "disableMfa": "Disable two‑factor authentication",
-    "disableMfaInstruction": "In order to disable two‑factor authentication, you need to provide a code from your mobile app and confirm your action with your current account password."
+  "disable": "Disable",
+  "mfaEnabledForYourAcc": "Two‑factor authentication for your account is active now",
+  "mfaLoginFlowDesc": "Additional code will be requested next time you log in. Please note, that Minecraft authorization won't work when two‑factor auth is enabled.",
+  "disableMfa": "Disable two‑factor authentication",
+  "disableMfaInstruction": "In order to disable two‑factor authentication, you need to provide a code from your mobile app and confirm your action with your current account password."
 }

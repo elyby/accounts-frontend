@@ -3,91 +3,93 @@ import expect from 'test/unexpected';
 import bearerHeaderMiddleware from 'components/user/middlewares/bearerHeaderMiddleware';
 
 describe('bearerHeaderMiddleware', () => {
-    const emptyState = {
-        user: {},
+  const emptyState = {
+    user: {},
+    accounts: {
+      active: null,
+      available: [],
+    },
+  };
+
+  describe('when token available', () => {
+    const token = 'foo';
+    const middleware = bearerHeaderMiddleware({
+      getState: () => ({
+        ...emptyState,
         accounts: {
-            active: null,
-            available: [],
+          active: 1,
+          available: [
+            {
+              id: 1,
+              token,
+            },
+          ],
         },
+      }),
+    });
+
+    it('should set Authorization header', () => {
+      let data = {
+        options: {
+          headers: {},
+        },
+      };
+
+      data = middleware.before(data);
+
+      expectBearerHeader(data, token);
+    });
+
+    it('overrides user.token with options.token if available', () => {
+      const tokenOverride = 'tokenOverride';
+      let data = {
+        options: {
+          headers: {},
+          token: tokenOverride,
+        },
+      };
+
+      data = middleware.before(data);
+
+      expectBearerHeader(data, tokenOverride);
+    });
+
+    it('disables token if options.token is null', () => {
+      const tokenOverride = null;
+      let data = {
+        options: {
+          headers: {},
+          token: tokenOverride,
+        },
+      };
+
+      data = middleware.before(data);
+
+      expect(data.options.headers.Authorization, 'to be undefined');
+    });
+  });
+
+  it('should not set Authorization header if no token', () => {
+    const middleware = bearerHeaderMiddleware({
+      getState: () => ({
+        ...emptyState,
+      }),
+    });
+
+    let data = {
+      options: {
+        headers: {},
+      },
     };
 
-    describe('when token available', () => {
-        const token = 'foo';
-        const middleware = bearerHeaderMiddleware({
-            getState: () => ({
-                ...emptyState,
-                accounts: {
-                    active: 1,
-                    available: [{
-                        id: 1,
-                        token,
-                    }],
-                }
-            })
-        });
+    data = middleware.before(data);
 
-        it('should set Authorization header', () => {
-            let data = {
-                options: {
-                    headers: {}
-                }
-            };
+    expect(data.options.headers.Authorization, 'to be undefined');
+  });
 
-            data = middleware.before(data);
-
-            expectBearerHeader(data, token);
-        });
-
-        it('overrides user.token with options.token if available', () => {
-            const tokenOverride = 'tokenOverride';
-            let data = {
-                options: {
-                    headers: {},
-                    token: tokenOverride
-                }
-            };
-
-            data = middleware.before(data);
-
-            expectBearerHeader(data, tokenOverride);
-        });
-
-        it('disables token if options.token is null', () => {
-            const tokenOverride = null;
-            let data = {
-                options: {
-                    headers: {},
-                    token: tokenOverride
-                }
-            };
-
-            data = middleware.before(data);
-
-            expect(data.options.headers.Authorization, 'to be undefined');
-        });
+  function expectBearerHeader(data, token) {
+    expect(data.options.headers, 'to satisfy', {
+      Authorization: `Bearer ${token}`,
     });
-
-    it('should not set Authorization header if no token', () => {
-        const middleware = bearerHeaderMiddleware({
-            getState: () => ({
-                ...emptyState
-            })
-        });
-
-        let data = {
-            options: {
-                headers: {}
-            }
-        };
-
-        data = middleware.before(data);
-
-        expect(data.options.headers.Authorization, 'to be undefined');
-    });
-
-    function expectBearerHeader(data, token) {
-        expect(data.options.headers, 'to satisfy', {
-            Authorization: `Bearer ${token}`
-        });
-    }
+  }
 });

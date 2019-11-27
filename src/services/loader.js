@@ -2,16 +2,18 @@
 let stack = 1;
 
 export default {
-    show() {
-        if (++stack >= 0) {
-            document.getElementById('loader').classList.add('is-active');
-        }
-    },
-
-    hide() {
-        if (--stack <= 0) {
-            stack = 0;
-            document.getElementById('loader').classList.remove('is-active', 'is-first-launch');
-        }
+  show() {
+    if (++stack >= 0) {
+      document.getElementById('loader').classList.add('is-active');
     }
+  },
+
+  hide() {
+    if (--stack <= 0) {
+      stack = 0;
+      document
+        .getElementById('loader')
+        .classList.remove('is-active', 'is-first-launch');
+    }
+  },
 };

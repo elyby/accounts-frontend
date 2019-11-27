@@ -17,152 +17,161 @@ import LanguageList from './LanguageList';
 const translateUrl = 'http://ely.by/translate';
 
 export type LocaleData = {
-    code: string,
-    name: string,
-    englishName: string,
-    progress: number,
-    isReleased: bool,
+  code: string,
+  name: string,
+  englishName: string,
+  progress: number,
+  isReleased: boolean,
 };
 
-export type LocalesMap = {[code: string]: LocaleData};
+export type LocalesMap = { [code: string]: LocaleData };
 
 type OwnProps = {|
-    onClose: () => void,
-    langs: LocalesMap,
-    emptyCaptions: Array<{
-        src: string,
-        caption: string,
-    }>,
+  onClose: () => void,
+  langs: LocalesMap,
+  emptyCaptions: Array<{
+    src: string,
+    caption: string,
+  }>,
 |};
 
 type Props = {
-    ...OwnProps,
-    intl: IntlShape,
-    selectedLocale: string,
-    changeLang: (lang: string) => void,
+  ...OwnProps,
+  intl: IntlShape,
+  selectedLocale: string,
+  changeLang: (lang: string) => void,
 };
 
-class LanguageSwitcher extends Component<Props, {
+class LanguageSwitcher extends Component<
+  Props,
+  {
     filter: string,
     filteredLangs: LocalesMap,
-}> {
-    state = {
-        filter: '',
-        filteredLangs: this.props.langs,
-    };
+  },
+> {
+  state = {
+    filter: '',
+    filteredLangs: this.props.langs,
+  };
 
-    static defaultProps = {
-        langs: LANGS,
-        onClose() {},
-    };
+  static defaultProps = {
+    langs: LANGS,
+    onClose() {},
+  };
 
-    render() {
-        const { selectedLocale, onClose, intl } = this.props;
-        const { filteredLangs } = this.state;
+  render() {
+    const { selectedLocale, onClose, intl } = this.props;
+    const { filteredLangs } = this.state;
 
-        return (
-            <div className={styles.languageSwitcher}>
-                <div className={popupStyles.popup}>
-                    <div className={popupStyles.header}>
-                        <h2 className={popupStyles.headerTitle}>
-                            <Message {...messages.siteLanguage} />
-                        </h2>
-                        <span className={classNames(icons.close, popupStyles.close)} onClick={onClose} />
-                    </div>
+    return (
+      <div className={styles.languageSwitcher}>
+        <div className={popupStyles.popup}>
+          <div className={popupStyles.header}>
+            <h2 className={popupStyles.headerTitle}>
+              <Message {...messages.siteLanguage} />
+            </h2>
+            <span
+              className={classNames(icons.close, popupStyles.close)}
+              onClick={onClose}
+            />
+          </div>
 
-                    <div className={styles.languageSwitcherBody}>
-                        <div className={styles.searchBox}>
-                            <input
-                                className={classNames(
-                                    formStyles.lightTextField,
-                                    formStyles.greenTextField,
-                                )}
-                                placeholder={intl.formatMessage(messages.startTyping)}
-                                onChange={this.onFilterUpdate}
-                                onKeyPress={this.onFilterKeyPress()}
-                                autoFocus
-                            />
-                            <span className={styles.searchIcon} />
-                        </div>
-
-                        <LanguageList
-                            selectedLocale={selectedLocale}
-                            langs={filteredLangs}
-                            onChangeLang={this.onChangeLang}
-                        />
-
-                        <div className={styles.improveTranslates}>
-                            <div className={styles.improveTranslatesIcon} />
-                            <div className={styles.improveTranslatesContent}>
-                                <div className={styles.improveTranslatesTitle}>
-                                    <Message {...messages.improveTranslates} />
-                                </div>
-                                <div className={styles.improveTranslatesText}>
-                                    <Message {...messages.improveTranslatesDescription} />
-                                    {' '}
-                                    <a href={translateUrl} target="_blank">
-                                        <Message {...messages.improveTranslatesParticipate} />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          <div className={styles.languageSwitcherBody}>
+            <div className={styles.searchBox}>
+              <input
+                className={classNames(
+                  formStyles.lightTextField,
+                  formStyles.greenTextField,
+                )}
+                placeholder={intl.formatMessage(messages.startTyping)}
+                onChange={this.onFilterUpdate}
+                onKeyPress={this.onFilterKeyPress()}
+                autoFocus
+              />
+              <span className={styles.searchIcon} />
             </div>
-        );
-    }
 
-    onChangeLang = this.changeLang.bind(this);
+            <LanguageList
+              selectedLocale={selectedLocale}
+              langs={filteredLangs}
+              onChangeLang={this.onChangeLang}
+            />
 
-    changeLang(lang: string) {
-        this.props.changeLang(lang);
+            <div className={styles.improveTranslates}>
+              <div className={styles.improveTranslatesIcon} />
+              <div className={styles.improveTranslatesContent}>
+                <div className={styles.improveTranslatesTitle}>
+                  <Message {...messages.improveTranslates} />
+                </div>
+                <div className={styles.improveTranslatesText}>
+                  <Message {...messages.improveTranslatesDescription} />{' '}
+                  <a href={translateUrl} target="_blank">
+                    <Message {...messages.improveTranslatesParticipate} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-        setTimeout(this.props.onClose, 300);
-    }
+  onChangeLang = this.changeLang.bind(this);
 
-    onFilterUpdate = (event: SyntheticInputEvent<HTMLInputElement>) => {
-        const filter = event.currentTarget.value.trim().toLowerCase();
-        const { langs } = this.props;
+  changeLang(lang: string) {
+    this.props.changeLang(lang);
 
-        const result = Object.keys(langs).reduce((previous, key) => {
-            if (langs[key].englishName.toLowerCase().indexOf(filter) === -1
-                && langs[key].name.toLowerCase().indexOf(filter) === -1
-            ) {
-                return previous;
-            }
+    setTimeout(this.props.onClose, 300);
+  }
 
-            previous[key] = langs[key];
+  onFilterUpdate = (event: SyntheticInputEvent<HTMLInputElement>) => {
+    const filter = event.currentTarget.value.trim().toLowerCase();
+    const { langs } = this.props;
 
-            return previous;
-        }, {});
+    const result = Object.keys(langs).reduce((previous, key) => {
+      if (
+        langs[key].englishName.toLowerCase().indexOf(filter) === -1 &&
+        langs[key].name.toLowerCase().indexOf(filter) === -1
+      ) {
+        return previous;
+      }
 
-        this.setState({
-            filter,
-            filteredLangs: result,
-        });
+      previous[key] = langs[key];
+
+      return previous;
+    }, {});
+
+    this.setState({
+      filter,
+      filteredLangs: result,
+    });
+  };
+
+  onFilterKeyPress() {
+    return (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== 'Enter' || this.state.filter === '') {
+        return;
+      }
+
+      const locales = Object.keys(this.state.filteredLangs);
+
+      if (locales.length === 0) {
+        return;
+      }
+
+      this.changeLang(locales[0]);
     };
-
-    onFilterKeyPress() {
-        return (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
-            if (event.key !== 'Enter' || this.state.filter === '') {
-                return;
-            }
-
-            const locales = Object.keys(this.state.filteredLangs);
-
-            if (locales.length === 0) {
-                return;
-            }
-
-            this.changeLang(locales[0]);
-        };
-    }
+  }
 }
 
 export default injectIntl(
-    connect<Props, OwnProps, _, _, _, _>((state) => ({
-        selectedLocale: state.i18n.locale,
-    }), {
-        changeLang,
-    })(LanguageSwitcher)
+  connect<Props, OwnProps, _, _, _, _>(
+    state => ({
+      selectedLocale: state.i18n.locale,
+    }),
+    {
+      changeLang,
+    },
+  )(LanguageSwitcher),
 );

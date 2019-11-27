@@ -1,2 +1,4 @@
 flow-typed
-tests-e2e
+dist
+dll
+node_modules

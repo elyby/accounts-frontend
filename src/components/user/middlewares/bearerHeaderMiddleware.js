@@ -8,31 +8,35 @@ import { getActiveAccount } from 'components/accounts/reducer';
  * Pass null to disable bearer header at all
  *
  * @param {object} store - redux store
- * @param {function} store.getState
+ * @param {Function} store.getState
  *
- * @return {object} - request middleware
+ * @returns {object} - request middleware
  */
-export default function bearerHeaderMiddleware(store: { getState: () => Object }) {
-    return {
-        before<T: {
-            options: {
-                token?: ?string,
-                headers: Object,
-            }
-        }>(req: T): T {
-            const activeAccount = getActiveAccount(store.getState());
+export default function bearerHeaderMiddleware(store: {
+  getState: () => Object,
+}) {
+  return {
+    before<
+      T: {
+        options: {
+          token?: ?string,
+          headers: Object,
+        },
+      },
+    >(req: T): T {
+      const activeAccount = getActiveAccount(store.getState());
 
-            let {token} = activeAccount || {};
+      let { token } = activeAccount || {};
 
-            if (req.options.token || req.options.token === null) {
-                token = req.options.token;
-            }
+      if (req.options.token || req.options.token === null) {
+        token = req.options.token;
+      }
 
-            if (token) {
-                req.options.headers.Authorization = `Bearer ${token}`;
-            }
+      if (token) {
+        req.options.headers.Authorization = `Bearer ${token}`;
+      }
 
-            return req;
-        }
-    };
+      return req;
+    },
+  };
 }

@@ -2,23 +2,23 @@
 
 // По умолчанию стрелка смотрит вниз, это просто алиас
 .arrowBottom {
-    @extend .arrow;
+  @extend .arrow;
 }
 
 .arrowTop {
-    @extend .arrow;
+  @extend .arrow;
 
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .arrowRight {
-    @extend .arrow;
+  @extend .arrow;
 
-    transform: rotate(270deg);
+  transform: rotate(270deg);
 }
 
 .arrowLeft {
-    @extend .arrow;
+  @extend .arrow;
 
-    transform: rotate(90deg);
+  transform: rotate(90deg);
 }

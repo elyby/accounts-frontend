@@ -10,35 +10,31 @@ import persistState from 'redux-localstorage';
 import reducers from 'reducers';
 
 export default function storeFactory() {
-    const middlewares = applyMiddleware(
-        thunk
+  const middlewares = applyMiddleware(thunk);
+  const persistStateEnhancer = persistState(['accounts', 'user'], {
+    key: 'redux-storage',
+  });
+
+  /* global process: false */
+  let enhancer;
+
+  if (process.env.NODE_ENV === 'production') {
+    enhancer = compose(middlewares, persistStateEnhancer);
+  } else {
+    const composeEnhancers =
+      window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    enhancer = composeEnhancers(middlewares, persistStateEnhancer);
+  }
+
+  const store = createStore(reducers, {}, enhancer);
+
+  // Hot reload reducers
+  // $FlowFixMe
+  if (module.hot && typeof module.hot.accept === 'function') {
+    module.hot.accept('reducers', () =>
+      store.replaceReducer(require('reducers').default),
     );
-    const persistStateEnhancer = persistState([
-        'accounts',
-        'user'
-    ], {key: 'redux-storage'});
+  }
 
-    /* global process: false */
-    let enhancer;
-    if (process.env.NODE_ENV === 'production') {
-        enhancer = compose(middlewares, persistStateEnhancer);
-    } else {
-        const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-        enhancer = composeEnhancers(
-            middlewares,
-            persistStateEnhancer
-        );
-    }
-
-    const store = createStore(reducers, {}, enhancer);
-
-    // Hot reload reducers
-    // $FlowFixMe
-    if (module.hot && typeof module.hot.accept === 'function') {
-        module.hot.accept('reducers', () =>
-            store.replaceReducer(require('reducers').default)
-        );
-    }
-
-    return store;
+  return store;
 }

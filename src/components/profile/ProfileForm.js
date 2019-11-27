@@ -11,24 +11,28 @@ import styles from 'components/profile/profileForm.scss';
 import messages from './ProfileForm.intl.json';
 
 export class BackButton extends FormComponent<{
-    to: string,
+  to: string,
 }> {
-    static displayName = 'BackButton';
+  static displayName = 'BackButton';
 
-    static defaultProps = {
-        to: '/',
-    };
+  static defaultProps = {
+    to: '/',
+  };
 
-    render() {
-        const { to } = this.props;
+  render() {
+    const { to } = this.props;
 
-        return (
-            <Link className={styles.backButton} to={to} title={this.formatMessage(messages.back)}>
-                <span className={styles.backIcon} />
-                <span className={styles.backText}>
-                    <Message {...messages.back} />
-                </span>
-            </Link>
-        );
-    }
+    return (
+      <Link
+        className={styles.backButton}
+        to={to}
+        title={this.formatMessage(messages.back)}
+      >
+        <span className={styles.backIcon} />
+        <span className={styles.backText}>
+          <Message {...messages.back} />
+        </span>
+      </Link>
+    );
+  }
 }

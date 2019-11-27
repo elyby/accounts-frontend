@@ -1,10 +1,10 @@
 export const BSOD = 'BSOD';
 
 /**
- * @return {object}
+ * @returns {object}
  */
 export function bsod() {
-    return {
-        type: BSOD
-    };
+  return {
+    type: BSOD,
+  };
 }

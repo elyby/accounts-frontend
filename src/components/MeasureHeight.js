@@ -26,46 +26,49 @@ import { omit, debounce } from 'functions';
 type ChildState = mixed;
 
 export default class MeasureHeight extends PureComponent<{
-    shouldMeasure: (prevState: ChildState, newState: ChildState) => bool,
-    onMeasure: (height: number) => void,
-    state: ChildState
+  shouldMeasure: (prevState: ChildState, newState: ChildState) => boolean,
+  onMeasure: (height: number) => void,
+  state: ChildState,
 }> {
-    static defaultProps = {
-        shouldMeasure: (prevState: ChildState, newState: ChildState) => prevState !== newState,
-        onMeasure: (height: number) => {} // eslint-disable-line
-    };
+  static defaultProps = {
+    shouldMeasure: (prevState: ChildState, newState: ChildState) =>
+      prevState !== newState,
+    onMeasure: (height: number) => {}, // eslint-disable-line
+  };
 
-    el: ?HTMLDivElement;
+  el: ?HTMLDivElement;
 
-    componentDidMount() {
-        // we want to measure height immediately on first mount to avoid ui laggs
-        this.measure();
-        window.addEventListener('resize', this.enqueueMeasurement);
+  componentDidMount() {
+    // we want to measure height immediately on first mount to avoid ui laggs
+    this.measure();
+    window.addEventListener('resize', this.enqueueMeasurement);
+  }
+
+  componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
+    if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
+      this.enqueueMeasurement();
     }
+  }
 
-    componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
-        if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
-            this.enqueueMeasurement();
-        }
-    }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.enqueueMeasurement);
+  }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.enqueueMeasurement);
-    }
+  render() {
+    const props: Object = omit(this.props, [
+      'shouldMeasure',
+      'onMeasure',
+      'state',
+    ]);
 
-    render() {
-        const props: Object = omit(this.props, [
-            'shouldMeasure',
-            'onMeasure',
-            'state'
-        ]);
+    return <div {...props} ref={(el: HTMLDivElement) => (this.el = el)} />;
+  }
 
-        return <div {...props} ref={(el: HTMLDivElement) => this.el = el} />;
-    }
+  measure = () => {
+    requestAnimationFrame(() => {
+      this.el && this.props.onMeasure(this.el.offsetHeight);
+    });
+  };
 
-    measure = () => {
-        requestAnimationFrame(() => {this.el && this.props.onMeasure(this.el.offsetHeight);});
-    };
-
-    enqueueMeasurement = debounce(this.measure);
+  enqueueMeasurement = debounce(this.measure);
 }

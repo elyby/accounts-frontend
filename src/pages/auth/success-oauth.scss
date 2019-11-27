@@ -1,70 +1,70 @@
-@import "~components/ui/fonts.scss";
-@import "~components/ui/colors.scss";
+@import '~components/ui/fonts.scss';
+@import '~components/ui/colors.scss';
 
 .page {
-    border-top: 50px solid #DDD8CE;
+  border-top: 50px solid #ddd8ce;
 
-    padding: 85px 10px;
+  padding: 85px 10px;
 }
 
 .wrapper {
-    position: relative;
+  position: relative;
 
-    margin: 0 auto;
-    padding: 55px 25px;
-    max-width: 330px;
-    box-sizing: border-box;
+  margin: 0 auto;
+  padding: 55px 25px;
+  max-width: 330px;
+  box-sizing: border-box;
 
-    background: #fff;
-    border: 3px solid #DDD8CE;
+  background: #fff;
+  border: 3px solid #ddd8ce;
 
-    text-align: center;
+  text-align: center;
 }
 
 .logo {
-    $borderWidth: 3px;
+  $borderWidth: 3px;
 
-    position: absolute;
-    top: -28px;
-    left: 50%;
-    transform: translate(-50%, 0);
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translate(-50%, 0);
 
-    padding: 0 20px;
+  padding: 0 20px;
 
-    font-family: $font-family-title;
-    font-size: 33px;
-    line-height: 50px - $borderWidth * 2;
+  font-family: $font-family-title;
+  font-size: 33px;
+  line-height: 50px - $borderWidth * 2;
+  color: #fff;
+  background: $green;
+  border: 3px solid darker($green);
+
+  &:hover {
     color: #fff;
     background: $green;
     border: 3px solid darker($green);
-
-    &:hover {
-        color: #fff;
-        background: $green;
-        border: 3px solid darker($green);
-    }
+  }
 }
 
 .title {
-    font-family: $font-family-title;
-    font-size: 20px;
-    margin-bottom: 20px;
+  font-family: $font-family-title;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 
 .checkmark {
-    composes: checkmark from '~components/ui/icons.scss';
+  composes: checkmark from '~components/ui/icons.scss';
 
-    color: lighter($green);
-    font-size: 66px;
-    margin-bottom: 28px;
+  color: lighter($green);
+  font-size: 66px;
+  margin-bottom: 28px;
 }
 
 .description {
-    font-size: 13px;
-    color: #9A9A9A;
-    line-height: 1.4;
+  font-size: 13px;
+  color: #9a9a9a;
+  line-height: 1.4;
 
-    b {
-        color: #666;
-    }
+  b {
+    color: #666;
+  }
 }

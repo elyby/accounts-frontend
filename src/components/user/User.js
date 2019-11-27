@@ -14,14 +14,14 @@ import PropTypes from 'prop-types';
  * @property {bool} hasMojangUsernameCollision
  */
 export const userShape = PropTypes.shape({
-    id: PropTypes.number,
-    uuid: PropTypes.string,
-    token: PropTypes.string,
-    username: PropTypes.string,
-    email: PropTypes.string,
-    avatar: PropTypes.string,
-    isGuest: PropTypes.bool.isRequired,
-    isActive: PropTypes.bool.isRequired,
-    passwordChangedAt: PropTypes.number,
-    hasMojangUsernameCollision: PropTypes.bool,
+  id: PropTypes.number,
+  uuid: PropTypes.string,
+  token: PropTypes.string,
+  username: PropTypes.string,
+  email: PropTypes.string,
+  avatar: PropTypes.string,
+  isGuest: PropTypes.bool.isRequired,
+  isActive: PropTypes.bool.isRequired,
+  passwordChangedAt: PropTypes.number,
+  hasMojangUsernameCollision: PropTypes.bool,
 });

@@ -5,15 +5,15 @@
 }
 
 .descriptionImage {
-    composes: envelope from '~components/ui/icons.scss';
+  composes: envelope from '~components/ui/icons.scss';
 
-    font-size: 100px;
-    color: $blue;
+  font-size: 100px;
+  color: $blue;
 }
 
 .descriptionText {
-    font-family: $font-family-title;
-    margin: 5px 0 19px;
-    line-height: 1.4;
-    font-size: 16px;
+  font-family: $font-family-title;
+  margin: 5px 0 19px;
+  line-height: 1.4;
+  font-size: 16px;
 }

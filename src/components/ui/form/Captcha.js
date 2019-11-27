@@ -10,67 +10,74 @@ import { ComponentLoader } from 'components/ui/loader';
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-export default class Captcha extends FormInputComponent<{
+export default class Captcha extends FormInputComponent<
+  {
     delay: number,
     skin: Skin,
-}, {
+  },
+  {
     code: string,
-}> {
-    elRef = React.createRef<HTMLDivElement>();
-    captchaId: CaptchaID;
+  },
+> {
+  elRef = React.createRef<HTMLDivElement>();
+  captchaId: CaptchaID;
 
-    static defaultProps = {
-        skin: 'dark',
-        delay: 0
-    };
+  static defaultProps = {
+    skin: 'dark',
+    delay: 0,
+  };
 
-    componentDidMount() {
-        setTimeout(() => {
-            const {current: el} = this.elRef;
+  componentDidMount() {
+    setTimeout(() => {
+      const { current: el } = this.elRef;
 
-            el && captcha.render(el, {
-                skin: this.props.skin,
-                onSetCode: this.setCode
-            })
-                .then((captchaId) => {this.captchaId = captchaId;})
-                .catch((error) => {
-                    logger.error('Failed rendering captcha', {
-                        error
-                    });
-                });
-        }, this.props.delay);
-    }
+      el &&
+        captcha
+          .render(el, {
+            skin: this.props.skin,
+            onSetCode: this.setCode,
+          })
+          .then(captchaId => {
+            this.captchaId = captchaId;
+          })
+          .catch(error => {
+            logger.error('Failed rendering captcha', {
+              error,
+            });
+          });
+    }, this.props.delay);
+  }
 
-    render() {
-        const {skin} = this.props;
+  render() {
+    const { skin } = this.props;
 
-        return (
-            <div className={styles.captchaContainer}>
-                <div className={styles.captchaLoader}>
-                    <ComponentLoader />
-                </div>
+    return (
+      <div className={styles.captchaContainer}>
+        <div className={styles.captchaLoader}>
+          <ComponentLoader />
+        </div>
 
-                <div ref={this.elRef} className={classNames(
-                    styles.captcha,
-                    styles[`${skin}Captcha`]
-                )} />
+        <div
+          ref={this.elRef}
+          className={classNames(styles.captcha, styles[`${skin}Captcha`])}
+        />
 
-                {this.renderError()}
-            </div>
-        );
-    }
+        {this.renderError()}
+      </div>
+    );
+  }
 
-    reset() {
-        captcha.reset(this.captchaId);
-    }
+  reset() {
+    captcha.reset(this.captchaId);
+  }
 
-    getValue() {
-        return this.state && this.state.code;
-    }
+  getValue() {
+    return this.state && this.state.code;
+  }
 
-    onFormInvalid() {
-        this.reset();
-    }
+  onFormInvalid() {
+    this.reset();
+  }
 
-    setCode = (code: string) => this.setState({code});
+  setCode = (code: string) => this.setState({ code });
 }

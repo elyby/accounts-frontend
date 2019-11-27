@@ -11,137 +11,143 @@ import styles from './dropdown.scss';
 import FormInputComponent from './FormInputComponent';
 
 export default class Dropdown extends FormInputComponent {
-    static displayName = 'Dropdown';
+  static displayName = 'Dropdown';
 
-    static propTypes = {
-        label: PropTypes.oneOfType([
-            PropTypes.shape({
-                id: PropTypes.string
-            }),
-            PropTypes.string
-        ]).isRequired,
-        items: PropTypes.arrayOf(PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.shape({
-                id: PropTypes.string
-            })
-        ])).isRequired,
-        block: PropTypes.bool,
-        color: PropTypes.oneOf(colors)
+  static propTypes = {
+    label: PropTypes.oneOfType([
+      PropTypes.shape({
+        id: PropTypes.string,
+      }),
+      PropTypes.string,
+    ]).isRequired,
+    items: PropTypes.arrayOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({
+          id: PropTypes.string,
+        }),
+      ]),
+    ).isRequired,
+    block: PropTypes.bool,
+    color: PropTypes.oneOf(colors),
+  };
+
+  static defaultProps = {
+    color: COLOR_GREEN,
+  };
+
+  state = {
+    isActive: false,
+    activeItem: null,
+  };
+
+  componentDidMount() {
+    // listen to capturing phase to ensure, that our event handler will be
+    // called before all other
+    document.addEventListener('click', this.onBodyClick, true);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.onBodyClick);
+  }
+
+  render() {
+    const { color, block, items } = this.props;
+    const { isActive } = this.state;
+
+    const activeItem = this.getActiveItem();
+    const label = this.formatMessage(activeItem.label);
+    const props = omit(this.props, Object.keys(Dropdown.propTypes));
+
+    return (
+      <div>
+        <div
+          className={classNames(styles[color], {
+            [styles.block]: block,
+            [styles.opened]: isActive,
+          })}
+          {...props}
+          onClick={this.onToggle}
+        >
+          <span className={styles.label}>{label}</span>
+          <span className={styles.toggleIcon} />
+
+          <div className={styles.menu}>
+            {Object.entries(items).map(([value, label]) => (
+              <div
+                className={styles.menuItem}
+                key={value}
+                onClick={this.onSelectItem({ value, label })}
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {this.renderError()}
+      </div>
+    );
+  }
+
+  toggle() {
+    this.setState({
+      isActive: !this.state.isActive,
+    });
+  }
+
+  onSelectItem(item) {
+    return event => {
+      event.preventDefault();
+
+      this.setState({
+        activeItem: item,
+      });
     };
+  }
 
-    static defaultProps = {
-        color: COLOR_GREEN
-    };
+  getActiveItem() {
+    const { items } = this.props;
+    let { activeItem } = this.state;
 
-    state = {
-        isActive: false,
-        activeItem: null
-    };
+    if (!activeItem) {
+      activeItem = {
+        label: this.props.label,
+        value: '',
+      };
 
-    componentDidMount() {
-        // listen to capturing phase to ensure, that our event handler will be
-        // called before all other
-        document.addEventListener('click', this.onBodyClick, true);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('click', this.onBodyClick);
-    }
-
-    render() {
-        const { color, block, items } = this.props;
-        const {isActive} = this.state;
-
-        const activeItem = this.getActiveItem();
-        const label = this.formatMessage(activeItem.label);
-        const props = omit(this.props, Object.keys(Dropdown.propTypes));
-
-        return (
-            <div>
-                <div
-                    className={classNames(styles[color], {
-                        [styles.block]: block,
-                        [styles.opened]: isActive
-                    })}
-                    {...props}
-                    onClick={this.onToggle}
-                >
-                    <span className={styles.label}>{label}</span>
-                    <span className={styles.toggleIcon} />
-
-                    <div className={styles.menu}>
-                        {Object.entries(items).map(([value, label]) => (
-                            <div className={styles.menuItem} key={value} onClick={this.onSelectItem({value, label})}>
-                                {label}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {this.renderError()}
-            </div>
-        );
-    }
-
-    toggle() {
-        this.setState({
-            isActive: !this.state.isActive
-        });
-    }
-
-    onSelectItem(item) {
-        return (event) => {
-            event.preventDefault();
-
-            this.setState({
-                activeItem: item
-            });
+      if (!activeItem.label) {
+        const firstItem = Object.entries(items)[0];
+        activeItem = {
+          label: firstItem[1],
+          value: firstItem[0],
         };
+      }
     }
 
-    getActiveItem() {
-        const {items} = this.props;
-        let {activeItem} = this.state;
+    return activeItem;
+  }
 
-        if (!activeItem) {
-            activeItem = {
-                label: this.props.label,
-                value: ''
-            };
+  getValue() {
+    return this.getActiveItem().value;
+  }
 
-            if (!activeItem.label) {
-                const firstItem = Object.entries(items)[0];
-                activeItem = {
-                    label: firstItem[1],
-                    value: firstItem[0]
-                };
-            }
-        }
+  onToggle = event => {
+    event.preventDefault();
 
-        return activeItem;
-    }
+    this.toggle();
+  };
 
-    getValue() {
-        return this.getActiveItem().value;
-    }
+  onBodyClick = event => {
+    if (this.state.isActive) {
+      const el = ReactDOM.findDOMNode(this);
 
-    onToggle = (event) => {
+      if (!el.contains(event.target) && el !== event.taget) {
         event.preventDefault();
+        event.stopPropagation();
 
         this.toggle();
-    };
-
-    onBodyClick = (event) => {
-        if (this.state.isActive) {
-            const el = ReactDOM.findDOMNode(this);
-
-            if (!el.contains(event.target) && el !== event.taget) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                this.toggle();
-            }
-        }
-    };
+      }
+    }
+  };
 }

@@ -2,211 +2,210 @@
 @import '~components/ui/fonts.scss';
 
 @mixin form-transition() {
-    // Анимация фона должна быть быстрее анимации рамки, т.к. визуально фон заполняется медленнее
-    transition: border-color .25s,
-                background-color .20s;
+  // Анимация фона должна быть быстрее анимации рамки, т.к. визуально фон заполняется медленнее
+  transition: border-color 0.25s, background-color 0.2s;
 }
 
 /**
  * Input
  */
 @mixin input-theme($themeName, $color) {
-    .#{$themeName}TextField {
-        composes: textField;
+  .#{$themeName}TextField {
+    composes: textField;
 
-        &:focus {
-            border-color: $color;
+    &:focus {
+      border-color: $color;
 
-            ~ .textFieldIcon {
-                background: $color;
-                border-color: $color;
-            }
+      ~ .textFieldIcon {
+        background: $color;
+        border-color: $color;
+      }
 
-            &.lightTextField {
-                color: $color;
-            }
-        }
+      &.lightTextField {
+        color: $color;
+      }
     }
+  }
 }
 
 .formRow {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
 .formIconRow {
-    composes: formRow;
+  composes: formRow;
 
-    .textField {
-        padding-left: 60px;
-    }
+  .textField {
+    padding-left: 60px;
+  }
 }
 
 .textFieldContainer {
-    position: relative;
-    height: 50px;
-    max-width: 100%;
+  position: relative;
+  height: 50px;
+  max-width: 100%;
 }
 
 .textField {
-    box-sizing: border-box;
-    height: 50px;
-    width: 100%;
+  box-sizing: border-box;
+  height: 50px;
+  width: 100%;
 
-    border: 2px solid;
+  border: 2px solid;
 
-    font-size: 18px;
-    color: #aaa;
-    font-family: $font-family-title;
-    padding: 0 10px;
+  font-size: 18px;
+  color: #aaa;
+  font-family: $font-family-title;
+  padding: 0 10px;
 
-    transition: border-color .25s;
+  transition: border-color 0.25s;
 
-    &:hover {
-        &,
-        ~ .textFieldIcon {
-            border-color: #aaa;
-        }
+  &:hover {
+    &,
+    ~ .textFieldIcon {
+      border-color: #aaa;
     }
+  }
 
-    &:focus {
-        color: #fff;
-        outline: none;
+  &:focus {
+    color: #fff;
+    outline: none;
 
-        ~ .textFieldIcon {
-            color: #fff;
-        }
+    ~ .textFieldIcon {
+      color: #fff;
     }
+  }
 }
 
 .textFieldIcon {
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 50px;
-    width: 50px;
-    line-height: 46px;
-    text-align: center;
-    border: 2px solid;
-    color: #444;
-    cursor: default;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 50px;
+  width: 50px;
+  line-height: 46px;
+  text-align: center;
+  border: 2px solid;
+  color: #444;
+  cursor: default;
 
-    @include form-transition();
+  @include form-transition();
 }
 
 .copyIcon {
-    position: absolute;
-    right: 5px;
-    top: 10px;
+  position: absolute;
+  right: 5px;
+  top: 10px;
 
-    padding: 5px;
-    cursor: pointer;
+  padding: 5px;
+  cursor: pointer;
 
-    font-size: 20px;
+  font-size: 20px;
 
-    transition: .25s;
+  transition: 0.25s;
 }
 
 .copyCheckmark {
-    color: $green!important;
+  color: $green !important;
 }
 
 .darkTextField {
+  background: $black;
+
+  &::placeholder {
+    opacity: 1;
+    color: #444;
+  }
+
+  &,
+  ~ .textFieldIcon {
+    border-color: lighter($black);
+  }
+
+  ~ .copyIcon {
+    color: #999;
     background: $black;
 
-    &::placeholder {
-        opacity: 1;
-        color: #444;
+    &:hover {
+      background: lighter($black);
     }
-
-    &,
-    ~ .textFieldIcon {
-        border-color: lighter($black);
-    }
-
-    ~ .copyIcon {
-        color: #999;
-        background: $black;
-
-        &:hover {
-            background: lighter($black);
-        }
-    }
+  }
 }
 
 .lightTextField {
-    background: #fff;
+  background: #fff;
 
-    &:disabled {
-        background: #DCD8CD;
-
-        ~ .copyIcon {
-            background: #dcd8ce;
-
-            &:hover {
-                background: #EBE8E2;
-            }
-        }
-    }
-
-    &::placeholder {
-        opacity: 1;
-        color: #aaa;
-    }
-
-    &,
-    ~ .textFieldIcon {
-        border-color: #dcd8cd;
-    }
+  &:disabled {
+    background: #dcd8cd;
 
     ~ .copyIcon {
-        color: #AAA;
-        background: #fff;
+      background: #dcd8ce;
 
-        &:hover {
-            background: #F5F5F5;
-        }
+      &:hover {
+        background: #ebe8e2;
+      }
     }
+  }
+
+  &::placeholder {
+    opacity: 1;
+    color: #aaa;
+  }
+
+  &,
+  ~ .textFieldIcon {
+    border-color: #dcd8cd;
+  }
+
+  ~ .copyIcon {
+    color: #aaa;
+    background: #fff;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
 }
 
 .textFieldLabel {
-    margin: 10px 0;
-    display: block;
+  margin: 10px 0;
+  display: block;
 
-    font-family: $font-family-title;
-    color: #666;
-    font-size: 18px;
+  font-family: $font-family-title;
+  color: #666;
+  font-size: 18px;
 }
 
 .fieldError {
+  color: $red;
+  font-size: 12px;
+  margin: 3px 0;
+
+  a {
+    border-bottom-color: rgba($red, 0.75);
     color: $red;
-    font-size: 12px;
-    margin: 3px 0;
 
-    a {
-        border-bottom-color: rgba($red, 0.75);
-        color: $red;
-
-        &:hover {
-            border-bottom-color: transparent;
-        }
+    &:hover {
+      border-bottom-color: transparent;
     }
+  }
 }
 
 .textAreaContainer {
-    height: auto;
+  height: auto;
 }
 
 .textArea {
-    height: auto; // unset .textField height
-    min-height: 50px;
-    padding: 5px 10px;
-    resize: none;
-    position: relative;
+  height: auto; // unset .textField height
+  min-height: 50px;
+  padding: 5px 10px;
+  resize: none;
+  position: relative;
 }
 
 .textFieldCenter {
-    text-align: center;
+  text-align: center;
 }
 
 @include input-theme('green', $green);
@@ -220,107 +219,107 @@
  * Markable is our common name for checkboxes and radio buttons
  */
 @mixin markable-theme($themeName, $color) {
-    .#{$themeName}MarkableRow {
-        composes: markableRow;
+  .#{$themeName}MarkableRow {
+    composes: markableRow;
 
-        .markableContainer {
-            &:hover {
-                .mark {
-                    border-color: $color;
-                }
-            }
+    .markableContainer {
+      &:hover {
+        .mark {
+          border-color: $color;
         }
-
-        .markableInput {
-            &:checked {
-                + .mark {
-                    background: $color;
-                    border-color: $color;
-                }
-            }
-        }
+      }
     }
+
+    .markableInput {
+      &:checked {
+        + .mark {
+          background: $color;
+          border-color: $color;
+        }
+      }
+    }
+  }
 }
 
 .markableRow {
-    height: 22px;
+  height: 22px;
 }
 
 .markableContainer {
-    display: inline-block;
-    position: relative;
-    padding-left: 27px;
+  display: inline-block;
+  position: relative;
+  padding-left: 27px;
 
-    font-family: $font-family-title;
-    font-size: 16px;
-    line-height: 24px;
+  font-family: $font-family-title;
+  font-size: 16px;
+  line-height: 24px;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .markPosition {
-    position: absolute;
-    box-sizing: border-box;
-    left: 0;
-    top: 0;
-    margin: 0;
+  position: absolute;
+  box-sizing: border-box;
+  left: 0;
+  top: 0;
+  margin: 0;
 
-    width: 22px;
-    height: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 .markableInput {
-    composes: markPosition;
-    opacity: 0;
+  composes: markPosition;
+  opacity: 0;
 
-    &:checked {
-        + .mark {
-            &:before {
-                opacity: 1;
-            }
-        }
+  &:checked {
+    + .mark {
+      &:before {
+        opacity: 1;
+      }
     }
+  }
 }
 
 .mark {
-    composes: markPosition;
-    composes: checkmark from '~components/ui/icons.scss';
+  composes: markPosition;
+  composes: checkmark from '~components/ui/icons.scss';
 
-    border: 2px #dcd8cd solid;
+  border: 2px #dcd8cd solid;
 
-    font-size: 10px;
-    line-height: 18px;
-    text-align: center;
-    color: #fff;
+  font-size: 10px;
+  line-height: 18px;
+  text-align: center;
+  color: #fff;
 
-    @include form-transition();
+  @include form-transition();
 
-    &:before {
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
+  &:before {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
 }
 
 .checkbox {
-    composes: mark;
+  composes: mark;
 }
 
 .radio {
-    composes: mark;
+  composes: mark;
 
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .lightMarkableRow {
-    .markableContainer {
-        color: #666;
-    }
+  .markableContainer {
+    color: #666;
+  }
 }
 
 .darkMarkableRow {
-    .markableContainer {
-        color: #fff;
-    }
+  .markableContainer {
+    color: #fff;
+  }
 }
 
 @include markable-theme('green', $green);
@@ -328,66 +327,66 @@
 @include markable-theme('red', $red);
 
 .isFormLoading {
-    // TODO: надо бы разнести from и input на отдельные модули,
-    // так как в текущем контексте isLoading немного не логичен,
-    // пришлось юзать isFormLoading
-    * {
-        pointer-events: none;
-    }
+  // TODO: надо бы разнести from и input на отдельные модули,
+  // так как в текущем контексте isLoading немного не логичен,
+  // пришлось юзать isFormLoading
+  * {
+    pointer-events: none;
+  }
 
-    [type="submit"] {
-        // TODO: duplicate of .loading from components/ui/buttons
-        background: url('./images/loader_button.gif') #95a5a6 center center !important;
+  [type='submit'] {
+    // TODO: duplicate of .loading from components/ui/buttons
+    background: url('./images/loader_button.gif') #95a5a6 center center !important;
 
-        cursor: default;
-        color: #fff;
-        transition: 0.25s;
-        outline: none;
-    }
+    cursor: default;
+    color: #fff;
+    transition: 0.25s;
+    outline: none;
+  }
 }
 
 .captchaContainer {
-    position: relative;
+  position: relative;
 }
 
 .captcha {
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 302px;
-    height: 77px;
-    overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 302px;
+  height: 77px;
+  overflow: hidden;
 
-    border: 2px solid;
-    transition: border-color .25s;
+  border: 2px solid;
+  transition: border-color 0.25s;
 
-    > div {
-        margin: -2px;
-    }
+  > div {
+    margin: -2px;
+  }
 
-    &:hover {
-        border-color: #aaa;
-    }
+  &:hover {
+    border-color: #aaa;
+  }
 
-    // minimum captcha width is 302px, which can not be changed
-    // using transform to scale down to 296px
-    // transform-origin: 0;
-    // transform: scaleX(0.98);
+  // minimum captcha width is 302px, which can not be changed
+  // using transform to scale down to 296px
+  // transform-origin: 0;
+  // transform: scaleX(0.98);
 }
 
 .darkCaptcha {
-    border-color: lighter($black);
+  border-color: lighter($black);
 }
 
 .lightCaptcha {
-    border-color: #dcd8cd;
+  border-color: #dcd8cd;
 }
 
 .captchaLoader {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
 }
 
 /**

@@ -7,95 +7,93 @@ import ResendActivationState from 'services/authFlow/ResendActivationState';
 import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
 
 describe('ActivationState', () => {
-    let state;
-    let context;
-    let mock;
+  let state;
+  let context;
+  let mock;
 
-    beforeEach(() => {
-        state = new ActivationState();
+  beforeEach(() => {
+    state = new ActivationState();
 
-        const data = bootstrap();
-        context = data.context;
-        mock = data.mock;
+    const data = bootstrap();
+    context = data.context;
+    mock = data.mock;
+  });
+
+  afterEach(() => {
+    mock.verify();
+  });
+
+  describe('#enter', () => {
+    it('should navigate to /activation', () => {
+      const expectedPath = '/activation';
+      context.getState.returns({
+        user: {
+          isActive: false,
+        },
+      });
+
+      context.getRequest.returns({ path: expectedPath });
+
+      expectNavigate(mock, '/activation');
+
+      state.enter(context);
     });
 
-    afterEach(() => {
-        mock.verify();
+    it('should navigate to /activation/key', () => {
+      const expectedPath = '/activation/sasx5AS4d61';
+      context.getState.returns({
+        user: {
+          isActive: false,
+        },
+      });
+
+      context.getRequest.returns({ path: expectedPath });
+
+      expectNavigate(mock, expectedPath);
+
+      state.enter(context);
+    });
+  });
+
+  describe('#resolve', () => {
+    it('should call activate with payload', () => {
+      const payload = {};
+
+      expectRun(mock, 'activate', sinon.match.same(payload)).returns(
+        new Promise(() => {}),
+      );
+
+      state.resolve(context, payload);
     });
 
-    describe('#enter', () => {
-        it('should navigate to /activation', () => {
-            const expectedPath = '/activation';
-            context.getState.returns({
-                user: {
-                    isActive: false
-                }
-            });
+    it('should transition to complete state on success', () => {
+      const promise = Promise.resolve();
 
-            context.getRequest.returns({path: expectedPath});
+      mock.expects('run').returns(promise);
+      expectState(mock, CompleteState);
 
-            expectNavigate(mock, '/activation');
+      state.resolve(context);
 
-            state.enter(context);
-        });
-
-        it('should navigate to /activation/key', () => {
-            const expectedPath = '/activation/sasx5AS4d61';
-            context.getState.returns({
-                user: {
-                    isActive: false
-                }
-            });
-
-            context.getRequest.returns({path: expectedPath});
-
-            expectNavigate(mock, expectedPath);
-
-            state.enter(context);
-        });
+      return promise;
     });
 
-    describe('#resolve', () => {
-        it('should call activate with payload', () => {
-            const payload = {};
+    it('should NOT transition to complete state on fail', () => {
+      const promise = Promise.reject();
 
-            expectRun(
-                mock,
-                'activate',
-                sinon.match.same(payload)
-            ).returns(new Promise(() => {}));
+      mock.expects('run').returns(promise);
+      mock.expects('setState').never();
 
-            state.resolve(context, payload);
-        });
+      state.resolve(context);
 
-        it('should transition to complete state on success', () => {
-            const promise = Promise.resolve();
-
-            mock.expects('run').returns(promise);
-            expectState(mock, CompleteState);
-
-            state.resolve(context);
-
-            return promise;
-        });
-
-        it('should NOT transition to complete state on fail', () => {
-            const promise = Promise.reject();
-
-            mock.expects('run').returns(promise);
-            mock.expects('setState').never();
-
-            state.resolve(context);
-
-            return promise.catch(mock.verify.bind(mock));
-        });
+      return promise.catch(mock.verify.bind(mock));
     });
+  });
 
-    describe('#reject', () => {
-        it('should transition to resend-activation', () => {
-            expectState(mock, ResendActivationState);
+  describe('#reject', () => {
+    it('should transition to resend-activation', () => {
+      expectState(mock, ResendActivationState);
 
-            state.reject(context);
-        });
+      state.reject(context);
     });
+  });
 });

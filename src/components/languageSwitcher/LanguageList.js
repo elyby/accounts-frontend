@@ -18,131 +18,141 @@ import type { LocalesMap } from './LanguageSwitcher';
 const itemHeight = 51;
 
 export default class LanguageList extends React.Component<{
-    selectedLocale: string,
-    langs: LocalesMap,
-    onChangeLang: (lang: string) => void,
+  selectedLocale: string,
+  langs: LocalesMap,
+  onChangeLang: (lang: string) => void,
 }> {
-    emptyListStateInner: ?HTMLDivElement;
+  emptyListStateInner: ?HTMLDivElement;
 
-    render() {
-        const { selectedLocale, langs } = this.props;
-        const isListEmpty = Object.keys(langs).length === 0;
-        const firstLocale = Object.keys(langs)[0] || null;
-        const emptyCaption = this.getEmptyCaption();
+  render() {
+    const { selectedLocale, langs } = this.props;
+    const isListEmpty = Object.keys(langs).length === 0;
+    const firstLocale = Object.keys(langs)[0] || null;
+    const emptyCaption = this.getEmptyCaption();
 
-        return (
-            <TransitionMotion
-                defaultStyles={this.getItemsWithDefaultStyles()}
-                styles={this.getItemsWithStyles()}
-                willLeave={this.willLeave}
-                willEnter={this.willEnter}
+    return (
+      <TransitionMotion
+        defaultStyles={this.getItemsWithDefaultStyles()}
+        styles={this.getItemsWithStyles()}
+        willLeave={this.willLeave}
+        willEnter={this.willEnter}
+      >
+        {items => (
+          <div className={styles.languagesList}>
+            <div
+              className={classNames(styles.emptyLanguagesListWrapper, {
+                [styles.emptyLanguagesListVisible]: isListEmpty,
+              })}
+              style={{
+                height:
+                  isListEmpty && this.emptyListStateInner
+                    ? this.emptyListStateInner.clientHeight
+                    : 0,
+              }}
             >
-                {(items) => (
-                    <div className={styles.languagesList}>
-                        <div
-                            className={classNames(styles.emptyLanguagesListWrapper, {
-                                [styles.emptyLanguagesListVisible]: isListEmpty,
-                            })}
-                            style={{
-                                height: isListEmpty && this.emptyListStateInner ? this.emptyListStateInner.clientHeight : 0,
-                            }}
-                        >
-                            <div
-                                ref={(elem: ?HTMLDivElement) => this.emptyListStateInner = elem}
-                                className={styles.emptyLanguagesList}
-                            >
-                                <img
-                                    src={emptyCaption.src}
-                                    alt={emptyCaption.caption}
-                                    className={styles.emptyLanguagesListCaption}
-                                />
-                                <div className={styles.emptyLanguagesListSubtitle}>
-                                    <Message {...messages.weDoNotSupportThisLang} />
-                                </div>
-                            </div>
-                        </div>
+              <div
+                ref={(elem: ?HTMLDivElement) =>
+                  (this.emptyListStateInner = elem)
+                }
+                className={styles.emptyLanguagesList}
+              >
+                <img
+                  src={emptyCaption.src}
+                  alt={emptyCaption.caption}
+                  className={styles.emptyLanguagesListCaption}
+                />
+                <div className={styles.emptyLanguagesListSubtitle}>
+                  <Message {...messages.weDoNotSupportThisLang} />
+                </div>
+              </div>
+            </div>
 
-                        {items.map(({key: locale, data: definition, style}) => (
-                            <div
-                                key={locale}
-                                style={style}
-                                className={classNames(styles.languageItem, {
-                                    [styles.activeLanguageItem]: locale === selectedLocale,
-                                    [styles.firstLanguageItem]: locale === firstLocale,
-                                })}
-                                onClick={this.onChangeLang(locale)}
-                            >
-                                <LocaleItem locale={definition} />
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </TransitionMotion>
-        );
-    }
+            {items.map(({ key: locale, data: definition, style }) => (
+              <div
+                key={locale}
+                style={style}
+                className={classNames(styles.languageItem, {
+                  [styles.activeLanguageItem]: locale === selectedLocale,
+                  [styles.firstLanguageItem]: locale === firstLocale,
+                })}
+                onClick={this.onChangeLang(locale)}
+              >
+                <LocaleItem locale={definition} />
+              </div>
+            ))}
+          </div>
+        )}
+      </TransitionMotion>
+    );
+  }
 
-    getEmptyCaption() {
-        const emptyCaptions = [
-            {
-                // Homestuck
-                src: thatFuckingPumpkin,
-                caption: 'That fucking pumpkin',
-            },
-            {
-                // Star Wars
-                src: mayTheForceBeWithYou,
-                caption: 'May The Force Be With You',
-            },
-            {
-                // Futurama
-                src: biteMyShinyMetalAss,
-                caption: 'Bite my shiny metal ass',
-            },
-            {
-                // The Elder Scrolls V: Skyrim
-                src: iTookAnArrowInMyKnee,
-                caption: 'I took an arrow in my knee',
-            },
-        ];
+  getEmptyCaption() {
+    const emptyCaptions = [
+      {
+        // Homestuck
+        src: thatFuckingPumpkin,
+        caption: 'That fucking pumpkin',
+      },
+      {
+        // Star Wars
+        src: mayTheForceBeWithYou,
+        caption: 'May The Force Be With You',
+      },
+      {
+        // Futurama
+        src: biteMyShinyMetalAss,
+        caption: 'Bite my shiny metal ass',
+      },
+      {
+        // The Elder Scrolls V: Skyrim
+        src: iTookAnArrowInMyKnee,
+        caption: 'I took an arrow in my knee',
+      },
+    ];
 
-        return emptyCaptions[Math.floor(Math.random() * emptyCaptions.length)];
-    }
+    return emptyCaptions[Math.floor(Math.random() * emptyCaptions.length)];
+  }
 
-    onChangeLang(lang: string) {
-        return (event: SyntheticMouseEvent<HTMLElement>) => {
-            event.preventDefault();
+  onChangeLang(lang: string) {
+    return (event: SyntheticMouseEvent<HTMLElement>) => {
+      event.preventDefault();
 
-            this.props.onChangeLang(lang);
-        };
-    }
+      this.props.onChangeLang(lang);
+    };
+  }
 
-    getItemsWithDefaultStyles = () => this.getItemsWithStyles({ useSpring: false });
+  getItemsWithDefaultStyles = () =>
+    this.getItemsWithStyles({ useSpring: false });
 
-    getItemsWithStyles = ({ useSpring }: { useSpring?: bool } = { useSpring: true }) =>
-        Object.keys({...this.props.langs})
-            .reduce((previous, key) => [
-                ...previous,
-                {
-                    key,
-                    data: this.props.langs[key],
-                    style: {
-                        height: useSpring ? spring(itemHeight, presets.gentle) : itemHeight,
-                        opacity: useSpring ? spring(1, presets.gentle) : 1,
-                    },
-                },
-            ], []);
+  getItemsWithStyles = (
+    { useSpring }: { useSpring?: boolean } = { useSpring: true },
+  ) =>
+    Object.keys({ ...this.props.langs }).reduce(
+      (previous, key) => [
+        ...previous,
+        {
+          key,
+          data: this.props.langs[key],
+          style: {
+            height: useSpring ? spring(itemHeight, presets.gentle) : itemHeight,
+            opacity: useSpring ? spring(1, presets.gentle) : 1,
+          },
+        },
+      ],
+      [],
+    );
 
-    willEnter() {
-        return {
-            height: 0,
-            opacity: 1,
-        };
-    }
+  willEnter() {
+    return {
+      height: 0,
+      opacity: 1,
+    };
+  }
 
-    willLeave() {
-        return {
-            height: spring(0),
-            opacity: spring(0),
-        };
-    }
+  willLeave() {
+    return {
+      height: spring(0),
+      opacity: spring(0),
+    };
+  }
 }

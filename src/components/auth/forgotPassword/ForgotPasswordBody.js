@@ -11,79 +11,79 @@ import styles from './forgotPassword.scss';
 import messages from './ForgotPassword.intl.json';
 
 export default class ForgotPasswordBody extends BaseAuthBody {
-    static displayName = 'ForgotPasswordBody';
-    static panelId = 'forgotPassword';
-    static hasGoBack = true;
+  static displayName = 'ForgotPasswordBody';
+  static panelId = 'forgotPassword';
+  static hasGoBack = true;
 
-    state = {
-        isLoginEdit: !this.getLogin()
-    };
+  state = {
+    isLoginEdit: !this.getLogin(),
+  };
 
-    autoFocusField = this.state.isLoginEdit ? 'login' : null;
+  autoFocusField = this.state.isLoginEdit ? 'login' : null;
 
-    render() {
-        const login = this.getLogin();
-        const isLoginEditShown = this.state.isLoginEdit;
+  render() {
+    const login = this.getLogin();
+    const isLoginEditShown = this.state.isLoginEdit;
 
-        return (
-            <div>
-                {this.renderErrors()}
+    return (
+      <div>
+        {this.renderErrors()}
 
-                <PanelIcon icon="lock" />
+        <PanelIcon icon="lock" />
 
-                {isLoginEditShown ? (
-                    <div>
-                        <p className={styles.descriptionText}>
-                            <Message {...messages.specifyEmail} />
-                        </p>
-                        <Input {...this.bindField('login')}
-                            icon="envelope"
-                            color="lightViolet"
-                            required
-                            placeholder={messages.accountEmail}
-                            defaultValue={login}
-                        />
-                    </div>
-                ) : (
-                    <div>
-                        <div className={styles.login}>
-                            {login}
-                            <span className={styles.editLogin} onClick={this.onClickEdit} />
-                        </div>
-                        <p className={styles.descriptionText}>
-                            <Message {...messages.pleasePressButton} />
-                        </p>
-                    </div>
-                )}
-
-                <Captcha {...this.bindField('captcha')} delay={600} />
+        {isLoginEditShown ? (
+          <div>
+            <p className={styles.descriptionText}>
+              <Message {...messages.specifyEmail} />
+            </p>
+            <Input
+              {...this.bindField('login')}
+              icon="envelope"
+              color="lightViolet"
+              required
+              placeholder={messages.accountEmail}
+              defaultValue={login}
+            />
+          </div>
+        ) : (
+          <div>
+            <div className={styles.login}>
+              {login}
+              <span className={styles.editLogin} onClick={this.onClickEdit} />
             </div>
-        );
+            <p className={styles.descriptionText}>
+              <Message {...messages.pleasePressButton} />
+            </p>
+          </div>
+        )}
+
+        <Captcha {...this.bindField('captcha')} delay={600} />
+      </div>
+    );
+  }
+
+  serialize() {
+    const data = super.serialize();
+
+    if (!data.login) {
+      data.login = this.getLogin();
     }
 
-    serialize() {
-        const data = super.serialize();
+    return data;
+  }
 
-        if (!data.login) {
-            data.login = this.getLogin();
-        }
+  getLogin() {
+    const login = getLogin(this.context);
+    const { user } = this.context;
 
-        return data;
-    }
+    return login || user.username || user.email || '';
+  }
 
-    getLogin() {
-        const login = getLogin(this.context);
-        const { user } = this.context;
+  onClickEdit = () => {
+    this.setState({
+      isLoginEdit: true,
+    });
 
-        return login || user.username || user.email || '';
-    }
-
-    onClickEdit = () => {
-        this.setState({
-            isLoginEdit: true
-        });
-
-        this.context.requestRedraw()
-            .then(() => this.form.focus('login'));
-    };
+    this.context.requestRedraw().then(() => this.form.focus('login'));
+  };
 }

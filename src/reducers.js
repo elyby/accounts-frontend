@@ -9,11 +9,11 @@ import bsod from 'components/ui/bsod/reducer';
 import apps from 'components/dev/apps/reducer';
 
 export default combineReducers({
-    bsod,
-    auth,
-    user,
-    accounts,
-    i18n,
-    popup,
-    apps,
+  bsod,
+  auth,
+  user,
+  accounts,
+  i18n,
+  popup,
+  apps,
 });

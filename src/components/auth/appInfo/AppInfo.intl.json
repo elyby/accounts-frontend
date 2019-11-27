@@ -1,7 +1,7 @@
 {
-    "appName": "Ely Accounts",
-    "goToAuth": "Go to auth",
-    "appDescription": "You are on the Ely.by authorization service, that allows you to safely perform any operations on your account. This single entry point for websites and desktop software, including game launchers.",
-    "useItYourself": "Visit our {link}, to learn how to use this service in you projects.",
-    "documentation": "documentation"
+  "appName": "Ely Accounts",
+  "goToAuth": "Go to auth",
+  "appDescription": "You are on the Ely.by authorization service, that allows you to safely perform any operations on your account. This single entry point for websites and desktop software, including game launchers.",
+  "useItYourself": "Visit our {link}, to learn how to use this service in you projects.",
+  "documentation": "documentation"
 }

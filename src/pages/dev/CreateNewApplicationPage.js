@@ -1,5 +1,5 @@
 // @flow
-import type {OauthAppResponse} from 'services/api/oauth';
+import type { OauthAppResponse } from 'services/api/oauth';
 import type { ApplicationType } from 'components/dev/apps';
 import React, { Component } from 'react';
 import { FormModel } from 'components/ui/form';
@@ -8,60 +8,64 @@ import oauth from 'services/api/oauth';
 import { browserHistory } from 'services/history';
 
 const app: OauthAppResponse = {
-    clientId: '',
-    clientSecret: '',
-    countUsers: 0,
-    createdAt: 0,
-    type: 'application',
-    name: '',
-    description: '',
-    websiteUrl: '',
-    redirectUri: '',
-    minecraftServerIp: '',
+  clientId: '',
+  clientSecret: '',
+  countUsers: 0,
+  createdAt: 0,
+  type: 'application',
+  name: '',
+  description: '',
+  websiteUrl: '',
+  redirectUri: '',
+  minecraftServerIp: '',
 };
 
-export default class CreateNewApplicationPage extends Component<{}, {
+export default class CreateNewApplicationPage extends Component<
+  {},
+  {
     type: ?ApplicationType,
-}> {
-    state = {
-        type: null,
-    };
+  },
+> {
+  state = {
+    type: null,
+  };
 
-    form: FormModel = new FormModel();
+  form: FormModel = new FormModel();
 
-    render() {
-        return (
-            <ApplicationForm
-                form={this.form}
-                displayTypeSwitcher
-                onSubmit={this.onSubmit}
-                type={this.state.type}
-                setType={this.setType}
-                app={app}
-            />
-        );
+  render() {
+    return (
+      <ApplicationForm
+        form={this.form}
+        displayTypeSwitcher
+        onSubmit={this.onSubmit}
+        type={this.state.type}
+        setType={this.setType}
+        app={app}
+      />
+    );
+  }
+
+  onSubmit = async () => {
+    const { form } = this;
+    const { type } = this.state;
+
+    if (!type) {
+      throw new Error('Form was submitted without specified type');
     }
 
-    onSubmit = async () => {
-        const { form } = this;
-        const { type } = this.state;
+    form.beginLoading();
+    const result = await oauth.create(type, form.serialize());
+    form.endLoading();
 
-        if (!type) {
-            throw new Error('Form was submitted without specified type');
-        }
+    this.goToMainPage(result.data.clientId);
+  };
 
-        form.beginLoading();
-        const result = await oauth.create(type, form.serialize());
-        form.endLoading();
+  setType = (type: ApplicationType) => {
+    this.setState({
+      type,
+    });
+  };
 
-        this.goToMainPage(result.data.clientId);
-    };
-
-    setType = (type: ApplicationType) => {
-        this.setState({
-            type,
-        });
-    };
-
-    goToMainPage = (hash?: string) => browserHistory.push(`/dev/applications${hash ? `#${hash}` : ''}`);
+  goToMainPage = (hash?: string) =>
+    browserHistory.push(`/dev/applications${hash ? `#${hash}` : ''}`);
 }
