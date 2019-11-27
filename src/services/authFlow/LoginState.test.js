@@ -59,7 +59,7 @@ describe('LoginState', () => {
                 mock,
                 'login',
                 sinon.match.same(payload)
-            ).returns(Promise.resolve());
+            ).returns(new Promise(() => {}));
 
             state.resolve(context, payload);
         });

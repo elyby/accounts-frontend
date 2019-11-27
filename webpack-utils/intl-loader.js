@@ -1,9 +1,8 @@
-module.exports = function(content) {
-    this.cacheable && this.cacheable();
-    content = JSON.parse(content);
+function transform(src, modulePath, rootContext) {
+    const json = JSON.parse(src);
 
-    const moduleId = this.context
-        .replace(this.rootContext, '')
+    const moduleId = modulePath
+        .replace(rootContext, '')
         // TODO: can't find the way to strip out this path part programmatically
         // this is a directory from resolve.modules config
         // may be this may work: .replace(this._compiler.options.resolve.root, '')
@@ -11,20 +10,28 @@ module.exports = function(content) {
         .replace(/^\/|\/$/g, '')
         .replace(/\//g, '.');
 
-    content = JSON.stringify(
-        Object.keys(content).reduce(
+    return JSON.stringify(
+        Object.keys(json).reduce(
             (translations, key) => ({
                 ...translations,
                 [key]: {
                     id: `${moduleId}.${key}`,
-                    defaultMessage: content[key]
+                    defaultMessage: json[key]
                 }
             }),
             {}
         )
     );
+}
+
+module.exports = function(content) {
+    this.cacheable && this.cacheable();
+
+    content = transform(content, this.context, this.rootContext);
 
     return `import { defineMessages } from 'react-intl';
 
 export default defineMessages(${content})`;
 };
+
+module.exports.transform = transform;

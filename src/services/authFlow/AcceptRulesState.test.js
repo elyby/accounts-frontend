@@ -51,7 +51,7 @@ describe('AcceptRulesState', () => {
     describe('#resolve', () => {
         it('should call acceptRules', () => {
             expectRun(mock, 'acceptRules')
-                .returns(Promise.resolve());
+                .returns(new Promise(() => {}));
 
             state.resolve(context);
         });

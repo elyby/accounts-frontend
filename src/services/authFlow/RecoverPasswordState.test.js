@@ -53,7 +53,7 @@ describe('RecoverPasswordState', () => {
                 mock,
                 'recoverPassword',
                 sinon.match(expectedPayload)
-            ).returns(Promise.resolve());
+            ).returns(new Promise(() => {}));
 
             state.resolve(context, expectedPayload);
         });

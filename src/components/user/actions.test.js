@@ -1,2 +1,0 @@
-describe('components/user/actions', () => {
-});

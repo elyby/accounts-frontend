@@ -41,7 +41,7 @@ describe('ForgotPasswordState', () => {
                 sinon.match({
                     login: expectedLogin
                 })
-            ).returns(Promise.resolve());
+            ).returns(new Promise(() => {}));
 
             state.resolve(context, {login: expectedLogin});
         });
