@@ -47,6 +47,22 @@
     "build:dll": "node ./scripts/build-dll.js",
     "build:serve": "http-server --proxy https://dev.account.ely.by ./dist"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn ci:check"
+    }
+  },
+  "lint-staged": {
+    "*.{json,scss,css,md}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,ts,tsx}": [
+      "eslint --fix --quiet",
+      "git add"
+    ]
+  },
   "jest": {
     "roots": [
       "<rootDir>/src/"
@@ -147,11 +163,13 @@
     "flow-bin": "~0.102.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^3.1.0",
     "identity-obj-proxy": "^3.0.0",
     "imports-loader": "^0.8.0",
     "jest": "^24.9.0",
     "jest-watch-typeahead": "^0.4.2",
     "json-loader": "^0.5.4",
+    "lint-staged": "^9.5.0",
     "loader-utils": "^1.0.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.0",
