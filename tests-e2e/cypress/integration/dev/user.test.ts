@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('/dev/applications - user', () => {
   before(() => {
     cy.login({ account: 'default' }).then(({ user }) => {

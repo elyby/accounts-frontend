@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 import { account1 } from '../fixtures/accounts.json';
 
 describe('sign in', () => {

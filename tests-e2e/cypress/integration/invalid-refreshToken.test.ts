@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 // account1 - authenticated
 // account2 - invalid refreshToken
 import { account1, account2 } from '../fixtures/accounts.json';

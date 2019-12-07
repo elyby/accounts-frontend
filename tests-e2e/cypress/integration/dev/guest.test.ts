@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 describe('/dev/applications - guest', () => {
   it('should render login button', () => {
     cy.visit('/dev/applications');

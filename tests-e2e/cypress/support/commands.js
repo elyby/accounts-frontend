@@ -1,4 +1,4 @@
-import { account1, account2 } from '../fixtures/accounts.json';
+import { account1, account2 } from '../fixtures/accounts';
 
 // ***********************************************
 // This example commands.js shows you how to
