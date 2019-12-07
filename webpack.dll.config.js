@@ -2,7 +2,7 @@
 /* eslint-env node */
 const path = require('path');
 const webpack = require('webpack');
-const supportedLocales = require('./src/i18n');
+const supportedLocales = require('app/i18n');
 const vendor = Object.keys(require('./package.json').dependencies);
 
 const isProduction = process.argv.some(arg => arg === '-p');

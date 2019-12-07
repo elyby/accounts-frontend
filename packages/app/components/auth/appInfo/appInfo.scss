@@ -1,0 +1,72 @@
+@import '~app/components/ui/colors.scss';
+@import '~app/components/ui/fonts.scss';
+
+.appInfo {
+  max-width: 270px;
+  margin: 0 auto;
+  padding: 55px 25px;
+}
+
+.logoContainer {
+  position: relative;
+  padding: 15px 0;
+
+  &:after {
+    content: '';
+    display: block;
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 40px;
+
+    background: $green;
+  }
+}
+
+.logo {
+  font-family: $font-family-title;
+  color: #fff;
+  font-size: 36px;
+}
+
+.descriptionContainer {
+  margin: 20px 0;
+}
+
+.description {
+  $font-color: #ccc;
+  font-family: $font-family-base;
+  color: $font-color;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-top: 7px;
+
+  a {
+    color: lighten($font-color, 10%);
+    border-bottom-color: #666;
+
+    &:hover {
+      color: $font-color;
+    }
+  }
+}
+
+.goToAuth {
+}
+
+@media (min-width: 720px) {
+  .goToAuth {
+    display: none;
+  }
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 1.5;
+}

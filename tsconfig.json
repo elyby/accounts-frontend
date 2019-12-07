@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "packages",
     "module": "esnext",
     "target": "esnext",
     "esModuleInterop": true, // allow importing commonjs exports as default in es imports
@@ -14,5 +14,5 @@
     "resolveJsonModule": false,
     "jsx": "preserve"
   },
-  "include": ["@types", "src", "webpack-utils", "config", "scripts"]
+  "include": ["@types", "packages", "config"]
 }

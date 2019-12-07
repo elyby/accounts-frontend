@@ -1,0 +1,38 @@
+@import '~app/components/ui/colors.scss';
+@import '~app/components/ui/fonts.scss';
+
+.mfaTitle {
+  font-size: 18px;
+  font-family: $font-family-title;
+  line-height: 1.2;
+  text-align: center;
+
+  margin-left: 17%;
+  margin-right: 17%;
+  margin-top: -20px; // TODO: костыль. На странице выключения mfa отступ от текста до заголовка должен быть 20px. На странице информации о статусе от большой иконки до этого заловка должно быть 15px.
+  margin-bottom: -10px; // TODO: костыль. Отступ от заголовка до последующего текста должен быть 20px.
+
+  @media screen and (max-width: 399px) {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.bigIcon {
+  color: $blue;
+  font-size: 100px;
+  line-height: 1;
+  text-align: center;
+  margin-top: -20px; // TODO: костыль. Но отступ большой иконки от текста должен быть 20px.
+  margin-bottom: 35px;
+}
+
+.disableMfa {
+  margin-top: -10px; // TODO: костыль. Отступ ссылки от текста должен быть 20px.
+  text-align: center;
+  font-size: 12px;
+
+  a {
+    color: #9e9e9e;
+  }
+}

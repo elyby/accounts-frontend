@@ -23,7 +23,7 @@ module.exports = ({ webpack: loader }) => ({
       load: (defaultLoad => (filename, importOptions) => {
         if (/\.font.(js|json)$/.test(filename)) {
           // separately process calls to font loader
-          // e.g. `@import '~icons.font.json';`
+          // e.g. `@import '~app/icons.font.json';`
           if (!fileCache[filename] || !isProduction) {
             // do not execute loader on the same file twice
             // this is an overcome for a bug with ExtractTextPlugin, for isProduction === true

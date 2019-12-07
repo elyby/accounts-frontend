@@ -16,9 +16,9 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const config = require('./config');
-const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n'));
-const localeFlags = require('./src/components/i18n/localeFlags').default;
-const rootPath = path.resolve('./src');
+const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n'));
+const localeFlags = require('app/components/i18n/localeFlags').default;
+const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'dist');
 
 const isProduction = process.argv.some(arg => arg === '-p');
@@ -45,7 +45,7 @@ const webpackConfig = {
   cache: true,
 
   entry: {
-    app: path.join(__dirname, 'src'),
+    app: path.join(__dirname, 'packages/app'),
   },
 
   output: {
@@ -109,8 +109,8 @@ const webpackConfig = {
       __PROD__: isProduction,
     }),
     new HtmlWebpackPlugin({
-      template: 'src/index.ejs',
-      favicon: 'src/favicon.ico',
+      template: 'packages/app/index.ejs',
+      favicon: 'packages/app/favicon.ico',
       scripts: isProduction ? [] : ['/dll/vendor.dll.js'],
       hash: false, // webpack does this for all our assets automagically
       filename: 'index.html',
@@ -230,8 +230,8 @@ const webpackConfig = {
 
   resolveLoader: {
     alias: {
-      'intl-loader': path.resolve('./webpack-utils/intl-loader'),
-      'fontgen-loader': path.resolve('./webpack-utils/fontgen-loader'),
+      'intl-loader': path.resolve('./packages/webpack-utils/intl-loader'),
+      'fontgen-loader': path.resolve('./packages/webpack-utils/fontgen-loader'),
     },
   },
 };

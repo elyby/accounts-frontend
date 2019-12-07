@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ely.by - Account</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <% if (htmlWebpackPlugin.options.isCspEnabled) { %>
+        <meta http-equiv="Content-Security-Policy" content="%%CSP_CONTENT%%">
+    <% } %>
+
+    <% if (htmlWebpackPlugin.files.favicon) { %>
+        <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.favicon %>">
+    <% } %>
+
+    <script nonce="edge-must-die">
+        if (/Edge\/(must die)?/.test(navigator.userAgent)) {
+            // Edge has a broken fetch implementation, so forcing the polyfill
+            // https://www.reddit.com/r/webdev/comments/57ii4f/psa_edge_14_ships_a_broken_windowfetch/
+            // https://github.com/aurelia/fetch-client/issues/81
+            // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/9370062/
+            // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7773267/
+            delete window.fetch;
+        }
+    </script>
+</head>
+<body>
+
+<div id="app" class="app"></div>
+
+<%= require('app/first-render').default %>
+
+<% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+<% } %>
+
+<% if (htmlWebpackPlugin.options.scripts) {
+    htmlWebpackPlugin.options.scripts.forEach(function(scriptSrc) {
+    %>
+        <script src="<%= scriptSrc %>"></script>
+    <%
+    });
+} %>
+
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %>
+</body>
+</html>

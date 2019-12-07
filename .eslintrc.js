@@ -24,7 +24,7 @@ module.exports = {
 
   overrides: [
     {
-      files: ['webpack-utils/**', 'scripts/**', 'jest/**'],
+      files: ['packages/webpack-utils/**', 'packages/scripts/**', 'jest/**'],
       env: {
         node: true,
       },
