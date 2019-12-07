@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageDescriptor } from 'react-intl';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { SKIN_DARK, COLOR_GREEN } from 'app/components/ui';
 import { omit } from 'app/functions';
 import { Color, Skin } from 'app/components/ui';
@@ -32,7 +32,7 @@ export default class Radio extends FormInputComponent<
 
     return (
       <div
-        className={classNames(
+        className={clsx(
           styles[`${color}MarkableRow`],
           styles[`${skin}MarkableRow`],
         )}

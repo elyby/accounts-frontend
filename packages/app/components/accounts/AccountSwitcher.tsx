@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import loader from 'app/services/loader';
@@ -62,7 +62,7 @@ export class AccountSwitcher extends React.Component<Props> {
 
     return (
       <div
-        className={classNames(
+        className={clsx(
           styles.accountSwitcher,
           styles[`${skin}AccountSwitcher`],
         )}
@@ -70,7 +70,7 @@ export class AccountSwitcher extends React.Component<Props> {
         {highlightActiveAccount ? (
           <div className={styles.item}>
             <div
-              className={classNames(
+              className={clsx(
                 styles.accountIcon,
                 styles.activeAccountIcon,
                 styles.accountIcon1,
@@ -81,10 +81,7 @@ export class AccountSwitcher extends React.Component<Props> {
                 {activeAccount.username}
               </div>
               <div
-                className={classNames(
-                  styles.accountEmail,
-                  styles.activeAccountEmail,
-                )}
+                className={clsx(styles.accountEmail, styles.activeAccountEmail)}
               >
                 {activeAccount.email}
               </div>
@@ -112,12 +109,12 @@ export class AccountSwitcher extends React.Component<Props> {
         ) : null}
         {available.map((account, index) => (
           <div
-            className={classNames(styles.item, styles.accountSwitchItem)}
+            className={clsx(styles.item, styles.accountSwitchItem)}
             key={account.id}
             onClick={this.onSwitch(account)}
           >
             <div
-              className={classNames(
+              className={clsx(
                 styles.accountIcon,
                 styles[
                   `accountIcon${(index % 7) + (highlightActiveAccount ? 2 : 1)}`

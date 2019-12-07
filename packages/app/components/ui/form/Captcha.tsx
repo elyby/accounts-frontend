@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { CaptchaID } from 'app/services/captcha';
 import { Skin } from 'app/components/ui';
 import captcha from 'app/services/captcha';
@@ -58,7 +58,7 @@ export default class Captcha extends FormInputComponent<
 
         <div
           ref={this.elRef}
-          className={classNames(styles.captcha, styles[`${skin}Captcha`])}
+          className={clsx(styles.captcha, styles[`${skin}Captcha`])}
         />
 
         {this.renderError()}

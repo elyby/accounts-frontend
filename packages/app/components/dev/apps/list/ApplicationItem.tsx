@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { SKIN_LIGHT, COLOR_BLACK, COLOR_RED } from 'app/components/ui';
 import { Input, Button } from 'app/components/ui/form';
 import { OauthAppResponse } from 'app/services/api/oauth';
@@ -63,7 +63,7 @@ export default class ApplicationItem extends React.Component<
 
     return (
       <div
-        className={classNames(styles.appItemContainer, {
+        className={clsx(styles.appItemContainer, {
           [styles.appExpanded]: expand,
         })}
         data-e2e="appItem"

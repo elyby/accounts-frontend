@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'app/functions';
 
 import styles from './panel.scss';
@@ -89,7 +89,7 @@ export class PanelBodyHeader extends React.Component<
       close = <span className={styles.close} onClick={this.onClose} />;
     }
 
-    const className = classNames(styles[`${type}BodyHeader`], {
+    const className = clsx(styles[`${type}BodyHeader`], {
       [styles.isClosed]: this.state.isClosed,
     });
 

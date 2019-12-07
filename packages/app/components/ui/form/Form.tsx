@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import logger from 'app/services/logger';
 
 import FormModel from './FormModel';
@@ -81,7 +81,7 @@ export default class Form extends React.Component<Props, State> {
 
     return (
       <form
-        className={classNames(styles.form, {
+        className={clsx(styles.form, {
           [styles.isFormLoading]: isLoading,
           [styles.formTouched]: this.state.isTouched,
         })}

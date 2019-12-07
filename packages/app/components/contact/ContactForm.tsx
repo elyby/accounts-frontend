@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FormattedMessage as Message } from 'react-intl';
 import {
   Input,
@@ -69,7 +69,7 @@ export class ContactForm extends React.Component<
               <Message {...messages.title} />
             </h2>
             <span
-              className={classNames(icons.close, popupStyles.close)}
+              className={clsx(icons.close, popupStyles.close)}
               onClick={onClose}
             />
           </div>

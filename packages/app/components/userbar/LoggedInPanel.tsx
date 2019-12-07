@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { AccountSwitcher } from 'app/components/accounts';
 
 import styles from './loggedInPanel.scss';
@@ -40,12 +40,9 @@ export default class LoggedInPanel extends React.Component<
     const { isAccountSwitcherActive } = this.state;
 
     return (
-      <div
-        ref={el => (this.el = el)}
-        className={classNames(styles.loggedInPanel)}
-      >
+      <div ref={el => (this.el = el)} className={clsx(styles.loggedInPanel)}>
         <div
-          className={classNames(styles.activeAccount, {
+          className={clsx(styles.activeAccount, {
             [styles.activeAccountExpanded]: isAccountSwitcherActive,
           })}
         >
@@ -58,7 +55,7 @@ export default class LoggedInPanel extends React.Component<
             <span className={styles.expandIcon} />
           </button>
 
-          <div className={classNames(styles.accountSwitcherContainer)}>
+          <div className={clsx(styles.accountSwitcherContainer)}>
             <AccountSwitcher
               skin="light"
               onAfterAction={this.onToggleAccountSwitcher}

@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Color, COLOR_GREEN } from 'app/components/ui';
 
 import styles from './stepper.scss';
@@ -14,10 +14,10 @@ export default function Stepper({
   color?: Color;
 }) {
   return (
-    <div className={classNames(styles.steps, styles[`${color}Steps`])}>
+    <div className={clsx(styles.steps, styles[`${color}Steps`])}>
       {new Array(totalSteps).fill(0).map((_, step) => (
         <div
-          className={classNames(styles.step, {
+          className={clsx(styles.step, {
             [styles.activeStep]: step <= activeStep,
           })}
           key={step}

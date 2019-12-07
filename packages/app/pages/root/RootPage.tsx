@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
 import Helmet from 'react-helmet';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import AuthPage from 'app/pages/auth/AuthPage';
 import ProfilePage from 'app/pages/profile/ProfilePage';
 import RulesPage from 'app/pages/rules/RulesPage';
@@ -65,7 +65,7 @@ class RootPage extends Component<{
 
         <div
           id="view-port"
-          className={classNames(styles.viewPort, {
+          className={clsx(styles.viewPort, {
             [styles.isPopupActive]: isPopupActive,
           })}
         >

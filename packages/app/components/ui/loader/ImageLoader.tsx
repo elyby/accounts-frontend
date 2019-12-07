@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ComponentLoader } from 'app/components/ui/loader';
 import { SKIN_LIGHT } from 'app/components/ui';
 
@@ -59,7 +59,7 @@ export default class ImageLoader extends React.Component<
         )}
 
         <div
-          className={classNames(styles.image, {
+          className={clsx(styles.image, {
             [styles.imageLoaded]: !isLoading,
           })}
         >

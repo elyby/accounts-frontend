@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localeFlags } from 'app/components/i18n';
 import LANGS from 'app/i18n';
 import { connect } from 'react-redux';
@@ -24,7 +24,7 @@ function LanguageLink({
 
   return (
     <span
-      className={classNames(styles.languageLink, {
+      className={clsx(styles.languageLink, {
         [styles.mark]: userLang !== interfaceLocale,
       })}
       onClick={showLanguageSwitcherPopup}

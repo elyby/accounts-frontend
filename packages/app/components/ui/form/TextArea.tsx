@@ -1,7 +1,7 @@
 import React from 'react';
 import { MessageDescriptor } from 'react-intl';
 import TextareaAutosize from 'react-textarea-autosize';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { uniqueId, omit } from 'app/functions';
 import { SKIN_DARK, COLOR_GREEN, Skin, Color } from 'app/components/ui';
 
@@ -73,7 +73,7 @@ export default class TextArea extends FormInputComponent<
         <div className={styles.textAreaContainer}>
           <TextareaAutosize
             inputRef={this.elRef}
-            className={classNames(
+            className={clsx(
               styles.textArea,
               styles[`${skin}TextField`],
               styles[`${color}TextField`],

@@ -10,7 +10,7 @@ import messages from './RulesPage.intl.json';
 
 const projectName = <Message {...appInfo.appName} />;
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const rules = [
   {
@@ -105,7 +105,7 @@ export default class RulesPage extends Component<{
           {rules.map((block, sectionIndex) => (
             <div className={styles.rulesSection} key={sectionIndex}>
               <h2
-                className={classNames(styles.rulesSectionTitle, {
+                className={clsx(styles.rulesSectionTitle, {
                   [styles.target]:
                     RulesPage.getTitleHash(sectionIndex) === hash,
                 })}
@@ -125,7 +125,7 @@ export default class RulesPage extends Component<{
                 <ol className={styles.rulesList}>
                   {block.items.map((item, ruleIndex) => (
                     <li
-                      className={classNames(styles.rulesItem, {
+                      className={clsx(styles.rulesItem, {
                         [styles.target]:
                           RulesPage.getRuleHash(sectionIndex, ruleIndex) ===
                           hash,

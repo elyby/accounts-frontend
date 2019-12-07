@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { Form, Button, Input, FormModel } from 'app/components/ui/form';
 import popupStyles from 'app/components/ui/popup/popup.scss';
@@ -32,7 +32,7 @@ export default class PasswordRequestForm extends Component {
               </h2>
             </div>
 
-            <div className={classNames(popupStyles.body, styles.body)}>
+            <div className={clsx(popupStyles.body, styles.body)}>
               <span className={styles.lockIcon} />
 
               <div className={styles.description}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import profileForm from '../../profileForm.scss';
 import messages from '../MultiFactorAuth.intl.json';
@@ -33,12 +33,12 @@ export default class Instructions extends React.Component<{}, State> {
 
         <div className={profileForm.formRow}>
           <div
-            className={classNames(styles.instructionContainer, {
+            className={clsx(styles.instructionContainer, {
               [styles.instructionActive]: !!activeOs,
             })}
           >
             <div
-              className={classNames(styles.osList, {
+              className={clsx(styles.osList, {
                 [styles.androidActive]: activeOs === 'android',
                 [styles.appleActive]: activeOs === 'ios',
                 [styles.windowsActive]: activeOs === 'windows',

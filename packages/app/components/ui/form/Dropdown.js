@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { omit } from 'app/functions';
 import { colors, COLOR_GREEN } from 'app/components/ui';
@@ -62,7 +62,7 @@ export default class Dropdown extends FormInputComponent {
     return (
       <div>
         <div
-          className={classNames(styles[color], {
+          className={clsx(styles[color], {
             [styles.block]: block,
             [styles.opened]: isActive,
           })}

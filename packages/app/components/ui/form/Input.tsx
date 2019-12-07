@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageDescriptor } from 'react-intl';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { uniqueId, omit } from 'app/functions';
 import copy from 'app/services/copy';
 import icons from 'app/components/ui/icons.scss';
@@ -96,15 +96,13 @@ export default class Input extends FormInputComponent<
 
     if (iconType) {
       baseClass = styles.formIconRow;
-      icon = (
-        <span className={classNames(styles.textFieldIcon, icons[iconType])} />
-      );
+      icon = <span className={clsx(styles.textFieldIcon, icons[iconType])} />;
     }
 
     if (showCopyIcon) {
       copyIcon = (
         <div
-          className={classNames(styles.copyIcon, {
+          className={clsx(styles.copyIcon, {
             [icons.clipboard]: !wasCopied,
             [icons.checkmark]: wasCopied,
             [styles.copyCheckmark]: wasCopied,
@@ -120,7 +118,7 @@ export default class Input extends FormInputComponent<
         <div className={styles.textFieldContainer}>
           <input
             ref={this.elRef}
-            className={classNames(
+            className={clsx(
               styles[`${skin}TextField`],
               styles[`${color}TextField`],
               {

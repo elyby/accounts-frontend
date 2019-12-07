@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import buttons from 'app/components/ui/buttons.scss';
 import { COLOR_GREEN } from 'app/components/ui';
 import { MessageDescriptor } from 'react-intl';
@@ -35,7 +35,7 @@ export default class Button extends FormComponent<
 
     return (
       <ComponentProp
-        className={classNames(
+        className={clsx(
           buttons[color],
           {
             [buttons.loading]: loading,

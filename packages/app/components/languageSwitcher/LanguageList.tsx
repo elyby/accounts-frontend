@@ -1,7 +1,7 @@
 import React from 'react';
 import { TransitionMotion, spring, presets } from 'react-motion';
 import { FormattedMessage as Message } from 'react-intl';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import LocaleItem from './LocaleItem';
 import messages from './languageSwitcher.intl.json';
@@ -38,7 +38,7 @@ export default class LanguageList extends React.Component<{
         {items => (
           <div className={styles.languagesList}>
             <div
-              className={classNames(styles.emptyLanguagesListWrapper, {
+              className={clsx(styles.emptyLanguagesListWrapper, {
                 [styles.emptyLanguagesListVisible]: isListEmpty,
               })}
               style={{
@@ -69,7 +69,7 @@ export default class LanguageList extends React.Component<{
               <div
                 key={locale}
                 style={style}
-                className={classNames(styles.languageItem, {
+                className={clsx(styles.languageItem, {
                   [styles.activeLanguageItem]: locale === selectedLocale,
                   [styles.firstLanguageItem]: locale === firstLocale,
                 })}

@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { LinkButton } from 'app/components/ui/form';
@@ -109,7 +109,7 @@ function Loader({ noApps }: { noApps: boolean }) {
       />
 
       <div
-        className={classNames(styles.noAppsContainer, {
+        className={clsx(styles.noAppsContainer, {
           [styles.noAppsAnimating]: noApps,
         })}
       >

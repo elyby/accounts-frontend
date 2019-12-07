@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage as Message, injectIntl, IntlShape } from 'react-intl';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { changeLang } from 'app/components/user/actions';
 import LANGS from 'app/i18n';
@@ -69,7 +69,7 @@ class LanguageSwitcher extends React.Component<
               <Message {...messages.siteLanguage} />
             </h2>
             <span
-              className={classNames(icons.close, popupStyles.close)}
+              className={clsx(icons.close, popupStyles.close)}
               onClick={onClose}
             />
           </div>
@@ -77,7 +77,7 @@ class LanguageSwitcher extends React.Component<
           <div className={styles.languageSwitcherBody}>
             <div className={styles.searchBox}>
               <input
-                className={classNames(
+                className={clsx(
                   formStyles.lightTextField,
                   formStyles.greenTextField,
                 )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FormattedMessage as Message } from 'react-intl';
 import { ImageLoader } from 'app/components/ui/loader';
 import profileForm from 'app/components/profile/profileForm.scss';
@@ -31,12 +31,7 @@ export default function KeyForm({
       </div>
 
       <div className={profileForm.formRow}>
-        <p
-          className={classNames(
-            styles.manualDescription,
-            profileForm.description,
-          )}
-        >
+        <p className={clsx(styles.manualDescription, profileForm.description)}>
           <span className={styles.or}>
             <Message {...messages.or} />
           </span>

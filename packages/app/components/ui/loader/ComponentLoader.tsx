@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Skin } from 'app/components/ui';
 
 import styles from './componentLoader.scss';
@@ -7,15 +7,12 @@ import styles from './componentLoader.scss';
 function ComponentLoader({ skin = 'dark' }: { skin?: Skin }) {
   return (
     <div
-      className={classNames(
-        styles.componentLoader,
-        styles[`${skin}ComponentLoader`],
-      )}
+      className={clsx(styles.componentLoader, styles[`${skin}ComponentLoader`])}
     >
       <div className={styles.spins}>
         {new Array(5).fill(0).map((_, index) => (
           <div
-            className={classNames(styles.spin, styles[`spin${index}`])}
+            className={clsx(styles.spin, styles[`spin${index}`])}
             key={index}
           />
         ))}
