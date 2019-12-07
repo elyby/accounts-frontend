@@ -15,6 +15,7 @@ env:
     - GA_ID=UA-45299905-3
     - SENTRY_CDN="https://95461d4ce6734b088c34fc4272d0a9e6@sentry.io/1463318"
     - VERSION="${TRAVIS_TAG:-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}}"
+    - FORCE_COLOR=1
 
 script:
   - yarn ci:check
