@@ -73,13 +73,13 @@ a {
   font-style: normal;
   font-weight: 400;
   src: local('Roboto Condensed'), local('RobotoCondensed-Regular'),
-    url('~app/fonts/roboto-condensed/roboto-condensed-v13-cyrillic_latin-regular.woff2')
+    url('./fonts/roboto-condensed/roboto-condensed-v17-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-regular.woff2')
       format('woff2'),
     /* Super Modern Browsers */
-      url('~app/fonts/roboto-condensed/roboto-condensed-v13-cyrillic_latin-regular.woff')
+      url('./fonts/roboto-condensed/roboto-condensed-v17-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-regular.woff')
       format('woff'),
     /* Modern Browsers */
-      url('~app/fonts/roboto-condensed/roboto-condensed-v13-cyrillic_latin-regular.ttf')
+      url('./fonts/roboto-condensed/roboto-condensed-v17-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-regular.ttf')
       format('truetype'); /* Safari, Android, iOS */
 }
 @font-face {
@@ -87,24 +87,28 @@ a {
   font-style: normal;
   font-weight: 400;
   src: local('Roboto'), local('Roboto-Regular'),
-    url('~app/fonts/roboto/roboto-v15-cyrillic_latin-regular.woff2')
-      format('woff2'),
     /* Super Modern Browsers */
-      url('~app/fonts/roboto/roboto-v15-cyrillic_latin-regular.woff')
-      format('woff'),
+      url('./fonts/roboto/roboto-v19-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-regular.woff2')
+      format('woff2'),
     /* Modern Browsers */
-      url('~app/fonts/roboto/roboto-v15-cyrillic_latin-regular.ttf')
-      format('truetype'); /* Safari, Android, iOS */
+      url('./fonts/roboto/roboto-v19-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-regular.woff')
+      format('woff'),
+    /* Safari, Android, iOS */
+      url('./fonts/roboto/roboto-v19-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-regular.ttf')
+      format('truetype');
 }
 @font-face {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 500;
   src: local('Roboto Medium'), local('Roboto-Medium'),
-    url('~app/fonts/roboto/roboto-v15-cyrillic_latin-500.woff2') format('woff2'),
     /* Super Modern Browsers */
-      url('~app/fonts/roboto/roboto-v15-cyrillic_latin-500.woff') format('woff'),
+      url('./fonts/roboto/roboto-v19-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-500.woff2')
+      format('woff2'),
     /* Modern Browsers */
-      url('~app/fonts/roboto/roboto-v15-cyrillic_latin-500.ttf')
-      format('truetype'); /* Safari, Android, iOS */
+      url('./fonts/roboto/roboto-v19-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-500.woff')
+      format('woff'),
+    /* Safari, Android, iOS */
+      url('./fonts/roboto/roboto-v19-vietnamese_latin-ext_greek-ext_cyrillic-ext_latin_cyrillic_greek-500.ttf')
+      format('truetype');
 }
