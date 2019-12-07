@@ -1,5 +1,5 @@
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
@@ -7,12 +7,14 @@ module.exports = {
 
   extends: [
     'eslint:recommended',
-    'plugin:flowtype/recommended',
-    'plugin:prettier/recommended',
     'plugin:jsdoc/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
   ],
 
-  plugins: ['react', 'flowtype'],
+  plugins: ['react'],
 
   env: {
     browser: true,
@@ -56,7 +58,7 @@ module.exports = {
 
   // @see: http://eslint.org/docs/rules/
   rules: {
-    'no-prototype-builtins': ['warn'], // temporary set to warn
+    'no-prototype-builtins': 'warn', // temporary set to warn
     'no-restricted-globals': [
       'error',
       'localStorage',
@@ -67,7 +69,7 @@ module.exports = {
       'error',
       { min: 2, exceptions: ['x', 'y', 'i', 'k', 'l', 'm', 'n', '$', '_'] },
     ],
-    'require-atomic-updates': ['warn'],
+    'require-atomic-updates': 'warn',
     'guard-for-in': ['error'],
     'no-var': ['error'],
     'prefer-const': ['error'],
@@ -76,25 +78,18 @@ module.exports = {
     'no-multi-assign': ['error'],
     eqeqeq: ['error'],
     'prefer-rest-params': ['error'],
-    'prefer-object-spread': ['warn'],
-    'prefer-destructuring': ['warn'],
-    'no-bitwise': ['warn'],
-    'no-negated-condition': ['warn'],
-    'no-nested-ternary': ['warn'],
-    'no-unneeded-ternary': ['warn'],
-    'no-shadow': ['warn'],
-    'no-else-return': ['warn'],
-    radix: ['warn'],
-    'prefer-promise-reject-errors': ['warn'],
-    'no-unused-vars': [
-      'error',
-      {
-        vars: 'all',
-        args: 'after-used',
-        argsIgnorePattern: '^_',
-      },
-    ],
-    'object-shorthand': ['warn'],
+    'prefer-object-spread': 'warn',
+    'prefer-destructuring': 'warn',
+    'no-bitwise': 'warn',
+    'no-negated-condition': 'warn',
+    'no-nested-ternary': 'warn',
+    'no-unneeded-ternary': 'warn',
+    'no-shadow': 'warn',
+    'no-else-return': 'warn',
+    radix: 'warn',
+    'prefer-promise-reject-errors': 'warn',
+    'object-shorthand': 'warn',
+    'require-atomic-updates': 'off',
 
     // force extra lines around if, else, for, while, switch, return etc
     'padding-line-between-statements': [
@@ -134,9 +129,8 @@ module.exports = {
       'warn',
       { eventHandlerPrefix: 'on', eventHandlerPropPrefix: 'on' },
     ],
-    'react/jsx-indent-props': 'warn',
     'react/jsx-key': 'warn',
-    'react/jsx-max-props-per-line': ['warn', { maximum: 3 }],
+    'react/jsx-max-props-per-line': 'off',
     'react/jsx-no-bind': 'off',
     'react/jsx-no-duplicate-props': 'warn',
     'react/jsx-no-literals': 'off',
@@ -156,17 +150,24 @@ module.exports = {
     'react/no-string-refs': 'warn',
     'react/no-unknown-property': 'warn',
     'react/prefer-es6-class': 'warn',
-    'react/prop-types': 'off', // using flowtype for this task
+    'react/prop-types': 'off', // using ts for this task
     'react/self-closing-comp': 'warn',
-    'react/sort-comp': [
-      'off',
-      { order: ['lifecycle', 'render', 'everything-else'] },
-    ],
+    'react/sort-comp': 'off',
 
-    'flowtype/space-after-type-colon': 'off',
-    'flowtype/no-unused-expressions': [
-      'warn',
-      { allowShortCircuit: true, allowTernary: true },
+    // ts
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
+    '@typescript-eslint/ban-ts-ignore': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-inferrable-types': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
     ],
   },
 };

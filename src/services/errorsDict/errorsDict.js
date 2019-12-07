@@ -96,7 +96,7 @@ const errorsMap = {
       {...messages.emailFrequency}
       values={{
         // for msLeft @see AuthError.jsx
-        time: <RelativeTime value={props.msLeft} />,
+        time: <RelativeTime timestamp={props.msLeft} />,
       }}
     />
   ),

@@ -2,6 +2,7 @@ export default class Box {
   constructor({ size, startX, startY, startRotate, color, shadowColor }) {
     this.color = color;
     this.shadowColor = shadowColor;
+    this.halfSize = 0;
     this.setSize(size);
     this.x = startX;
     this.y = startY;

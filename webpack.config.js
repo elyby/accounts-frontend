@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 
-require('@babel/register');
+require('@babel/register')({
+  extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx'],
+});
 
 const path = require('path');
 const webpack = require('webpack');
@@ -13,8 +16,7 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const config = require('./config');
-
-const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
+const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n'));
 const localeFlags = require('./src/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./src');
 const outputPath = path.join(__dirname, 'dist');
@@ -54,7 +56,7 @@ const webpackConfig = {
 
   resolve: {
     modules: [rootPath, 'node_modules'],
-    extensions: ['.js', '.jsx', '.json'],
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     alias: {
       'react-dom': isProduction ? 'react-dom' : '@hot-loader/react-dom',
     },
@@ -181,7 +183,7 @@ const webpackConfig = {
         ],
       },
       {
-        test: /\.jsx?$/,
+        test: /\.[tj]sx?$/,
         exclude: /node_modules/,
         use: [
           {

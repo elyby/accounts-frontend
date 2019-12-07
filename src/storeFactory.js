@@ -1,4 +1,3 @@
-// @flow
 import { createStore, applyMiddleware, compose } from 'redux';
 // midleware, который позволяет возвращать из экшенов функции
 // это полезно для работы с асинхронными действиями,
@@ -29,7 +28,6 @@ export default function storeFactory() {
   const store = createStore(reducers, {}, enhancer);
 
   // Hot reload reducers
-  // $FlowFixMe
   if (module.hot && typeof module.hot.accept === 'function') {
     module.hot.accept('reducers', () =>
       store.replaceReducer(require('reducers').default),

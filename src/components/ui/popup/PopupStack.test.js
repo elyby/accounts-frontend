@@ -8,7 +8,7 @@ import { shallow, mount } from 'enzyme';
 import { PopupStack } from 'components/ui/popup/PopupStack';
 import styles from 'components/ui/popup/popup.scss';
 
-function DummyPopup() {
+function DummyPopup(/** @type {{[key: string]: any}} */ _props) {
   return null;
 }
 
@@ -133,6 +133,7 @@ describe('<PopupStack />', () => {
     mount(<PopupStack {...props} />);
 
     const event = new Event('keyup');
+    // @ts-ignore
     event.which = 27;
     document.dispatchEvent(event);
 
@@ -156,6 +157,7 @@ describe('<PopupStack />', () => {
     mount(<PopupStack {...props} />);
 
     const event = new Event('keyup');
+    // @ts-ignore
     event.which = 27;
     document.dispatchEvent(event);
 
@@ -178,6 +180,7 @@ describe('<PopupStack />', () => {
     mount(<PopupStack {...props} />);
 
     const event = new Event('keyup');
+    // @ts-ignore
     event.which = 27;
     document.dispatchEvent(event);
 

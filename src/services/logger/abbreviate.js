@@ -6,10 +6,10 @@ const STRING_MAX_LENGTH = 128 * 1024;
  *
  * @param {any}    obj     Any data structure
  * @param {object} options
- * @param {Function} options.filter - callback that is called on every object's key with (key,value) and should return
+ * @param {Function=} options.filter - callback that is called on every object's key with (key,value) and should return
  *        value to use (may return undefined to remove unwanted keys). See nodeFilter and browserFilter.
- * @param {number} options.depth - maximum recursion depth. Elements deeper than that are stringified with util.inspect()
- * @param {number} options.maxSize - roughly maximum allowed size of data after JSON serialisation (but it's not guaranteed
+ * @param {number=} options.depth - maximum recursion depth. Elements deeper than that are stringified with util.inspect()
+ * @param {number=} options.maxSize - roughly maximum allowed size of data after JSON serialisation (but it's not guaranteed
  *        that it won't exceed the limit)
  *
  * @see https://github.com/ftlabs/js-abbreviate

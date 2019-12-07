@@ -36,6 +36,8 @@ export default class ChangeEmail extends Component {
                     \`${componentName}\`. Validation failed.`,
           );
         }
+
+        return null;
       },
     ),
     onSubmit: PropTypes.func.isRequired,
@@ -120,7 +122,6 @@ export default class ChangeEmail extends Component {
                   ? messages.changeEmailButton
                   : messages.sendEmailButton
               }
-              onClick={this.onSubmit}
             />
           </div>
 

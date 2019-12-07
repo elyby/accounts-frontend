@@ -5,7 +5,7 @@ import Box from './Box';
  */
 export default class BoxesField {
   /**
-   * @param {Node} elem - canvas DOM node
+   * @param {HTMLCanvasElement} elem - canvas DOM node
    * @param {object} params
    */
   constructor(
@@ -28,7 +28,13 @@ export default class BoxesField {
     },
   ) {
     this.elem = elem;
-    this.ctx = elem.getContext('2d');
+    const ctx = elem.getContext('2d');
+
+    if (!ctx) {
+      throw new Error('Can not get canvas 2d context');
+    }
+
+    this.ctx = ctx;
     this.params = params;
 
     this.light = {

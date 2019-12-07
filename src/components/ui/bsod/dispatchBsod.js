@@ -11,7 +11,7 @@ export default function dispatchBsod(store = injectedStore) {
   store.dispatch(bsod());
   onBsod && onBsod();
 
-  ReactDOM.render(<BSoD store={store} />, document.getElementById('app'));
+  ReactDOM.render(<BSoD />, document.getElementById('app'));
 }
 
 export function inject(store, stopLoading) {

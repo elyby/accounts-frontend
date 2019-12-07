@@ -24,7 +24,7 @@ export default {
   },
 
   /**
-   * @returns {bool} - whether history.back() can be safetly called
+   * @returns {boolean} - whether history.back() can be safetly called
    */
   canGoBack() {
     return (

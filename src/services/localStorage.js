@@ -17,20 +17,18 @@ export function hasStorage() {
   return _hasStorage;
 }
 
-function DummyStorage() {
-  return {
-    getItem(key) {
-      return this[key] || null;
-    },
+class DummyStorage {
+  getItem(key) {
+    return this[key] || null;
+  }
 
-    setItem(key, value) {
-      this[key] = value;
-    },
+  setItem(key, value) {
+    this[key] = value;
+  }
 
-    removeItem(key) {
-      Reflect.deleteProperty(this, key);
-    },
-  };
+  removeItem(key) {
+    Reflect.deleteProperty(this, key);
+  }
 }
 
 export const localStorage = _hasStorage

@@ -108,7 +108,7 @@ export default class Dropdown extends FormInputComponent {
 
   getActiveItem() {
     const { items } = this.props;
-    let { activeItem } = this.state;
+    let { activeItem } = /** @type {any} */ (this.state);
 
     if (!activeItem) {
       activeItem = {
@@ -117,10 +117,11 @@ export default class Dropdown extends FormInputComponent {
       };
 
       if (!activeItem.label) {
-        const firstItem = Object.entries(items)[0];
+        const [[value, label]] = Object.entries(items);
+
         activeItem = {
-          label: firstItem[1],
-          value: firstItem[0],
+          label,
+          value,
         };
       }
     }

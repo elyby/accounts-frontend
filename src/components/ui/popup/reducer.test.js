@@ -1,11 +1,13 @@
 import expect from 'test/unexpected';
-
+import React from 'react';
 import reducer from 'components/ui/popup/reducer';
 import { create, destroy } from 'components/ui/popup/actions';
 
 describe('popup/reducer', () => {
   it('should have no popups by default', () => {
-    const actual = reducer(undefined, {});
+    const actual = reducer(undefined, {
+      type: 'init',
+    });
 
     expect(actual.popups, 'to be an', 'array');
     expect(actual.popups, 'to be empty');
@@ -46,7 +48,12 @@ describe('popup/reducer', () => {
 
     it('throws when no type provided', () => {
       expect(
-        () => reducer(undefined, create({})),
+        () =>
+          reducer(
+            undefined,
+            // @ts-ignore
+            create({}),
+          ),
         'to throw',
         'Popup is required',
       );
@@ -86,4 +93,6 @@ describe('popup/reducer', () => {
   });
 });
 
-function FakeComponent() {}
+function FakeComponent() {
+  return <span />;
+}

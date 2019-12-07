@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+// @ts-nocheck
 /* eslint-env node */
 /**
  * Forked from

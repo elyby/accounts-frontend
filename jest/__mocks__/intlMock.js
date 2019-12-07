@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 const path = require('path');
 const { transform } = require('../../webpack-utils/intl-loader');
@@ -11,7 +13,6 @@ module.exports = {
    *
    * @returns {string}
    */
-  // eslint-disable-next-line no-unused-vars
   process(src, filename, config, options) {
     return transform(src, filename, path.resolve(`${__dirname}/../../..`));
   },

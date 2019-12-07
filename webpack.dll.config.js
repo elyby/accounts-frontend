@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 const path = require('path');
 const webpack = require('webpack');
+const supportedLocales = require('./src/i18n');
 const vendor = Object.keys(require('./package.json').dependencies);
+
 const isProduction = process.argv.some(arg => arg === '-p');
-const supportedLocales = require('./src/i18n/index.json');
 const isTest = process.argv.some(arg => arg.indexOf('karma') !== -1);
 
 process.env.NODE_ENV = 'development';

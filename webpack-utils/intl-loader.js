@@ -1,3 +1,4 @@
+// @ts-nocheck
 function transform(src, modulePath, rootContext) {
   const json = JSON.parse(src);
 

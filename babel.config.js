@@ -1,5 +1,9 @@
 module.exports = {
-  presets: ['@babel/preset-react', '@babel/preset-flow', ['@babel/preset-env']],
+  presets: [
+    '@babel/preset-react',
+    '@babel/preset-typescript',
+    ['@babel/preset-env'],
+  ],
   plugins: [
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-proposal-function-bind',
@@ -27,12 +31,6 @@ module.exports = {
           },
         ],
       ],
-    },
-    development: {
-      presets: [],
-    },
-    test: {
-      presets: [],
     },
   },
 };

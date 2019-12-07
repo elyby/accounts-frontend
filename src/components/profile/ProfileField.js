@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import styles from './profile.scss';
 
-export default class ProfileField extends Component {
-  static displayName = 'ProfileField';
+export default class ProfileField extends React.Component {
   static propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
       .isRequired,

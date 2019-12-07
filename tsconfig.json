@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "module": "esnext",
+    "target": "esnext",
+    "esModuleInterop": true, // allow importing commonjs exports as default in es imports
+    "moduleResolution": "node",
+    "noEmit": true,
+    "checkJs": true,
+    "allowJs": true,
+    "strictNullChecks": true,
+    // we can not enable json modules, because this will disable
+    // *.intl.json overrides (@see `webpack-loaders.d.ts`)
+    "resolveJsonModule": false,
+    "jsx": "preserve"
+  },
+  "include": ["@types", "src", "webpack-utils", "config", "scripts"]
+}
