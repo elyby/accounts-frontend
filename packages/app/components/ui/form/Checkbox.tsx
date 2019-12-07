@@ -7,11 +7,13 @@ import { omit } from 'app/functions';
 import styles from './form.scss';
 import FormInputComponent from './FormInputComponent';
 
-export default class Checkbox extends FormInputComponent<{
-  color: Color;
-  skin: Skin;
-  label: string | MessageDescriptor;
-}> {
+export default class Checkbox extends FormInputComponent<
+  React.InputHTMLAttributes<HTMLInputElement> & {
+    color: Color;
+    skin: Skin;
+    label: string | MessageDescriptor | React.ReactElement;
+  }
+> {
   static defaultProps = {
     color: COLOR_GREEN,
     skin: SKIN_DARK,
@@ -23,7 +25,7 @@ export default class Checkbox extends FormInputComponent<{
     const { color, skin } = this.props;
     let { label } = this.props;
 
-    label = this.formatMessage(label);
+    label = React.isValidElement(label) ? label : this.formatMessage(label);
 
     const props = omit(this.props, ['color', 'skin', 'label']);
 

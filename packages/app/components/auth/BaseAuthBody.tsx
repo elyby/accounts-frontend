@@ -53,7 +53,9 @@ export default class BaseAuthBody extends React.Component<
     renderErrors: false,
   });
 
-  bindField = this.form.bindField.bind(this.form);
+  bindField(name: string) {
+    return this.form.bindField(name);
+  }
 
   serialize() {
     return this.form.serialize();

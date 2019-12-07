@@ -20,7 +20,6 @@ export default class TextArea extends FormInputComponent<
   {
     placeholder?: string | MessageDescriptor;
     label?: string | MessageDescriptor;
-    error?: string;
     skin: Skin;
     color: Color;
   } & TextareaAutosizeProps &

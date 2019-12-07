@@ -2,7 +2,7 @@ import FormInputComponent from './FormInputComponent';
 
 type LoadingListener = (isLoading: boolean) => void;
 
-type ValidationError =
+export type ValidationError =
   | string
   | {
       type: string;
@@ -37,10 +37,20 @@ export default class FormModel {
    *
    * @returns {object} - ref and name props for component
    */
-  bindField(name: string) {
+  bindField(
+    name: string,
+  ): {
+    name: string;
+    ref: (el: any) => void;
+    error?: ValidationError;
+  } {
     this.fields[name] = {};
 
-    const props: { [key: string]: any } = {
+    const props: {
+      name: string;
+      ref: (el: any) => void;
+      error?: ValidationError;
+    } = {
       name,
       ref: (el: FormInputComponent<any> | null) => {
         if (el) {
@@ -55,8 +65,10 @@ export default class FormModel {
       },
     };
 
-    if (this.renderErrors && this.getError(name)) {
-      props.error = this.getError(name);
+    const error = this.getError(name);
+
+    if (this.renderErrors && error) {
+      props.error = error;
     }
 
     return props;

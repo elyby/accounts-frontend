@@ -1,6 +1,5 @@
 import React from 'react';
 import { AccountsState } from 'app/components/accounts';
-import { AuthState } from 'app/components/auth';
 import { User } from 'app/components/user';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,17 +10,17 @@ import {
   PanelFooter,
   PanelHeader,
 } from 'app/components/ui/Panel';
-import { getLogin } from 'app/components/auth/reducer';
 import { Form } from 'app/components/ui/form';
 import MeasureHeight from 'app/components/MeasureHeight';
-import defaultHelpLinksStyles from 'app/components/auth/helpLinks.scss';
 import panelStyles from 'app/components/ui/panel.scss';
 import icons from 'app/components/ui/icons.scss';
 import authFlow from 'app/services/authFlow';
 import { userShape } from 'app/components/user/User';
-
-import * as actions from './actions';
 import { RootState } from 'app/reducers';
+
+import { getLogin, State as AuthState } from './reducer';
+import * as actions from './actions';
+import helpLinks from './helpLinks.scss';
 
 const opacitySpringConfig = { stiffness: 300, damping: 20 };
 const transformSpringConfig = { stiffness: 500, damping: 50, precision: 0.5 };
@@ -31,7 +30,7 @@ const changeContextSpringConfig = {
   precision: 0.5,
 };
 
-const { helpLinksStyles } = defaultHelpLinksStyles;
+const { helpLinks: helpLinksStyles } = helpLinks;
 
 type PanelId = string;
 

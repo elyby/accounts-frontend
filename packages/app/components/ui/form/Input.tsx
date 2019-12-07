@@ -19,7 +19,6 @@ export default class Input extends FormInputComponent<
     disabled: boolean;
     label?: string | MessageDescriptor;
     placeholder?: string | MessageDescriptor;
-    error?: string | { type: string; payload: string };
     icon?: string;
     copy?: boolean;
   },

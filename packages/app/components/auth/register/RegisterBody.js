@@ -11,7 +11,6 @@ import messages from './Register.intl.json';
 // TODO: password and username can be validate for length and sameness
 
 export default class RegisterBody extends BaseAuthBody {
-  static displayName = 'RegisterBody';
   static panelId = 'register';
 
   autoFocusField = 'username';

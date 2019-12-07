@@ -3,8 +3,9 @@ import { MessageDescriptor } from 'react-intl';
 
 import FormComponent from './FormComponent';
 import FormError from './FormError';
+import { ValidationError } from './FormModel';
 
-type Error = string | MessageDescriptor;
+type Error = ValidationError | MessageDescriptor;
 
 export default class FormInputComponent<P, S = {}> extends FormComponent<
   P & {

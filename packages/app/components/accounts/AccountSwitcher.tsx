@@ -51,7 +51,7 @@ export class AccountSwitcher extends React.Component<Props> {
     const activeAccount = getActiveAccount({ accounts });
 
     if (!activeAccount) {
-      throw new Error('Can not find active account');
+      return null;
     }
 
     let { available } = accounts;
