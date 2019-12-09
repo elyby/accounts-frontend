@@ -2,8 +2,8 @@ import Raven from 'raven-js';
 
 import abbreviate from './abbreviate';
 
-const isTest = process.env.__TEST__; // eslint-disable-line
-const isProduction = process.env.__PROD__; // eslint-disable-line
+const isTest = process.env.NODE_ENV === 'test';
+const isProduction = process.env.NODE_ENV === 'production';
 
 class Logger {
   init({ sentryCdn }: { sentryCdn: string }) {
@@ -11,8 +11,8 @@ class Logger {
       Raven.config(sentryCdn, {
         logger: 'accounts-js-app',
         level: 'info',
-        environment: process.env.APP_ENV, // eslint-disable-line
-        release: process.env.__VERSION__, // eslint-disable-line
+        environment: process.env.APP_ENV,
+        release: process.env.__VERSION__,
         shouldSendCallback: () => !isTest,
         dataCallback: data => {
           if (!data.level) {

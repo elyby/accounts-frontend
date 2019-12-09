@@ -21,10 +21,8 @@ const localeFlags = require('app/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'dist');
 
-const isProduction = process.argv.some(arg => arg === '-p');
+const isProduction = process.env.NODE_ENV === 'production';
 const isAnalyze = process.argv.some(arg => arg === '--analyze');
-
-const isTest = process.argv.some(arg => arg.indexOf('karma') !== -1);
 
 const isDockerized = !!process.env.DOCKERIZED;
 const isCI = !!process.env.CI;
@@ -32,10 +30,6 @@ const isSilent = isCI || process.argv.some(arg => /quiet/.test(arg));
 const isCspEnabled = false;
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
-
-if (isTest) {
-  process.env.NODE_ENV = 'test';
-}
 
 const smp = new SpeedMeasurePlugin();
 
@@ -61,17 +55,6 @@ const webpackConfig = {
       'react-dom': isProduction ? 'react-dom' : '@hot-loader/react-dom',
     },
   },
-
-  externals: isTest
-    ? {
-        sinon: 'sinon',
-        // http://airbnb.io/enzyme/docs/guides/webpack.html
-        cheerio: 'window',
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': true,
-        'react/addons': true,
-      }
-    : {},
 
   devtool: 'cheap-module-source-map',
 
@@ -104,9 +87,6 @@ const webpackConfig = {
       NODE_ENV: process.env.NODE_ENV,
       APP_ENV: config.environment || process.env.NODE_ENV,
       __VERSION__: config.version || '',
-      __DEV__: !isProduction,
-      __TEST__: isTest,
-      __PROD__: isProduction,
     }),
     new HtmlWebpackPlugin({
       template: 'packages/app/index.ejs',
@@ -288,7 +268,7 @@ if (isProduction) {
   );
 }
 
-if (!isProduction && !isTest) {
+if (!isProduction) {
   webpackConfig.devServer = {
     host: 'localhost',
     port: 8080,
