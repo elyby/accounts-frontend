@@ -1,10 +1,10 @@
 import React from 'react';
 import clsx from 'clsx';
-import buttons from 'app/components/ui/buttons.scss';
 import { COLOR_GREEN } from 'app/components/ui';
 import { MessageDescriptor } from 'react-intl';
 import { Color } from 'app/components/ui';
 
+import buttons from '../buttons.scss';
 import FormComponent from './FormComponent';
 
 export default class Button extends FormComponent<

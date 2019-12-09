@@ -43,7 +43,9 @@
     "build:webpack": "webpack --colors -p --bail",
     "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
     "build:dll": "node ./packages/scripts/build-dll.js",
-    "build:serve": "http-server --proxy https://dev.account.ely.by ./dist"
+    "build:serve": "http-server --proxy https://dev.account.ely.by ./dist",
+    "sb": "start-storybook -p 9009 --ci",
+    "build-storybook": "build-storybook"
   },
   "husky": {
     "hooks": {
@@ -110,6 +112,11 @@
     "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.7.4",
     "@babel/runtime-corejs3": "^7.7.4",
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/addon-links": "^5.2.8",
+    "@storybook/addon-viewport": "^5.2.8",
+    "@storybook/addons": "^5.2.8",
+    "@storybook/react": "^5.2.8",
     "@types/jest": "^24.0.23",
     "@types/webpack-env": "^1.14.1",
     "@typescript-eslint/eslint-plugin": "^2.9.0",

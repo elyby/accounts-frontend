@@ -96,3 +96,8 @@
   background: #95a5a6;
   cursor: default;
 }
+
+.disabled {
+  cursor: default;
+  pointer-events: none;
+}

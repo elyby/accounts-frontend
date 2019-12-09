@@ -14,5 +14,5 @@
     "resolveJsonModule": false,
     "jsx": "preserve"
   },
-  "include": ["@types", "packages", "config"]
+  "include": ["@types", "packages", "config", ".storybook"]
 }
