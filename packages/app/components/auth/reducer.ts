@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { RootState } from 'app/reducers';
 
 import {
   ERROR,
@@ -27,9 +28,25 @@ export interface Client {
   description: string;
 }
 
+interface OAuthState {
+  clientId: string;
+  redirectUrl: string;
+  responseType: string;
+  description?: string;
+  scope: string;
+  prompt: string;
+  loginHint: string;
+  state: string;
+  success?: boolean;
+  code?: string;
+  displayCode?: string;
+  acceptRequired?: boolean;
+}
+
 export interface State {
   credentials: Credentials;
   error:
+    | null
     | string
     | {
         type: string;
@@ -38,25 +55,11 @@ export interface State {
   isLoading: boolean;
   isSwitcherEnabled: boolean;
   client: Client | null;
-  login: string;
-  oauth: {
-    clientId: string;
-    redirectUrl: string;
-    responseType: string;
-    description: string;
-    scope: string;
-    prompt: string;
-    loginHint: string;
-    state: string;
-    success?: boolean;
-    code?: string;
-    displayCode?: string;
-    acceptRequired?: boolean;
-  } | null;
+  oauth: OAuthState | null;
   scopes: string[];
 }
 
-export default combineReducers({
+export default combineReducers<State>({
   credentials,
   error,
   isLoading,
@@ -66,7 +69,10 @@ export default combineReducers({
   scopes,
 });
 
-function error(state = null, { type, payload = null, error = false }) {
+function error(
+  state = null,
+  { type, payload = null, error = false },
+): State['error'] {
   switch (type) {
     case ERROR:
       if (!error) {
@@ -89,7 +95,7 @@ function credentials(
     type: string;
     payload: Credentials | null;
   },
-) {
+): State['credentials'] {
   if (type === SET_CREDENTIALS) {
     if (payload && typeof payload === 'object') {
       return {
@@ -103,7 +109,10 @@ function credentials(
   return state;
 }
 
-function isSwitcherEnabled(state = true, { type, payload = false }) {
+function isSwitcherEnabled(
+  state = true,
+  { type, payload = false },
+): State['isSwitcherEnabled'] {
   switch (type) {
     case SET_SWITCHER:
       if (typeof payload !== 'boolean') {
@@ -117,7 +126,10 @@ function isSwitcherEnabled(state = true, { type, payload = false }) {
   }
 }
 
-function isLoading(state = false, { type, payload = null }) {
+function isLoading(
+  state = false,
+  { type, payload = null },
+): State['isLoading'] {
   switch (type) {
     case SET_LOADING_STATE:
       return !!payload;
@@ -127,7 +139,7 @@ function isLoading(state = false, { type, payload = null }) {
   }
 }
 
-function client(state = null, { type, payload }) {
+function client(state = null, { type, payload }): State['client'] {
   switch (type) {
     case SET_CLIENT:
       return {
@@ -141,7 +153,10 @@ function client(state = null, { type, payload }) {
   }
 }
 
-function oauth(state: State | null = null, { type, payload }) {
+function oauth(
+  state: State['oauth'] = null,
+  { type, payload },
+): State['oauth'] {
   switch (type) {
     case SET_OAUTH:
       return {
@@ -156,7 +171,7 @@ function oauth(state: State | null = null, { type, payload }) {
 
     case SET_OAUTH_RESULT:
       return {
-        ...state,
+        ...(state as OAuthState),
         success: payload.success,
         code: payload.code,
         displayCode: payload.displayCode,
@@ -164,7 +179,7 @@ function oauth(state: State | null = null, { type, payload }) {
 
     case REQUIRE_PERMISSIONS_ACCEPT:
       return {
-        ...state,
+        ...(state as OAuthState),
         acceptRequired: true,
       };
 
@@ -173,7 +188,7 @@ function oauth(state: State | null = null, { type, payload }) {
   }
 }
 
-function scopes(state = [], { type, payload = [] }) {
+function scopes(state = [], { type, payload = [] }): State['scopes'] {
   switch (type) {
     case SET_SCOPES:
       return payload;
@@ -183,10 +198,10 @@ function scopes(state = [], { type, payload = [] }) {
   }
 }
 
-export function getLogin(state: { [key: string]: any }): string | null {
+export function getLogin(state: RootState): string | null {
   return state.auth.credentials.login || null;
 }
 
-export function getCredentials(state: { [key: string]: any }): Credentials {
+export function getCredentials(state: RootState): Credentials {
   return state.auth.credentials;
 }

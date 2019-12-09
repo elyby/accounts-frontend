@@ -6,26 +6,25 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 
-import reducers from 'app/reducers';
+import reducers, { Store } from 'app/reducers';
 
-export default function storeFactory() {
+export default function storeFactory(): Store {
   const middlewares = applyMiddleware(thunk);
   const persistStateEnhancer = persistState(['accounts', 'user'], {
     key: 'redux-storage',
   });
 
-  /* global process: false */
   let enhancer;
 
   if (process.env.NODE_ENV === 'production') {
     enhancer = compose(middlewares, persistStateEnhancer);
   } else {
     const composeEnhancers =
-      window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+      (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
     enhancer = composeEnhancers(middlewares, persistStateEnhancer);
   }
 
-  const store = createStore(reducers, {}, enhancer);
+  const store = createStore(reducers, {}, enhancer) as Store;
 
   // Hot reload reducers
   if (module.hot && typeof module.hot.accept === 'function') {

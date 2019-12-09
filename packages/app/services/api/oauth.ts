@@ -33,7 +33,7 @@ type OauthRequestData = {
   client_id: string;
   redirect_uri: string;
   response_type: string;
-  description: string;
+  description?: string;
   scope: string;
   prompt: string;
   login_hint?: string;
@@ -44,7 +44,7 @@ export type OauthData = {
   clientId: string;
   redirectUrl: string;
   responseType: string;
-  description: string;
+  description?: string;
   scope: string;
   prompt: string; // comma separated list of 'none' | 'consent' | 'select_account';
   loginHint?: string;

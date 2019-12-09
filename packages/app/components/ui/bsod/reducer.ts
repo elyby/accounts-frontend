@@ -1,6 +1,8 @@
 import { BSOD } from './actions';
 
-export default function(state = false, { type }) {
+export type State = boolean;
+
+export default function(state: State = false, { type }): State {
   if (type === BSOD) {
     return true;
   }

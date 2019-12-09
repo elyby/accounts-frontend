@@ -7,13 +7,14 @@ import accounts, {
 } from 'app/components/accounts/reducer';
 import i18n, { State as I18nState } from 'app/components/i18n/reducer';
 import popup, { State as PopupState } from 'app/components/ui/popup/reducer';
-import bsod from 'app/components/ui/bsod/reducer';
+import bsod, { State as BsodState } from 'app/components/ui/bsod/reducer';
 import apps, { Apps } from 'app/components/dev/apps/reducer';
 import { ThunkDispatch, ThunkAction as ReduxThunkAction } from 'redux-thunk';
 import { Store as ReduxStore } from 'redux';
 
 export interface RootState {
   auth: AuthState;
+  bsod: BsodState;
   accounts: AccountsState;
   user: User;
   popup: PopupState;
@@ -41,7 +42,7 @@ export type Store = ReduxStore<RootState> & {
   dispatch: Dispatch;
 };
 
-export default combineReducers({
+export default combineReducers<RootState>({
   bsod,
   auth,
   user,

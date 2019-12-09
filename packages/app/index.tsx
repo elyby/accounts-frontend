@@ -14,7 +14,7 @@ import history, { browserHistory } from 'app/services/history';
 import i18n from 'app/services/i18n';
 import { loadScript, debounce } from 'app/functions';
 
-import App from './App';
+import App from './shell';
 
 const win: { [key: string]: any } = window as any;
 
@@ -35,7 +35,7 @@ Promise.all([
   i18n.ensureIntl(), // ensure, that intl is polyfilled before any rendering
 ]).then(() => {
   ReactDOM.render(
-    <App store={store} browserHistory={browserHistory} />,
+    <App store={store} history={browserHistory} />,
     document.getElementById('app'),
   );
 
