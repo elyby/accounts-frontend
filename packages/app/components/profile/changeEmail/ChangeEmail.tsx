@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import Helmet from 'react-helmet';
 import { SlideMotion } from 'app/components/ui/motion';
@@ -21,35 +20,30 @@ import messages from './ChangeEmail.intl.json';
 
 const STEPS_TOTAL = 3;
 
-export default class ChangeEmail extends Component {
-  static propTypes = {
-    onChangeStep: PropTypes.func,
-    lang: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    stepForms: PropTypes.arrayOf(
-      (propValue, key, componentName, location, propFullName) => {
-        if (propValue.length !== 3) {
-          return new Error(
-            `\`${propFullName}\` must be an array of 3 FormModel instances. Validation failed.`,
-          );
-        }
+export type ChangeEmailStep = 0 | 1 | 2;
+type HeightProp = 'step0Height' | 'step1Height' | 'step2Height';
+type HeightDict = {
+  [K in HeightProp]?: number;
+};
 
-        if (!(propValue[key] instanceof FormModel)) {
-          return new Error(
-            `Invalid prop \`${propFullName}\` supplied to \
-                    \`${componentName}\`. Validation failed.`,
-          );
-        }
+interface Props {
+  onChangeStep: (step: ChangeEmailStep) => void;
+  lang: string;
+  email: string;
+  stepForms: FormModel[];
+  onSubmit: (step: ChangeEmailStep, form: FormModel) => Promise<void>;
+  step: ChangeEmailStep;
+  code?: string;
+}
 
-        return null;
-      },
-    ),
-    onSubmit: PropTypes.func.isRequired,
-    step: PropTypes.oneOf([0, 1, 2]),
-    code: PropTypes.string,
-  };
+interface State extends HeightDict {
+  newEmail: string | null;
+  activeStep: ChangeEmailStep;
+  code: string;
+}
 
-  static get defaultProps() {
+export default class ChangeEmail extends React.Component<Props, State> {
+  static get defaultProps(): Partial<Props> {
     return {
       stepForms: [new FormModel(), new FormModel(), new FormModel()],
       onChangeStep() {},
@@ -57,19 +51,18 @@ export default class ChangeEmail extends Component {
     };
   }
 
-  state = {
+  state: State = {
+    newEmail: null,
     activeStep: this.props.step,
     code: this.props.code || '',
   };
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
+  static getDerivedStateFromProps(props: Props, state: State) {
+    return {
       activeStep:
-        typeof nextProps.step === 'number'
-          ? nextProps.step
-          : this.state.activeStep,
-      code: nextProps.code || '',
-    });
+        typeof props.step === 'number' ? props.step : state.activeStep,
+      code: props.code || '',
+    };
   }
 
   render() {
@@ -272,8 +265,9 @@ export default class ChangeEmail extends Component {
     );
   }
 
-  onStepMeasure(step) {
-    return height =>
+  onStepMeasure(step: ChangeEmailStep) {
+    return (height: number) =>
+      // @ts-ignore
       this.setState({
         [`step${step}Height`]: height,
       });
@@ -290,11 +284,11 @@ export default class ChangeEmail extends Component {
 
     if (nextStep < STEPS_TOTAL) {
       this.setState({
-        activeStep: nextStep,
+        activeStep: nextStep as ChangeEmailStep,
         newEmail,
       });
 
-      this.props.onChangeStep(nextStep);
+      this.props.onChangeStep(nextStep as ChangeEmailStep);
     }
   }
 

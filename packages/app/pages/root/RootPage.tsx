@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { resetAuth } from 'app/components/auth/actions';
 import { withRouter } from 'react-router-dom';
@@ -25,7 +25,7 @@ import { RootState } from 'app/reducers';
 import styles from './root.scss';
 import messages from './RootPage.intl.json';
 
-class RootPage extends Component<{
+class RootPage extends React.PureComponent<{
   account: Account | null;
   user: User;
   isPopupActive: boolean;
@@ -88,8 +88,13 @@ class RootPage extends Component<{
               <Route path="/404" component={PageNotFound} />
               <Route path="/rules" component={RulesPage} />
               <Route path="/dev" component={DevPage} />
-              <AuthFlowRoute exact path="/" component={ProfilePage} />
-              <AuthFlowRoute path="/" component={AuthPage} />
+
+              {user.isGuest ? (
+                <AuthFlowRoute path="/" component={AuthPage} />
+              ) : (
+                <AuthFlowRoute exact path="/" component={ProfilePage} />
+              )}
+
               <Route component={PageNotFound} />
             </Switch>
           </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MultiFactorAuth, {
@@ -22,26 +22,24 @@ class MultiFactorAuthPage extends React.Component<Props> {
     goToProfile: PropTypes.func.isRequired,
   };
 
-  componentWillMount() {
-    const { step } = this.props.match.params;
-    const { user } = this.props;
+  render() {
+    const {
+      user,
+      match: {
+        params: { step },
+      },
+    } = this.props;
 
     if (step) {
       if (!/^[1-3]$/.test(step)) {
         // wrong param value
-        this.props.history.push('/404');
-
-        return;
+        return <Redirect to="/404" />;
       }
 
       if (user.isOtpEnabled) {
-        this.props.history.push('/mfa');
+        return <Redirect to="/mfa" />;
       }
     }
-  }
-
-  render() {
-    const { user } = this.props;
 
     return (
       <MultiFactorAuth
@@ -58,7 +56,7 @@ class MultiFactorAuthPage extends React.Component<Props> {
     const step = Number(this.props.match.params.step) - 1;
 
     if (step !== 0 && step !== 1 && step !== 2) {
-      return 1;
+      return 0;
     }
 
     return step;

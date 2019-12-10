@@ -20,7 +20,7 @@ export default class ImageLoader extends React.Component<
     isLoading: true,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.preloadImage();
   }
 

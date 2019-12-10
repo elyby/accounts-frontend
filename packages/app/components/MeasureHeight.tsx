@@ -23,6 +23,8 @@ import { omit, debounce } from 'app/functions';
 
 type ChildState = any;
 
+// TODO: this may be rewritten in more efficient way using resize/mutation observer
+
 export default class MeasureHeight extends React.PureComponent<
   {
     shouldMeasure: (prevState: ChildState, newState: ChildState) => boolean;

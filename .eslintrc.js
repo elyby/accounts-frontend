@@ -140,7 +140,7 @@ module.exports = {
     'react/jsx-uses-vars': 'warn',
     'react/jsx-no-comment-textnodes': 'warn',
     'react/jsx-wrap-multilines': 'warn',
-    'react/no-deprecated': 'warn',
+    'react/no-deprecated': 'error',
     'react/no-did-mount-set-state': 'warn',
     'react/no-did-update-set-state': 'warn',
     'react/no-direct-mutation-state': 'warn',

@@ -32,7 +32,7 @@ interface State {
   qrCodeSrc: string;
 }
 
-export default class MfaEnable extends React.Component<Props, State> {
+export default class MfaEnable extends React.PureComponent<Props, State> {
   static defaultProps = {
     confirmationForm: new FormModel(),
     step: 0,
@@ -51,12 +51,22 @@ export default class MfaEnable extends React.Component<Props, State> {
 
   confirmationFormEl: Form | null;
 
-  componentWillMount() {
+  componentDidMount() {
     this.syncState(this.props);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.syncState(nextProps);
+  static getDerivedStateFromProps(props: Props, state: State) {
+    if (typeof props.step === 'number' && props.step !== state.activeStep) {
+      return {
+        activeStep: props.step,
+      };
+    }
+
+    return null;
+  }
+
+  componentDidUpdate() {
+    this.syncState(this.props);
   }
 
   render() {
@@ -108,23 +118,23 @@ export default class MfaEnable extends React.Component<Props, State> {
 
     return (
       <SlideMotion activeStep={activeStep}>
-        {[
-          <Instructions key="step1" />,
-          <KeyForm key="step2" secret={secret} qrCodeSrc={qrCodeSrc} />,
-          <Confirmation
-            key="step3"
-            form={this.props.confirmationForm}
-            formRef={(el: Form) => (this.confirmationFormEl = el)}
-            onSubmit={this.onTotpSubmit}
-            onInvalid={() => this.forceUpdate()}
-          />,
-        ]}
+        <Instructions key="step1" />
+        <KeyForm key="step2" secret={secret} qrCodeSrc={qrCodeSrc} />
+        <Confirmation
+          key="step3"
+          form={this.props.confirmationForm}
+          formRef={(el: Form) => (this.confirmationFormEl = el)}
+          onSubmit={this.onTotpSubmit}
+          onInvalid={() => this.forceUpdate()}
+        />
       </SlideMotion>
     );
   }
 
   syncState(props: Props) {
-    if (props.step === 1) {
+    const { isLoading, qrCodeSrc } = this.state;
+
+    if (props.step === 1 && !isLoading && !qrCodeSrc) {
       this.setState({ isLoading: true });
 
       getSecret(this.context.userId).then(resp => {
@@ -135,11 +145,6 @@ export default class MfaEnable extends React.Component<Props, State> {
         });
       });
     }
-
-    this.setState({
-      activeStep:
-        typeof props.step === 'number' ? props.step : this.state.activeStep,
-    });
   }
 
   nextStep() {

@@ -14,7 +14,7 @@ export class PopupStack extends React.Component<{
 }> {
   unlistenTransition: () => void;
 
-  componentWillMount() {
+  componentDidMount() {
     document.addEventListener('keyup', this.onKeyPress);
     this.unlistenTransition = browserHistory.listen(this.onRouteLeave);
   }

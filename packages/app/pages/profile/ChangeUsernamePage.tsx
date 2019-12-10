@@ -7,8 +7,6 @@ import { changeUsername } from 'app/services/api/accounts';
 import { FormModel } from 'app/components/ui/form';
 import ChangeUsername from 'app/components/profile/changeUsername/ChangeUsername';
 
-type OwnProps = {};
-
 type Props = {
   username: string;
   updateUsername: (username: string) => void;
@@ -23,11 +21,7 @@ class ChangeUsernamePage extends React.Component<Props> {
 
   form = new FormModel();
 
-  actualUsername: string;
-
-  componentWillMount() {
-    this.actualUsername = this.props.username;
-  }
+  actualUsername: string = this.props.username;
 
   componentWillUnmount() {
     this.props.updateUsername(this.actualUsername);

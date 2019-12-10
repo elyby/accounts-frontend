@@ -185,17 +185,18 @@ class PanelTransition extends React.Component<Props, State> {
     };
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(prevProps: Props) {
     const nextPanel: PanelId =
-      nextProps.Body && (nextProps.Body.type as any).panelId;
-    const prevPanel: PanelId =
       this.props.Body && (this.props.Body.type as any).panelId;
+    const prevPanel: PanelId =
+      prevProps.Body && (prevProps.Body.type as any).panelId;
 
     if (nextPanel !== prevPanel) {
       const direction = this.getDirection(nextPanel, prevPanel);
       const forceHeight = direction === 'Y' && nextPanel !== prevPanel ? 1 : 0;
 
       this.props.clearErrors();
+
       this.setState({
         direction,
         panelId: nextPanel,

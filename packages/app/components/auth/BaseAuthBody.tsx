@@ -31,6 +31,7 @@ export default class BaseAuthBody extends React.Component<
 
   autoFocusField: string | null = '';
 
+  // eslint-disable-next-line react/no-deprecated
   componentWillReceiveProps(nextProps, nextContext) {
     if (nextContext.auth.error !== this.context.auth.error) {
       this.form.setErrors(nextContext.auth.error || {});

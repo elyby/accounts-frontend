@@ -14,6 +14,7 @@ interface Props {
   children: React.ReactNode;
 }
 interface State {
+  id: string; // just to track value for derived updates
   isTouched: boolean;
   isLoading: boolean;
 }
@@ -27,7 +28,8 @@ export default class Form extends React.Component<Props, State> {
     onInvalid() {},
   };
 
-  state = {
+  state: State = {
+    id: this.props.id,
     isTouched: false,
     isLoading: this.props.isLoading || false,
   };
@@ -44,27 +46,36 @@ export default class Form extends React.Component<Props, State> {
     this.mounted = true;
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.id !== this.props.id) {
-      this.setState({
-        isTouched: false,
-      });
-    }
+  static getDerivedStateFromProps(props: Props, state: State) {
+    const patch: Partial<State> = {};
 
     if (
-      typeof nextProps.isLoading !== 'undefined' &&
-      nextProps.isLoading !== this.state.isLoading
+      typeof props.isLoading !== 'undefined' &&
+      props.isLoading !== state.isLoading
     ) {
-      this.setState({
-        isLoading: nextProps.isLoading,
-      });
+      patch.isLoading = props.isLoading;
     }
 
-    const nextForm = nextProps.form;
+    if (props.id !== state.id) {
+      patch.id = props.id;
+      patch.isTouched = true;
+    }
 
-    if (nextForm && this.props.form && nextForm !== this.props.form) {
-      this.props.form.removeLoadingListener(this.onLoading);
-      nextForm.addLoadingListener(this.onLoading);
+    return patch;
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const nextForm = this.props.form;
+    const prevForm = prevProps.form;
+
+    if (nextForm !== prevForm) {
+      if (prevForm) {
+        prevForm.removeLoadingListener(this.onLoading);
+      }
+
+      if (nextForm) {
+        nextForm.addLoadingListener(this.onLoading);
+      }
     }
   }
 

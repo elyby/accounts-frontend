@@ -15,11 +15,11 @@ export default class FormInputComponent<P, S = {}> extends FormComponent<
     error?: Error;
   }
 > {
-  componentWillReceiveProps() {
+  componentDidUpdate() {
     if (this.state && this.state.error) {
-      Reflect.deleteProperty(this.state, 'error');
-
-      this.setState(this.state);
+      this.setState({
+        error: undefined,
+      });
     }
   }
 

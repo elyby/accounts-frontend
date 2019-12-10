@@ -4,29 +4,37 @@ import MeasureHeight from 'app/components/MeasureHeight';
 
 import styles from './slide-motion.scss';
 
-interface State {
-  [stepHeight: string]: number;
-  version: number;
+interface Props {
+  activeStep: number;
+  children: React.ReactNode;
 }
 
-class SlideMotion extends React.Component<
-  {
-    activeStep: number;
-    children: React.ReactNode;
-  },
-  State
-> {
+interface State {
+  // [stepHeight: string]: number;
+  version: string;
+  prevChildren: React.ReactNode | undefined;
+}
+
+class SlideMotion extends React.PureComponent<Props, State> {
   state: State = {
-    version: 0,
+    prevChildren: undefined, // to track version updates
+    version: `${this.props.activeStep}.0`,
   };
 
   isHeightMeasured: boolean;
 
-  componentWillReceiveProps() {
+  static getDerivedStateFromProps(props: Props, state: State) {
+    let [, version] = state.version.split('.').map(Number);
+
+    if (props.children !== state.prevChildren) {
+      version++;
+    }
+
     // mark this view as dirty to re-measure height
-    this.setState({
-      version: this.state.version + 1,
-    });
+    return {
+      prevChildren: props.children,
+      version: `${props.activeStep}.${version}`,
+    };
   }
 
   render() {
@@ -90,6 +98,7 @@ class SlideMotion extends React.Component<
 
   onStepMeasure(step: number) {
     return (height: number) =>
+      // @ts-ignore
       this.setState({
         [`step${step}Height`]: height,
       });

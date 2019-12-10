@@ -4,37 +4,38 @@ import MeasureHeight from 'app/components/MeasureHeight';
 
 import styles from './collapse.scss';
 
-type Props = {
+interface Props {
   isOpened?: boolean;
   children: React.ReactNode;
   onRest: () => void;
-};
+}
 
-export default class Collapse extends Component<
-  Props,
-  {
-    height: number;
-    wasInitialized: boolean;
-  }
-> {
+interface State {
+  isOpened?: boolean; // just to track value for derived updates
+  height: number;
+  wasInitialized: boolean;
+}
+
+export default class Collapse extends Component<Props, State> {
   state = {
+    isOpened: this.props.isOpened,
     height: 0,
     wasInitialized: false,
   };
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     onRest: () => {},
   };
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (
-      this.props.isOpened !== nextProps.isOpened &&
-      !this.state.wasInitialized
-    ) {
-      this.setState({
+  static getDerivedStateFromProps(props: Props, state: State) {
+    if (props.isOpened !== state.isOpened && !state.wasInitialized) {
+      return {
+        isOpened: props.isOpened,
         wasInitialized: true,
-      });
+      };
     }
+
+    return null;
   }
 
   render() {

@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Redirect } from 'react-router-dom';
 import FormModel from 'app/components/ui/form/FormModel';
-import ChangeEmail from 'app/components/profile/changeEmail/ChangeEmail';
+import ChangeEmail, {
+  ChangeEmailStep,
+} from 'app/components/profile/changeEmail/ChangeEmail';
 import {
   requestEmailChange,
   setNewEmail,
@@ -28,24 +30,20 @@ class ChangeEmailPage extends React.Component<Props> {
     goToProfile: PropTypes.func.isRequired,
   };
 
-  componentWillMount() {
-    const { step } = this.props.match.params;
+  render() {
+    const { step = 'step1', code } = this.props.match.params;
 
     if (step && !/^step[123]$/.test(step)) {
       // wrong param value
-      this.props.history.push('/404');
+      return <Redirect to="/404" />;
     }
-  }
-
-  render() {
-    const { step = 'step1', code } = this.props.match.params;
 
     return (
       <ChangeEmail
         onSubmit={this.onSubmit}
         email={this.props.email}
         lang={this.props.lang}
-        step={Number(step.slice(-1)) - 1}
+        step={(Number(step.slice(-1)) - 1) as ChangeEmailStep}
         onChangeStep={this.onChangeStep}
         code={code}
       />
@@ -56,7 +54,7 @@ class ChangeEmailPage extends React.Component<Props> {
     this.props.history.push(`/profile/change-email/step${++step}`);
   };
 
-  onSubmit = (step: number, form: FormModel) => {
+  onSubmit = (step: number, form: FormModel): Promise<void> => {
     return this.context
       .onSubmit({
         form,
