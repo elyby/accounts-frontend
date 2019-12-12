@@ -30,7 +30,7 @@ describe('OAuthState', () => {
         redirect_uri: 'redirect_uri',
         response_type: 'response_type',
         description: 'description',
-        scope: 'scope',
+        scope: 'scope1 scope2',
         prompt: 'none',
         login_hint: '1',
         state: 'state',
@@ -64,7 +64,7 @@ describe('OAuthState', () => {
       const query = {
         redirect_uri: 'redirect_uri',
         response_type: 'response_type',
-        scope: 'scope',
+        scope: 'scope1 scope2',
         state: 'state',
       };
 
@@ -94,7 +94,7 @@ describe('OAuthState', () => {
         client_id: 'client_id',
         redirect_uri: 'redirect_uri',
         response_type: 'response_type',
-        scope: 'scope',
+        scope: 'scope1 scope2',
         state: 'state',
       };
 
@@ -111,6 +111,34 @@ describe('OAuthState', () => {
           redirectUrl: query.redirect_uri,
           responseType: query.response_type,
           scope: query.scope,
+          state: query.state,
+        }),
+      ).returns({ then() {} });
+
+      state.enter(context);
+    });
+
+    it('should replace commas with spaces in scope param', () => {
+      const query = {
+        client_id: 'client_id',
+        redirect_uri: 'redirect_uri',
+        response_type: 'response_type',
+        scope: 'scope1,scope2',
+        state: 'state',
+      };
+
+      context.getRequest.returns({
+        query: new URLSearchParams(query),
+      });
+
+      expectRun(
+        mock,
+        'oAuthValidate',
+        sinon.match({
+          clientId: query.client_id,
+          redirectUrl: query.redirect_uri,
+          responseType: query.response_type,
+          scope: 'scope1 scope2',
           state: query.state,
         }),
       ).returns({ then() {} });
