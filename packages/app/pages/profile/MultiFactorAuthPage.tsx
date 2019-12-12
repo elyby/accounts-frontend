@@ -1,6 +1,5 @@
 import React from 'react';
 import { RouteComponentProps, Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MultiFactorAuth, {
   MfaStep,
@@ -8,6 +7,7 @@ import MultiFactorAuth, {
 import { FormModel } from 'app/components/ui/form';
 import { User } from 'app/components/user';
 import { RootState } from 'app/reducers';
+import Context from 'app/components/profile/Context';
 
 interface Props
   extends RouteComponentProps<{
@@ -17,10 +17,8 @@ interface Props
 }
 
 class MultiFactorAuthPage extends React.Component<Props> {
-  static contextTypes = {
-    onSubmit: PropTypes.func.isRequired,
-    goToProfile: PropTypes.func.isRequired,
-  };
+  static contextType = Context;
+  /* TODO: use declare */ context: React.ContextType<typeof Context>;
 
   render() {
     const {

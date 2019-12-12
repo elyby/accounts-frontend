@@ -1,9 +1,14 @@
 /* eslint-env node */
 module.exports = {
   presets: [
+    [
+      '@babel/preset-typescript',
+      {
+        allowDeclareFields: true,
+      },
+    ],
     '@babel/preset-react',
-    '@babel/preset-typescript',
-    ['@babel/preset-env'],
+    '@babel/preset-env',
   ],
   plugins: [
     '@babel/plugin-syntax-dynamic-import',

@@ -1,9 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import logger from 'app/services/logger';
 import { disable as disableMFA } from 'app/services/api/mfa';
 import { FormModel } from 'app/components/ui/form';
 
+import Context from '../Context';
 import MfaDisableForm from './disableForm/MfaDisableForm';
 import MfaStatus from './status/MfaStatus';
 
@@ -16,9 +16,8 @@ export default class MfaDisable extends React.Component<
     showForm: boolean;
   }
 > {
-  static contextTypes = {
-    userId: PropTypes.number.isRequired,
-  };
+  static contextType = Context;
+  /* TODO: use declare */ context: React.ContextType<typeof Context>;
 
   state = {
     showForm: false,

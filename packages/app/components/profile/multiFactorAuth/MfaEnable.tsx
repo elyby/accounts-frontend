@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button, FormModel } from 'app/components/ui/form';
 import styles from 'app/components/profile/profileForm.scss';
 import Stepper from 'app/components/ui/stepper';
@@ -9,6 +8,7 @@ import logger from 'app/services/logger';
 import { getSecret, enable as enableMFA } from 'app/services/api/mfa';
 import { Form } from 'app/components/ui/form';
 
+import Context from '../Context';
 import Instructions from './instructions';
 import KeyForm from './keyForm';
 import Confirmation from './confirmation';
@@ -33,13 +33,12 @@ interface State {
 }
 
 export default class MfaEnable extends React.PureComponent<Props, State> {
+  static contextType = Context;
+  /* TODO: use declare */ context: React.ContextType<typeof Context>;
+
   static defaultProps = {
     confirmationForm: new FormModel(),
     step: 0,
-  };
-
-  static contextTypes = {
-    userId: PropTypes.number.isRequired,
   };
 
   state = {

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Redirect } from 'react-router-dom';
 import FormModel from 'app/components/ui/form/FormModel';
@@ -12,6 +11,7 @@ import {
   confirmNewEmail,
 } from 'app/services/api/accounts';
 import { RootState } from 'app/reducers';
+import Context from 'app/components/profile/Context';
 
 interface RouteParams {
   step: 'step1' | 'step2' | 'step3';
@@ -24,11 +24,8 @@ interface Props extends RouteComponentProps<RouteParams> {
 }
 
 class ChangeEmailPage extends React.Component<Props> {
-  static contextTypes = {
-    userId: PropTypes.number.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    goToProfile: PropTypes.func.isRequired,
-  };
+  static contextType = Context;
+  /* TODO: use declare */ context: React.ContextType<typeof Context>;
 
   render() {
     const { step = 'step1', code } = this.props.match.params;

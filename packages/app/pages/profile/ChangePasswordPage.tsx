@@ -1,24 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { changePassword } from 'app/services/api/accounts';
 import { FormModel } from 'app/components/ui/form';
 import ChangePassword from 'app/components/profile/changePassword/ChangePassword';
 import { User } from 'app/components/user';
 import { updateUser } from 'app/components/user/actions';
+import Context from 'app/components/profile/Context';
 
-type OwnProps = {};
-
-type Props = OwnProps & {
+interface Props {
   updateUser: (fields: Partial<User>) => void;
-};
+}
 
 class ChangePasswordPage extends React.Component<Props> {
-  static contextTypes = {
-    userId: PropTypes.number.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    goToProfile: PropTypes.func.isRequired,
-  };
+  static contextType = Context;
+  /* TODO: use declare */ context: React.ContextType<typeof Context>;
 
   form = new FormModel();
 

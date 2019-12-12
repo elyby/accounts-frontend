@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchUserData } from 'app/components/user/actions';
@@ -15,6 +14,7 @@ import ChangeEmailPage from 'app/pages/profile/ChangeEmailPage';
 import MultiFactorAuthPage from 'app/pages/profile/MultiFactorAuthPage';
 import { FormModel } from 'app/components/ui/form';
 import { RootState } from 'app/reducers';
+import { Provider } from 'app/components/profile/Context';
 
 import styles from './profile.scss';
 
@@ -23,61 +23,61 @@ interface Props {
   onSubmit: (options: {
     form: FormModel;
     sendData: () => Promise<any>;
-  }) => void;
+  }) => Promise<void>;
   fetchUserData: () => Promise<any>;
 }
 
 class ProfilePage extends React.Component<Props> {
-  static childContextTypes = {
-    userId: PropTypes.number,
-    onSubmit: PropTypes.func,
-    goToProfile: PropTypes.func,
-  };
-
-  getChildContext() {
-    return {
-      userId: this.props.userId,
-      onSubmit: this.props.onSubmit,
-      goToProfile: () => this.props.fetchUserData().then(this.goToProfile),
-    };
-  }
-
   render() {
+    const { userId, onSubmit } = this.props;
+
     return (
       <div className={styles.container}>
-        <Switch>
-          <Route
-            path="/profile/mfa/step:step([1-3])"
-            component={MultiFactorAuthPage}
-          />
-          <Route path="/profile/mfa" exact component={MultiFactorAuthPage} />
-          <Route
-            path="/profile/change-password"
-            exact
-            component={ChangePasswordPage}
-          />
-          <Route
-            path="/profile/change-username"
-            exact
-            component={ChangeUsernamePage}
-          />
-          <Route
-            path="/profile/change-email/:step?/:code?"
-            component={ChangeEmailPage}
-          />
-          <Route path="/profile" exact component={Profile} />
-          <Route path="/" exact component={Profile} />
-          <Redirect to="/404" />
-        </Switch>
+        <Provider
+          value={{
+            userId,
+            onSubmit,
+            goToProfile: this.goToProfile,
+          }}
+        >
+          <Switch>
+            <Route
+              path="/profile/mfa/step:step([1-3])"
+              component={MultiFactorAuthPage}
+            />
+            <Route path="/profile/mfa" exact component={MultiFactorAuthPage} />
+            <Route
+              path="/profile/change-password"
+              exact
+              component={ChangePasswordPage}
+            />
+            <Route
+              path="/profile/change-username"
+              exact
+              component={ChangeUsernamePage}
+            />
+            <Route
+              path="/profile/change-email/:step?/:code?"
+              component={ChangeEmailPage}
+            />
+            <Route path="/profile" exact component={Profile} />
+            <Route path="/" exact component={Profile} />
+            <Redirect to="/404" />
+          </Switch>
 
-        <div className={styles.footer}>
-          <FooterMenu />
-        </div>
+          <div className={styles.footer}>
+            <FooterMenu />
+          </div>
+        </Provider>
       </div>
     );
   }
 
-  goToProfile = () => browserHistory.push('/');
+  goToProfile = async () => {
+    await this.props.fetchUserData();
+
+    browserHistory.push('/');
+  };
 }
 
 export default connect(
