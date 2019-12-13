@@ -45,13 +45,14 @@ interface OAuthState {
 
 export interface State {
   credentials: Credentials;
-  error:
-    | null
-    | string
-    | {
-        type: string;
-        payload: { [key: string]: any };
-      };
+  error: null | {
+    [key: string]:
+      | string
+      | {
+          type: string;
+          payload: { [key: string]: any };
+        };
+  };
   isLoading: boolean;
   isSwitcherEnabled: boolean;
   client: Client | null;
@@ -198,7 +199,9 @@ function scopes(state = [], { type, payload = [] }): State['scopes'] {
   }
 }
 
-export function getLogin(state: RootState): string | null {
+export function getLogin(
+  state: RootState | Pick<RootState, 'auth'>,
+): string | null {
   return state.auth.credentials.login || null;
 }
 

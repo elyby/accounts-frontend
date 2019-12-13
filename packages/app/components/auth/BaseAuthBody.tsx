@@ -1,41 +1,35 @@
-/**
- * Helps with form fields binding, form serialization and errors rendering
- */
-import PropTypes from 'prop-types';
 import React from 'react';
 import AuthError from 'app/components/auth/authError/AuthError';
-import { userShape } from 'app/components/user/User';
 import { FormModel } from 'app/components/ui/form';
 import { RouteComponentProps } from 'react-router-dom';
 
-export default class BaseAuthBody extends React.Component<
+import Context, { AuthContext } from './Context';
+
+/**
+ * Helps with form fields binding, form serialization and errors rendering
+ */
+
+class BaseAuthBody extends React.Component<
   // TODO: this may be converted to generic type RouteComponentProps<T>
   RouteComponentProps<{ [key: string]: any }>
 > {
-  static contextTypes = {
-    clearErrors: PropTypes.func.isRequired,
-    resolve: PropTypes.func.isRequired,
-    requestRedraw: PropTypes.func.isRequired,
-    auth: PropTypes.shape({
-      error: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.shape({
-          type: PropTypes.string,
-          payload: PropTypes.object,
-        }),
-      ]),
-      scopes: PropTypes.array,
-    }).isRequired,
-    user: userShape,
-  };
+  static contextType = Context;
+  /* TODO: use declare */ context: React.ContextType<typeof Context>;
+  prevErrors: AuthContext['auth']['error'];
 
   autoFocusField: string | null = '';
 
-  // eslint-disable-next-line react/no-deprecated
-  componentWillReceiveProps(nextProps, nextContext) {
-    if (nextContext.auth.error !== this.context.auth.error) {
-      this.form.setErrors(nextContext.auth.error || {});
+  componentDidMount() {
+    this.prevErrors = this.context.auth.error;
+  }
+
+  componentDidUpdate() {
+    if (this.context.auth.error !== this.prevErrors) {
+      this.form.setErrors(this.context.auth.error || {});
+      this.context.requestRedraw();
     }
+
+    this.prevErrors = this.context.auth.error;
   }
 
   renderErrors() {
@@ -48,7 +42,7 @@ export default class BaseAuthBody extends React.Component<
     this.context.resolve(this.serialize());
   }
 
-  onClearErrors = this.context.clearErrors;
+  onClearErrors = () => this.context.clearErrors();
 
   form = new FormModel({
     renderErrors: false,
@@ -65,6 +59,10 @@ export default class BaseAuthBody extends React.Component<
   autoFocus() {
     const fieldId = this.autoFocusField;
 
-    fieldId && this.form.focus(fieldId);
+    if (fieldId && this.form.hasField(fieldId)) {
+      this.form.focus(fieldId);
+    }
   }
 }
+
+export default BaseAuthBody;

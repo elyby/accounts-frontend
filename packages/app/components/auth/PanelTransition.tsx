@@ -1,7 +1,6 @@
 import React from 'react';
 import { AccountsState } from 'app/components/accounts';
 import { User } from 'app/components/user';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TransitionMotion, spring } from 'react-motion';
 import {
@@ -15,9 +14,9 @@ import MeasureHeight from 'app/components/MeasureHeight';
 import panelStyles from 'app/components/ui/panel.scss';
 import icons from 'app/components/ui/icons.scss';
 import authFlow from 'app/services/authFlow';
-import { userShape } from 'app/components/user/User';
 import { RootState } from 'app/reducers';
 
+import { Provider as AuthContextProvider } from './Context';
 import { getLogin, State as AuthState } from './reducer';
 import * as actions from './actions';
 import helpLinks from './helpLinks.scss';
@@ -111,10 +110,11 @@ interface Props extends OwnProps {
   auth: AuthState;
   user: User;
   accounts: AccountsState;
-  setErrors: (errors: { [key: string]: ValidationError }) => void;
   clearErrors: () => void;
   resolve: () => void;
   reject: () => void;
+
+  setErrors: (errors: { [key: string]: ValidationError }) => void;
 }
 
 type State = {
@@ -126,28 +126,7 @@ type State = {
   direction: 'X' | 'Y';
 };
 
-class PanelTransition extends React.Component<Props, State> {
-  static childContextTypes = {
-    auth: PropTypes.shape({
-      error: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.shape({
-          type: PropTypes.string,
-          payload: PropTypes.object,
-        }),
-      ]),
-      login: PropTypes.string,
-    }),
-    user: userShape,
-    accounts: PropTypes.shape({
-      available: PropTypes.array,
-    }),
-    requestRedraw: PropTypes.func,
-    clearErrors: PropTypes.func,
-    resolve: PropTypes.func,
-    reject: PropTypes.func,
-  };
-
+class PanelTransition extends React.PureComponent<Props, State> {
   state: State = {
     contextHeight: 0,
     panelId: this.props.Body && (this.props.Body.type as any).panelId,
@@ -165,25 +144,6 @@ class PanelTransition extends React.Component<Props, State> {
   } = null;
 
   timerIds: NodeJS.Timeout[] = []; // this is a list of a probably running timeouts to clean on unmount
-
-  getChildContext() {
-    return {
-      auth: this.props.auth,
-      user: this.props.user,
-      requestRedraw: (): Promise<void> =>
-        new Promise(resolve =>
-          this.setState({ isHeightDirty: true }, () => {
-            this.setState({ isHeightDirty: false });
-
-            // wait till transition end
-            this.timerIds.push(setTimeout(resolve, 200));
-          }),
-        ),
-      clearErrors: this.props.clearErrors,
-      resolve: this.props.resolve,
-      reject: this.props.reject,
-    };
-  }
 
   componentDidUpdate(prevProps: Props) {
     const nextPanel: PanelId =
@@ -222,7 +182,17 @@ class PanelTransition extends React.Component<Props, State> {
   render() {
     const { contextHeight, forceHeight } = this.state;
 
-    const { Title, Body, Footer, Links } = this.props;
+    const {
+      Title,
+      Body,
+      Footer,
+      Links,
+      auth,
+      user,
+      clearErrors,
+      resolve,
+      reject,
+    } = this.props;
 
     if (this.props.children) {
       return this.props.children;
@@ -245,84 +215,95 @@ class PanelTransition extends React.Component<Props, State> {
     this.isHeightMeasured = isHeightMeasured || formHeight > 0;
 
     return (
-      <TransitionMotion
-        styles={[
-          {
-            key: panelId,
-            data: { Title, Body, Footer, Links, hasBackButton: hasGoBack },
-            style: {
-              transformSpring: spring(0, transformSpringConfig),
-              opacitySpring: spring(1, opacitySpringConfig),
-            },
-          },
-          {
-            key: 'common',
-            style: {
-              heightSpring: isHeightMeasured
-                ? spring(forceHeight || formHeight, transformSpringConfig)
-                : formHeight,
-              switchContextHeightSpring: spring(
-                forceHeight || contextHeight,
-                changeContextSpringConfig,
-              ),
-            },
-          },
-        ]}
-        willEnter={this.willEnter}
-        willLeave={this.willLeave}
-      >
-        {items => {
-          const panels = items.filter(({ key }) => key !== 'common');
-          const [common] = items.filter(({ key }) => key === 'common');
-
-          const contentHeight = {
-            overflow: 'hidden',
-            height: forceHeight
-              ? common.style.switchContextHeightSpring
-              : 'auto',
-          };
-
-          this.tryToAutoFocus(panels.length);
-
-          const bodyHeight = {
-            position: 'relative' as const,
-            height: `${common.style.heightSpring}px`,
-          };
-
-          return (
-            <Form
-              id={panelId}
-              onSubmit={this.onFormSubmit}
-              onInvalid={this.onFormInvalid}
-              isLoading={this.props.auth.isLoading}
-            >
-              <Panel>
-                <PanelHeader>
-                  {panels.map(config => this.getHeader(config))}
-                </PanelHeader>
-                <div style={contentHeight}>
-                  <MeasureHeight
-                    state={this.shouldMeasureHeight()}
-                    onMeasure={this.onUpdateContextHeight}
-                  >
-                    <PanelBody>
-                      <div style={bodyHeight}>
-                        {panels.map(config => this.getBody(config))}
-                      </div>
-                    </PanelBody>
-                    <PanelFooter>
-                      {panels.map(config => this.getFooter(config))}
-                    </PanelFooter>
-                  </MeasureHeight>
-                </div>
-              </Panel>
-              <div className={helpLinksStyles}>
-                {panels.map(config => this.getLinks(config))}
-              </div>
-            </Form>
-          );
+      <AuthContextProvider
+        value={{
+          auth,
+          user,
+          requestRedraw: this.requestRedraw,
+          clearErrors,
+          resolve,
+          reject,
         }}
-      </TransitionMotion>
+      >
+        <TransitionMotion
+          styles={[
+            {
+              key: panelId,
+              data: { Title, Body, Footer, Links, hasBackButton: hasGoBack },
+              style: {
+                transformSpring: spring(0, transformSpringConfig),
+                opacitySpring: spring(1, opacitySpringConfig),
+              },
+            },
+            {
+              key: 'common',
+              style: {
+                heightSpring: isHeightMeasured
+                  ? spring(forceHeight || formHeight, transformSpringConfig)
+                  : formHeight,
+                switchContextHeightSpring: spring(
+                  forceHeight || contextHeight,
+                  changeContextSpringConfig,
+                ),
+              },
+            },
+          ]}
+          willEnter={this.willEnter}
+          willLeave={this.willLeave}
+        >
+          {items => {
+            const panels = items.filter(({ key }) => key !== 'common');
+            const [common] = items.filter(({ key }) => key === 'common');
+
+            const contentHeight = {
+              overflow: 'hidden',
+              height: forceHeight
+                ? common.style.switchContextHeightSpring
+                : 'auto',
+            };
+
+            this.tryToAutoFocus(panels.length);
+
+            const bodyHeight = {
+              position: 'relative' as const,
+              height: `${common.style.heightSpring}px`,
+            };
+
+            return (
+              <Form
+                id={panelId}
+                onSubmit={this.onFormSubmit}
+                onInvalid={this.onFormInvalid}
+                isLoading={this.props.auth.isLoading}
+              >
+                <Panel>
+                  <PanelHeader>
+                    {panels.map(config => this.getHeader(config))}
+                  </PanelHeader>
+                  <div style={contentHeight}>
+                    <MeasureHeight
+                      state={this.shouldMeasureHeight()}
+                      onMeasure={this.onUpdateContextHeight}
+                    >
+                      <PanelBody>
+                        <div style={bodyHeight}>
+                          {panels.map(config => this.getBody(config))}
+                        </div>
+                      </PanelBody>
+                      <PanelFooter>
+                        {panels.map(config => this.getFooter(config))}
+                      </PanelFooter>
+                    </MeasureHeight>
+                  </div>
+                </Panel>
+                <div className={helpLinksStyles}>
+                  {panels.map(config => this.getLinks(config))}
+                </div>
+              </Form>
+            );
+          }}
+        </TransitionMotion>
+      </AuthContextProvider>
     );
   }
 
@@ -442,8 +423,11 @@ class PanelTransition extends React.Component<Props, State> {
   }
 
   shouldMeasureHeight() {
-    const errorString = Object.values(this.props.auth.error || {}).reduce(
-      (acc, item: ValidationError) => {
+    const { user, accounts, auth } = this.props;
+    const { isHeightDirty } = this.state;
+
+    const errorString = Object.values(auth.error || {}).reduce(
+      (acc: string, item: ValidationError): string => {
         if (typeof item === 'string') {
           return acc + item;
         }
@@ -451,13 +435,13 @@ class PanelTransition extends React.Component<Props, State> {
         return acc + item.type;
       },
       '',
-    );
+    ) as string;
 
     return [
       errorString,
-      this.state.isHeightDirty,
-      this.props.user.lang,
-      this.props.accounts.available.length,
+      isHeightDirty,
+      user.lang,
+      accounts.available.length,
     ].join('');
   }
 
@@ -601,6 +585,16 @@ class PanelTransition extends React.Component<Props, State> {
       transform: `translate${direction}(${value}${unit})`,
     };
   }
+
+  requestRedraw = (): Promise<void> =>
+    new Promise(resolve =>
+      this.setState({ isHeightDirty: true }, () => {
+        this.setState({ isHeightDirty: false });
+
+        // wait till transition end
+        this.timerIds.push(setTimeout(resolve, 200));
+      }),
+    );
 }
 
 export default connect(

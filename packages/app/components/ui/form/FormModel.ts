@@ -27,6 +27,10 @@ export default class FormModel {
     this.renderErrors = options.renderErrors !== false;
   }
 
+  hasField(fieldId: string) {
+    return !!this.fields[fieldId];
+  }
+
   /**
    * Connects form with React's component
    *
