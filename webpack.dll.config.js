@@ -43,6 +43,9 @@ const webpackConfig = {
       name: '[name]',
       path: path.join(outputPath, '[name].json'),
     }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: process.env.NODE_ENV,
+    }),
   ],
 };
 
