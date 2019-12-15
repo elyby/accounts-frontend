@@ -10,7 +10,7 @@ export default class OAuthState extends AbstractState {
             redirectUrl: query.get('redirect_uri'),
             responseType: query.get('response_type'),
             description: query.get('description'),
-            scope: (query.get('scope') || '').replace(',', ' '),
+            scope: (query.get('scope') || '').replace(/,/g, ' '),
             prompt: query.get('prompt'),
             loginHint: query.get('login_hint'),
             state: query.get('state')

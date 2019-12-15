@@ -123,7 +123,7 @@ describe('OAuthState', () => {
                 client_id: 'client_id',
                 redirect_uri: 'redirect_uri',
                 response_type: 'response_type',
-                scope: 'scope1,scope2',
+                scope: 'scope1,scope2,scope3',
                 state: 'state',
             };
 
@@ -138,7 +138,7 @@ describe('OAuthState', () => {
                     clientId: query.client_id,
                     redirectUrl: query.redirect_uri,
                     responseType: query.response_type,
-                    scope: 'scope1 scope2',
+                    scope: 'scope1 scope2 scope3',
                     state: query.state,
                 })
             ).returns({then() {}});
