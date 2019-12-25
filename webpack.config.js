@@ -133,7 +133,14 @@ const webpackConfig = {
       {
         test: /\.s?css$/,
         use: [
-          'style-loader',
+          {
+            loader: 'style-loader',
+            options: {
+              // Enable when we will upgrade to @^1.1.0
+              // This also need style-loader#445 to be resolved
+              // esModule: true,
+            },
+          },
           {
             loader: 'css-loader',
             options: {
@@ -142,6 +149,7 @@ const webpackConfig = {
                   ? '[hash:base64:5]'
                   : '[path][name]-[local]',
               },
+              esModule: true,
               importLoaders: 2,
               sourceMap: !isProduction,
             },
