@@ -28,7 +28,11 @@ export default {
    * @returns {string}
    */
   getIconUrl(locale: string): string {
-    return require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] ||
-      locale}.svg`);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require(`flag-icon-css/flags/4x3/${localeToCountryCode[
+      locale
+    ] || locale}.svg`);
+
+    return mod.default || mod;
   },
 };
