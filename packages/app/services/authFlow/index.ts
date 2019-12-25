@@ -1,4 +1,4 @@
-import AuthFlow, { ActionsDict } from './AuthFlow';
+import AuthFlow, { ActionsDict, AuthContext as TAuthContext } from './AuthFlow';
 
 import * as actions from 'app/components/auth/actions';
 
@@ -34,5 +34,5 @@ const availableActions = {
   setLoadingState: actions.setLoadingState,
 };
 
-export { AuthContext } from './AuthFlow';
+export type AuthContext = TAuthContext;
 export default new AuthFlow(availableActions as ActionsDict);

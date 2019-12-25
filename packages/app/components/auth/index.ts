@@ -1,1 +1,3 @@
-export { State as AuthState } from './reducer';
+import { State } from './reducer';
+
+export type AuthState = State;

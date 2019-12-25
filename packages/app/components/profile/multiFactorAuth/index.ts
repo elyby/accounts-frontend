@@ -1,2 +1,4 @@
+import { MfaStep as TMfaStep } from './MfaEnable';
+
 export { default } from './MultiFactorAuth';
-export { MfaStep } from './MfaEnable';
+export type MfaStep = TMfaStep;
