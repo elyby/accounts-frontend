@@ -89,11 +89,11 @@ class RootPage extends React.PureComponent<{
               <Route path="/rules" component={RulesPage} />
               <Route path="/dev" component={DevPage} />
 
-              {user.isGuest ? (
-                <AuthFlowRoute path="/" component={AuthPage} />
-              ) : (
+              {!user.isGuest && (
                 <AuthFlowRoute exact path="/" component={ProfilePage} />
               )}
+
+              <AuthFlowRoute path="/" component={AuthPage} />
 
               <Route component={PageNotFound} />
             </Switch>

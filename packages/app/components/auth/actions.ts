@@ -20,6 +20,7 @@ import signup from 'app/services/api/signup';
 import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact/ContactForm';
+import { Account } from 'app/components/accounts/reducer';
 import { ThunkAction, Dispatch } from 'app/reducers';
 
 import { getCredentials } from './reducer';
@@ -31,17 +32,8 @@ type ValidationError =
       payload: { [key: string]: any };
     };
 
-export { updateUser } from 'app/components/user/actions';
-export {
-  authenticate,
-  logoutAll as logout,
-  remove as removeAccount,
-  activate as activateAccount,
-} from 'app/components/accounts/actions';
-import { Account } from 'app/components/accounts/reducer';
-
 /**
- * Reoutes user to the previous page if it is possible
+ * Routes user to the previous page if it is possible
  *
  * @param {object} options
  * @param {string} options.fallbackUrl - an url to route user to if goBack is not possible
@@ -427,7 +419,7 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
         localStorage.removeItem('oauthData');
 
         if (resp.redirectUri.startsWith('static_page')) {
-          const displayCode = resp.redirectUri === 'static_page_with_code';
+          const displayCode = /static_page_with_code/.test(resp.redirectUri);
 
           const [, code] = resp.redirectUri.match(/code=(.+)&/) || [];
           [, resp.redirectUri] = resp.redirectUri.match(/^(.+)\?/) || [];
@@ -516,7 +508,7 @@ export function resetAuth(): ThunkAction {
 }
 
 export const SET_OAUTH = 'set_oauth';
-export function setOAuthRequest(oauth: {
+export function setOAuthRequest(data: {
   client_id?: string;
   redirect_uri?: string;
   response_type?: string;
@@ -528,19 +520,19 @@ export function setOAuthRequest(oauth: {
   return {
     type: SET_OAUTH,
     payload: {
-      clientId: oauth.client_id,
-      redirectUrl: oauth.redirect_uri,
-      responseType: oauth.response_type,
-      scope: oauth.scope,
-      prompt: oauth.prompt,
-      loginHint: oauth.loginHint,
-      state: oauth.state,
+      clientId: data.client_id,
+      redirectUrl: data.redirect_uri,
+      responseType: data.response_type,
+      scope: data.scope,
+      prompt: data.prompt,
+      loginHint: data.loginHint,
+      state: data.state,
     },
   };
 }
 
 export const SET_OAUTH_RESULT = 'set_oauth_result';
-export function setOAuthCode(oauth: {
+export function setOAuthCode(data: {
   success: boolean;
   code: string;
   displayCode: boolean;
@@ -548,9 +540,9 @@ export function setOAuthCode(oauth: {
   return {
     type: SET_OAUTH_RESULT,
     payload: {
-      success: oauth.success,
-      code: oauth.code,
-      displayCode: oauth.displayCode,
+      success: data.success,
+      code: data.code,
+      displayCode: data.displayCode,
     },
   };
 }
@@ -564,7 +556,7 @@ export function requirePermissionsAccept() {
 
 export const SET_SCOPES = 'set_scopes';
 export function setScopes(scopes: Scope[]) {
-  if (!(scopes instanceof Array)) {
+  if (!Array.isArray(scopes)) {
     throw new Error('Scopes must be array');
   }
 
@@ -610,11 +602,11 @@ function needActivation() {
 }
 
 function authHandler(dispatch: Dispatch) {
-  return (resp: OAuthResponse): Promise<Account> =>
+  return (oAuthResp: OAuthResponse): Promise<Account> =>
     dispatch(
       authenticate({
-        token: resp.access_token,
-        refreshToken: resp.refresh_token || null,
+        token: oAuthResp.access_token,
+        refreshToken: oAuthResp.refresh_token || null,
       }),
     ).then(resp => {
       dispatch(setLogin(null));
@@ -626,7 +618,7 @@ function authHandler(dispatch: Dispatch) {
 function validationErrorsHandler(dispatch: Dispatch, repeatUrl?: string) {
   return resp => {
     if (resp.errors) {
-      const firstError = Object.keys(resp.errors)[0];
+      const [firstError] = Object.keys(resp.errors);
       const error = {
         type: resp.errors[firstError],
         payload: {

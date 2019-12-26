@@ -5,15 +5,16 @@ import {
   requestToken,
   logout,
 } from 'app/services/api/authentication';
-import { relogin as navigateToLogin } from 'app/components/auth/actions';
+import {
+  relogin as navigateToLogin,
+  setAccountSwitcher,
+} from 'app/components/auth/actions';
 import { updateUser, setGuest } from 'app/components/user/actions';
 import { setLocale } from 'app/components/i18n/actions';
-import { setAccountSwitcher } from 'app/components/auth/actions';
-import { getActiveAccount } from 'app/components/accounts/reducer';
 import logger from 'app/services/logger';
 import { ThunkAction } from 'app/reducers';
 
-import { Account } from './reducer';
+import { getActiveAccount, Account } from './reducer';
 import {
   add,
   remove,

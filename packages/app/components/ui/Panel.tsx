@@ -42,7 +42,7 @@ export function Panel(props: {
 
 export function PanelHeader(props: { children: React.ReactNode }) {
   return (
-    <div className={styles.header} {...props}>
+    <div className={styles.header} {...props} data-testid="auth-header">
       {props.children}
     </div>
   );
@@ -50,7 +50,7 @@ export function PanelHeader(props: { children: React.ReactNode }) {
 
 export function PanelBody(props: { children: React.ReactNode }) {
   return (
-    <div className={styles.body} {...props}>
+    <div className={styles.body} {...props} data-testid="auth-body">
       {props.children}
     </div>
   );
@@ -58,7 +58,7 @@ export function PanelBody(props: { children: React.ReactNode }) {
 
 export function PanelFooter(props: { children: React.ReactNode }) {
   return (
-    <div className={styles.footer} {...props}>
+    <div className={styles.footer} {...props} data-testid="auth-controls">
       {props.children}
     </div>
   );

@@ -13,16 +13,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
 import './commands';
 
 Cypress.on('window:before:load', win => {
-  /**
-   * define @fetch alias for asserting fetch requests
-   * Example:
-   *   cy
-   *     .get('@fetch')
-   *     .should('be.calledWith', '/api/options');
-   */
-  cy.spy(win, 'fetch').as('fetch');
+  // remove fetch to enable correct api mocking with cypress xhr mocks
+  win.fetch = null;
 });

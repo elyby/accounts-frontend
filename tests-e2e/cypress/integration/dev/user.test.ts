@@ -1,9 +1,9 @@
 describe('/dev/applications - user', () => {
   before(() => {
-    cy.login({ account: 'default' }).then(({ user }) => {
+    cy.login({ accounts: ['default'] }).then(({ user }) => {
       cy.visit('/dev/applications');
 
-      // remove all previousely added apps
+      // remove all previously added apps
       cy.window().then(async (/** @type {any} */ { oauthApi }) => {
         const apps = await oauthApi.getAppsByUser(user.id);
 

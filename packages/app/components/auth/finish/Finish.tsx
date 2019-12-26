@@ -44,7 +44,7 @@ class Finish extends React.Component<Props> {
               />
             </div>
             {displayCode ? (
-              <div>
+              <div data-testid="oauth-code-container">
                 <div className={styles.description}>
                   <Message {...messages.passCodeToApp} values={{ appName }} />
                 </div>

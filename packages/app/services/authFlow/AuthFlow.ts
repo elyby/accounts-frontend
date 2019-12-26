@@ -173,10 +173,11 @@ export default class AuthFlow implements AuthContext {
         const callback = this.onReady;
         this.onReady = () => {};
 
-        return resp.then(
-          callback,
-          err => err || logger.warn('State transition error', err),
-        );
+        return resp.then(callback, error => {
+          logger.error('State transition error', { error });
+
+          return error;
+        });
       }
 
       return resp;

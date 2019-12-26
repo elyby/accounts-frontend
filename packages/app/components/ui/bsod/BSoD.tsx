@@ -1,6 +1,5 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
-import { IntlProvider } from 'app/components/i18n';
 import logger from 'app/services/logger';
 import appInfo from 'app/components/auth/appInfo/AppInfo.intl.json';
 
@@ -42,32 +41,30 @@ class BSoD extends React.Component<{}, State> {
     }
 
     return (
-      <IntlProvider>
-        <div className={styles.body}>
-          <canvas
-            className={styles.canvas}
-            ref={(el: HTMLCanvasElement | null) => el && new BoxesField(el)}
-          />
+      <div className={styles.body}>
+        <canvas
+          className={styles.canvas}
+          ref={(el: HTMLCanvasElement | null) => el && new BoxesField(el)}
+        />
 
-          <div className={styles.wrapper}>
-            <div className={styles.title}>
-              <Message {...appInfo.appName} />
-            </div>
-            <div className={styles.lineWithMargin}>
-              <Message {...messages.criticalErrorHappened} />
-            </div>
-            <div className={styles.line}>
-              <Message {...messages.reloadPageOrContactUs} />
-            </div>
-            <a href={emailUrl} className={styles.support}>
-              support@ely.by
-            </a>
-            <div className={styles.easterEgg}>
-              <Message {...messages.alsoYouCanInteractWithBackground} />
-            </div>
+        <div className={styles.wrapper}>
+          <div className={styles.title}>
+            <Message {...appInfo.appName} />
+          </div>
+          <div className={styles.lineWithMargin}>
+            <Message {...messages.criticalErrorHappened} />
+          </div>
+          <div className={styles.line}>
+            <Message {...messages.reloadPageOrContactUs} />
+          </div>
+          <a href={emailUrl} className={styles.support}>
+            support@ely.by
+          </a>
+          <div className={styles.easterEgg}>
+            <Message {...messages.alsoYouCanInteractWithBackground} />
           </div>
         </div>
-      </IntlProvider>
+      </div>
     );
   }
 }

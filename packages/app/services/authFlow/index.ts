@@ -1,13 +1,20 @@
+import * as actions from 'app/components/auth/actions';
+import { updateUser } from 'app/components/user/actions';
+import {
+  authenticate,
+  logoutAll as logout,
+  remove as removeAccount,
+  activate as activateAccount,
+} from 'app/components/accounts/actions';
+
 import AuthFlow, { ActionsDict, AuthContext as TAuthContext } from './AuthFlow';
 
-import * as actions from 'app/components/auth/actions';
-
 const availableActions = {
-  updateUser: actions.updateUser,
-  authenticate: actions.authenticate,
-  activateAccount: actions.activateAccount,
-  removeAccount: actions.removeAccount,
-  logout: actions.logout,
+  updateUser,
+  authenticate,
+  activateAccount,
+  removeAccount,
+  logout,
   goBack: actions.goBack,
   redirect: actions.redirect,
   login: actions.login,

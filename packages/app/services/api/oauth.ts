@@ -182,19 +182,36 @@ function getOAuthRequest(oauthData: OauthData): OauthRequestData {
   };
 }
 
-function handleOauthParamsValidation(resp: { [key: string]: any } = {}) {
+function handleOauthParamsValidation(
+  resp:
+    | { [key: string]: any }
+    | {
+        statusCode: number;
+        success: false;
+        error:
+          | 'invalid_request'
+          | 'unsupported_response_type'
+          | 'invalid_scope'
+          | 'invalid_client';
+        parameter: string;
+      } = {},
+) {
+  let userMessage: string | null = null;
+
   if (resp.statusCode === 400 && resp.error === 'invalid_request') {
-    resp.userMessage = `Invalid request (${resp.parameter} required).`;
+    userMessage = `Invalid request (${resp.parameter} required).`;
   } else if (
     resp.statusCode === 400 &&
     resp.error === 'unsupported_response_type'
   ) {
-    resp.userMessage = `Invalid response type '${resp.parameter}'.`;
+    userMessage = `Invalid response type '${resp.parameter}'.`;
   } else if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
-    resp.userMessage = `Invalid scope '${resp.parameter}'.`;
+    userMessage = `Invalid scope '${resp.parameter}'.`;
   } else if (resp.statusCode === 401 && resp.error === 'invalid_client') {
-    resp.userMessage = 'Can not find application you are trying to authorize.';
+    userMessage = 'Can not find application you are trying to authorize.';
   }
 
-  return Promise.reject(resp);
+  return userMessage
+    ? Promise.reject({ ...resp, userMessage })
+    : Promise.reject(resp);
 }
