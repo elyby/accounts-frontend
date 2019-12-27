@@ -69,7 +69,7 @@ class RootPage extends React.PureComponent<{
             [styles.isPopupActive]: isPopupActive,
           })}
         >
-          <div className={styles.header} data-e2e-toolbar>
+          <div className={styles.header} data-testid="toolbar">
             <div className={styles.headerContent}>
               <Link to="/" className={styles.logo} onClick={onLogoClick}>
                 <Message {...messages.siteName} />
@@ -90,7 +90,7 @@ class RootPage extends React.PureComponent<{
               <Route path="/dev" component={DevPage} />
 
               {!user.isGuest && (
-                <AuthFlowRoute exact path="/" component={ProfilePage} />
+                <PrivateRoute exact path="/" component={ProfilePage} />
               )}
 
               <AuthFlowRoute path="/" component={AuthPage} />

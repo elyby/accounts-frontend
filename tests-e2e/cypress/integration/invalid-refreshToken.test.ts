@@ -55,7 +55,8 @@ describe("when user's token and refreshToken are invalid", () => {
 
     cy.url().should('include', '/password');
 
-    cy.get('[data-e2e-toolbar] a')
+    cy.getByTestId('toolbar')
+      .get('a')
       .contains('Ely.by')
       .click();
 
@@ -96,7 +97,7 @@ describe("when user's token and refreshToken are invalid", () => {
 
     cy.url().should('include', '/login');
 
-    cy.get('[data-e2e-toolbar]').contains('Join');
+    cy.getByTestId('toolbar').contains('Join');
   });
 
   it('should allow logout', () => {
@@ -107,10 +108,10 @@ describe("when user's token and refreshToken are invalid", () => {
       `/api/v1/accounts/${account2.id}`,
     );
 
-    cy.get('[data-e2e-toolbar]')
+    cy.getByTestId('toolbar')
       .contains(account2.username)
       .click();
-    cy.get('[data-e2e-toolbar]')
+    cy.getByTestId('toolbar')
       .contains('Log out')
       .click();
 
@@ -118,10 +119,10 @@ describe("when user's token and refreshToken are invalid", () => {
       'be.calledWith',
       '/api/authentication/logout',
     );
-    cy.get('[data-e2e-toolbar]')
+    cy.getByTestId('toolbar')
       .contains(account2.email)
       .should('not.exist');
-    cy.get('[data-e2e-toolbar]')
+    cy.getByTestId('toolbar')
       .contains(account2.username)
       .should('not.exist');
   });
@@ -167,7 +168,7 @@ describe("when user's token and refreshToken are invalid", () => {
 
     cy.url().should('include', '/login');
 
-    cy.get('[data-e2e-toolbar]').contains('a', 'Join');
+    cy.getByTestId('toolbar').contains('a', 'Join');
   });
 
   it('should ask for password if selected account with bad token', () => {
