@@ -7,9 +7,10 @@ let sitekey;
 
 export type CaptchaID = string;
 
-export default {
+class Captcha {
   /**
    * @param {DOMNode|string} el - dom node or id of element where to render captcha
+   * @param {object} options
    * @param {string} options.skin - skin color (dark|light)
    * @param {Function} options.onSetCode - the callback, that will be called with
    *                                       captcha verification code, after user successfully solves captcha
@@ -26,6 +27,9 @@ export default {
       onSetCode: (code: string) => void;
     },
   ): Promise<CaptchaID> {
+    // for testing purposes only
+    (window as any).e2eCaptchaSetCode = callback;
+
     return this.loadApi().then(() =>
       (window as any).grecaptcha.render(el, {
         sitekey,
@@ -33,14 +37,16 @@ export default {
         callback,
       }),
     );
-  },
+  }
 
   /**
    * @param {string} captchaId - captcha id, returned from render promise
    */
   reset(captchaId: CaptchaID) {
+    delete (window as any).e2eCaptchaSetCode;
+
     this.loadApi().then(() => (window as any).grecaptcha.reset(captchaId));
-  },
+  }
 
   /**
    * @param {stirng} newLang
@@ -49,7 +55,7 @@ export default {
    */
   setLang(newLang: string) {
     lang = newLang;
-  },
+  }
 
   /**
    * @param {string} apiKey
@@ -58,14 +64,12 @@ export default {
    */
   setApiKey(apiKey: string) {
     sitekey = apiKey;
-  },
+  }
 
   /**
-   * @api private
-   *
    * @returns {Promise}
    */
-  loadApi(): Promise<void> {
+  private loadApi(): Promise<void> {
     if (!readyPromise) {
       readyPromise = Promise.all([
         new Promise(resolve => {
@@ -80,5 +84,7 @@ export default {
     }
 
     return readyPromise;
-  },
-};
+  }
+}
+
+export default new Captcha();

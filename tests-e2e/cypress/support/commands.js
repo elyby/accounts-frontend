@@ -31,47 +31,56 @@ const accountsMap = {
   default2: account1,
 };
 
-Cypress.Commands.add('login', async ({ accounts }) => {
-  const accountsData = await Promise.all(
-    accounts.map(async account => {
-      let credentials;
+Cypress.Commands.add(
+  'login',
+  async ({ accounts, updateState = true, rawApiResp = false }) => {
+    const accountsData = await Promise.all(
+      accounts.map(async account => {
+        let credentials;
 
-      if (account) {
-        credentials = accountsMap[account];
+        if (account) {
+          credentials = accountsMap[account];
 
-        if (!credentials) {
-          throw new Error(`Unknown account name: ${account}`);
+          if (!credentials) {
+            throw new Error(`Unknown account name: ${account}`);
+          }
         }
-      }
 
-      const resp = await fetch('/api/authentication/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-        body: `${new URLSearchParams({
-          login: credentials.login,
-          password: credentials.password,
-          rememberMe: '1',
-        })}`,
-      }).then(rawResp => rawResp.json());
+        const resp = await fetch('/api/authentication/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          },
+          body: `${new URLSearchParams({
+            login: credentials.login,
+            password: credentials.password,
+            rememberMe: '1',
+          })}`,
+        }).then(rawResp => rawResp.json());
 
-      return {
-        id: credentials.id,
-        username: credentials.username,
-        email: credentials.email,
-        token: resp.access_token,
-        refreshToken: resp.refresh_token,
-      };
-    }),
-  );
+        if (rawApiResp) {
+          return resp;
+        }
 
-  const state = createState(accountsData);
+        return {
+          id: credentials.id,
+          username: credentials.username,
+          email: credentials.email,
+          token: resp.access_token,
+          refreshToken: resp.refresh_token,
+        };
+      }),
+    );
 
-  localStorage.setItem('redux-storage', JSON.stringify(state));
+    if (updateState) {
+      const state = createState(accountsData);
 
-  return { accounts: accountsData };
-});
+      localStorage.setItem('redux-storage', JSON.stringify(state));
+    }
+
+    return { accounts: accountsData };
+  },
+);
 
 Cypress.Commands.add('getByTestId', (id, options) =>
   cy.get(`[data-testid=${id}]`, options),

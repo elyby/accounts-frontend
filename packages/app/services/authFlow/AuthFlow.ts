@@ -288,11 +288,9 @@ export default class AuthFlow implements AuthContext {
    * Tries to restore last oauth request, if it was stored in localStorage
    * in last 2 hours
    *
-   * @api private
-   *
    * @returns {bool} - whether oauth state is being restored
    */
-  restoreOAuthState() {
+  private restoreOAuthState() {
     if (/^\/(register|oauth2)/.test(this.getRequest().path)) {
       // allow register or the new oauth requests
       return;
