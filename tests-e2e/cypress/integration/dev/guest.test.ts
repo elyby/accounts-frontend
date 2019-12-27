@@ -23,6 +23,6 @@ describe('/dev/applications - guest', () => {
     cy.visit('/dev/applications');
 
     cy.get('[data-e2e-content] [data-e2e-button="feedbackPopup"]').click();
-    cy.get('[data-e2e="feedbackPopup"]').should('be.visible');
+    cy.getByTestId('feedbackPopup').should('be.visible');
   });
 });

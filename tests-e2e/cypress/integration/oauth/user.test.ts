@@ -105,7 +105,7 @@ xit('should redirect to error page, when permission request declined', () => {
 
   cy.server({ enable: false });
 
-  cy.getByTestId('auth-secondary-controls')
+  cy.getByTestId('auth-controls-secondary')
     .contains('Decline')
     .click();
 
@@ -220,7 +220,7 @@ describe('prompts', () => {
 
     cy.url().should('include', '/oauth/permissions');
 
-    cy.getByTestId('auth-secondary-controls')
+    cy.getByTestId('auth-controls-secondary')
       .contains('Decline')
       .click();
 

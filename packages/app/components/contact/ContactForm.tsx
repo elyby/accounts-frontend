@@ -58,7 +58,7 @@ export class ContactForm extends React.Component<
 
     return (
       <div
-        data-e2e="feedbackPopup"
+        data-testid="feedbackPopup"
         className={
           isSuccessfullySent ? styles.successState : styles.contactForm
         }
@@ -71,6 +71,7 @@ export class ContactForm extends React.Component<
             <span
               className={clsx(icons.close, popupStyles.close)}
               onClick={onClose}
+              data-testid="feedback-popup-close"
             />
           </div>
 

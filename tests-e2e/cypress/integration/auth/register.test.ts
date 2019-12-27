@@ -92,7 +92,7 @@ it('should allow activation', () => {
   });
   cy.visit('/register');
 
-  cy.getByTestId('auth-secondary-controls')
+  cy.getByTestId('auth-controls-secondary')
     .contains('Already have')
     .click();
 
@@ -119,7 +119,7 @@ it('should allow resend code', () => {
   }).as('resend');
   cy.visit('/register');
 
-  cy.getByTestId('auth-secondary-controls')
+  cy.getByTestId('auth-controls-secondary')
     .contains('not received')
     .click();
 

@@ -48,10 +48,14 @@ export default class ForgotPasswordBody extends BaseAuthBody {
             />
           </div>
         ) : (
-          <div>
+          <div data-testid="forgot-password-login">
             <div className={styles.login}>
               {login}
-              <span className={styles.editLogin} onClick={this.onClickEdit} />
+              <span
+                className={styles.editLogin}
+                onClick={this.onClickEdit}
+                data-testid="edit-login"
+              />
             </div>
             <p className={styles.descriptionText}>
               <Message {...messages.pleasePressButton} />

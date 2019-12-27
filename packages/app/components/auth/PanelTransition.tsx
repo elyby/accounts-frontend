@@ -298,7 +298,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
                 </Panel>
                 <div
                   className={helpLinksStyles}
-                  data-testid="auth-secondary-controls"
+                  data-testid="auth-controls-secondary"
                 >
                   {panels.map(config => this.getLinks(config))}
                 </div>
