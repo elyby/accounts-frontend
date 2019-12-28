@@ -16,7 +16,7 @@ type Props = {
 class FooterMenu extends React.Component<Props> {
   render() {
     return (
-      <div className={styles.footerMenu}>
+      <div className={styles.footerMenu} data-testid="footer">
         <Link to="/rules">
           <Message {...messages.rules} />
         </Link>

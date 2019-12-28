@@ -1,42 +1,38 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import ReactDOM from 'react-dom';
-
+import { MessageDescriptor } from 'react-intl';
 import clsx from 'clsx';
-
-import { omit } from 'app/functions';
-import { colors, COLOR_GREEN } from 'app/components/ui';
+import { COLOR_GREEN, Color } from 'app/components/ui';
 
 import styles from './dropdown.scss';
 import FormInputComponent from './FormInputComponent';
 
-export default class Dropdown extends FormInputComponent {
-  static displayName = 'Dropdown';
+type I18nString = string | MessageDescriptor;
+type ItemLabel = I18nString | React.ReactElement;
 
-  static propTypes = {
-    label: PropTypes.oneOfType([
-      PropTypes.shape({
-        id: PropTypes.string,
-      }),
-      PropTypes.string,
-    ]).isRequired,
-    items: PropTypes.arrayOf(
-      PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.shape({
-          id: PropTypes.string,
-        }),
-      ]),
-    ).isRequired,
-    block: PropTypes.bool,
-    color: PropTypes.oneOf(colors),
-  };
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
+  label: I18nString;
+  items: { [value: string]: ItemLabel };
+  block?: boolean;
+  color: Color;
+}
 
-  static defaultProps = {
+interface OptionItem {
+  label: ItemLabel;
+  value: string;
+}
+
+interface State {
+  isActive: boolean;
+  activeItem: OptionItem | null;
+}
+
+export default class Dropdown extends FormInputComponent<Props, State> {
+  static defaultProps: Partial<Props> = {
     color: COLOR_GREEN,
   };
 
-  state = {
+  state: State = {
     isActive: false,
     activeItem: null,
   };
@@ -52,12 +48,15 @@ export default class Dropdown extends FormInputComponent {
   }
 
   render() {
-    const { color, block, items } = this.props;
+    const { color, block, items, ...restProps } = this.props;
     const { isActive } = this.state;
 
+    delete restProps.label;
+
     const activeItem = this.getActiveItem();
-    const label = this.formatMessage(activeItem.label);
-    const props = omit(this.props, Object.keys(Dropdown.propTypes));
+    const label = React.isValidElement(activeItem.label)
+      ? activeItem.label
+      : this.formatMessage(activeItem.label);
 
     return (
       <div>
@@ -66,10 +65,13 @@ export default class Dropdown extends FormInputComponent {
             [styles.block]: block,
             [styles.opened]: isActive,
           })}
-          {...props}
+          data-e2e-select-name={restProps.name}
+          {...restProps}
           onClick={this.onToggle}
         >
-          <span className={styles.label}>{label}</span>
+          <span className={styles.label} data-testid="select-label">
+            {label}
+          </span>
           <span className={styles.toggleIcon} />
 
           <div className={styles.menu}>
@@ -96,7 +98,7 @@ export default class Dropdown extends FormInputComponent {
     });
   }
 
-  onSelectItem(item) {
+  onSelectItem(item: OptionItem) {
     return event => {
       event.preventDefault();
 
@@ -106,9 +108,9 @@ export default class Dropdown extends FormInputComponent {
     };
   }
 
-  getActiveItem() {
+  getActiveItem(): OptionItem {
     const { items } = this.props;
-    let { activeItem } = /** @type {any} */ (this.state);
+    let { activeItem } = this.state;
 
     if (!activeItem) {
       activeItem = {
@@ -130,20 +132,20 @@ export default class Dropdown extends FormInputComponent {
   }
 
   getValue() {
-    return this.getActiveItem().value;
+    return this.getActiveItem()?.value;
   }
 
-  onToggle = event => {
+  onToggle = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
 
     this.toggle();
   };
 
-  onBodyClick = event => {
+  onBodyClick = (event: MouseEvent) => {
     if (this.state.isActive) {
       const el = ReactDOM.findDOMNode(this);
 
-      if (!el.contains(event.target) && el !== event.taget) {
+      if (!el.contains(event.target) && el !== event.target) {
         event.preventDefault();
         event.stopPropagation();
 

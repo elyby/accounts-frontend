@@ -20,14 +20,14 @@ import { User } from 'app/components/user';
 import styles from './contactForm.scss';
 import messages from './contactForm.intl.json';
 
-const CONTACT_CATEGORIES = [
+const CONTACT_CATEGORIES = {
   // TODO: сюда позже проставить реальные id категорий с backend
-  <Message key="m1" {...messages.cannotAccessMyAccount} />,
-  <Message key="m2" {...messages.foundBugOnSite} />,
-  <Message key="m3" {...messages.improvementsSuggestion} />,
-  <Message key="m4" {...messages.integrationQuestion} />,
-  <Message key="m5" {...messages.other} />,
-];
+  0: <Message {...messages.cannotAccessMyAccount} />,
+  1: <Message {...messages.foundBugOnSite} />,
+  2: <Message {...messages.improvementsSuggestion} />,
+  3: <Message {...messages.integrationQuestion} />,
+  4: <Message {...messages.other} />,
+};
 
 export class ContactForm extends React.Component<
   {
@@ -161,7 +161,12 @@ export class ContactForm extends React.Component<
         </div>
 
         <div className={styles.footer}>
-          <Button label={messages.close} block onClick={onClose} />
+          <Button
+            label={messages.close}
+            block
+            onClick={onClose}
+            data-testid="feedback-popup-close-button"
+          />
         </div>
       </div>
     );
