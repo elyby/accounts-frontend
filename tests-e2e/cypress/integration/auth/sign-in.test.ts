@@ -1,7 +1,9 @@
-import { account1 } from '../../fixtures/accounts.json';
+import { account1, account2 } from '../../fixtures/accounts.json';
 
 it('should sign in', () => {
   cy.visit('/');
+
+  cy.url().should('include', '/login');
 
   cy.get('[name=login]').type(`${account1.login}{enter}`);
 
@@ -121,4 +123,130 @@ it('should sign in with totp', () => {
     .should('include', 'totp=123');
 
   cy.location('pathname').should('eq', '/');
+});
+
+it('should allow logout', () => {
+  cy.login({ accounts: ['default'] });
+
+  cy.visit('/');
+
+  cy.getByTestId('toolbar')
+    .contains(account1.username)
+    .click();
+
+  cy.getByTestId('active-account')
+    .getByTestId('logout-account')
+    .click();
+
+  cy.location('pathname').should('eq', '/login');
+  cy.getByTestId('toolbar').should('contain', 'Join');
+});
+
+describe('multi account', () => {
+  it('should allow sign in with another account', () => {
+    cy.login({ accounts: ['default2'] });
+
+    cy.visit('/');
+
+    cy.getByTestId('toolbar')
+      .contains(account2.username)
+      .click();
+
+    cy.getByTestId('active-account').should('have.length', 1);
+    cy.get('[data-e2e-account-id]').should('have.length', 0);
+
+    cy.getByTestId('add-account').click();
+
+    cy.location('pathname').should('eq', '/login');
+
+    cy.get('[data-e2e-go-back]').should('exist');
+
+    cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+    cy.url().should('include', '/password');
+
+    cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+    cy.location('pathname').should('eq', '/');
+
+    cy.getByTestId('toolbar')
+      .contains(account1.username)
+      .click();
+
+    cy.getByTestId('active-account').should('have.length', 1);
+    cy.get('[data-e2e-account-id]').should('have.length', 1);
+
+    cy.get('[data-e2e-account-id]')
+      .getByTestId('logout-account')
+      .click();
+  });
+
+  it('should go back to profile from login screen', () => {
+    cy.login({ accounts: ['default'] });
+
+    cy.visit('/');
+
+    cy.getByTestId('toolbar')
+      .contains(account1.username)
+      .click();
+
+    cy.getByTestId('add-account').click();
+
+    cy.location('pathname').should('eq', '/login');
+
+    cy.get('[data-e2e-go-back]').click();
+
+    cy.location('pathname').should('eq', '/');
+  });
+
+  it('should allow logout active account', () => {
+    cy.login({ accounts: ['default', 'default2'] });
+
+    cy.visit('/');
+
+    cy.getByTestId('toolbar')
+      .contains(account1.username)
+      .click();
+
+    cy.getByTestId('active-account')
+      .getByTestId('logout-account')
+      .click();
+
+    cy.getByTestId('toolbar')
+      .contains(account2.username)
+      .click();
+    cy.get('[data-e2e-account-id]').should('have.length', 0);
+  });
+
+  it('should not allow log in the same account twice', () => {
+    cy.login({ accounts: ['default'] });
+
+    cy.visit('/');
+
+    cy.getByTestId('toolbar')
+      .contains(account1.username)
+      .click();
+
+    cy.getByTestId('active-account').should('have.length', 1);
+    cy.get('[data-e2e-account-id]').should('have.length', 0);
+
+    cy.getByTestId('add-account').click();
+
+    cy.location('pathname').should('eq', '/login');
+
+    cy.get('[data-e2e-go-back]').should('exist');
+
+    cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+    cy.url().should('include', '/password');
+
+    cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+    cy.location('pathname').should('eq', '/');
+
+    cy.getByTestId('toolbar')
+      .contains(account1.username)
+      .click();
+    cy.get('[data-e2e-account-id]').should('have.length', 0);
+  });
 });

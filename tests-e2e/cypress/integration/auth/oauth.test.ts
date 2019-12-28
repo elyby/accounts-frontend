@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
+import { account1 } from '../../fixtures/accounts.json';
+
 const defaults = {
   client_id: 'ely',
   redirect_uri: 'http://ely.by/authorization/oauth',
@@ -10,6 +12,29 @@ it('should complete oauth', () => {
   cy.login({ accounts: ['default'] });
 
   cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+  cy.url().should('equal', 'https://ely.by/');
+});
+
+it('should restore previous oauthData if any', () => {
+  localStorage.setItem(
+    'oauthData',
+    JSON.stringify({
+      timestamp: Date.now() - 3600,
+      payload: {
+        clientId: 'ely',
+        redirectUrl: 'http://ely.by/authorization/oauth',
+        responseType: 'code',
+        description: null,
+        scope: 'account_info account_email',
+        loginHint: null,
+        state: null,
+      },
+    }),
+  );
+  cy.login({ accounts: ['default'] });
+
+  cy.visit('/');
 
   cy.url().should('equal', 'https://ely.by/');
 });
@@ -70,6 +95,20 @@ it('should prompt for permissions', () => {
     .click();
 
   cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+});
+
+it('should allow sign in during oauth (guest oauth)', () => {
+  cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+  cy.url().should('include', '/login');
+
+  cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+  cy.url().should('include', '/password');
+
+  cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+  cy.url().should('equal', 'https://ely.by/');
 });
 
 // TODO: enable, when backend api will return correct response on auth decline
@@ -170,7 +209,28 @@ describe('login_hint', () => {
 
 describe('prompts', () => {
   it('should prompt for account', () => {
-    cy.login({ accounts: ['default'] });
+    cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
+      cy.visit(
+        `/oauth2/v1/ely?${new URLSearchParams({
+          ...defaults,
+          prompt: 'select_account',
+        })}`,
+      );
+
+      cy.url().should('include', '/oauth/choose-account');
+
+      cy.getByTestId('auth-header').should('contain', 'Choose an account');
+
+      cy.getByTestId('auth-body')
+        .contains(account.email)
+        .click();
+
+      cy.url().should('equal', 'https://ely.by/');
+    });
+  });
+
+  it('should allow sign in with another account', () => {
+    cy.login({ accounts: ['default2'] });
 
     cy.visit(
       `/oauth2/v1/ely?${new URLSearchParams({
@@ -181,7 +241,19 @@ describe('prompts', () => {
 
     cy.url().should('include', '/oauth/choose-account');
 
-    cy.getByTestId('auth-header').should('contain', 'Choose an account');
+    cy.getByTestId('auth-controls')
+      .contains('another account')
+      .click();
+
+    cy.url().should('include', '/login');
+
+    cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+    cy.url().should('include', '/password');
+
+    cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+    cy.url().should('equal', 'https://ely.by/');
   });
 
   it('should prompt for permissions', () => {
@@ -257,6 +329,33 @@ describe('prompts', () => {
         /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/,
       );
     });
+  });
+
+  it('should allow sign in during oauth (guest oauth)', () => {
+    cy.visit(
+      `/oauth2/v1/ely?${new URLSearchParams({
+        ...defaults,
+        client_id: 'tlauncher',
+        redirect_uri: 'http://localhost:8080',
+        prompt: 'select_account,consent',
+      })}`,
+    );
+
+    cy.url().should('include', '/login');
+
+    cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+    cy.url().should('include', '/password');
+
+    cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+    assertPermissions();
+
+    cy.getByTestId('auth-controls')
+      .contains('Approve')
+      .click();
+
+    cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
   });
 });
 

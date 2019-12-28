@@ -27,8 +27,8 @@ import { account1, account2 } from '../fixtures/accounts';
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 const accountsMap = {
-  default: account2,
-  default2: account1,
+  default: account1,
+  default2: account2,
 };
 
 Cypress.Commands.add(
@@ -82,8 +82,18 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getByTestId', (id, options) =>
-  cy.get(`[data-testid=${id}]`, options),
+Cypress.Commands.add(
+  'getByTestId',
+  { prevSubject: 'optional' },
+  (subject, id, options) => {
+    const selector = `[data-testid=${id}]`;
+
+    if (subject) {
+      return cy.wrap(subject.find(selector));
+    }
+
+    return cy.get(selector, options);
+  },
 );
 
 function createState(accounts) {

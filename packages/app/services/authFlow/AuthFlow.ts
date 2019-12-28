@@ -77,6 +77,7 @@ export default class AuthFlow implements AuthContext {
   onReady: () => void;
   navigate: (route: string, options: { replace?: boolean }) => void;
   currentRequest: Request;
+  oAuthStateRestored = false;
   dispatch: (action: { [key: string]: any }) => void;
   getState: () => RootState;
 
@@ -184,9 +185,6 @@ export default class AuthFlow implements AuthContext {
     }
   }
 
-  /**
-   * @returns {object} - current request object
-   */
   getRequest() {
     return {
       path: '',
@@ -295,6 +293,12 @@ export default class AuthFlow implements AuthContext {
       // allow register or the new oauth requests
       return;
     }
+
+    if (this.oAuthStateRestored) {
+      return;
+    }
+
+    this.oAuthStateRestored = true;
 
     try {
       const data = JSON.parse(localStorage.getItem('oauthData'));

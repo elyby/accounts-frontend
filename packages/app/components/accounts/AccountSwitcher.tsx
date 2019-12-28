@@ -66,9 +66,10 @@ export class AccountSwitcher extends React.Component<Props> {
           styles.accountSwitcher,
           styles[`${skin}AccountSwitcher`],
         )}
+        data-testid="account-switcher"
       >
-        {highlightActiveAccount ? (
-          <div className={styles.item}>
+        {highlightActiveAccount && (
+          <div className={styles.item} data-testid="active-account">
             <div
               className={clsx(
                 styles.accountIcon,
@@ -97,6 +98,7 @@ export class AccountSwitcher extends React.Component<Props> {
                 <div className={styles.link}>
                   <a
                     className={styles.link}
+                    data-testid="logout-account"
                     onClick={this.onRemove(activeAccount)}
                     href="#"
                   >
@@ -106,11 +108,13 @@ export class AccountSwitcher extends React.Component<Props> {
               </div>
             </div>
           </div>
-        ) : null}
+        )}
+
         {available.map((account, index) => (
           <div
             className={clsx(styles.item, styles.accountSwitchItem)}
             key={account.id}
+            data-e2e-account-id={account.id}
             onClick={this.onSwitch(account)}
           >
             <div
@@ -125,6 +129,7 @@ export class AccountSwitcher extends React.Component<Props> {
             {allowLogout ? (
               <div
                 className={styles.logoutIcon}
+                data-testid="logout-account"
                 onClick={this.onRemove(account)}
               />
             ) : (
@@ -141,6 +146,7 @@ export class AccountSwitcher extends React.Component<Props> {
           <Link to="/login" onClick={this.props.onAfterAction}>
             <Button
               color={COLOR_WHITE}
+              data-testid="add-account"
               block
               small
               className={styles.addAccount}
