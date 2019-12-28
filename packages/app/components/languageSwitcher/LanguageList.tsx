@@ -36,7 +36,7 @@ export default class LanguageList extends React.Component<{
         willEnter={this.willEnter}
       >
         {items => (
-          <div className={styles.languagesList}>
+          <div className={styles.languagesList} data-testid="language-list">
             <div
               className={clsx(styles.emptyLanguagesListWrapper, {
                 [styles.emptyLanguagesListVisible]: isListEmpty,

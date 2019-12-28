@@ -7,7 +7,7 @@ function transform(src, modulePath, rootContext) {
     // TODO: can't find the way to strip out this path part programmatically
     // this is a directory from resolve.modules config
     // may be this may work: .replace(this._compiler.options.resolve.root, '')
-    .replace('src/', '')
+    .replace('packages/app/', '')
     .replace(/^\/|\/$/g, '')
     .replace(/\//g, '.');
 

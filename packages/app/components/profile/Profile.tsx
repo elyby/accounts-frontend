@@ -26,7 +26,7 @@ class Profile extends React.Component<Props> {
     const { user, interfaceLocale } = this.props;
 
     return (
-      <div>
+      <div data-testid="profile-index">
         <Message {...messages.accountPreferencesTitle}>
           {(pageTitle: string) => (
             <h2 className={styles.indexTitle}>

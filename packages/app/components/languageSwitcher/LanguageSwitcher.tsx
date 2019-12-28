@@ -62,7 +62,11 @@ class LanguageSwitcher extends React.Component<
     const { filteredLangs } = this.state;
 
     return (
-      <div className={styles.languageSwitcher}>
+      <div
+        className={styles.languageSwitcher}
+        data-testid="language-switcher"
+        data-e2e-active-locale={selectedLocale}
+      >
         <div className={popupStyles.popup}>
           <div className={popupStyles.header}>
             <h2 className={popupStyles.headerTitle}>
