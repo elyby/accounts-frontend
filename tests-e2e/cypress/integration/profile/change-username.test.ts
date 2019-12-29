@@ -1,3 +1,5 @@
+import { openSectionByName, confirmWithPassword } from './utils';
+
 describe('Change username', () => {
   it('should change username', () => {
     cy.server();
@@ -29,15 +31,17 @@ describe('Change username', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('profile-item')
-        .contains('Nickname')
-        .closest('[data-testid="profile-item"]')
-        .getByTestId('profile-action')
-        .click();
+      openSectionByName('Nickname');
 
       cy.location('pathname').should('eq', '/profile/change-username');
 
       cy.get('[name=username]').type(`{selectall}${account.username}{enter}`);
+
+      // unmock accounts route
+      cy.route({
+        method: 'GET',
+        url: `/api/v1/accounts/${account.id}`,
+      });
 
       cy.wait('@username')
         .its('requestBody')
@@ -48,18 +52,8 @@ describe('Change username', () => {
             password: '',
           }).toString(),
         );
-      cy.getByTestId('password-request-form').should('be.visible');
 
-      // unmock accounts route
-      cy.route({
-        method: 'GET',
-        url: `/api/v1/accounts/${account.id}`,
-      });
-
-      cy.get('[name=password]').type(account.password);
-      cy.getByTestId('password-request-form')
-        .find('[type=submit]')
-        .click();
+      confirmWithPassword(account.password);
 
       cy.wait('@username')
         .its('requestBody')

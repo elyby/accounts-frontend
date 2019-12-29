@@ -19,6 +19,9 @@
 // };
 const wp = require('@cypress/webpack-preprocessor');
 
+// for some reason loader can not locate babel.config. So we
+const config = require('../../../babel.config');
+
 module.exports = on => {
   const options = {
     webpackOptions: {
@@ -38,6 +41,7 @@ module.exports = on => {
                 options: {
                   envName: 'webpack',
                   cacheDirectory: true,
+                  ...config,
                 },
               },
             ],
