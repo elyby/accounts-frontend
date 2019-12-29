@@ -1,4 +1,4 @@
-describe('Change locales', () => {
+describe('Change locale', () => {
   it('should change locale from footer', () => {
     cy.visit('/');
 

@@ -1,6 +1,6 @@
 import { openSectionByName, confirmWithPassword } from './utils';
 
-describe('Change password', () => {
+describe('Profile — Change password', () => {
   it('should change password', () => {
     cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
       cy.server();
@@ -11,6 +11,8 @@ describe('Change password', () => {
       cy.visit('/');
 
       openSectionByName('Password');
+
+      cy.location('pathname').should('eq', '/profile/change-password');
 
       cy.get('[name=newPassword]').type(account.password);
       cy.get('[name=newRePassword]').type(account.password);

@@ -1,6 +1,6 @@
 import { openSectionByName, confirmWithPassword } from './utils';
 
-describe('Change username', () => {
+describe('Profile — Change Username', () => {
   it('should change username', () => {
     cy.server();
 

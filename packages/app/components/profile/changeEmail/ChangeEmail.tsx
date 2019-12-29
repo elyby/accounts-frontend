@@ -61,7 +61,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
     return {
       activeStep:
         typeof props.step === 'number' ? props.step : state.activeStep,
-      code: props.code || '',
+      code: props.code || state.code,
     };
   }
 
@@ -75,7 +75,10 @@ export default class ChangeEmail extends React.Component<Props, State> {
         onSubmit={this.onFormSubmit}
         onInvalid={() => this.forceUpdate()}
       >
-        <div className={styles.contentWithBackButton}>
+        <div
+          className={styles.contentWithBackButton}
+          data-testid="change-email"
+        >
           <BackButton />
 
           <div className={styles.form}>
@@ -158,7 +161,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
 
   renderStep0({ email, form }) {
     return (
-      <div key="step0" className={styles.formBody}>
+      <div key="step0" data-testid="step1" className={styles.formBody}>
         <div className={styles.formRow}>
           <p className={styles.description}>
             <Message {...messages.currentAccountEmail} />
@@ -182,7 +185,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
 
   renderStep1({ email, form, code, isCodeSpecified, isActiveStep }) {
     return (
-      <div key="step1" className={styles.formBody}>
+      <div key="step1" data-testid="step2" className={styles.formBody}>
         <div className={styles.formRow}>
           <p className={styles.description}>
             <Message
@@ -231,7 +234,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
     const { newEmail } = this.state;
 
     return (
-      <div key="step2" className={styles.formBody}>
+      <div key="step2" data-testid="step3" className={styles.formBody}>
         <div className={styles.formRow}>
           <p className={styles.description}>
             {newEmail ? (
@@ -296,17 +299,21 @@ export default class ChangeEmail extends React.Component<Props, State> {
     return this.state.activeStep + 1 === STEPS_TOTAL;
   }
 
-  onSwitchStep = event => {
+  onSwitchStep = (event: React.MouseEvent) => {
     event.preventDefault();
 
     this.nextStep();
   };
 
-  onCodeInput = event => {
+  onCodeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
 
+    if (this.props.code) {
+      return;
+    }
+
     this.setState({
-      code: this.props.code || value,
+      code: value,
     });
   };
 
@@ -320,7 +327,12 @@ export default class ChangeEmail extends React.Component<Props, State> {
     }
 
     promise.then(
-      () => this.nextStep(),
+      () => {
+        this.nextStep();
+        this.setState({
+          code: '',
+        });
+      },
       resp => {
         if (resp.errors) {
           form.setErrors(resp.errors);
