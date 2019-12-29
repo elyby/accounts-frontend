@@ -2,8 +2,8 @@
 
 type AccountAlias = 'default' | 'default2';
 
-interface Account {
-  id: string;
+interface TAccount {
+  id: number;
   username: string;
   password: string;
   email: string;
@@ -31,7 +31,7 @@ declare namespace Cypress {
        * Whether return raw api response without any conversion. Defaults to: `false`
        */
       rawApiResp?: boolean;
-    }): Promise<{ accounts: Account[] }>;
+    }): Promise<{ accounts: TAccount[] }>;
 
     getByTestId<S = any>(
       id: string,

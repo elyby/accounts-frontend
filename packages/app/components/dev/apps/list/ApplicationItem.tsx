@@ -124,6 +124,7 @@ export default class ApplicationItem extends React.Component<
                 skin={SKIN_LIGHT}
                 disabled
                 value={app.clientSecret}
+                data-testid="client-secret"
                 copy
               />
             </div>
@@ -228,6 +229,7 @@ export default class ApplicationItem extends React.Component<
                     color={COLOR_RED}
                     className={styles.appActionButton}
                     onClick={this.onSubmitDelete}
+                    data-testid="delete-app"
                     small
                   />
                 )}
