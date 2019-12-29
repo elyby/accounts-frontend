@@ -218,4 +218,45 @@ describe('Forgot / reset password', () => {
         }).toString(),
       );
   });
+
+  it('should read key from an url', () => {
+    const key = 'key';
+    const newPassword = 'newPassword';
+
+    cy.server();
+    cy.login({
+      accounts: ['default'],
+      updateState: false,
+      rawApiResp: true,
+    }).then(({ accounts: [account] }) => {
+      cy.route({
+        method: 'POST',
+        url: '/api/authentication/recover-password',
+        response: account,
+      }).as('recover');
+    });
+
+    cy.visit('/');
+
+    cy.visit(`/recover-password/${key}`);
+
+    cy.get('[name=key]').should('have.value', key);
+    cy.get('[name=key]').should('have.attr', 'readonly');
+    cy.get('[name=newPassword]').type(newPassword);
+    cy.get('[name=newRePassword]').type(newPassword);
+    cy.get('[type=submit]')
+      .should('have.length', 1)
+      .click();
+
+    cy.wait('@recover')
+      .its('requestBody')
+      .should(
+        'eq',
+        new URLSearchParams({
+          key,
+          newPassword,
+          newRePassword: newPassword,
+        }).toString(),
+      );
+  });
 });
