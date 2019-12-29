@@ -161,8 +161,8 @@ describe('OAuth', () => {
               ...defaults,
               // suggest preferred username
               // https://docs.ely.by/ru/oauth.html#id3
-              login_hint: account.id,
-            })}`,
+              login_hint: String(account.id),
+            }).toString()}`,
           );
 
           cy.url().should('equal', 'https://ely.by/');
@@ -368,6 +368,12 @@ describe('OAuth', () => {
 
   describe('static pages', () => {
     it('should authenticate using static page', () => {
+      cy.server();
+      cy.route({
+        method: 'POST',
+        url: '/api/oauth2/v1/complete**',
+      }).as('complete');
+
       cy.login({ accounts: ['default'] });
 
       cy.visit(
@@ -378,10 +384,18 @@ describe('OAuth', () => {
         })}`,
       );
 
+      cy.wait('@complete');
+
       cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
     });
 
     it('should authenticate using static page with code', () => {
+      cy.server();
+      cy.route({
+        method: 'POST',
+        url: '/api/oauth2/v1/complete**',
+      }).as('complete');
+
       cy.login({ accounts: ['default'] });
 
       cy.visit(
@@ -391,6 +405,8 @@ describe('OAuth', () => {
           redirect_uri: 'static_page_with_code',
         })}`,
       );
+
+      cy.wait('@complete');
 
       cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
 
@@ -404,25 +420,21 @@ describe('OAuth', () => {
       // https://github.com/cypress-io/cypress/issues/2752
       cy.getByTestId('oauth-code-container')
         .contains('Copy')
-        .click({
-          // TODO: forcing, because currently we have needless re-renders, that causing
-          // button to disappear for some time and to be unclickable
-          force: true,
-        });
+        .click();
     });
   });
-
-  function assertPermissions() {
-    cy.url().should('include', '/oauth/permissions');
-
-    cy.getByTestId('auth-header').should('contain', 'Application permissions');
-    cy.getByTestId('auth-body').should(
-      'contain',
-      'Access to your profile data (except E‑mail)',
-    );
-    cy.getByTestId('auth-body').should(
-      'contain',
-      'Access to your E‑mail address',
-    );
-  }
 });
+
+function assertPermissions() {
+  cy.url().should('include', '/oauth/permissions');
+
+  cy.getByTestId('auth-header').should('contain', 'Application permissions');
+  cy.getByTestId('auth-body').should(
+    'contain',
+    'Access to your profile data (except E‑mail)',
+  );
+  cy.getByTestId('auth-body').should(
+    'contain',
+    'Access to your E‑mail address',
+  );
+}

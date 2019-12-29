@@ -15,9 +15,11 @@ import { AuthContext } from './AuthFlow';
 
 export default class PasswordState extends AbstractState {
   enter(context: AuthContext) {
-    const { login } = getCredentials(context.getState());
+    const { login, isTotpRequired } = getCredentials(context.getState());
 
-    if (login) {
+    if (isTotpRequired) {
+      context.setState(new MfaState());
+    } else if (login) {
       context.navigate('/password');
     } else {
       context.setState(new CompleteState());

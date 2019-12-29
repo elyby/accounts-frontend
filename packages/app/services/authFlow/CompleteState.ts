@@ -105,7 +105,7 @@ export default class CompleteState extends AbstractState {
         (resp: { redirectUri: string }) => {
           // TODO: пусть в стейт попадает флаг или тип авторизации
           // вместо волшебства над редирект урлой
-          if (resp.redirectUri.indexOf('static_page') === 0) {
+          if (resp.redirectUri.includes('static_page')) {
             context.setState(new FinishState());
           } else {
             return context.run('redirect', resp.redirectUri);

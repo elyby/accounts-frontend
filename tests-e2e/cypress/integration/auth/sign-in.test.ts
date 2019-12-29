@@ -46,6 +46,16 @@ describe('Sign in / Log out', () => {
       });
   });
 
+  it('should force to /login page', () => {
+    cy.visit('/');
+
+    cy.location('pathname').should('eq', '/login');
+
+    cy.getByTestId('home-page').click();
+
+    cy.location('pathname').should('eq', '/login');
+  });
+
   it('should sign in without remember me', () => {
     cy.visit('/');
 

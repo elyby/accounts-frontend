@@ -30,8 +30,20 @@ declare namespace Cypress {
       /**
        * Whether return raw api response without any conversion. Defaults to: `false`
        */
-      rawApiResp?: boolean;
+      rawApiResp?: false;
     }): Promise<{ accounts: TAccount[] }>;
+    login(options: {
+      accounts: AccountAlias[];
+      updateState?: boolean;
+      rawApiResp: true;
+    }): Promise<{
+      accounts: {
+        success: true;
+        access_token: string;
+        expires_in: number;
+        refresh_token: string;
+      }[];
+    }>;
 
     getByTestId<S = any>(
       id: string,

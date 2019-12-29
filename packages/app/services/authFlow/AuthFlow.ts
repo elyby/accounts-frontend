@@ -115,12 +115,6 @@ export default class AuthFlow implements AuthContext {
           options.replace = true;
         }
 
-        this.currentRequest = {
-          path: route,
-          params: {},
-          query: new URLSearchParams(),
-        };
-
         if (this.replace) {
           this.replace(route);
         }
@@ -288,17 +282,17 @@ export default class AuthFlow implements AuthContext {
    *
    * @returns {bool} - whether oauth state is being restored
    */
-  private restoreOAuthState() {
-    if (/^\/(register|oauth2)/.test(this.getRequest().path)) {
-      // allow register or the new oauth requests
-      return;
-    }
-
+  private restoreOAuthState(): boolean {
     if (this.oAuthStateRestored) {
-      return;
+      return false;
     }
 
     this.oAuthStateRestored = true;
+
+    if (/^\/(register|oauth2)/.test(this.getRequest().path)) {
+      // allow register or the new oauth requests
+      return false;
+    }
 
     try {
       const data = JSON.parse(localStorage.getItem('oauthData'));

@@ -12,7 +12,7 @@ export default class LoginState extends AbstractState {
     const { user } = context.getState();
 
     const isUserAddsSecondAccount =
-      !user.isGuest && /login|password/.test(context.getRequest().path); // TODO: improve me
+      !user.isGuest && /login|password/.test(location.pathname); // TODO: improve me
 
     // TODO: it may not allow user to leave password state till he click back or enters password
     if (login) {

@@ -71,7 +71,12 @@ class RootPage extends React.PureComponent<{
         >
           <div className={styles.header} data-testid="toolbar">
             <div className={styles.headerContent}>
-              <Link to="/" className={styles.logo} onClick={onLogoClick}>
+              <Link
+                to="/"
+                className={styles.logo}
+                onClick={onLogoClick}
+                data-testid="home-page"
+              >
                 <Message {...messages.siteName} />
               </Link>
               <div className={styles.userbar}>

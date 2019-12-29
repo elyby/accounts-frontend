@@ -9,31 +9,25 @@ singleAccount.accounts.available = singleAccount.accounts.available.filter(
   account => account.id === singleAccount.accounts.active,
 );
 
-describe("when user's token and refreshToken are invalid", () => {
-  before(() =>
+describe('User with invalid token and refreshToken', () => {
+  before(() => {
     // ensure we always have one account with correct token
-    cy.visit('/').then(() =>
-      fetch('/api/authentication/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-        body: `login=${account1.login}&password=${account1.password}`,
-      })
-        .then(resp => resp.json())
-        .then(resp => {
-          const account = multiAccount.accounts.available.find(
-            item => item.username === account1.username,
-          );
+    cy.login({
+      accounts: ['default'],
+      updateState: false,
+      rawApiResp: true,
+    }).then(({ accounts: [resp] }) => {
+      const account = multiAccount.accounts.available.find(
+        item => item.username === account1.username,
+      );
 
-          if (!account) {
-            throw new Error('Can not find an account');
-          }
+      if (!account) {
+        throw new Error('Can not find an account');
+      }
 
-          account.token = resp.access_token;
-        }),
-    ),
-  );
+      account.token = resp.access_token;
+    });
+  });
 
   beforeEach(() =>
     localStorage.setItem('redux-storage', JSON.stringify(multiAccount)),
@@ -46,7 +40,7 @@ describe("when user's token and refreshToken are invalid", () => {
 
     cy.get('[name="password"]').type(`${account2.password}{enter}`);
 
-    cy.location('pathname', { timeout: 15000 }).should('eq', '/');
+    cy.location('pathname').should('eq', '/');
     cy.contains('account preferences');
   });
 
@@ -60,18 +54,15 @@ describe("when user's token and refreshToken are invalid", () => {
       .contains('Ely.by')
       .click();
 
-    // TODO: currently we can not skip redirect to /, but we will in future
-    cy.location('pathname', { timeout: 15000 }).should('eq', '/');
-    cy.url({ timeout: 15000 }).should('include', '/password');
+    cy.url().should('include', '/password');
   });
 
   it('should allow select account', () => {
-    // TODO: need a way to get valid token for one of the accounts
     cy.visit('/');
 
     cy.get('[data-e2e-go-back]').click();
 
-    cy.url().should('include', '/choose-account');
+    cy.location('pathname').should('eq', '/choose-account');
 
     cy.get('[data-e2e-content]')
       .contains(account2.email)
@@ -80,8 +71,9 @@ describe("when user's token and refreshToken are invalid", () => {
     cy.get('[data-e2e-content]')
       .contains(account1.username)
       .click();
+    cy.get('[name="password"]').type(`${account2.password}{enter}`);
 
-    cy.location('pathname', { timeout: 15000 }).should('eq', '/');
+    cy.location('pathname').should('eq', '/');
     cy.contains('account preferences');
   });
 
@@ -101,12 +93,20 @@ describe("when user's token and refreshToken are invalid", () => {
   });
 
   it('should allow logout', () => {
+    cy.server();
+    cy.route({
+      url: `/api/v1/accounts/${account2.id}`,
+    }).as('account');
+    cy.route({
+      method: 'POST',
+      url: '/api/authentication/logout',
+    }).as('logout');
+
     cy.visit('/');
 
-    cy.get('@fetch', { timeout: 15000 }).should(
-      'be.calledWith',
-      `/api/v1/accounts/${account2.id}`,
-    );
+    cy.wait('@account')
+      .its('status')
+      .should('eq', 401);
 
     cy.getByTestId('toolbar')
       .contains(account2.username)
@@ -115,10 +115,7 @@ describe("when user's token and refreshToken are invalid", () => {
       .contains('Log out')
       .click();
 
-    cy.get('@fetch', { timeout: 15000 }).should(
-      'be.calledWith',
-      '/api/authentication/logout',
-    );
+    cy.wait('@logout');
     cy.getByTestId('toolbar')
       .contains(account2.email)
       .should('not.exist');
@@ -128,12 +125,16 @@ describe("when user's token and refreshToken are invalid", () => {
   });
 
   it('should allow enter new login from choose account', () => {
+    cy.server();
+    cy.route({
+      url: `/api/v1/accounts/${account2.id}`,
+    }).as('account');
+
     cy.visit('/');
 
-    cy.get('@fetch', { timeout: 15000 }).should(
-      'be.calledWith',
-      `/api/v1/accounts/${account2.id}`,
-    );
+    cy.wait('@account')
+      .its('status')
+      .should('eq', 401);
 
     cy.url().should('include', '/password');
 
@@ -152,9 +153,10 @@ describe("when user's token and refreshToken are invalid", () => {
 
     cy.get('[name=password]').type(account1.password);
     cy.get('[name=rememberMe]').should('be.checked');
+    cy.get('[type=submit]').should('have.length', 1); // wait till transition ends
     cy.get('[type=submit]').click();
 
-    cy.location('pathname', { timeout: 15000 }).should('eq', '/');
+    cy.location('pathname').should('eq', '/');
   });
 
   it('should allow logout from all accounts while choosing an account', () => {
@@ -195,7 +197,7 @@ describe("when user's token and refreshToken are invalid", () => {
     cy.wait(1000);
     cy.get('[name="password"]').type(`${account1.password}{enter}`);
 
-    cy.location('pathname', { timeout: 15000 }).should('eq', '/');
+    cy.location('pathname').should('eq', '/');
     cy.contains('account preferences');
   });
 
@@ -254,7 +256,7 @@ describe("when user's token and refreshToken are invalid", () => {
 
     cy.get('[name=password]').type(`${account2.password}{enter}`);
 
-    cy.url({ timeout: 15000 }).should('contain', '/oauth/choose-account');
+    cy.url().should('contain', '/oauth/choose-account');
 
     cy.get('[data-e2e-content]')
       .contains(account2.username)

@@ -68,7 +68,7 @@ describe('AuthFlow.functional', () => {
     it('should redirect guest / -> /login', () => {
       navigate('/');
 
-      expect(flow.navigate, 'was called once');
+      expect(flow.navigate, 'was called twice');
       expect(flow.navigate, 'to have a call satisfying', ['/login']);
     });
 
@@ -80,8 +80,12 @@ describe('AuthFlow.functional', () => {
       navigate('/login');
       navigate('/');
 
-      expect(flow.navigate, 'was called twice');
-      expect(flow.navigate, 'to have a call satisfying', ['/login']);
+      expect(flow.navigate, 'was called thrice');
+      expect(flow.navigate, 'to have calls satisfying', [
+        ['/login'],
+        ['/login'],
+        ['/login'],
+      ]);
     });
   });
 
