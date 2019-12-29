@@ -15,7 +15,11 @@ export default function OsInstruction({
   onClick: (event: React.MouseEvent<any>) => void;
 }) {
   return (
-    <div className={clsx(styles.osTile, className)} onClick={onClick}>
+    <div
+      className={clsx(styles.osTile, className)}
+      onClick={onClick}
+      data-testid="os-tile"
+    >
       <img className={styles.osLogo} src={logo} alt={label} />
       <div className={styles.osName}>{label}</div>
     </div>

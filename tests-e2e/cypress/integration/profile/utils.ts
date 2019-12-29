@@ -1,10 +1,12 @@
 export function getSectionByName(name: string) {
-  return cy.getByTestId('profile-item').contains(name);
+  return cy
+    .getByTestId('profile-item')
+    .contains(name)
+    .closest('[data-testid="profile-item"]');
 }
 
 export function openSectionByName(name: string) {
   return getSectionByName(name)
-    .closest('[data-testid="profile-item"]')
     .getByTestId('profile-action')
     .click();
 }

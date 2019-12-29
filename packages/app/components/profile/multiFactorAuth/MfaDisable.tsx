@@ -38,9 +38,12 @@ export default class MfaDisable extends React.Component<
   onSubmit = (form: FormModel) => {
     return this.props
       .onSubmit(form, () => {
-        const { totp } = form.serialize() as { totp: string };
+        const { totp, password } = form.serialize() as {
+          totp: string;
+          password?: string;
+        };
 
-        return disableMFA(this.context.userId, totp);
+        return disableMFA(this.context.userId, totp, password);
       })
       .then(() => this.props.onComplete())
       .catch(resp => {

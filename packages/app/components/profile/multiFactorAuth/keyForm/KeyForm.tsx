@@ -40,7 +40,9 @@ export default function KeyForm({
       </div>
 
       <div className={profileForm.formRow}>
-        <div className={styles.key}>{formattedSecret}</div>
+        <div className={styles.key} data-testid="secret">
+          {formattedSecret}
+        </div>
       </div>
 
       <div className={profileForm.formRow}>

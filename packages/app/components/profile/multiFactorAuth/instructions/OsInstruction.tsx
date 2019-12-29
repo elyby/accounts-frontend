@@ -77,7 +77,11 @@ const linksByOs: {
 
 export default function OsInstruction({ os }: { os: OS }) {
   return (
-    <div className={styles.osInstruction}>
+    <div
+      className={styles.osInstruction}
+      data-testid="os-instruction"
+      data-os={os}
+    >
       <h3 className={styles.instructionTitle}>
         <Message {...messages.installOnOfTheApps} />
       </h3>
