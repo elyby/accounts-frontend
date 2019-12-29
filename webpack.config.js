@@ -136,8 +136,9 @@ const webpackConfig = {
           {
             loader: 'style-loader',
             options: {
-              // Enable when we will upgrade to @^1.1.0
-              // This also need style-loader#445 to be resolved
+              // style-loader@1.1.2 is still buggy. It breaks our icon styles
+              // (vertical align is broken and styles applied multiple times)
+              // so we can not use it and it's new `esModule` options
               // esModule: true,
             },
           },
