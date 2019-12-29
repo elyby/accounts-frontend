@@ -5,6 +5,7 @@ type AccountAlias = 'default' | 'default2';
 interface Account {
   id: string;
   username: string;
+  password: string;
   email: string;
   token: string;
   refreshToken: string;

@@ -118,6 +118,21 @@ export function authenticate(
   };
 }
 
+/**
+ * Re-fetch user data for currently active account
+ */
+export function refreshUserData(): ThunkAction<Promise<void>> {
+  return async (dispatch, getState) => {
+    const activeAccount = getActiveAccount(getState());
+
+    if (!activeAccount) {
+      throw new Error('Can not fetch user data. No user.id available');
+    }
+
+    await dispatch(authenticate(activeAccount));
+  };
+}
+
 function findAccountIdFromToken(token: string): number {
   const { sub, jti } = getJwtPayloads(token);
 

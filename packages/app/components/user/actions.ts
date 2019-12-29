@@ -1,8 +1,6 @@
 import {
-  getInfo as getInfoEndpoint,
   changeLang as changeLangEndpoint,
   acceptRules as acceptRulesEndpoint,
-  UserResponse,
 } from 'app/services/api/accounts';
 import { setLocale } from 'app/components/i18n/actions';
 import { ThunkAction } from 'app/reducers';
@@ -39,9 +37,9 @@ export function setUser(payload: Partial<User>) {
 }
 
 export const CHANGE_LANG = 'USER_CHANGE_LANG';
-export function changeLang(lang: string): ThunkAction<Promise<void>> {
-  return (dispatch, getState) =>
-    dispatch(setLocale(lang)).then((lang: string) => {
+export function changeLang(targetLang: string): ThunkAction<Promise<void>> {
+  return async (dispatch, getState) =>
+    dispatch(setLocale(targetLang)).then((lang: string) => {
       const { id, isGuest, lang: oldLang } = getState().user;
 
       if (oldLang === lang) {
@@ -69,28 +67,6 @@ export function setGuest(): ThunkAction<Promise<void>> {
         isGuest: true,
       }),
     );
-  };
-}
-
-export function fetchUserData(): ThunkAction<Promise<UserResponse>> {
-  return async (dispatch, getState) => {
-    const { id } = getState().user;
-
-    if (!id) {
-      throw new Error('Can not fetch user data. No user.id available');
-    }
-
-    const resp = await getInfoEndpoint(id);
-
-    dispatch(
-      updateUser({
-        isGuest: false,
-        ...resp,
-      }),
-    );
-    dispatch(changeLang(resp.lang));
-
-    return resp;
   };
 }
 

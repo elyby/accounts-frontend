@@ -21,6 +21,7 @@ export class BackButton extends FormComponent<{
         className={styles.backButton}
         to={to}
         title={this.formatMessage(messages.back)}
+        data-testid="back-to-profile"
       >
         <span className={styles.backIcon} />
         <span className={styles.backText}>

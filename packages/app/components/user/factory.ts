@@ -36,7 +36,7 @@ export function factory(store: Store): Promise<void> {
         return;
       }
 
-      return Promise.reject();
+      throw new Error('No active account found');
     })
     .catch(async () => {
       // the user is guest or user authentication failed

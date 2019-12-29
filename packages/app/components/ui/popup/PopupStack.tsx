@@ -35,7 +35,7 @@ export class PopupStack extends React.Component<{
           return (
             <CSSTransition
               key={index}
-              clsx={{
+              classNames={{
                 enter: styles.trEnter,
                 enterActive: styles.trEnterActive,
                 exit: styles.trExit,

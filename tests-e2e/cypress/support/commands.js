@@ -65,6 +65,7 @@ Cypress.Commands.add(
         return {
           id: credentials.id,
           username: credentials.username,
+          password: credentials.password,
           email: credentials.email,
           token: resp.access_token,
           refreshToken: resp.refresh_token,

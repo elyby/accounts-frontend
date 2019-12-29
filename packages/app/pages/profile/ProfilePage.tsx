@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { fetchUserData } from 'app/components/user/actions';
+import { refreshUserData } from 'app/components/accounts/actions';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import PasswordRequestForm from 'app/components/profile/passwordRequestForm/PasswordRequestForm';
 import logger from 'app/services/logger';
@@ -24,7 +24,7 @@ interface Props {
     form: FormModel;
     sendData: () => Promise<any>;
   }) => Promise<void>;
-  fetchUserData: () => Promise<any>;
+  refreshUserData: () => Promise<any>;
 }
 
 class ProfilePage extends React.Component<Props> {
@@ -74,7 +74,7 @@ class ProfilePage extends React.Component<Props> {
   }
 
   goToProfile = async () => {
-    await this.props.fetchUserData();
+    await this.props.refreshUserData();
 
     browserHistory.push('/');
   };
@@ -85,7 +85,7 @@ export default connect(
     userId: state.user.id,
   }),
   {
-    fetchUserData,
+    refreshUserData,
     onSubmit: ({
       form,
       sendData,
@@ -158,11 +158,11 @@ export default connect(
                           ).length > 0;
 
                         if (parentFormHasErrors) {
-                          // something wrong with parent form, hidding popup and show that form
+                          // something wrong with parent form, hiding popup and show that form
                           props.onClose();
                           reject(resp);
                           logger.warn(
-                            'Profile: can not submit pasword popup due to errors in source form',
+                            'Profile: can not submit password popup due to errors in source form',
                             { resp },
                           );
                         }

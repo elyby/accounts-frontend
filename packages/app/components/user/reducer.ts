@@ -18,7 +18,7 @@ export interface User {
 }
 
 export type State = {
-  user: User; // TODO: replace with centralized global state
+  user: User;
 };
 
 const defaults: User = {

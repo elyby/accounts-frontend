@@ -19,7 +19,7 @@ type Props = {
   interfaceLocale: string;
 };
 
-class Profile extends React.Component<Props> {
+class Profile extends React.PureComponent<Props> {
   UUID: HTMLElement | null;
 
   render() {
