@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { SlideMotion } from 'app/components/ui/motion';
 import { ScrollIntoView } from 'app/components/ui/scroll';
 import {

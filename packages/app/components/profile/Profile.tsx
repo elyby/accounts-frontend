@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { ChangeLanguageLink } from 'app/components/languageSwitcher';
 import { RelativeTime } from 'app/components/ui';
 import { User } from 'app/components/user';

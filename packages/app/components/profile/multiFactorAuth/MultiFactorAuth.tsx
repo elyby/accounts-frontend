@@ -1,5 +1,5 @@
 import React from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FormattedMessage as Message } from 'react-intl';
 import styles from 'app/components/profile/profileForm.scss';
 import { BackButton } from 'app/components/profile/ProfileForm';

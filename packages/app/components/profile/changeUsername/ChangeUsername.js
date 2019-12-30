@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 import { Input, Button, Form, FormModel } from 'app/components/ui/form';
 import { BackButton } from 'app/components/profile/ProfileForm';

@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { FormattedMessage as Message } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { LinkButton } from 'app/components/ui/form';
 import { COLOR_GREEN, COLOR_BLUE } from 'app/components/ui';
 import { ContactLink } from 'app/components/contact';

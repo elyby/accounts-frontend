@@ -4,7 +4,7 @@ import { resetAuth } from 'app/components/auth/actions';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import clsx from 'clsx';
 import AuthPage from 'app/pages/auth/AuthPage';
 import ProfilePage from 'app/pages/profile/ProfilePage';

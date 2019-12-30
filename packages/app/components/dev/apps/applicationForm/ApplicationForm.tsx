@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { MessageDescriptor } from 'react-intl';
 import { OauthAppResponse } from 'app/services/api/oauth';
 import { ApplicationType } from 'app/components/dev/apps';

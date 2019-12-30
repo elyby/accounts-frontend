@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import loader from 'app/services/loader';
 import { Query } from 'app/services/request';
 

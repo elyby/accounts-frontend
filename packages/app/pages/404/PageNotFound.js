@@ -4,7 +4,7 @@ import { FooterMenu } from 'app/components/footerMenu';
 
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 import styles from './404.scss';
 import messages from './PageNotFound.intl.json';

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FooterMenu } from 'app/components/footerMenu';
 import appInfo from 'app/components/auth/appInfo/AppInfo.intl.json';
 

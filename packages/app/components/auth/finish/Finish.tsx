@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage as Message } from 'react-intl';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Button } from 'app/components/ui/form';
 import copy from 'app/services/copy';
 import { RootState } from 'app/reducers';
