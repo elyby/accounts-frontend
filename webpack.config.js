@@ -19,7 +19,7 @@ const config = require('./config');
 const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n'));
 const localeFlags = require('app/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./packages');
-const outputPath = path.join(__dirname, 'dist');
+const outputPath = path.join(__dirname, 'build');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isAnalyze = process.argv.some(arg => arg === '--analyze');

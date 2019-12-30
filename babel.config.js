@@ -22,7 +22,7 @@ module.exports = {
         corejs: 3,
       },
     ],
-    ['react-intl', { messagesDir: './dist/messages/' }],
+    ['react-intl', { messagesDir: './build/messages/' }],
   ],
   env: {
     webpack: {

@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "start": "yarn run clean && yarn run build:dll && webpack-dev-server --colors",
-    "clean": "rm -rf ./dist && mkdir ./dist",
+    "clean": "rm -rf ./build && mkdir ./build",
     "e2e": "yarn --cwd ./tests-e2e test",
     "test": "jest",
     "test:watch": "yarn test --watch",
@@ -43,7 +43,7 @@
     "build:webpack": "NODE_ENV=production webpack --colors -p --bail",
     "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
     "build:dll": "node ./packages/scripts/build-dll.js",
-    "build:serve": "http-server --proxy https://dev.account.ely.by ./dist",
+    "build:serve": "http-server --proxy https://dev.account.ely.by ./build",
     "sb": "start-storybook -p 9009 --ci",
     "build-storybook": "build-storybook"
   },

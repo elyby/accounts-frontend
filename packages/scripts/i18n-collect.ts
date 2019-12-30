@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import prompt from 'prompt';
 import localesMap from 'app/i18n';
 
-const MESSAGES_PATTERN = `${__dirname}/../../dist/messages/**/*.json`;
+const MESSAGES_PATTERN = `${__dirname}/../../build/messages/**/*.json`;
 const LANG_DIR = `${__dirname}/../app/i18n`;
 const DEFAULT_LOCALE = 'en';
 const SUPPORTED_LANGS = [DEFAULT_LOCALE, ...Object.keys(localesMap)];

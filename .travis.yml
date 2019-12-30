@@ -28,24 +28,24 @@ before_deploy:
   - chmod 600 /tmp/deploy_rsa
   - ssh-add /tmp/deploy_rsa
   # Removing unneeded files
-  - rm -rf dist/messages
-  - rm -rf dist/*.css.map
+  - rm -rf build/messages
+  - rm -rf build/*.css.map
   # Move all source maps to it's own directory
   - mkdir -p source-maps
-  - mv dist/*.js.map source-maps/ 2>/dev/null; true
-  - cp dist/*.js source-maps/
+  - mv build/*.js.map source-maps/ 2>/dev/null; true
+  - cp build/*.js source-maps/
   # Creating tar.gz and zip archives
-  - cd dist
-  - tar -zcf ../dist.tar.gz --exclude="*.map" *
-  - zip -rq ../dist.zip * -x "*.map"
+  - cd build
+  - tar -zcf ../build.tar.gz --exclude="*.map" *
+  - zip -rq ../build.zip * -x "*.map"
   - cd ..
 
 deploy:
   - provider: releases
     api_key: "$GITHUB_TOKEN"
     file:
-      - dist.tar.gz
-      - dist.zip
+      - build.tar.gz
+      - build.zip
     skip_cleanup: true
     draft: true
     on:
@@ -53,7 +53,7 @@ deploy:
 
   # - provider: script
   #   skip_cleanup: true
-  #   script: echo "put -r $TRAVIS_BUILD_DIR/dist/* accounts-frontend/" | sftp deploy@account.ely.by
+  #   script: echo "put -r $TRAVIS_BUILD_DIR/build/* accounts-frontend/" | sftp deploy@account.ely.by
   #   on:
   #     branch: master
 
