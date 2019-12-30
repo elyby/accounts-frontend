@@ -8,7 +8,7 @@ import ChangePassword from 'app/components/profile/changePassword/ChangePassword
 
 describe('<ChangePassword />', () => {
   it('renders two <Input /> components', () => {
-    const component = shallow(<ChangePassword onSubmit={() => {}} />);
+    const component = shallow(<ChangePassword onSubmit={async () => {}} />);
 
     expect(component.find('Input'), 'to satisfy', { length: 2 });
   });

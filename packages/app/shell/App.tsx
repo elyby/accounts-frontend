@@ -1,6 +1,7 @@
-import React from 'react';
 import { hot } from 'react-hot-loader/root';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { History } from 'history';
 import { Store } from 'app/reducers';
 import AuthFlowRoute from 'app/containers/AuthFlowRoute';
 import RootPage from 'app/pages/root/RootPage';
@@ -14,7 +15,7 @@ const SuccessOauthPage = React.lazy(() =>
   ),
 );
 
-const App = ({ store, history }: { store: Store; history: any }) => (
+const App = ({ store, history }: { store: Store; history: History<any> }) => (
   <ContextProvider store={store} history={history}>
     <React.Suspense fallback={<ComponentLoader />}>
       <Switch>

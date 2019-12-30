@@ -34,7 +34,7 @@ class MultiFactorAuth extends React.Component<{
             <Message {...messages.mfaTitle}>
               {pageTitle => (
                 <h3 className={styles.title}>
-                  <Helmet title={pageTitle} />
+                  <Helmet title={pageTitle as string} />
                   {pageTitle}
                 </h3>
               )}

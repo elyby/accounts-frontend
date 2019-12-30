@@ -35,6 +35,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "@types/react-helmet": "^5.0.14",
     "@types/webpack-env": "^1.14.1",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.15.1"

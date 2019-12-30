@@ -1,10 +1,8 @@
 import React from 'react';
-
-import { FooterMenu } from 'app/components/footerMenu';
-
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
+import { FooterMenu } from 'app/components/footerMenu';
 
 import styles from './404.scss';
 import messages from './PageNotFound.intl.json';
@@ -14,7 +12,7 @@ export default function PageNotFound() {
   return (
     <div className={styles.page}>
       <Message {...messages.title}>
-        {pageTitle => <Helmet title={pageTitle} />}
+        {pageTitle => <Helmet title={pageTitle as string} />}
       </Message>
 
       <div className={styles.loading}>

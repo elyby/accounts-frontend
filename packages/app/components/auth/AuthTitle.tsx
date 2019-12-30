@@ -8,7 +8,7 @@ export default function AuthTitle({ title }: { title: MessageDescriptor }) {
       {msg => (
         <span>
           {msg}
-          <Helmet title={msg} />
+          <Helmet title={msg as string} />
         </span>
       )}
     </Message>

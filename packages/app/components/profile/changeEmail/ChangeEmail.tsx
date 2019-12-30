@@ -86,7 +86,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
               <Message {...messages.changeEmailTitle}>
                 {pageTitle => (
                   <h3 className={styles.violetTitle}>
-                    <Helmet title={pageTitle} />
+                    <Helmet title={pageTitle as string} />
                     {pageTitle}
                   </h3>
                 )}

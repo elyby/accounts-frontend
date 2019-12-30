@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -9,20 +8,18 @@ import {
   Form,
   FormModel,
 } from 'app/components/ui/form';
-import { BackButton } from 'app/components/profile/ProfileForm';
 
-import styles from 'app/components/profile/profileForm.scss';
+import { BackButton } from '../ProfileForm';
+import styles from '../profileForm.scss';
 import messages from './ChangePassword.intl.json';
 
-export default class ChangePassword extends Component {
-  static displayName = 'ChangePassword';
+interface Props {
+  form: FormModel;
+  onSubmit: (form: FormModel) => Promise<void>;
+}
 
-  static propTypes = {
-    form: PropTypes.instanceOf(FormModel),
-    onSubmit: PropTypes.func.isRequired,
-  };
-
-  static get defaultProps() {
+export default class ChangePassword extends React.Component<Props> {
+  static get defaultProps(): Partial<Props> {
     return {
       form: new FormModel(),
     };
@@ -41,7 +38,7 @@ export default class ChangePassword extends Component {
               <Message {...messages.changePasswordTitle}>
                 {pageTitle => (
                   <h3 className={styles.title}>
-                    <Helmet title={pageTitle} />
+                    <Helmet title={pageTitle as string} />
                     {pageTitle}
                   </h3>
                 )}

@@ -1,26 +1,21 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
+import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
-
 import { Input, Button, Form, FormModel } from 'app/components/ui/form';
 import { BackButton } from 'app/components/profile/ProfileForm';
-import styles from 'app/components/profile/profileForm.scss';
 
+import styles from '../profileForm.scss';
 import messages from './ChangeUsername.intl.json';
 
-export default class ChangeUsername extends Component {
-  static displayName = 'ChangeUsername';
+interface Props {
+  username: string;
+  form: FormModel;
+  onChange: (name: string) => void;
+  onSubmit: (form: FormModel) => Promise<void>;
+}
 
-  static propTypes = {
-    username: PropTypes.string.isRequired,
-    form: PropTypes.instanceOf(FormModel),
-    onChange: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-  };
-
-  static get defaultProps() {
+export default class ChangeUsername extends React.Component<Props> {
+  static get defaultProps(): Partial<Props> {
     return {
       form: new FormModel(),
     };
@@ -39,7 +34,7 @@ export default class ChangeUsername extends Component {
               <Message {...messages.changeUsernameTitle}>
                 {pageTitle => (
                   <h3 className={styles.title}>
-                    <Helmet title={pageTitle} />
+                    <Helmet title={pageTitle as string} />
                     {pageTitle}
                   </h3>
                 )}
@@ -80,7 +75,7 @@ export default class ChangeUsername extends Component {
     );
   }
 
-  onUsernameChange = event => {
+  onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.props.onChange(event.target.value);
   };
 
