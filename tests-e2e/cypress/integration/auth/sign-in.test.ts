@@ -227,6 +227,8 @@ describe('Sign in / Log out', () => {
         .contains(account2.username)
         .click();
       cy.get('[data-e2e-account-id]').should('have.length', 0);
+      cy.getByTestId('profile-index').should('not.contain', account1.username);
+      cy.getByTestId('profile-index').should('contain', account2.username);
     });
 
     it('should not allow log in the same account twice', () => {

@@ -58,6 +58,7 @@ describe('Profile — Change Email', () => {
 
       cy.location('pathname').should('eq', '/profile/change-email/step2');
 
+      cy.getByTestId('step2').should('be.visible');
       cy.getByTestId('step2')
         .find('[name=key]')
         .type(key);
@@ -76,6 +77,9 @@ describe('Profile — Change Email', () => {
         );
       cy.location('pathname').should('eq', '/profile/change-email/step3');
 
+      cy.getByTestId('step3')
+        .find('[name=key]')
+        .should('be.visible');
       cy.getByTestId('step3')
         .find('[name=key]')
         .should('have.value', '');
