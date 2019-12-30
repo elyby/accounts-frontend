@@ -7,16 +7,38 @@ import PasswordRequestForm from 'app/components/profile/passwordRequestForm/Pass
 import logger from 'app/services/logger';
 import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
-import Profile from 'app/components/profile/Profile';
-import ChangePasswordPage from 'app/pages/profile/ChangePasswordPage';
-import ChangeUsernamePage from 'app/pages/profile/ChangeUsernamePage';
-import ChangeEmailPage from 'app/pages/profile/ChangeEmailPage';
-import MultiFactorAuthPage from 'app/pages/profile/MultiFactorAuthPage';
 import { FormModel } from 'app/components/ui/form';
 import { RootState } from 'app/reducers';
 import { Provider } from 'app/components/profile/Context';
+import { ComponentLoader } from 'app/components/ui/loader';
 
 import styles from './profile.scss';
+
+const Profile = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-profile-index" */ 'app/components/profile/Profile'
+  ),
+);
+const ChangePasswordPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-profile-change-password" */ 'app/pages/profile/ChangePasswordPage'
+  ),
+);
+const ChangeUsernamePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-profile-change-username" */ 'app/pages/profile/ChangeUsernamePage'
+  ),
+);
+const ChangeEmailPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-profile-change-email" */ 'app/pages/profile/ChangeEmailPage'
+  ),
+);
+const MultiFactorAuthPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-profile-mfa" */ 'app/pages/profile/MultiFactorAuthPage'
+  ),
+);
 
 interface Props {
   userId: number;
@@ -40,30 +62,36 @@ class ProfilePage extends React.Component<Props> {
             goToProfile: this.goToProfile,
           }}
         >
-          <Switch>
-            <Route
-              path="/profile/mfa/step:step([1-3])"
-              component={MultiFactorAuthPage}
-            />
-            <Route path="/profile/mfa" exact component={MultiFactorAuthPage} />
-            <Route
-              path="/profile/change-password"
-              exact
-              component={ChangePasswordPage}
-            />
-            <Route
-              path="/profile/change-username"
-              exact
-              component={ChangeUsernamePage}
-            />
-            <Route
-              path="/profile/change-email/:step?/:code?"
-              component={ChangeEmailPage}
-            />
-            <Route path="/profile" exact component={Profile} />
-            <Route path="/" exact component={Profile} />
-            <Redirect to="/404" />
-          </Switch>
+          <React.Suspense fallback={<ComponentLoader />}>
+            <Switch>
+              <Route
+                path="/profile/mfa/step:step([1-3])"
+                component={MultiFactorAuthPage}
+              />
+              <Route
+                path="/profile/mfa"
+                exact
+                component={MultiFactorAuthPage}
+              />
+              <Route
+                path="/profile/change-password"
+                exact
+                component={ChangePasswordPage}
+              />
+              <Route
+                path="/profile/change-username"
+                exact
+                component={ChangeUsernamePage}
+              />
+              <Route
+                path="/profile/change-email/:step?/:code?"
+                component={ChangeEmailPage}
+              />
+              <Route path="/profile" exact component={Profile} />
+              <Route path="/" exact component={Profile} />
+              <Redirect to="/404" />
+            </Switch>
+          </React.Suspense>
 
           <div className={styles.footer}>
             <FooterMenu />

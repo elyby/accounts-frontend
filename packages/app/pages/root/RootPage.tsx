@@ -6,11 +6,6 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import clsx from 'clsx';
-import AuthPage from 'app/pages/auth/AuthPage';
-import ProfilePage from 'app/pages/profile/ProfilePage';
-import RulesPage from 'app/pages/rules/RulesPage';
-import DevPage from 'app/pages/dev/DevPage';
-import PageNotFound from 'app/pages/404/PageNotFound';
 import { ScrollIntoView } from 'app/components/ui/scroll';
 import PrivateRoute from 'app/containers/PrivateRoute';
 import AuthFlowRoute from 'app/containers/AuthFlowRoute';
@@ -21,9 +16,30 @@ import { getActiveAccount } from 'app/components/accounts/reducer';
 import { User } from 'app/components/user';
 import { Account } from 'app/components/accounts/reducer';
 import { RootState } from 'app/reducers';
+import { ComponentLoader } from 'app/components/ui/loader';
 
 import styles from './root.scss';
 import messages from './RootPage.intl.json';
+
+const ProfilePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfilePage'
+  ),
+);
+const PageNotFound = React.lazy(() =>
+  import(/* webpackChunkName: "page-not-found" */ 'app/pages/404/PageNotFound'),
+);
+const RulesPage = React.lazy(() =>
+  import(/* webpackChunkName: "page-rules" */ 'app/pages/rules/RulesPage'),
+);
+const DevPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "page-dev-applications" */ 'app/pages/dev/DevPage'
+  ),
+);
+const AuthPage = React.lazy(() =>
+  import(/* webpackChunkName: "page-auth" */ 'app/pages/auth/AuthPage'),
+);
 
 class RootPage extends React.PureComponent<{
   account: Account | null;
@@ -88,22 +104,24 @@ class RootPage extends React.PureComponent<{
             </div>
           </div>
           <div className={styles.body}>
-            <Switch>
-              <PrivateRoute path="/profile" component={ProfilePage} />
-              <Route path="/404" component={PageNotFound} />
-              <Route path="/rules" component={RulesPage} />
-              <Route path="/dev" component={DevPage} />
+            <React.Suspense fallback={<ComponentLoader />}>
+              <Switch>
+                <PrivateRoute path="/profile" component={ProfilePage} />
+                <Route path="/404" component={PageNotFound} />
+                <Route path="/rules" component={RulesPage} />
+                <Route path="/dev" component={DevPage} />
 
-              <AuthFlowRoute
-                exact
-                path="/"
-                key="indexPage"
-                component={user.isGuest ? AuthPage : ProfilePage}
-              />
-              <AuthFlowRoute path="/" component={AuthPage} />
+                <AuthFlowRoute
+                  exact
+                  path="/"
+                  key="indexPage"
+                  component={user.isGuest ? AuthPage : ProfilePage}
+                />
+                <AuthFlowRoute path="/" component={AuthPage} />
 
-              <Route component={PageNotFound} />
-            </Switch>
+                <Route component={PageNotFound} />
+              </Switch>
+            </React.Suspense>
           </div>
         </div>
         <PopupStack />

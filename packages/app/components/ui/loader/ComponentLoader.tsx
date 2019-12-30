@@ -4,6 +4,8 @@ import { Skin } from 'app/components/ui';
 
 import styles from './componentLoader.scss';
 
+// TODO: add mode to not show loader until first ~150ms
+
 function ComponentLoader({ skin = 'dark' }: { skin?: Skin }) {
   return (
     <div
