@@ -3,17 +3,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const vendor = Object.keys(require('./packages/app/package.json').dependencies);
+const baseConfig = require('./babel.config');
 
-const isProduction = process.argv.some(arg => arg === '-p');
-const isTest = process.argv.some(arg => arg.indexOf('karma') !== -1);
-
-process.env.NODE_ENV = 'development';
-
-if (isTest) {
-  process.env.NODE_ENV = 'test';
-}
-
-if (isProduction) {
+if (process.env.NODE_ENV === 'production') {
   throw new Error('Dll plugin should be used for dev mode only');
 }
 
@@ -23,7 +15,11 @@ const webpackConfig = {
   mode: 'development',
 
   entry: {
-    vendor,
+    vendor: vendor.filter(
+      item =>
+        // if we include rhl in dll. It won't work for some reason
+        !item.includes('react-hot-loader'),
+    ),
   },
 
   output: {
@@ -33,10 +29,7 @@ const webpackConfig = {
     publicPath: '/',
   },
 
-  resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    modules: ['./packages/app/node_modules', './node_modules'],
-  },
+  resolve: baseConfig.resolve,
 
   plugins: [
     new webpack.DllPlugin({
