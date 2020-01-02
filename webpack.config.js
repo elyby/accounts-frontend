@@ -25,9 +25,11 @@ const isProduction = process.env.NODE_ENV === 'production';
 const isAnalyze = process.argv.some(arg => arg === '--analyze');
 
 const isDockerized = !!process.env.DOCKERIZED;
+const isStorybook = process.env.APP_ENV === 'storybook';
 const isCI = !!process.env.CI;
 const isSilent = isCI || process.argv.some(arg => /quiet/.test(arg));
 const isCspEnabled = false;
+const enableDll = !isProduction && !isStorybook;
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
 
@@ -91,7 +93,7 @@ const webpackConfig = {
     new HtmlWebpackPlugin({
       template: 'packages/app/index.ejs',
       favicon: 'packages/app/favicon.ico',
-      scripts: isProduction ? [] : ['/dll/vendor.dll.js'],
+      scripts: enableDll ? ['/dll/vendor.dll.js'] : [],
       hash: false, // webpack does this for all our assets automagically
       filename: 'index.html',
       inject: false,
@@ -281,12 +283,16 @@ if (isProduction) {
     // this will improve build performance
     // this mode will be default for dev builds in webpack 5
     new EagerImportsPlugin(),
-
-    new webpack.DllReferencePlugin({
-      context: __dirname,
-      manifest: require('./dll/vendor.json'),
-    }),
   );
+
+  if (enableDll) {
+    webpackConfig.plugins.push(
+      new webpack.DllReferencePlugin({
+        context: __dirname,
+        manifest: require('./dll/vendor.json'),
+      }),
+    );
+  }
 
   webpackConfig.devServer = {
     host: 'localhost',

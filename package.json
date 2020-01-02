@@ -44,7 +44,7 @@
     "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
     "build:dll": "node ./packages/scripts/build-dll.js",
     "build:serve": "http-server --proxy https://dev.account.ely.by ./build",
-    "sb": "start-storybook -p 9009 --ci",
+    "sb": "APP_ENV=storybook start-storybook -p 9009 --ci",
     "build-storybook": "build-storybook"
   },
   "husky": {
