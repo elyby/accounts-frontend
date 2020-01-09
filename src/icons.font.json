@@ -1,9 +1,0 @@
-{
-    "files": ["icons/webfont/*"],
-    "fileName": "assets/fonts/[fontname][ext]?[hash]",
-    "fontName": "ely-account-icons",
-    "cssTemplate": "icons.css.hbs",
-    "classPrefix": "",
-    "fixedWidth": true,
-    "normalize": true
-}

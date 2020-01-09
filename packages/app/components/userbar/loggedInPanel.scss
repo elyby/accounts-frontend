@@ -1,0 +1,61 @@
+@import '~app/components/ui/colors.scss';
+
+.loggedInPanel {
+}
+
+.activeAccount {
+  position: relative;
+  display: inline-block;
+
+  $border: 1px solid rgba(#fff, 0.15);
+  border-left: $border;
+  border-right: $border;
+}
+
+.activeAccountButton {
+  composes: green from '~app/components/ui/buttons.scss';
+}
+
+.activeAccountExpanded {
+  .activeAccountButton {
+    background-color: darker($green);
+  }
+
+  .accountSwitcherContainer {
+    display: block;
+  }
+
+  .expandIcon {
+    transform: rotate(-180deg);
+  }
+}
+
+.userIcon {
+  composes: user from '~app/components/ui/icons.scss';
+
+  position: relative;
+  bottom: 2px;
+
+  padding-right: 5px;
+}
+
+.expandIcon {
+  composes: caret from '~app/components/ui/icons.scss';
+
+  margin-left: 4px;
+  font-size: 6px;
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.userName {
+}
+
+.accountSwitcherContainer {
+  position: absolute;
+  top: 100%;
+  right: -2px;
+  cursor: auto;
+
+  display: none;
+}

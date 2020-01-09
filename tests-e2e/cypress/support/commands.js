@@ -1,4 +1,4 @@
-import { account1, account2 } from '../fixtures/accounts.json';
+import { account1, account2 } from '../fixtures/accounts';
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -27,67 +27,99 @@ import { account1, account2 } from '../fixtures/accounts.json';
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 const accountsMap = {
-    // default: account1,
-    default: account2
+  default: account1,
+  default2: account2,
 };
 
-Cypress.Commands.add('login', async ({ login, password, account }) => {
-    let credentials;
+Cypress.Commands.add(
+  'login',
+  async ({ accounts, updateState = true, rawApiResp = false }) => {
+    const accountsData = await Promise.all(
+      accounts.map(async account => {
+        let credentials;
 
-    if (account) {
-        credentials = accountsMap[account];
+        if (account) {
+          credentials = accountsMap[account];
 
-        if (!credentials) {
+          if (!credentials) {
             throw new Error(`Unknown account name: ${account}`);
+          }
         }
+
+        const resp = await fetch('/api/authentication/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          },
+          body: `${new URLSearchParams({
+            login: credentials.login,
+            password: credentials.password,
+            rememberMe: '1',
+          })}`,
+        }).then(rawResp => rawResp.json());
+
+        if (rawApiResp) {
+          return resp;
+        }
+
+        return {
+          id: credentials.id,
+          username: credentials.username,
+          password: credentials.password,
+          email: credentials.email,
+          token: resp.access_token,
+          refreshToken: resp.refresh_token,
+        };
+      }),
+    );
+
+    if (updateState) {
+      const state = createState(accountsData);
+
+      localStorage.setItem('redux-storage', JSON.stringify(state));
     }
 
-    const resp = await fetch('/api/authentication/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        body: `login=${credentials.login}&password=${credentials.password}&rememberMe=1`
-    }).then((resp) => resp.json());
+    return { accounts: accountsData };
+  },
+);
 
-    const state = createState([
-        {
-            id: credentials.id,
-            username: credentials.username,
-            email: credentials.email,
-            token: resp.access_token,
-            refreshToken: resp.refresh_token
-        }
-    ]);
+Cypress.Commands.add(
+  'getByTestId',
+  { prevSubject: 'optional' },
+  (subject, id, options) => {
+    const selector = `[data-testid=${id}]`;
 
-    localStorage.setItem('redux-storage', JSON.stringify(state));
+    if (subject) {
+      return cy.wrap(subject.find(selector));
+    }
 
-    return state;
-});
+    return cy.get(selector, options);
+  },
+);
 
 function createState(accounts) {
-    return {
-        accounts: {
-            available: accounts,
-            active: accounts[0].id
-        },
-        user: {
-            id: 102,
-            uuid: 'e49cafdc-6e0c-442d-b608-dacdb864ee34',
-            username: 'test',
-            token: '',
-            email: 'admin@udf.su',
-            maskedEmail: '',
-            avatar: '',
-            lang: 'en',
-            isActive: true,
-            isOtpEnabled: true,
-            shouldAcceptRules: false,
-            passwordChangedAt: 1478961317,
-            hasMojangUsernameCollision: true,
-            isGuest: false,
-            registeredAt: 1478961317,
-            elyProfileLink: 'http://ely.by/u102'
-        }
-    };
+  return {
+    accounts: {
+      available: accounts,
+      active: accounts[0].id,
+    },
+    user: {
+      id: 102,
+      uuid: 'e49cafdc-6e0c-442d-b608-dacdb864ee34',
+      username: 'test',
+      token: '',
+      email: 'admin@udf.su',
+      maskedEmail: '',
+      avatar: '',
+      lang: 'en',
+      isActive: true,
+      isOtpEnabled: true,
+      shouldAcceptRules: false,
+      passwordChangedAt: 1478961317,
+      hasMojangUsernameCollision: true,
+      isGuest: false,
+      registeredAt: 1478961317,
+      elyProfileLink: 'http://ely.by/u102',
+    },
+  };
 }

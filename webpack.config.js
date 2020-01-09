@@ -1,374 +1,367 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 
-require('babel-register');
+require('@babel/register')({
+  extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx'],
+});
 
 const path = require('path');
-
 const webpack = require('webpack');
-const loaderUtils = require('loader-utils');
-const chalk = require('chalk');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const cssUrl = require('webpack-utils/cssUrl');
-const cssImport = require('postcss-import');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const CSPPlugin = require('csp-webpack-plugin');
-const localeFlags = require('./src/components/i18n/localeFlags').default;
+const WebpackBar = require('webpackbar');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const config = require('./config');
+const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n'));
+const localeFlags = require('app/components/i18n/localeFlags').default;
+const rootPath = path.resolve('./packages');
+const outputPath = path.join(__dirname, 'build');
 
-const SUPPORTED_LANGUAGES = Object.keys(require('./src/i18n/index.json'));
-const rootPath = path.resolve('./src');
-const outputPath = path.join(__dirname, 'dist');
-
-const packageJson = require('./package.json');
-
-let config = {};
-try {
-    config = require('./config/env.js');
-} catch (err) {
-    console.log(chalk.yellow('\nCan not find config/env.js. Running with defaults\n\n'));
-
-    if (err.code !== 'MODULE_NOT_FOUND') {
-        console.error(err);
-    }
-}
-
-/**
- * TODO: https://babeljs.io/docs/plugins/
- * TODO: отдельные конфиги для env (аля https://github.com/davezuko/react-redux-starter-kit)
- * TODO: dev tools https://github.com/freeqaz/redux-simple-router-example/blob/master/index.jsx
- * https://github.com/glenjamin/ultimate-hot-reloading-example ( обратить внимание на плагины babel )
- * https://github.com/gajus/react-css-modules ( + BrowserSync)
- * https://github.com/reactuate/reactuate
- * https://github.com/insin/nwb
- *
- * Inspiration projects:
- * https://github.com/davezuko/react-redux-starter-kit
- */
-
-const isProduction = process.argv.some((arg) => arg === '-p');
-
-const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
+const isProduction = process.env.NODE_ENV === 'production';
+const isAnalyze = process.argv.some(arg => arg === '--analyze');
 
 const isDockerized = !!process.env.DOCKERIZED;
+const isStorybook = process.env.APP_ENV === 'storybook';
 const isCI = !!process.env.CI;
-const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
+const isSilent = isCI || process.argv.some(arg => /quiet/.test(arg));
 const isCspEnabled = false;
+const enableDll = !isProduction && !isStorybook;
 
 process.env.NODE_ENV = isProduction ? 'production' : 'development';
-if (isTest) {
-    process.env.NODE_ENV = 'test';
-}
 
-const CSS_CLASS_TEMPLATE = isProduction ? '[hash:base64:5]' : '[path][name]-[local]';
-
-const fileCache = {};
-
-const cssLoaderQuery = {
-    modules: true,
-    importLoaders: 2,
-    url: false,
-    localIdentName: CSS_CLASS_TEMPLATE,
-
-    /**
-     * cssnano options
-     */
-    sourcemap: !isProduction,
-    autoprefixer: {
-        add: true,
-        remove: true,
-        browsers: ['last 2 versions']
-    },
-    safe: true,
-    // отключаем минификацию цветов, что бы она не ломала такие выражения:
-    // composes: black from './buttons.scss';
-    colormin: false,
-    discardComments: {
-        removeAll: true
-    }
-};
+const smp = new SpeedMeasurePlugin();
 
 const webpackConfig = {
-    cache: true,
+  mode: isProduction ? 'production' : 'development',
 
-    entry: {
-        app: path.join(__dirname, 'src')
+  cache: true,
+
+  entry: {
+    app: path.join(__dirname, 'packages/app'),
+  },
+
+  output: {
+    path: outputPath,
+    publicPath: '/',
+    filename: '[name].js?[hash]',
+  },
+
+  resolve: {
+    modules: [rootPath, 'node_modules'],
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+    alias: {
+      'react-dom': isProduction ? 'react-dom' : '@hot-loader/react-dom',
     },
+  },
 
-    output: {
-        path: outputPath,
-        publicPath: '/',
-        filename: '[name].js?[hash]'
-    },
+  devtool: 'cheap-module-source-map',
 
-    resolve: {
-        root: rootPath,
-        extensions: ['', '.js', '.jsx']
-    },
+  stats: {
+    hash: false,
+    version: false,
+    timings: true,
+    assets: false,
+    chunks: false,
+    modules: false,
+    reasons: false,
+    children: false,
+    source: false,
+    errors: true,
+    errorDetails: true,
+    warnings: false,
+    publicPath: false,
+  },
 
-    externals: isTest ? {
-        sinon: 'sinon',
-        // http://airbnb.io/enzyme/docs/guides/webpack.html
-        cheerio: 'window',
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': true,
-        'react/addons': true
-    } : {},
+  plugins: [
+    new WebpackBar(),
+    new webpack.DefinePlugin({
+      'window.SENTRY_CDN': config.sentryCdn
+        ? JSON.stringify(config.sentryCdn)
+        : undefined,
+      'window.GA_ID':
+        config.ga && config.ga.id ? JSON.stringify(config.ga.id) : undefined,
+    }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: process.env.NODE_ENV,
+      APP_ENV: config.environment || process.env.NODE_ENV,
+      __VERSION__: config.version || '',
+    }),
+    new HtmlWebpackPlugin({
+      template: 'packages/app/index.ejs',
+      favicon: 'packages/app/favicon.ico',
+      scripts: enableDll ? ['/dll/vendor.dll.js'] : [],
+      hash: false, // webpack does this for all our assets automagically
+      filename: 'index.html',
+      inject: false,
+      minify: {
+        collapseWhitespace: isProduction,
+      },
+      isCspEnabled,
+    }),
+    new SitemapPlugin(
+      'https://account.ely.by',
+      [
+        '/',
+        '/register',
+        '/resend-activation',
+        '/activation',
+        '/forgot-password',
+        '/rules',
+      ],
+      {
+        lastMod: true,
+        changeFreq: 'weekly',
+      },
+    ),
+    // restrict webpack import context, to create chunks only for supported locales
+    // @see services/i18n/intlPolyfill.js
+    new webpack.ContextReplacementPlugin(
+      /locale-data/,
+      new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js$`),
+    ),
+    // @see components/i18n/localeFlags.js
+    new webpack.ContextReplacementPlugin(
+      /flag-icon-css\/flags\/4x3/,
+      new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`),
+    ),
+  ],
 
-    devtool: 'cheap-module-source-map',
-
-    plugins: [
-        new webpack.DefinePlugin({
-            'window.SENTRY_CDN': config.sentryCdn ? JSON.stringify(config.sentryCdn) : undefined,
-            'window.GA_ID': config.ga && config.ga.id ? JSON.stringify(config.ga.id) : undefined,
-            'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                APP_ENV: JSON.stringify(config.environment || process.env.NODE_ENV),
-                __VERSION__: JSON.stringify(config.version || ''),
-                __DEV__: !isProduction,
-                __TEST__: isTest,
-                __PROD__: isProduction
-            }
-        }),
-        new HtmlWebpackPlugin({
-            template: 'src/index.ejs',
-            favicon: 'src/favicon.ico',
-            scripts: isProduction ? [] : ['/dll/vendor.dll.js'],
-            hash: false, // webpack does this for all our assets automagically
-            filename: 'index.html',
-            inject: false,
-            minify: {
-                collapseWhitespace: isProduction
+  module: {
+    rules: [
+      {
+        test: /\.s?css$/,
+        use: [
+          {
+            loader: 'style-loader',
+            options: {
+              // style-loader@1.1.2 is still buggy. It breaks our icon styles
+              // (vertical align is broken and styles applied multiple times)
+              // so we can not use it and it's new `esModule` options
+              // esModule: true,
             },
-            isCspEnabled,
-        }),
-        new SitemapPlugin('https://account.ely.by', [
-            '/',
-            '/register',
-            '/resend-activation',
-            '/activation',
-            '/forgot-password',
-            '/rules',
-        ], {
-            lastMod: true,
-            changeFreq: 'weekly',
-        }),
-        new webpack.ProvidePlugin({
-            React: 'react'
-        }),
-        // restrict webpack import context, to create chunks only for supported locales
-        // @see services/i18n.js
-        new webpack.ContextReplacementPlugin(
-            /locale-data/, new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js`)
-        ),
-        // @see components/i18n/localeFlags.js
-        new webpack.ContextReplacementPlugin(
-            /flag-icon-css\/flags\/4x3/, new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`)
-        ),
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: isProduction
+                  ? '[hash:base64:5]'
+                  : '[path][name]-[local]',
+              },
+              esModule: true,
+              importLoaders: 2,
+              sourceMap: !isProduction,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: !isProduction,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              sourceMap: !isProduction,
+              config: { path: __dirname },
+            },
+          },
+        ],
+      },
+      {
+        test: /\.[tj]sx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              envName: 'webpack',
+              cacheDirectory: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(png|gif|jpg|svg)$/,
+        loader: 'file-loader',
+        query: {
+          name: 'assets/[name].[ext]?[hash]',
+        },
+      },
+      {
+        test: /\.(woff|woff2|ttf)$/,
+        loader: 'file-loader',
+        query: {
+          name: 'assets/fonts/[name].[ext]?[hash]',
+        },
+      },
+      {
+        test: /\.html$/,
+        loader: 'html-loader',
+      },
+      {
+        test: /\.intl\.json$/,
+        type: 'javascript/auto',
+        use: ['babel-loader', 'intl-loader'],
+      },
+      {
+        // this is consumed by postcss-import
+        // @see postcss.config.js
+        test: /\.font\.(js|json)$/,
+        type: 'javascript/auto',
+        use: ['fontgen-loader'],
+      },
     ],
+  },
 
-    module: {
-        loaders: [
-            {
-                test: /\.scss$/,
-                extractInProduction: true,
-                loader: `style!css?${ JSON.stringify(cssLoaderQuery) }!sass!postcss?syntax=postcss-scss`
-            },
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loader: 'babel?cacheDirectory=true'
-            },
-            {
-                test: /\.(png|gif|jpg|svg)$/,
-                loader: 'file',
-                query: {
-                    name: 'assets/[name].[ext]?[hash]'
-                }
-            },
-            {
-                test: /\.(woff|woff2|ttf)$/,
-                loader: 'file',
-                query: {
-                    name: 'assets/fonts/[name].[ext]?[hash]'
-                }
-
-            },
-            {
-                test: /\.json$/,
-                exclude: /(intl|font)\.json/,
-                loader: 'json'
-            },
-            {
-                test: /\.html$/,
-                loader: 'html'
-            },
-            {
-                test: /\.intl\.json$/,
-                loader: 'babel!intl'
-            },
-            {
-                test: /\.font\.(js|json)$/,
-                loader: 'raw!fontgen'
-            }
-        ]
+  resolveLoader: {
+    alias: {
+      'intl-loader': path.resolve('./packages/webpack-utils/intl-loader'),
+      'fontgen-loader': path.resolve('./packages/webpack-utils/fontgen-loader'),
     },
-
-    resolveLoader: {
-        alias: {
-            intl: path.resolve('webpack-utils/intl-loader')
-        }
-    },
-
-    postcss() {
-        return [
-            cssImport({
-                path: rootPath,
-
-                resolve: ((defaultResolve) =>
-                    (url, basedir, importOptions) =>
-                        defaultResolve(loaderUtils.urlToRequest(url), basedir, importOptions)
-                )(require('postcss-import/lib/resolve-id')),
-
-                load: ((defaultLoad) =>
-                    (filename, importOptions) => {
-                        if (/\.font.(js|json)$/.test(filename)) {
-                            if (!fileCache[filename] || !isProduction) {
-                                // do not execute loader on the same file twice
-                                // this is an overcome for a bug with ExtractTextPlugin, for isProduction === true
-                                // when @imported files may be processed mutiple times
-                                fileCache[filename] = new Promise((resolve, reject) =>
-                                    this.loadModule(filename, (err, source) =>
-                                        err ? reject(err) : resolve(this.exec(source, rootPath))
-                                    )
-                                );
-                            }
-
-                            return fileCache[filename];
-                        }
-
-                        return defaultLoad(filename, importOptions);
-                    }
-                )(require('postcss-import/lib/load-content'))
-            }),
-
-            cssUrl(this)
-        ];
-    }
+  },
 };
 
-if (isProduction) {
-    webpackConfig.module.loaders.forEach((loader) => {
-        if (loader.extractInProduction) {
-            // remove style-loader from chain and pass through ExtractTextPlugin
-            const parts = loader.loader.split('!');
-
-            loader.loader = ExtractTextPlugin.extract(
-                parts[0], // style-loader
-                parts.slice(1) // css-loader and rest
-                    .join('!')
-                    .replace(/[&?]sourcemap/, '')
-            );
-        }
-    });
-
-    webpackConfig.plugins.push(
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js?[hash]'),
-        new webpack.optimize.OccurenceOrderPlugin(true),
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin('styles.css?[hash]', {
-            allChunks: true
-        })
-    );
-
-    webpackConfig.devtool = 'hidden-source-map';
-
-    const ignoredPlugins = [
-        'flag-icon-css',
-    ];
-
-    webpackConfig.entry.vendor = Object.keys(packageJson.dependencies)
-        .filter((module) => !ignoredPlugins.includes(module));
-} else {
-    webpackConfig.plugins.push(
-        new webpack.DllReferencePlugin({
-            context: __dirname,
-            manifest: require('./dll/vendor.json')
-        })
-    );
+if (isAnalyze) {
+  webpackConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 
-if (!isProduction && !isTest) {
-    webpackConfig.plugins.push(
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin()
-    );
+if (isProduction) {
+  let cssExtractApplied = false;
 
-    if (config.apiHost) {
-        webpackConfig.devServer = {
-            host: 'localhost',
-            port: 8080,
-            proxy: {
-                '/api': {
-                    target: config.apiHost,
-                    changeOrigin: true, // add host http-header, based on target
-                    secure: false // allow self-signed certs
-                }
-            },
-            hot: true,
-            inline: true,
-            historyApiFallback: true
-        };
+  webpackConfig.module.rules.forEach(rule => {
+    if (
+      rule.use &&
+      (rule.use[0] === 'style-loader' || rule.use[0].loader === 'style-loader')
+    ) {
+      // replace `style-loader` with `MiniCssExtractPlugin`
+      rule.use[0] = MiniCssExtractPlugin.loader;
+      cssExtractApplied = true;
     }
+  });
+
+  if (!cssExtractApplied) {
+    throw new Error(
+      'Can not locate style-loader to replace it with mini-css-extract-plugin loader',
+    );
+  }
+
+  webpackConfig.plugins.push(
+    new MiniCssExtractPlugin({
+      filename: '[name].css?[hash]',
+      chunkFilename: '[id].css?[hash]',
+    }),
+  );
+
+  webpackConfig.devtool = 'hidden-source-map';
+
+  webpackConfig.optimization = {
+    moduleIds: 'hashed',
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: m =>
+            String(m.context).includes('node_modules') &&
+            // icons and intl with relateed polyfills are allowed
+            // to be splitted to other chunks
+            !/\/(flag-icon-css|intl|@formatjs)\//.test(String(m.context)),
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
+  };
+} else {
+  webpackConfig.plugins.push(
+    // force webpack to use mode: eager chunk imports in dev mode
+    // this will improve build performance
+    // this mode will be default for dev builds in webpack 5
+    new EagerImportsPlugin(),
+  );
+
+  if (enableDll) {
+    webpackConfig.plugins.push(
+      new webpack.DllReferencePlugin({
+        context: __dirname,
+        manifest: require('./dll/vendor.json'),
+      }),
+    );
+  }
+
+  webpackConfig.devServer = {
+    host: 'localhost',
+    port: 8080,
+    proxy: config.apiHost && {
+      '/api': {
+        target: config.apiHost,
+        changeOrigin: true, // add host http-header, based on target
+        secure: false, // allow self-signed certs
+      },
+    },
+    hot: true,
+    inline: true,
+    historyApiFallback: true,
+  };
 }
 
 if (isCspEnabled) {
-    webpackConfig.plugins.push(new CSPPlugin({
-        'default-src': '\'none\'',
-        'style-src': ['\'self\'', '\'unsafe-inline\''],
-        'script-src': [
-            '\'self\'',
-            '\'nonce-edge-must-die\'',
-            '\'unsafe-inline\'',
-            'https://www.google-analytics.com',
-            'https://recaptcha.net/recaptcha/',
-            'https://www.gstatic.com/recaptcha/',
-            'https://www.gstatic.cn/recaptcha/',
-        ],
-        'img-src': ['\'self\'', 'data:', 'www.google-analytics.com'],
-        'font-src': ['\'self\'', 'data:'],
-        'connect-src': ['\'self\'', 'https://sentry.ely.by'].concat(isProduction ? [] : ['ws://localhost:8080']),
-        'frame-src': [
-            'https://www.google.com/recaptcha/',
-            'https://recaptcha.net/recaptcha/',
-        ],
-        'report-uri': 'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
-    }));
+  webpackConfig.plugins.push(
+    new CSPPlugin({
+      'default-src': "'none'",
+      'style-src': ["'self'", "'unsafe-inline'"],
+      'script-src': [
+        "'self'",
+        "'nonce-edge-must-die'",
+        "'unsafe-inline'",
+        'https://www.google-analytics.com',
+        'https://recaptcha.net/recaptcha/',
+        'https://www.gstatic.com/recaptcha/',
+        'https://www.gstatic.cn/recaptcha/',
+      ],
+      'img-src': ["'self'", 'data:', 'www.google-analytics.com'],
+      'font-src': ["'self'", 'data:'],
+      'connect-src': ["'self'", 'https://sentry.ely.by'].concat(
+        isProduction ? [] : ['ws://localhost:8080'],
+      ),
+      'frame-src': [
+        'https://www.google.com/recaptcha/',
+        'https://recaptcha.net/recaptcha/',
+      ],
+      'report-uri':
+        'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
+    }),
+  );
 }
 
 if (isDockerized) {
-    webpackConfig.watchOptions = {
-        poll: 2000
-    };
-    webpackConfig.devServer.host = '0.0.0.0';
+  webpackConfig.watchOptions = {
+    poll: 2000,
+  };
+  webpackConfig.devServer.host = '0.0.0.0';
 }
 
 if (isSilent) {
-    webpackConfig.stats = {
-        hash: false,
-        version: false,
-        timings: true,
-        assets: false,
-        chunks: false,
-        modules: false,
-        reasons: false,
-        children: false,
-        source: false,
-        errors: true,
-        errorDetails: true,
-        warnings: false,
-        publicPath: false
-    };
+  webpackConfig.stats = {
+    hash: false,
+    version: false,
+    timings: true,
+    assets: false,
+    chunks: false,
+    modules: false,
+    reasons: false,
+    children: false,
+    source: false,
+    errors: true,
+    errorDetails: true,
+    warnings: false,
+    publicPath: false,
+  };
 }
 
-module.exports = webpackConfig;
+module.exports = smp.wrap(webpackConfig);

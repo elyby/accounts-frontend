@@ -1,0 +1,17 @@
+{
+  "changeEmailTitle": "Change E‑mail",
+  "changeEmailDescription": "To change current account E‑mail you must first verify that you own the current address and then confirm the new one.",
+  "currentAccountEmail": "Current account E‑mail address:",
+  "pressButtonToStart": "Press the button below to send a message with the code for E‑mail change initialization.",
+  "enterInitializationCode": "The E‑mail with an initialization code for E‑mail change procedure was sent to {email}. Please enter the code into the field below:",
+
+  "enterNewEmail": "Then provide your new E‑mail address, that you want to use with this account. You will be mailed with confirmation code.",
+  "finalizationCodeWasSentToEmail": "The E‑mail change confirmation code was sent to {email}.",
+  "enterFinalizationCode": "In order to confirm your new E‑mail, please enter the code received into the field below:",
+
+  "newEmailPlaceholder": "Enter new E‑mail",
+  "codePlaceholder": "Paste the code here",
+  "sendEmailButton": "Send E‑mail",
+  "changeEmailButton": "Change E‑mail",
+  "alreadyReceivedCode": "Already received code"
+}

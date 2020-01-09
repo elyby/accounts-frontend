@@ -1,0 +1,7 @@
+{
+  "title": "Authorization successful",
+  "applicationAuth": "Application authorization",
+  "authorizationSuccessful": "Authorization has been successfully completed.",
+  "authorizationForAppSuccessful": "Authorization for {appName} has been successfully completed.",
+  "youCanCloseThisPage": "You can close this window and return to your application."
+}

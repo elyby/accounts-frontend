@@ -1,0 +1,262 @@
+@import '~app/components/ui/fonts.scss';
+@import '~app/components/ui/colors.scss';
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  border-bottom: 10px solid #ddd8ce;
+
+  @media (max-width: 540px) {
+    margin: 0 20px;
+  }
+}
+
+.welcomeContainer {
+  padding: 30px;
+  background: #f5f5f5;
+  text-align: center;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.welcomeTitle {
+  font-size: 30px;
+  font-family: $font-family-title;
+  max-width: 245px;
+  margin: 0 auto 15px;
+  line-height: 1.2;
+}
+
+.welcomeTitleDelimiter {
+  width: 86px;
+  height: 3px;
+  background: $green;
+  margin: 0 auto 15px;
+}
+
+.welcomeParagraph {
+  color: #666666;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.3;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.emptyState {
+  padding: 30px 30px 50px;
+  text-align: center;
+}
+
+.emptyStateIcon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+@mixin emptyStateAnimation($order) {
+  animation: slide-in-bottom 1s // Total animation time
+    0.2s + 0.2s * $order // Increase each next element delay
+    cubic-bezier(0.075, 0.82, 0.165, 1) // easeOutCirc
+    both;
+}
+
+.emptyStateText {
+  font-family: $font-family-title;
+  color: #666666;
+  font-size: 16px;
+  margin-bottom: 20px;
+  line-height: 20px;
+}
+
+.noAppsContainer {
+  visibility: hidden;
+}
+
+.noAppsAnimating {
+  visibility: visible;
+
+  .emptyStateText {
+    > div {
+      &:nth-child(1) {
+        @include emptyStateAnimation(0);
+      }
+
+      &:nth-child(2) {
+        @include emptyStateAnimation(1);
+      }
+    }
+  }
+
+  .emptyStateActionButton {
+    @include emptyStateAnimation(2);
+  }
+}
+
+@keyframes slide-in-bottom {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.appsListTitleContainer {
+  display: flex;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 1px solid #eee;
+}
+
+.appsListTitle {
+  font-family: $font-family-title;
+  font-size: 24px;
+  flex-grow: 1;
+}
+
+.appsListAddNewAppBtn {
+}
+
+.appsListContainer {
+  margin-bottom: 30px;
+}
+
+.appItemContainer {
+  border-bottom: 1px solid #eee;
+}
+
+.appItemTile {
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.appTileTitle {
+  flex-grow: 1;
+}
+
+.appName {
+  font-family: $font-family-title;
+  font-size: 24px;
+}
+
+.appStats {
+  color: #999;
+  font-size: 14px;
+}
+
+.appItemToggle {
+}
+
+.appItemToggleIcon {
+  composes: arrowRight from '~app/components/ui/icons.scss';
+
+  position: relative;
+  left: 0;
+
+  font-size: 28px;
+  color: #ebe8e1;
+
+  transition: 0.25s;
+
+  .appItemTile:hover & {
+    color: #777;
+  }
+
+  .appExpanded & {
+    color: #777;
+    transform: rotate(360deg) !important; // Prevent it from hover rotating
+  }
+}
+
+$appDetailsContainerRightLeftPadding: 30px;
+
+.appDetailsContainer {
+  background: #f5f5f5;
+  border-top: 1px solid #eee;
+  padding: 5px $appDetailsContainerRightLeftPadding;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.appDetailsInfoField {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.editAppLink {
+  position: absolute;
+  top: 4px;
+  right: 0;
+
+  font-size: 12px;
+  color: #9a9a9a;
+  border-bottom: 0;
+}
+
+.pencilIcon {
+  composes: pencil from '~app/components/ui/icons.scss';
+
+  font-size: 14px;
+  position: relative;
+  bottom: 2px;
+}
+
+.appDetailsDescription {
+  font-size: 12px;
+  color: #9a9a9a;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.appActionsButtons {
+}
+
+.appActionButton {
+  margin: 0 10px 10px 0;
+
+  &:last-of-type {
+    margin-right: 0;
+  }
+}
+
+.appActionContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 0 $appDetailsContainerRightLeftPadding;
+  background: #f5f5f5;
+}
+
+.appActionDescription {
+  composes: appDetailsDescription;
+
+  margin-top: 6px;
+}
+
+.continueActionButtonWrapper {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.continueActionLink {
+  composes: textLink from '~app/index.scss';
+
+  font-family: $font-family-title;
+  font-size: 14px;
+  color: #666;
+}
+
+.performingAction {
+  font-family: $font-family-title;
+  font-size: 14px;
+  color: #666;
+}

@@ -1,0 +1,7 @@
+{
+  "chooseAccountTitle": "Choose an account",
+  "addAccount": "Log into another account",
+  "logoutAll": "Log out from all accounts",
+  "pleaseChooseAccount": "Please select an account you're willing to use",
+  "pleaseChooseAccountForApp": "Please select an account that you want to use to authorize {appName}"
+}

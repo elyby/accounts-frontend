@@ -1,64 +1,45 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
-
 const path = require('path');
-
 const webpack = require('webpack');
+const vendor = Object.keys(require('./packages/app/package.json').dependencies);
+const baseConfig = require('./babel.config');
 
-const vendor = Object.keys(require('./package.json').dependencies);
-
-const isProduction = process.argv.some((arg) => arg === '-p');
-
-const isTest = process.argv.some((arg) => arg.indexOf('karma') !== -1);
-
-process.env.NODE_ENV = 'development';
-if (isTest) {
-    process.env.NODE_ENV = 'test';
+if (process.env.NODE_ENV === 'production') {
+  throw new Error('Dll plugin should be used for dev mode only');
 }
 
 const outputPath = path.join(__dirname, 'dll');
 
 const webpackConfig = {
-    entry: {
-        vendor: vendor.concat([
-            'core-js/library',
-            'redux-devtools',
-            'redux-devtools-dock-monitor',
-            'redux-devtools-log-monitor',
-            'react-transform-hmr',
-            'react-transform-catch-errors',
-            'redbox-react',
-            'react-intl/locale-data/en.js',
-            'react-intl/locale-data/ru.js',
-            'react-intl/locale-data/be.js',
-            'react-intl/locale-data/uk.js'
-        ])
-    },
+  mode: 'development',
 
-    output: {
-        filename: '[name].dll.js?[hash]',
-        path: outputPath,
-        library: '[name]',
-        publicPath: '/'
-    },
+  entry: {
+    vendor: vendor.filter(
+      item =>
+        // if we include rhl in dll. It won't work for some reason
+        !item.includes('react-hot-loader'),
+    ),
+  },
 
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-            },
-            __DEV__: true,
-            __TEST__: isTest,
-            __PROD__: false
-        }),
-        new webpack.DllPlugin({
-            name: '[name]',
-            path: path.join(outputPath, '[name].json')
-        })
-    ].concat(isProduction ? [
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.OccurenceOrderPlugin(true),
-        new webpack.optimize.UglifyJsPlugin()
-    ] : [])
+  output: {
+    filename: '[name].dll.js?[hash]',
+    path: outputPath,
+    library: '[name]',
+    publicPath: '/',
+  },
+
+  resolve: baseConfig.resolve,
+
+  plugins: [
+    new webpack.DllPlugin({
+      name: '[name]',
+      path: path.join(outputPath, '[name].json'),
+    }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: process.env.NODE_ENV,
+    }),
+  ],
 };
 
 module.exports = webpackConfig;

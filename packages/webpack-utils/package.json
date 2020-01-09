@@ -1,0 +1,12 @@
+{
+  "name": "webpack-utils",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "loader-utils": "^1.0.0",
+    "webfonts-generator": "0.3.5"
+  }
+}

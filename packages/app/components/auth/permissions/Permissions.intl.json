@@ -1,0 +1,12 @@
+{
+  "permissionsTitle": "Application permissions",
+  "youAuthorizedAs": "You authorized as:",
+  "theAppNeedsAccess1": "This application needs access",
+  "theAppNeedsAccess2": "to your data",
+  "decline": "Decline",
+  "approve": "Approve",
+  "scope_minecraft_server_session": "Authorization data for minecraft server",
+  "scope_offline_access": "Access to your profile data, when you offline",
+  "scope_account_info": "Access to your profile data (except E‑mail)",
+  "scope_account_email": "Access to your E‑mail address"
+}

@@ -1,0 +1,23 @@
+.footerMenu {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666;
+
+  a {
+    color: #666;
+    border-bottom-color: #666;
+  }
+}
+
+.langTriggerContainer {
+  text-align: center;
+}
+
+.langTriggerIcon {
+  composes: globe from '~app/components/ui/icons.scss';
+
+  position: relative;
+  bottom: 1px;
+  font-size: 11px;
+  margin-right: 3px;
+}

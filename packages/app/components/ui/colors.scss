@@ -1,0 +1,52 @@
+$green: #207e5c;
+$blue: #5b9aa9;
+$red: #e66c69;
+$violet: #6b5b8c;
+$dark_blue: #28555b;
+$light_violet: #8b5d79;
+$orange: #dd8650;
+$white: #ebe8e1;
+
+$black: #232323;
+
+$defaultButtonTextColor: #fff;
+$whiteButtonLight: #f5f5f5;
+$whiteButtonDark: #f5f5f5; // TODO: найти оптимальный цвет для прожатого состояния
+
+@function darker($color) {
+  $elyColorsMap: (
+    $green: #1a6449,
+    $blue: #568297,
+    $red: #e15457,
+    $violet: #66437a,
+    $dark_blue: #233d49,
+    $light_violet: #864567,
+    $orange: #d86e3e,
+    $black: #1c1c1c,
+  );
+
+  @if (map_has_key($elyColorsMap, $color)) {
+    @return map-get($elyColorsMap, $color);
+  } @else {
+    @return darken($color, 4%);
+  }
+}
+
+@function lighter($color) {
+  $elyColorsMap: (
+    $green: #379070,
+    $blue: #71a6b2,
+    $red: #fc7872,
+    $violet: #816795,
+    $dark_blue: #3e6164,
+    $light_violet: #a16982,
+    $orange: #f39259,
+    $black: #2e2e2e,
+  );
+
+  @if (map_has_key($elyColorsMap, $color)) {
+    @return map-get($elyColorsMap, $color);
+  } @else {
+    @return lighten($color, 3%);
+  }
+}

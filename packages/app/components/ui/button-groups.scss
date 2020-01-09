@@ -1,0 +1,20 @@
+.horizontalGroup {
+  display: flex;
+}
+
+.item {
+  // TODO: in some cases we do not need overflow hidden
+  // probably, it is better to create a separate class for children, that will
+  // enable overflow hidden and ellipsis
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  $borderConfig: 1px solid rgba(#fff, 0.15);
+
+  border-left: $borderConfig;
+
+  &:last-child {
+    border-right: $borderConfig;
+  }
+}
