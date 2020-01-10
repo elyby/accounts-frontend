@@ -3,7 +3,7 @@ import { account1 } from '../../fixtures/accounts.json';
 
 const defaults = {
   client_id: 'ely',
-  redirect_uri: 'http://ely.by/authorization/oauth',
+  redirect_uri: 'https://dev.ely.by/authorization/oauth',
   response_type: 'code',
   scope: 'account_info,account_email',
 };
@@ -14,7 +14,7 @@ describe('OAuth', () => {
 
     cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-    cy.url().should('equal', 'https://ely.by/');
+    cy.url().should('equal', 'https://dev.ely.by/');
   });
 
   it('should restore previous oauthData if any', () => {
@@ -24,7 +24,7 @@ describe('OAuth', () => {
         timestamp: Date.now() - 3600,
         payload: {
           clientId: 'ely',
-          redirectUrl: 'http://ely.by/authorization/oauth',
+          redirectUrl: 'https://dev.ely.by/authorization/oauth',
           responseType: 'code',
           description: null,
           scope: 'account_info account_email',
@@ -37,7 +37,7 @@ describe('OAuth', () => {
 
     cy.visit('/');
 
-    cy.url().should('equal', 'https://ely.by/');
+    cy.url().should('equal', 'https://dev.ely.by/');
   });
 
   it('should ask to choose an account if user has multiple', () => {
@@ -53,7 +53,7 @@ describe('OAuth', () => {
           .contains(account.email)
           .click();
 
-        cy.url().should('equal', 'https://ely.by/');
+        cy.url().should('equal', 'https://dev.ely.by/');
       },
     );
   });
@@ -109,7 +109,7 @@ describe('OAuth', () => {
 
     cy.get('[name=password]').type(`${account1.password}{enter}`);
 
-    cy.url().should('equal', 'https://ely.by/');
+    cy.url().should('equal', 'https://dev.ely.by/');
   });
 
   // TODO: enable, when backend api will return correct response on auth decline
@@ -165,7 +165,7 @@ describe('OAuth', () => {
             }).toString()}`,
           );
 
-          cy.url().should('equal', 'https://ely.by/');
+          cy.url().should('equal', 'https://dev.ely.by/');
         },
       );
     });
@@ -182,7 +182,7 @@ describe('OAuth', () => {
             })}`,
           );
 
-          cy.url().should('equal', 'https://ely.by/');
+          cy.url().should('equal', 'https://dev.ely.by/');
         },
       );
     });
@@ -202,7 +202,7 @@ describe('OAuth', () => {
             })}`,
           );
 
-          cy.url().should('equal', 'https://ely.by/');
+          cy.url().should('equal', 'https://dev.ely.by/');
         },
       );
     });
@@ -226,7 +226,7 @@ describe('OAuth', () => {
           .contains(account.email)
           .click();
 
-        cy.url().should('equal', 'https://ely.by/');
+        cy.url().should('equal', 'https://dev.ely.by/');
       });
     });
 
@@ -254,7 +254,7 @@ describe('OAuth', () => {
 
       cy.get('[name=password]').type(`${account1.password}{enter}`);
 
-      cy.url().should('equal', 'https://ely.by/');
+      cy.url().should('equal', 'https://dev.ely.by/');
     });
 
     it('should prompt for permissions', () => {
