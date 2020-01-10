@@ -1,21 +1,13 @@
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
-
 import './commands';
 
 Cypress.on('window:before:load', win => {
-  // remove fetch to enable correct api mocking with cypress xhr mocks
+  // Remove fetch to enable correct api mocking with the cypress xhr mocks
   win.fetch = null;
+  // The browser extends the system's language. Not everyone so cool to use English on their workstation,
+  // so we must force browser's language to be English to let tests, based on buttons labels, work
+  Object.defineProperty(win.navigator, 'languages', {
+    get() {
+      return ['en-US', 'en'];
+    },
+  });
 });
