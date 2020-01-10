@@ -249,7 +249,7 @@ describe('User with invalid token and refreshToken', () => {
 
   it('should allow oauth', () => {
     cy.visit(
-      '/oauth2/v1/ely?client_id=ely&redirect_uri=http%3A%2F%2Fely.by%2Fauthorization%2Foauth&response_type=code&scope=account_info%2Caccount_email',
+      '/oauth2/v1/ely?client_id=ely&redirect_uri=https%3A%2F%2Fdev.ely.by%2Fauthorization%2Foauth&response_type=code&scope=account_info%2Caccount_email',
     );
 
     cy.url().should('contain', '/password');
@@ -262,7 +262,7 @@ describe('User with invalid token and refreshToken', () => {
       .contains(account2.username)
       .click();
 
-    cy.url().should('contain', '//ely.by');
+    cy.url().should('contain', '//dev.ely.by');
   });
 });
 
