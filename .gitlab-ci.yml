@@ -5,8 +5,11 @@ stages:
   - testing
   - build
 
+# To cache both npm modules and Cypress binary we use environment variables
+# to point at the folders we can list as paths in "cache" job settings
 variables:
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
+  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
 
 # GitLab don't support bash syntax in the "variables" definitions,
 # so we use a custom step to define all necessary environment variables
@@ -21,7 +24,7 @@ variables:
   cache:
     key: yarn-cache
     paths:
-      - cache/Cypress
+      - cache
       - node_modules
       - packages/app/node_modules
       - packages/scripts/node_modules
@@ -73,6 +76,7 @@ Cypress:
     - .yarnCache
   script:
     - yarn start &
+    - yarn wait-on http://localhost:8080
     - yarn --cwd tests-e2e test:ci --record --browser chrome
   allow_failure: true
 
