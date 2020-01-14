@@ -1,0 +1,92 @@
+image: circleci/node:12-buster-browsers
+
+stages:
+  - prepare
+  - testing
+  - build
+
+# GitLab don't support bash syntax in the "variables" definitions,
+# so we use a custom step to define all necessary environment variables
+.defineVars: &defineVars |-
+  export VERSION="${CI_COMMIT_TAG:-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}}"
+
+###################
+# Steps to extend #
+###################
+
+.yarnCache:
+  cache:
+    key: yarn-cache
+    paths:
+      - ~/.cache/Cypress
+      - ~/.cache/yarn
+      - node_modules
+      - packages/app/node_modules
+      - packages/scripts/node_modules
+      - packages/webpack-utils/node_modules
+    policy: pull
+
+#################
+# Prepare stage #
+#################
+
+Yarn:
+  stage: prepare
+  extends:
+    - .yarnCache
+  cache:
+    policy: pull-push
+  script:
+    - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+
+
+#################
+# Testing stage #
+#################
+
+Lint:
+  stage: testing
+  extends:
+    - .yarnCache
+  script:
+    - yarn lint:check
+
+TypeScript:
+  stage: testing
+  extends:
+    - .yarnCache
+  script:
+    - yarn ts:check
+
+Jest:
+  stage: testing
+  extends:
+    - .yarnCache
+  script:
+    - yarn test
+
+Cypress:
+  stage: testing
+  extends:
+    - .yarnCache
+  script:
+    - yarn start &
+    - yarn --cwd tests-e2e test:ci --record --browser chrome
+  allow_failure: true
+
+###############
+# Build stage #
+###############
+
+Build:
+  stage: build
+  extends:
+    - .yarnCache
+  before_script:
+    - *defineVars
+  script:
+    - yarn build
+  needs:
+    - Lint
+    - TypeScript
+    - Jest
