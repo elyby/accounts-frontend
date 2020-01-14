@@ -1,21 +1,31 @@
+variables:
+  # To cache both npm modules and Cypress binary we use environment variables
+  # to point at the folders we can list as paths in "cache" job settings
+  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
+
 default:
   image: circleci/node:12-buster-browsers
 
 stages:
-  - prepare
-  - testing
+  - .pre
+  - test
   - build
-
-# To cache both npm modules and Cypress binary we use environment variables
-# to point at the folders we can list as paths in "cache" job settings
-variables:
-  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
+  - deploy
 
 # GitLab don't support bash syntax in the "variables" definitions,
 # so we use a custom step to define all necessary environment variables
 .defineVars: &defineVars |-
   export VERSION="${CI_COMMIT_TAG:-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}}"
+
+.installSentry: &installSentry |-
+  curl -sL https://sentry.io/get-cli/ | bash
+
+.setupSSH: &setupSSH |-
+  eval $(ssh-agent -s)
+  echo "$SSH_DEPLOY_KEY" | tr -d '\r' | ssh-add -
+  mkdir -p ~/.ssh
+  ssh-keyscan ely.by >> ~/.ssh/known_hosts
 
 ###################
 # Steps to extend #
@@ -36,7 +46,7 @@ variables:
 #################
 
 Yarn:
-  stage: prepare
+  stage: .pre
   extends:
     - .yarnCache
   cache:
@@ -49,28 +59,28 @@ Yarn:
 #################
 
 Lint:
-  stage: testing
+  stage: test
   extends:
     - .yarnCache
   script:
     - yarn lint:check
 
 TypeScript:
-  stage: testing
+  stage: test
   extends:
     - .yarnCache
   script:
     - yarn ts:check
 
 Jest:
-  stage: testing
+  stage: test
   extends:
     - .yarnCache
   script:
     - yarn test
 
 Cypress:
-  stage: testing
+  stage: test
   extends:
     - .yarnCache
   variables:
@@ -86,6 +96,7 @@ Cypress:
       --browser chrome
       --parallel
   parallel: 4
+  timeout: 5m
   allow_failure: true
 
 ###############
@@ -102,10 +113,44 @@ Build:
     - .yarnCache
   before_script:
     - *defineVars
+    - sudo apt install cpio
   script:
     - yarn build
+    # Removing unneeded files
+    - rm -rf build/messages
+    - rm -rf build/*.css.map
+    # Move all source maps to it's own directory
+    - mkdir -p source-maps
+    - cd build
+    - find . -name '*.js.map' | cpio -pdm ../source-maps/
+    - rm -rf *.js.map
+    - find . -name '*.js' | cpio -pdm ../source-maps/
+    - cd ..
   artifacts:
     name: "Production build for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
     paths:
       - build
+      - source-maps
     expire_in: 1 week
+
+################
+# Deploy stage #
+################
+
+Deploy dev:
+  stage: deploy
+  before_script:
+    - *defineVars
+    - *installSentry
+    - *setupSSH
+    - sudo apt install rsync
+  script:
+    # Notify Sentry about release
+    - sentry-cli releases new $VERSION
+    - sentry-cli releases set-commits --auto $VERSION
+    - sentry-cli releases files $VERSION upload-sourcemaps source-maps
+    # Deploy the build
+    - rsync -v -a -r --delete-after -e 'ssh -J deploy@ely.by:4534 -p 722' build/ root@playground.ely.local:/srv/dev.account.ely.by/frontend
+    # Notify Sentry about deployment and finalize release
+    - sentry-cli releases deploys $VERSION new -e "Development"
+    - sentry-cli releases finalize $VERSION
