@@ -72,10 +72,19 @@ Cypress:
   stage: testing
   extends:
     - .yarnCache
+  variables:
+    # Sentry's DSN is provided for build step from repository configuration,
+    # but it's not necessary to send any logs reports during E2E testing
+    SENTRY_DSN: ""
   script:
     - yarn start &
     - yarn wait-on http://localhost:8080
-    - yarn --cwd tests-e2e test:ci --record --browser chrome
+    - >
+      yarn --cwd tests-e2e test:ci
+      --record
+      --browser chrome
+      --parallel
+  parallel: 4
   allow_failure: true
 
 ###############
