@@ -24,7 +24,7 @@ variables:
   cache:
     key: yarn-cache
     paths:
-      - cache
+      - cache/cypress
       - node_modules
       - packages/*/node_modules
       - tests-e2e/node_modules
