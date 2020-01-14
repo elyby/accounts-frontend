@@ -9,6 +9,6 @@ module.exports = {
   environment: env.ENVIRONMENT || env.NODE_ENV,
   apiHost: env.API_HOST || 'https://dev.account.ely.by',
   ga: env.GA_ID && { id: env.GA_ID },
-  sentryCdn: env.SENTRY_CDN,
+  sentryDSN: env.SENTRY_DSN,
   crowdinApiKey: env.CROWDIN_API_KEY,
 };

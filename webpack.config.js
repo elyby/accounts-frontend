@@ -79,8 +79,8 @@ const webpackConfig = {
   plugins: [
     new WebpackBar(),
     new webpack.DefinePlugin({
-      'window.SENTRY_CDN': config.sentryCdn
-        ? JSON.stringify(config.sentryCdn)
+      'window.SENTRY_DSN': config.sentryDSN
+        ? JSON.stringify(config.sentryDSN)
         : undefined,
       'window.GA_ID':
         config.ga && config.ga.id ? JSON.stringify(config.ga.id) : undefined,

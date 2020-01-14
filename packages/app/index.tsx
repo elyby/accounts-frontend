@@ -21,7 +21,7 @@ const win: { [key: string]: any } = window as any;
 history.init();
 
 logger.init({
-  sentryCdn: (window as any).SENTRY_CDN as string,
+  sentryDSN: (window as any).SENTRY_DSN as string,
 });
 
 const store = storeFactory();

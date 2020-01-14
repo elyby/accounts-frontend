@@ -6,9 +6,9 @@ const isTest = process.env.NODE_ENV === 'test';
 const isProduction = process.env.NODE_ENV === 'production';
 
 class Logger {
-  init({ sentryCdn }: { sentryCdn: string }) {
-    if (sentryCdn) {
-      Raven.config(sentryCdn, {
+  init({ sentryDSN }: { sentryDSN: string }) {
+    if (sentryDSN) {
+      Raven.config(sentryDSN, {
         logger: 'accounts-js-app',
         level: 'info',
         environment: process.env.APP_ENV,
