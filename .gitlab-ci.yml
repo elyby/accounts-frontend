@@ -1,4 +1,5 @@
-image: circleci/node:12-buster-browsers
+default:
+  image: circleci/node:12-buster-browsers
 
 stages:
   - prepare
@@ -93,13 +94,18 @@ Cypress:
 
 Build:
   stage: build
+  needs:
+    - Lint
+    - TypeScript
+    - Jest
   extends:
     - .yarnCache
   before_script:
     - *defineVars
   script:
     - yarn build
-  needs:
-    - Lint
-    - TypeScript
-    - Jest
+  artifacts:
+    name: "Production build for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - build
+    expire_in: 1 week
