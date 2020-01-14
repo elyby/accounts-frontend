@@ -26,9 +26,7 @@ variables:
     paths:
       - cache
       - node_modules
-      - packages/app/node_modules
-      - packages/scripts/node_modules
-      - packages/webpack-utils/node_modules
+      - packages/*/node_modules
       - tests-e2e/node_modules
     policy: pull
 

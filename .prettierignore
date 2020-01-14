@@ -1,5 +1,7 @@
 build
 dll
+node_modules
+cache
 *.jpg
 *.png
 *.gif
