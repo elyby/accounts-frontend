@@ -24,8 +24,6 @@ stages:
 .setupSSH: &setupSSH |-
   eval $(ssh-agent -s)
   echo "$SSH_DEPLOY_KEY" | tr -d '\r' | ssh-add -
-  mkdir -p ~/.ssh
-  ssh-keyscan ely.by >> ~/.ssh/known_hosts
 
 ###################
 # Steps to extend #
@@ -153,7 +151,10 @@ Deploy dev:
     - sentry-cli releases set-commits --commit "elyby/accounts-frontend@$CI_COMMIT_SHA" $VERSION
     - sentry-cli releases files $VERSION upload-sourcemaps source-maps
     # Deploy the build
-    - rsync -v -a -r --delete-after -e 'ssh -J deploy@ely.by:4534 -p 722' build/ root@playground.ely.local:/srv/dev.account.ely.by/frontend
+    - >
+      rsync -v -a -r --delete-after -e 'ssh -J deploy@ely.by:4534 -p 722 -o StrictHostKeyChecking=no'
+      build/
+      root@playground.ely.local:/srv/dev.account.ely.by/frontend
     # Notify Sentry about deployment and finalize release
     - sentry-cli releases deploys $VERSION new -e "Development"
     - sentry-cli releases finalize $VERSION
