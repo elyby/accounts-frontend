@@ -8,7 +8,7 @@ default:
   image: circleci/node:12-buster-browsers
 
 stages:
-  - .pre
+  - prepare
   - test
   - build
   - deploy
@@ -46,7 +46,7 @@ stages:
 #################
 
 Yarn:
-  stage: .pre
+  stage: prepare
   extends:
     - .yarnCache
   cache:
@@ -98,6 +98,9 @@ Cypress:
   parallel: 4
   timeout: 5m
   allow_failure: true
+  only:
+    refs:
+      - master
 
 ###############
 # Build stage #
@@ -147,7 +150,7 @@ Deploy dev:
   script:
     # Notify Sentry about release
     - sentry-cli releases new $VERSION
-    - sentry-cli releases set-commits --auto $VERSION
+    - sentry-cli releases set-commits --commits "elyby/accounts-frontend@$CI_COMMIT_SHA" $VERSION
     - sentry-cli releases files $VERSION upload-sourcemaps source-maps
     # Deploy the build
     - rsync -v -a -r --delete-after -e 'ssh -J deploy@ely.by:4534 -p 722' build/ root@playground.ely.local:/srv/dev.account.ely.by/frontend
