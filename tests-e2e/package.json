@@ -4,7 +4,8 @@
   "description": "account.ely.by e2e test suit",
   "main": "index.js",
   "scripts": {
-    "test": "cypress open"
+    "test": "cypress open",
+    "test:ci": "cypress run"
   },
   "keywords": [],
   "author": "SleepWalker <dev@udf.su>",
