@@ -143,18 +143,16 @@ Build:
 .deployJob:
   stage: deploy
   before_script:
-    # Prepare build env
     - *defineVars
     - *installSentry
     - *setupSSH
     - sudo apt install rsync
+  script:
     # Send release to the Sentry
     - sentry-cli releases new $VERSION
     - sentry-cli releases set-commits --commit "elyby/accounts-frontend@${CI_COMMIT_SHA}" $VERSION
     - sentry-cli releases files $VERSION upload-sourcemaps source-maps
-  script:
     - rsync -v -a -r --delete-after -e "ssh -J deploy@ely.by:4534 -p 722" build/ "root@${VM_HOST_NAME}:${VM_DEPLOY_PATH}"
-  after_script:
     # Finalize Sentry's release
     - sentry-cli releases deploys $VERSION new -e $CI_ENVIRONMENT_NAME
     - sentry-cli releases finalize $VERSION
@@ -181,8 +179,9 @@ Deploy prod:
   variables:
     VM_HOST_NAME: accounts.ely.local
     VM_DEPLOY_PATH: /srv/frontend
-  when: manual
-  only:
-    refs:
-      - master
-      - gitlab-ci
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH != "gitlab-ci"'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[deploy\]/'
+      when: on_success
+    - when: manual
