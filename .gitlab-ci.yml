@@ -38,6 +38,7 @@ stages:
     paths:
       - node_modules
       - packages/*/node_modules
+      - tests-e2e/node_modules # Keep this node_modules because it's one of workspaces
     policy: pull
 
 .yarnE2ECache:
@@ -64,7 +65,7 @@ Yarn:
   variables:
     CYPRESS_INSTALL_BINARY: 0 # Don't install binary to increase caching performance between jobs
   script:
-    - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+    - yarn install --frozen-lockfile
 
 Yarn E2E:
   stage: prepare
@@ -74,7 +75,7 @@ Yarn E2E:
   cache:
     policy: pull-push
   script:
-    - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+    - yarn install --frozen-lockfile
   only:
     refs:
       - master
