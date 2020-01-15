@@ -5,7 +5,7 @@ variables:
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
 
 default:
-  image: circleci/node:12-buster-browsers
+  image: circleci/node:12
 
 stages:
   - prepare
@@ -35,6 +35,14 @@ stages:
   cache:
     key: yarn-cache
     paths:
+      - node_modules
+      - packages/*/node_modules
+    policy: pull
+
+.yarnE2ECache:
+  cache:
+    key: yarn-e2e-cache
+    paths:
       - cache/cypress
       - node_modules
       - packages/*/node_modules
@@ -51,8 +59,22 @@ Yarn:
     - .yarnCache
   cache:
     policy: pull-push
+  variables:
+    CYPRESS_INSTALL_BINARY: 0 # Don't install binary to increase caching performance between jobs
   script:
     - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+
+Yarn E2E:
+  stage: prepare
+  extends:
+    - .yarnE2ECache
+  cache:
+    policy: pull-push
+  script:
+    - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+  only:
+    refs:
+      - master
 
 #################
 # Testing stage #
@@ -81,8 +103,9 @@ Jest:
 
 Cypress:
   stage: test
+  image: circleci/node:12-buster-browsers
   extends:
-    - .yarnCache
+    - .yarnE2ECache
   variables:
     # Sentry's DSN is provided for build step from repository configuration,
     # but it's not necessary to send any logs reports during E2E testing
