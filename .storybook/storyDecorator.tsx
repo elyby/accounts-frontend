@@ -5,6 +5,8 @@ import storeFactory from 'app/storeFactory';
 
 const store = storeFactory();
 
+import 'app/index.scss';
+
 export default story => (
   <ContextProvider store={store} history={browserHistory}>
     {story()}

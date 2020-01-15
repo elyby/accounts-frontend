@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react';
 
 import Button from './Button';
 
-storiesOf('ui/form', module).add('Button', () => (
+storiesOf('UI/Form', module).add('Button', () => (
   <>
     <div>
       <Button label="Green Button" />{' '}
