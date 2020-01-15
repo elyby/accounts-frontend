@@ -87,7 +87,6 @@ const webpackConfig = {
     }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: process.env.NODE_ENV,
-      APP_ENV: config.environment || process.env.NODE_ENV,
       __VERSION__: config.version || '',
     }),
     new HtmlWebpackPlugin({
