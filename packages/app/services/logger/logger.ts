@@ -11,7 +11,10 @@ class Logger {
       Raven.config(sentryDSN, {
         logger: 'accounts-js-app',
         level: 'info',
-        environment: process.env.APP_ENV,
+        environment:
+          window.location.host === 'account.ely.by'
+            ? 'Production'
+            : 'Development',
         release: process.env.__VERSION__,
         shouldSendCallback: () => !isTest,
         dataCallback: data => {

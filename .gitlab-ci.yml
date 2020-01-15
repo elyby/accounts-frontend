@@ -1,0 +1,209 @@
+variables:
+  # To cache both npm modules and Cypress binary we use environment variables
+  # to point at the folders we can list as paths in "cache" job settings
+  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
+
+default:
+  image: circleci/node:12
+
+stages:
+  - prepare
+  - test
+  - build
+  - deploy
+
+# GitLab don't support bash syntax in the "variables" definitions,
+# so we use a custom step to define all necessary environment variables
+.defineVars: &defineVars |-
+  export VERSION="${CI_COMMIT_TAG:-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}}"
+
+.installSentry: &installSentry |-
+  curl -sL https://sentry.io/get-cli/ | bash
+
+.setupSSH: &setupSSH |-
+  mkdir ~/.ssh
+  echo -e "Host *\n    StrictHostKeyChecking no\n" > ~/.ssh/config
+  eval $(ssh-agent -s)
+  echo "$SSH_DEPLOY_KEY" | tr -d '\r' | ssh-add -
+
+###################
+# Steps to extend #
+###################
+
+.yarnCache:
+  cache:
+    key: yarn-cache
+    paths:
+      - node_modules
+      - packages/*/node_modules
+    policy: pull
+
+.yarnE2ECache:
+  cache:
+    key: yarn-e2e-cache
+    paths:
+      - cache/cypress
+      - node_modules
+      - packages/*/node_modules
+      - tests-e2e/node_modules
+    policy: pull
+
+#################
+# Prepare stage #
+#################
+
+Yarn:
+  stage: prepare
+  extends:
+    - .yarnCache
+  cache:
+    policy: pull-push
+  variables:
+    CYPRESS_INSTALL_BINARY: 0 # Don't install binary to increase caching performance between jobs
+  script:
+    - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+
+Yarn E2E:
+  stage: prepare
+  extends:
+    - .yarnE2ECache
+  cache:
+    policy: pull-push
+  script:
+    - yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+  only:
+    refs:
+      - master
+
+#################
+# Testing stage #
+#################
+
+Lint:
+  stage: test
+  extends:
+    - .yarnCache
+  script:
+    - yarn lint:check
+
+TypeScript:
+  stage: test
+  extends:
+    - .yarnCache
+  script:
+    - yarn ts:check
+
+Jest:
+  stage: test
+  extends:
+    - .yarnCache
+  script:
+    - yarn test
+
+Cypress:
+  stage: test
+  image: circleci/node:12-buster-browsers
+  extends:
+    - .yarnE2ECache
+  variables:
+    # Sentry's DSN is provided for build step from repository configuration,
+    # but it's not necessary to send any logs reports during E2E testing
+    SENTRY_DSN: ""
+  script:
+    - yarn start &
+    - yarn wait-on http://localhost:8080
+    - >
+      yarn --cwd tests-e2e test:ci
+      --record
+      --browser chrome
+      --parallel
+  parallel: 4
+  timeout: 5m
+  allow_failure: true
+  only:
+    refs:
+      - master
+
+###############
+# Build stage #
+###############
+
+Build:
+  stage: build
+  needs:
+    - Lint
+    - TypeScript
+    - Jest
+  extends:
+    - .yarnCache
+  before_script:
+    - *defineVars
+    - sudo apt install cpio
+  script:
+    - yarn build
+    # Remove unneeded files
+    - rm -rf build/messages
+    - rm -rf build/*.css.map
+    # Move all source maps to its own directory
+    - mkdir -p source-maps
+    - cd build
+    - find . -name '*.js.map' | cpio -pdm ../source-maps/
+    - rm -rf *.js.map
+    - find . -name '*.js' | cpio -pdm ../source-maps/
+    - cd ..
+  artifacts:
+    name: "Production build for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - build
+      - source-maps
+    expire_in: 1 week
+
+################
+# Deploy stage #
+################
+
+.deployJob:
+  stage: deploy
+  before_script:
+    - *defineVars
+    - *installSentry
+    - *setupSSH
+    - sudo apt install rsync
+  script:
+    # Send release to the Sentry
+    - sentry-cli releases new $VERSION
+    - sentry-cli releases set-commits --commit "elyby/accounts-frontend@${CI_COMMIT_SHA}" $VERSION
+    - sentry-cli releases files $VERSION upload-sourcemaps source-maps
+    - rsync -v -a -r --delete-after -e "ssh -J deploy@ely.by:4534 -p 722" build/ "root@${VM_HOST_NAME}:${VM_DEPLOY_PATH}"
+    # Finalize Sentry's release
+    - sentry-cli releases deploys $VERSION new -e $CI_ENVIRONMENT_NAME
+    - sentry-cli releases finalize $VERSION
+
+Deploy dev:
+  extends:
+    - .deployJob
+  environment:
+    name: Development
+  variables:
+    VM_HOST_NAME: playground.ely.local
+    VM_DEPLOY_PATH: /srv/dev.account.ely.by/frontend
+  only:
+    refs:
+      - master
+
+Deploy prod:
+  extends:
+    - .deployJob
+  stage: deploy
+  environment:
+    name: Production
+  variables:
+    VM_HOST_NAME: accounts.ely.local
+    VM_DEPLOY_PATH: /srv/frontend
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "master"'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[deploy\]/'
+      when: on_success
+    - when: manual
