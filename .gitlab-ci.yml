@@ -1,11 +1,11 @@
 variables:
+  NODE_IMAGE: node:12-alpine
+  NODE_E2E_IMAGE: circleci/node:12-buster-browsers
+  DEPLOY_IMAGE: docksal/ssh-agent:1.3
   # To cache both npm modules and Cypress binary we use environment variables
   # to point at the folders we can list as paths in "cache" job settings
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
-
-default:
-  image: circleci/node:12
 
 stages:
   - prepare
@@ -19,6 +19,7 @@ stages:
   export VERSION="${CI_COMMIT_TAG:-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}}"
 
 .installSentry: &installSentry |-
+  apk add curl
   curl -sL https://sentry.io/get-cli/ | bash
 
 .setupSSH: &setupSSH |-
@@ -55,6 +56,7 @@ stages:
 
 Yarn:
   stage: prepare
+  image: $NODE_IMAGE
   extends:
     - .yarnCache
   cache:
@@ -66,6 +68,7 @@ Yarn:
 
 Yarn E2E:
   stage: prepare
+  image: $NODE_E2E_IMAGE
   extends:
     - .yarnE2ECache
   cache:
@@ -82,6 +85,9 @@ Yarn E2E:
 
 Lint:
   stage: test
+  image: $NODE_IMAGE
+  needs:
+    - Yarn
   extends:
     - .yarnCache
   script:
@@ -89,6 +95,9 @@ Lint:
 
 TypeScript:
   stage: test
+  image: $NODE_IMAGE
+  needs:
+    - Yarn
   extends:
     - .yarnCache
   script:
@@ -96,6 +105,9 @@ TypeScript:
 
 Jest:
   stage: test
+  image: $NODE_IMAGE
+  needs:
+    - Yarn
   extends:
     - .yarnCache
   script:
@@ -103,7 +115,9 @@ Jest:
 
 Cypress:
   stage: test
-  image: circleci/node:12-buster-browsers
+  image: $NODE_E2E_IMAGE
+  needs:
+    - Yarn E2E
   extends:
     - .yarnE2ECache
   variables:
@@ -119,7 +133,7 @@ Cypress:
       --browser chrome
       --parallel
   parallel: 4
-  timeout: 5m
+  timeout: 10m
   allow_failure: true
   only:
     refs:
@@ -131,6 +145,7 @@ Cypress:
 
 Build:
   stage: build
+  image: $NODE_IMAGE
   needs:
     - Lint
     - TypeScript
@@ -139,7 +154,6 @@ Build:
     - .yarnCache
   before_script:
     - *defineVars
-    - sudo apt install cpio
   script:
     - yarn build
     # Remove unneeded files
@@ -165,11 +179,12 @@ Build:
 
 .deployJob:
   stage: deploy
+  image: $DEPLOY_IMAGE
   before_script:
     - *defineVars
     - *installSentry
     - *setupSSH
-    - sudo apt install rsync
+    - apk add rsync
   script:
     # Send release to the Sentry
     - sentry-cli releases new $VERSION
