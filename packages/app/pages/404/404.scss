@@ -43,12 +43,15 @@
   0% {
     transform: rotate(0deg) translate3D(0, 0, 0);
   }
+
   65% {
     transform: rotate(45deg) translate3D(0, -13px, 0);
   }
+
   90% {
     transform: rotate(70deg) translate3D(0, -8px, 0);
   }
+
   100% {
     transform: rotate(90deg) translate3D(0, 0, 0);
   }
@@ -58,12 +61,15 @@
   0% {
     transform: translate3D(0, 0, 0);
   }
+
   60% {
     transform: translate3D(0, 2px, 0);
   }
+
   90% {
     transform: translate3D(0, 4px, 0);
   }
+
   100% {
     transform: translate3D(0, 0, 0);
   }
@@ -73,12 +79,15 @@
   0% {
     transform: translate3D(0, 0, 0);
   }
+
   60% {
     transform: translate3D(0, -2px, 0);
   }
+
   95% {
     transform: translate3D(0, -2px, 0);
   }
+
   100% {
     transform: translate3D(0, 0, 0);
   }
@@ -118,33 +127,43 @@
   0% {
     right: -2%;
   }
+
   10% {
     right: 8%;
   }
+
   20% {
     right: 18%;
   }
+
   30% {
     right: 29%;
   }
+
   40% {
     right: 40%;
   }
+
   50% {
     right: 51%;
   }
+
   60% {
     right: 62%;
   }
+
   70% {
     right: 72%;
   }
+
   80% {
     right: 82%;
   }
+
   90% {
     right: 92%;
   }
+
   100% {
     right: 102%;
   }
@@ -203,6 +222,7 @@
   0% {
     right: -30%;
   }
+
   100% {
     right: 110%;
   }
@@ -212,12 +232,15 @@
   0% {
     transform: translate3D(0, 0, 0);
   }
+
   60% {
     transform: translate3D(0, 2px, 0);
   }
+
   85% {
     transform: translate3D(0, 2px, 0);
   }
+
   100% {
     transform: translate3D(0, 0, 0);
   }
