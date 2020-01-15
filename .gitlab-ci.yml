@@ -168,7 +168,6 @@ Deploy dev:
   only:
     refs:
       - master
-      - gitlab-ci
 
 Deploy prod:
   extends:
@@ -180,7 +179,7 @@ Deploy prod:
     VM_HOST_NAME: accounts.ely.local
     VM_DEPLOY_PATH: /srv/frontend
   rules:
-    - if: '$CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH != "gitlab-ci"'
+    - if: '$CI_COMMIT_BRANCH != "master"'
       when: never
     - if: '$CI_COMMIT_MESSAGE =~ /\[deploy\]/'
       when: on_success
