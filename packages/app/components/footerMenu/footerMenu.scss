@@ -1,16 +1,29 @@
 .footerMenu {
+  padding: 0 25px;
+  text-align: center;
   font-size: 12px;
-  line-height: 1.5;
-  color: #666;
+  // Set line-height the same as the font-size value to keep the border-bottom
+  // close to the text when the inline-block is turned on .footerItem
+  line-height: 12px;
+}
 
-  a {
-    color: #666;
-    border-bottom-color: #666;
+.footerItem {
+  display: inline-block;
+  margin: 2px 5px 2px 0;
+  color: #666;
+  border-bottom-color: #666;
+
+  &:last-of-type {
+    margin-right: 0;
   }
 }
 
 .langTriggerContainer {
-  text-align: center;
+  margin-top: 1px;
+}
+
+.langTrigger {
+  composes: footerItem;
 }
 
 .langTriggerIcon {
