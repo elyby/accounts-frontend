@@ -1,7 +1,6 @@
 @import '~app/components/ui/colors.scss';
 
-$font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono',
-  monospace;
+$font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 
 .body {
   height: 100%;
@@ -46,9 +45,16 @@ $font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono',
 
 .support {
   font-size: 18px;
+  line-height: 18px;
   color: #fff;
-  margin: 3px 0 44px;
-  display: block;
+  margin: 5px 0 44px;
+  display: inline-block;
+  border-bottom-color: #39777f;
+
+  &:hover {
+    color: #fff;
+    border-bottom-color: #eee;
+  }
 }
 
 .easterEgg {

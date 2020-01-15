@@ -5,7 +5,7 @@ import { Store } from 'app/reducers';
 import { History } from 'history';
 
 import { bsod } from './actions';
-import BSoD from './BSoD';
+import BSoDContainer from './BSoDContainer';
 
 let injectedStore: Store;
 let injectedHistory: History<any>;
@@ -20,7 +20,7 @@ export default function dispatchBsod(
 
   ReactDOM.render(
     <ContextProvider store={store} history={history}>
-      <BSoD />
+      <BSoDContainer />
     </ContextProvider>,
     document.getElementById('app'),
   );

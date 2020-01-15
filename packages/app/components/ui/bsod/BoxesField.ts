@@ -1,16 +1,34 @@
+import Point from './Point';
 import Box from './Box';
 
+interface Params {
+  countBoxes: number;
+  boxMinSize: number;
+  boxMaxSize: number;
+  backgroundColor: string;
+  lightColor: string;
+  shadowColor: string;
+  boxColors: ReadonlyArray<string>;
+}
+
 /**
- * Основано на http://codepen.io/mladen___/pen/gbvqBo
+ * Based on http://codepen.io/mladen___/pen/gbvqBo
  */
 export default class BoxesField {
+  private readonly elem: HTMLCanvasElement;
+  private readonly ctx: CanvasRenderingContext2D;
+  private readonly params: Params;
+
+  private light: Point;
+  private boxes: Array<Box>;
+
   /**
    * @param {HTMLCanvasElement} elem - canvas DOM node
    * @param {object} params
    */
   constructor(
-    elem,
-    params = {
+    elem: HTMLCanvasElement,
+    params: Params = {
       countBoxes: 14,
       boxMinSize: 20,
       boxMaxSize: 75,
@@ -31,7 +49,7 @@ export default class BoxesField {
     const ctx = elem.getContext('2d');
 
     if (!ctx) {
-      throw new Error('Can not get canvas 2d context');
+      throw new Error('Cannot get canvas 2d context');
     }
 
     this.ctx = ctx;
@@ -46,35 +64,34 @@ export default class BoxesField {
     this.drawLoop();
     this.bindWindowListeners();
 
-    /**
-     * @type {Box[]}
-     */
     this.boxes = [];
 
     while (this.boxes.length < this.params.countBoxes) {
       this.boxes.push(
-        new Box({
-          size: Math.floor(
+        new Box(
+          Math.floor(
             Math.random() * (this.params.boxMaxSize - this.params.boxMinSize) +
               this.params.boxMinSize,
           ),
-          startX: Math.floor(Math.random() * elem.width + 1),
-          startY: Math.floor(Math.random() * elem.height + 1),
-          startRotate: Math.random() * Math.PI,
-          color: this.getRandomColor(),
-          shadowColor: this.params.shadowColor,
-        }),
+          {
+            x: Math.floor(Math.random() * elem.width + 1),
+            y: Math.floor(Math.random() * elem.height + 1),
+          },
+          Math.random() * Math.PI,
+          this.getRandomColor(),
+          this.params.shadowColor,
+        ),
       );
     }
   }
 
-  resize() {
+  resize(): void {
     const { width, height } = this.elem.getBoundingClientRect();
     this.elem.width = width;
     this.elem.height = height;
   }
 
-  drawLight(light) {
+  drawLight(light: Point): void {
     const greaterSize =
       window.screen.width > window.screen.height
         ? window.screen.width
@@ -98,7 +115,7 @@ export default class BoxesField {
     this.ctx.fill();
   }
 
-  drawLoop() {
+  drawLoop(): void {
     this.ctx.clearRect(0, 0, this.elem.width, this.elem.height);
     this.drawLight(this.light);
 
@@ -120,14 +137,20 @@ export default class BoxesField {
       const box = this.boxes[i];
       box.draw(this.ctx);
 
-      // Если квадратик вылетел за пределы экрана
-      if (box.y - box.halfSize > this.elem.height) {
-        box.y -= this.elem.height + 100;
-        this.updateBox(box);
+      // When box leaves window boundaries
+      let shouldUpdateBox = false;
+
+      if (box.position.y - box.halfSize > this.elem.height) {
+        box.position.y -= this.elem.height + 100;
+        shouldUpdateBox = true;
       }
 
-      if (box.x - box.halfSize > this.elem.width) {
-        box.x -= this.elem.width + 100;
+      if (box.position.x - box.halfSize > this.elem.width) {
+        box.position.x -= this.elem.width + 100;
+        shouldUpdateBox = true;
+      }
+
+      if (shouldUpdateBox) {
         this.updateBox(box);
       }
     }
@@ -143,14 +166,11 @@ export default class BoxesField {
     });
   }
 
-  /**
-   * @param {Box} box
-   */
-  updateBox(box) {
+  updateBox(box: Box): void {
     box.color = this.getRandomColor();
   }
 
-  getRandomColor() {
+  getRandomColor(): string {
     return this.params.boxColors[
       Math.floor(Math.random() * this.params.boxColors.length)
     ];
