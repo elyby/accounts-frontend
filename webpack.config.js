@@ -231,31 +231,34 @@ if (isAnalyze) {
 }
 
 if (isProduction) {
-  let cssExtractApplied = false;
+  if (!isStorybook) {
+    let cssExtractApplied = false;
 
-  webpackConfig.module.rules.forEach(rule => {
-    if (
-      rule.use &&
-      (rule.use[0] === 'style-loader' || rule.use[0].loader === 'style-loader')
-    ) {
-      // replace `style-loader` with `MiniCssExtractPlugin`
-      rule.use[0] = MiniCssExtractPlugin.loader;
-      cssExtractApplied = true;
+    webpackConfig.module.rules.forEach(rule => {
+      if (
+        rule.use &&
+        (rule.use[0] === 'style-loader' ||
+          rule.use[0].loader === 'style-loader')
+      ) {
+        // replace `style-loader` with `MiniCssExtractPlugin`
+        rule.use[0] = MiniCssExtractPlugin.loader;
+        cssExtractApplied = true;
+      }
+    });
+
+    if (!cssExtractApplied) {
+      throw new Error(
+        'Can not locate style-loader to replace it with mini-css-extract-plugin loader',
+      );
     }
-  });
 
-  if (!cssExtractApplied) {
-    throw new Error(
-      'Can not locate style-loader to replace it with mini-css-extract-plugin loader',
+    webpackConfig.plugins.push(
+      new MiniCssExtractPlugin({
+        filename: '[name].css?[hash]',
+        chunkFilename: '[id].css?[hash]',
+      }),
     );
   }
-
-  webpackConfig.plugins.push(
-    new MiniCssExtractPlugin({
-      filename: '[name].css?[hash]',
-      chunkFilename: '[id].css?[hash]',
-    }),
-  );
 
   webpackConfig.devtool = 'hidden-source-map';
 

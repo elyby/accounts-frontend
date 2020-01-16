@@ -45,7 +45,7 @@
     "build:dll": "node ./packages/scripts/build-dll.js",
     "build:serve": "http-server --proxy https://dev.account.ely.by ./build",
     "sb": "APP_ENV=storybook start-storybook -p 9009 --ci",
-    "build-storybook": "build-storybook"
+    "sb:build": "APP_ENV=storybook build-storybook"
   },
   "husky": {
     "hooks": {
