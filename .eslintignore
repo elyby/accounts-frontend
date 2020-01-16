@@ -1,4 +1,5 @@
 build
 dll
+storybook-static
 node_modules
 cache

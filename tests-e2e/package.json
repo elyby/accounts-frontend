@@ -13,6 +13,6 @@
   "private": true,
   "dependencies": {
     "@cypress/webpack-preprocessor": "^4.1.1",
-    "cypress": "^3.8.1"
+    "cypress": "^3.8.2"
   }
 }
