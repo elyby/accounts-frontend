@@ -182,7 +182,7 @@ Storybook:
   extends:
     - .yarnCache
   script:
-    - yarn sb:build
+    - yarn sb:build --quiet
   artifacts:
     name: "Storybook for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
     paths:
