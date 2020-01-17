@@ -5,10 +5,10 @@ import React from 'react';
 
 import { shallow, mount } from 'enzyme';
 
-import { PopupStack } from 'app/components/ui/popup/PopupStack';
+import PopupStack from 'app/components/ui/popup/PopupStack';
 import styles from 'app/components/ui/popup/popup.scss';
 
-function DummyPopup(/** @type {{[key: string]: any}} */ _props) {
+function DummyPopup(_props: Record<string, any>) {
   return null;
 }
 
@@ -39,7 +39,7 @@ describe('<PopupStack />', () => {
       destroy: () => {},
       popups: [
         {
-          Popup: (props = {}) => {
+          Popup: (props = { onClose: Function }) => {
             // eslint-disable-next-line
             expect(props.onClose, 'to be a', 'function');
 

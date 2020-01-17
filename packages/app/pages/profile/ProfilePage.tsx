@@ -8,7 +8,7 @@ import logger from 'app/services/logger';
 import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
 import { FormModel } from 'app/components/ui/form';
-import { RootState } from 'app/reducers';
+import { Dispatch, RootState } from 'app/reducers';
 import { Provider } from 'app/components/profile/Context';
 import { ComponentLoader } from 'app/components/ui/loader';
 
@@ -110,7 +110,7 @@ class ProfilePage extends React.Component<Props> {
 
 export default connect(
   (state: RootState) => ({
-    userId: state.user.id,
+    userId: state.user.id!,
   }),
   {
     refreshUserData,
@@ -120,7 +120,7 @@ export default connect(
     }: {
       form: FormModel;
       sendData: () => Promise<any>;
-    }) => dispatch => {
+    }) => (dispatch: Dispatch) => {
       form.beginLoading();
 
       return sendData()
@@ -165,7 +165,7 @@ export default connect(
         })
         .finally(() => form.endLoading());
 
-      function requestPassword(form) {
+      function requestPassword(form: FormModel) {
         return new Promise((resolve, reject) => {
           dispatch(
             createPopup({

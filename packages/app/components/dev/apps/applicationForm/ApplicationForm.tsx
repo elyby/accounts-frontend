@@ -19,12 +19,15 @@ import ApplicationTypeSwitcher from './ApplicationTypeSwitcher';
 import WebsiteType from './WebsiteType';
 import MinecraftServerType from './MinecraftServerType';
 
-const typeToForm: {
-  [K in ApplicationType]: {
+type TypeToForm = Record<
+  ApplicationType,
+  {
     label: MessageDescriptor;
     component: React.ComponentType<any>;
-  };
-} = {
+  }
+>;
+
+const typeToForm: TypeToForm = {
   [TYPE_APPLICATION]: {
     label: messages.website,
     component: WebsiteType,
@@ -35,16 +38,15 @@ const typeToForm: {
   },
 };
 
-const typeToLabel = Object.keys(typeToForm).reduce(
-  (result, key: ApplicationType) => {
-    result[key] = typeToForm[key].label;
+type TypeToLabel = Record<ApplicationType, MessageDescriptor>;
 
-    return result;
-  },
-  {} as {
-    [K in ApplicationType]: MessageDescriptor;
-  },
-);
+const typeToLabel: TypeToLabel = ((Object.keys(typeToForm) as unknown) as Array<
+  ApplicationType
+>).reduce((result, key) => {
+  result[key] = typeToForm[key].label;
+
+  return result;
+}, {} as TypeToLabel);
 
 export default class ApplicationForm extends React.Component<{
   app: OauthAppResponse;

@@ -10,7 +10,12 @@ describe('services/api/options', () => {
     sinon
       .stub(request, 'get')
       .named('request.get')
-      .returns(Promise.resolve(expectedResp));
+      .returns(
+        Promise.resolve({
+          originalResponse: new Response(),
+          ...expectedResp,
+        }),
+      );
   });
 
   afterEach(() => {

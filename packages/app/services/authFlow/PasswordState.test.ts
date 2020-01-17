@@ -1,5 +1,5 @@
 import expect from 'app/test/unexpected';
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import PasswordState from 'app/services/authFlow/PasswordState';
 import CompleteState from 'app/services/authFlow/CompleteState';
@@ -8,12 +8,18 @@ import LoginState from 'app/services/authFlow/LoginState';
 import ForgotPasswordState from 'app/services/authFlow/ForgotPasswordState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('PasswordState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: PasswordState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new PasswordState();

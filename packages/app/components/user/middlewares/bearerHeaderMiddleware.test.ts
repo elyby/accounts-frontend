@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import expect from 'app/test/unexpected';
 import { RootState } from 'app/reducers';
 
 import bearerHeaderMiddleware from 'app/components/user/middlewares/bearerHeaderMiddleware';
+import { MiddlewareRequestOptions } from '../../../services/request/PromiseMiddlewareLayer';
 
 describe('bearerHeaderMiddleware', () => {
   const emptyState: RootState = {
@@ -33,27 +35,29 @@ describe('bearerHeaderMiddleware', () => {
     } as any);
 
     it('should set Authorization header', async () => {
-      let data: any = {
+      let data: MiddlewareRequestOptions = {
+        url: '',
         options: {
           headers: {},
         },
       };
 
-      data = middleware.before && (await middleware.before(data));
+      data = await middleware.before!(data);
 
       expectBearerHeader(data, token);
     });
 
     it('overrides user.token with options.token if available', async () => {
       const tokenOverride = 'tokenOverride';
-      let data: any = {
+      let data: MiddlewareRequestOptions = {
+        url: '',
         options: {
           headers: {},
           token: tokenOverride,
         },
       };
 
-      data = middleware.before && (await middleware.before(data));
+      data = await middleware.before!(data);
 
       expectBearerHeader(data, tokenOverride);
     });
@@ -62,16 +66,12 @@ describe('bearerHeaderMiddleware', () => {
       const tokenOverride = null;
       const data: any = {
         options: {
-          headers: {} as { [key: string]: any },
+          headers: {},
           token: tokenOverride,
         },
       };
 
-      if (!middleware.before) {
-        throw new Error('No middleware.before');
-      }
-
-      const resp = await middleware.before(data);
+      const resp = await middleware.before!(data);
 
       expect(resp.options.headers.Authorization, 'to be undefined');
     });
@@ -84,22 +84,19 @@ describe('bearerHeaderMiddleware', () => {
       }),
     } as any);
 
-    const data: any = {
+    const data: MiddlewareRequestOptions = {
+      url: '',
       options: {
-        headers: {} as { [key: string]: any },
+        headers: {},
       },
     };
 
-    if (!middleware.before) {
-      throw new Error('No middleware.before');
-    }
-
-    const resp = await middleware.before(data);
+    const resp = await middleware.before!(data);
 
     expect(resp.options.headers.Authorization, 'to be undefined');
   });
 
-  function expectBearerHeader(data, token) {
+  function expectBearerHeader(data: MiddlewareRequestOptions, token: string) {
     expect(data.options.headers, 'to satisfy', {
       Authorization: `Bearer ${token}`,
     });

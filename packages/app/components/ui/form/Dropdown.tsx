@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, MouseEventHandler } from 'react';
 import ReactDOM from 'react-dom';
 import { MessageDescriptor } from 'react-intl';
 import clsx from 'clsx';
@@ -40,10 +40,12 @@ export default class Dropdown extends FormInputComponent<Props, State> {
   componentDidMount() {
     // listen to capturing phase to ensure, that our event handler will be
     // called before all other
+    // @ts-ignore
     document.addEventListener('click', this.onBodyClick, true);
   }
 
   componentWillUnmount() {
+    // @ts-ignore
     document.removeEventListener('click', this.onBodyClick);
   }
 
@@ -98,7 +100,7 @@ export default class Dropdown extends FormInputComponent<Props, State> {
     });
   }
 
-  onSelectItem(item: OptionItem) {
+  onSelectItem(item: OptionItem): MouseEventHandler {
     return event => {
       event.preventDefault();
 
@@ -141,11 +143,12 @@ export default class Dropdown extends FormInputComponent<Props, State> {
     this.toggle();
   };
 
-  onBodyClick = (event: MouseEvent) => {
+  onBodyClick: MouseEventHandler = event => {
     if (this.state.isActive) {
-      const el = ReactDOM.findDOMNode(this);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const el = ReactDOM.findDOMNode(this)!;
 
-      if (!el.contains(event.target) && el !== event.target) {
+      if (!el.contains(event.target as HTMLElement) && el !== event.target) {
         event.preventDefault();
         event.stopPropagation();
 

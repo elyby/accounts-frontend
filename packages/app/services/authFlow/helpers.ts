@@ -2,15 +2,25 @@
  * A helpers for testing states in isolation from AuthFlow
  */
 
-import sinon from 'sinon';
+import sinon, { SinonExpectation, SinonMock, SinonStub } from 'sinon';
+import AbstractState from './AbstractState';
+import { AuthContext } from './AuthFlow';
 
-export function bootstrap() {
-  const context = {
+export interface MockedAuthContext extends AuthContext {
+  getState: SinonStub;
+  getRequest: SinonStub;
+}
+
+export function bootstrap(): { context: MockedAuthContext; mock: SinonMock } {
+  const context: MockedAuthContext = {
     getState: sinon.stub(),
-    run() {},
+    run() {
+      return Promise.resolve();
+    },
     setState() {},
     getRequest: sinon.stub(),
     navigate() {},
+    prevState: new (class State extends AbstractState {})(),
   };
 
   const mock = sinon.mock(context);
@@ -21,7 +31,10 @@ export function bootstrap() {
   return { context, mock };
 }
 
-export function expectState(mock, state) {
+export function expectState(
+  mock: SinonMock,
+  state: typeof AbstractState,
+): SinonExpectation {
   return mock
     .expects('setState')
     .once()
@@ -29,10 +42,10 @@ export function expectState(mock, state) {
 }
 
 export function expectNavigate(
-  mock,
-  route,
-  options: { [key: string]: any } | void,
-) {
+  mock: SinonMock,
+  route: string,
+  options: Record<string, any> | void,
+): SinonExpectation {
   if (options) {
     return mock
       .expects('navigate')
@@ -46,7 +59,10 @@ export function expectNavigate(
     .withExactArgs(route);
 }
 
-export function expectRun(mock, ...args) {
+export function expectRun(
+  mock: SinonMock,
+  ...args: Array<any>
+): SinonExpectation {
   return mock
     .expects('run')
     .once()

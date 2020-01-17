@@ -2,16 +2,19 @@ import React from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { browserHistory } from 'app/services/history';
 import { connect } from 'react-redux';
+import { Location } from 'history';
 import { RootState } from 'app/reducers';
 
 import { PopupConfig } from './reducer';
 import { destroy } from './actions';
 import styles from './popup.scss';
 
-export class PopupStack extends React.Component<{
+interface Props {
   popups: PopupConfig[];
   destroy: (popup: PopupConfig) => void;
-}> {
+}
+
+export class PopupStack extends React.Component<Props> {
   unlistenTransition: () => void;
 
   componentDidMount() {
@@ -87,7 +90,7 @@ export class PopupStack extends React.Component<{
     }
   };
 
-  onRouteLeave = nextLocation => {
+  onRouteLeave = (nextLocation: Location) => {
     if (nextLocation) {
       this.popStack();
     }

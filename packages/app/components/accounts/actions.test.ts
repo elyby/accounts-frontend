@@ -12,13 +12,10 @@ import {
 } from 'app/components/accounts/actions';
 import {
   add,
-  ADD,
   activate,
-  ACTIVATE,
   remove,
   reset,
 } from 'app/components/accounts/actions/pure-actions';
-import { SET_LOCALE } from 'app/components/i18n/actions';
 import { updateUser, setUser } from 'app/components/user/actions';
 import { setLogin, setAccountSwitcher } from 'app/components/auth/actions';
 import { Dispatch, RootState } from 'app/reducers';
@@ -124,20 +121,20 @@ describe('components/accounts/actions', () => {
         ]),
       ));
 
-    it(`dispatches ${ADD} action`, () =>
+    it(`dispatches accounts:add action`, () =>
       authenticate(account)(dispatch, getState, undefined).then(() =>
         expect(dispatch, 'to have a call satisfying', [add(account)]),
       ));
 
-    it(`dispatches ${ACTIVATE} action`, () =>
+    it(`dispatches accounts:activate action`, () =>
       authenticate(account)(dispatch, getState, undefined).then(() =>
         expect(dispatch, 'to have a call satisfying', [activate(account)]),
       ));
 
-    it(`dispatches ${SET_LOCALE} action`, () =>
+    it(`dispatches i18n:setLocale action`, () =>
       authenticate(account)(dispatch, getState, undefined).then(() =>
         expect(dispatch, 'to have a call satisfying', [
-          { type: SET_LOCALE, payload: { locale: 'be' } },
+          { type: 'i18n:setLocale', payload: { locale: 'be' } },
         ]),
       ));
 
@@ -479,7 +476,7 @@ describe('components/accounts/actions', () => {
       const key = `stranger${foreignAccount.id}`;
 
       beforeEach(() => {
-        sessionStorage.setItem(key, 1);
+        sessionStorage.setItem(key, '1');
 
         logoutStrangers()(dispatch, getState, undefined);
       });

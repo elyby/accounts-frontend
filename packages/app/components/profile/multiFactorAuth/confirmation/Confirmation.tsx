@@ -1,8 +1,9 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
-import { Input, Form, FormModel } from 'app/components/ui/form';
 
+import { Input, Form, FormModel } from 'app/components/ui/form';
 import profileForm from 'app/components/profile/profileForm.scss';
+
 import messages from '../MultiFactorAuth.intl.json';
 
 export default function Confirmation({
@@ -13,7 +14,7 @@ export default function Confirmation({
 }: {
   form: FormModel;
   formRef?: (el: Form | null) => void;
-  onSubmit: (form: FormModel) => Promise<void>;
+  onSubmit: (form: FormModel) => Promise<void> | void;
   onInvalid: () => void;
 }) {
   return (

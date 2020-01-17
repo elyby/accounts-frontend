@@ -86,7 +86,7 @@ class Logger {
 function log(
   level: 'error' | 'warning' | 'info' | 'debug',
   message: string | Error,
-  context?: { [key: string]: any },
+  context?: Record<string, any>,
 ) {
   const method: 'error' | 'warn' | 'info' | 'debug' =
     level === 'warning' ? 'warn' : level;
@@ -120,7 +120,7 @@ function log(
  *
  * @returns {Promise}
  */
-function prepareContext(context: { [key: string]: any }) {
+function prepareContext(context: Record<string, any>): Promise<string> {
   if (context instanceof Response) {
     // TODO: rewrite abbreviate to use promises and recursively find Response
     return context

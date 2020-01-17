@@ -1,5 +1,6 @@
 import React from 'react';
 import { Motion, spring } from 'react-motion';
+
 import MeasureHeight from 'app/components/MeasureHeight';
 
 import styles from './slide-motion.scss';
@@ -10,18 +11,19 @@ interface Props {
 }
 
 interface State {
-  // [stepHeight: string]: number;
   version: string;
   prevChildren: React.ReactNode | undefined;
+  stepsHeights: Record<Props['activeStep'], number>;
 }
 
 class SlideMotion extends React.PureComponent<Props, State> {
   state: State = {
     prevChildren: undefined, // to track version updates
     version: `${this.props.activeStep}.0`,
+    stepsHeights: [],
   };
 
-  isHeightMeasured: boolean;
+  private isHeightMeasured: boolean;
 
   static getDerivedStateFromProps(props: Props, state: State) {
     let [, version] = state.version.split('.').map(Number);
@@ -42,7 +44,7 @@ class SlideMotion extends React.PureComponent<Props, State> {
 
     const { version } = this.state;
 
-    const activeStepHeight = this.state[`step${activeStep}Height`] || 0;
+    const activeStepHeight = this.state.stepsHeights[activeStep] || 0;
 
     // a hack to disable height animation on first render
     const { isHeightMeasured } = this;
@@ -65,7 +67,7 @@ class SlideMotion extends React.PureComponent<Props, State> {
 
     return (
       <Motion style={motionStyle}>
-        {(interpolatingStyle: { height: number; transform: string }) => (
+        {interpolatingStyle => (
           <div
             style={{
               overflow: 'hidden',
@@ -96,13 +98,14 @@ class SlideMotion extends React.PureComponent<Props, State> {
     );
   }
 
-  onStepMeasure(step: number) {
-    return (height: number) =>
-      // @ts-ignore
-      this.setState({
-        [`step${step}Height`]: height,
-      });
-  }
+  onStepMeasure = (step: number) => (height: number) => {
+    this.setState({
+      stepsHeights: {
+        ...this.state.stepsHeights,
+        [step]: height,
+      },
+    });
+  };
 }
 
 export default SlideMotion;

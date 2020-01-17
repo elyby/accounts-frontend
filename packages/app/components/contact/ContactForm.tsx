@@ -172,9 +172,9 @@ export class ContactForm extends React.Component<
     );
   }
 
-  onSubmit = () => {
+  onSubmit = (): Promise<void> => {
     if (this.state.isLoading) {
-      return;
+      return Promise.resolve();
     }
 
     this.setState({ isLoading: true });

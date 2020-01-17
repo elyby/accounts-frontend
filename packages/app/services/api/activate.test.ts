@@ -2,7 +2,7 @@ import expect from 'app/test/unexpected';
 import sinon from 'sinon';
 
 import request from 'app/services/request';
-import signup from 'app/services/api/signup';
+import * as signup from 'app/services/api/signup';
 
 describe('signup api', () => {
   describe('#register', () => {
@@ -46,9 +46,7 @@ describe('signup api', () => {
   });
 
   describe('#activate', () => {
-    const params = {
-      key: 'key',
-    };
+    const key = 'key';
 
     beforeEach(() => {
       sinon.stub(request, 'post').named('request.post');
@@ -59,21 +57,21 @@ describe('signup api', () => {
     });
 
     it('should post to confirmation api', () => {
-      signup.activate(params);
+      signup.activate(key);
 
       expect(request.post, 'to have a call satisfying', [
         '/api/signup/confirm',
-        params,
+        { key },
         {},
       ]);
     });
 
     it('should disable any token', () => {
-      signup.activate(params);
+      signup.activate(key);
 
       expect(request.post, 'to have a call satisfying', [
         '/api/signup/confirm',
-        params,
+        { key },
         { token: null },
       ]);
     });

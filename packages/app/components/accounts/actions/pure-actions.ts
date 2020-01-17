@@ -1,78 +1,67 @@
-import {
-  Account,
-  AddAction,
-  RemoveAction,
-  ActivateAction,
-  UpdateTokenAction,
-  ResetAction,
-} from '../reducer';
+import { Action as ReduxAction } from 'redux';
+import { Account } from 'app/components/accounts/reducer';
 
-export const ADD = 'accounts:add';
-/**
- * @private
- *
- * @param {Account} account
- *
- * @returns {object} - action definition
- */
+interface AddAction extends ReduxAction {
+  type: 'accounts:add';
+  payload: Account;
+}
+
 export function add(account: Account): AddAction {
   return {
-    type: ADD,
+    type: 'accounts:add',
     payload: account,
   };
 }
 
-export const REMOVE = 'accounts:remove';
-/**
- * @private
- *
- * @param {Account} account
- *
- * @returns {object} - action definition
- */
+interface RemoveAction extends ReduxAction {
+  type: 'accounts:remove';
+  payload: Account;
+}
+
 export function remove(account: Account): RemoveAction {
   return {
-    type: REMOVE,
+    type: 'accounts:remove',
     payload: account,
   };
 }
 
-export const ACTIVATE = 'accounts:activate';
-/**
- * @private
- *
- * @param {Account} account
- *
- * @returns {object} - action definition
- */
+interface ActivateAction extends ReduxAction {
+  type: 'accounts:activate';
+  payload: Account;
+}
+
 export function activate(account: Account): ActivateAction {
   return {
-    type: ACTIVATE,
+    type: 'accounts:activate',
     payload: account,
   };
 }
 
-export const RESET = 'accounts:reset';
-/**
- * @private
- *
- * @returns {object} - action definition
- */
+interface ResetAction extends ReduxAction {
+  type: 'accounts:reset';
+}
+
 export function reset(): ResetAction {
   return {
-    type: RESET,
+    type: 'accounts:reset',
   };
 }
 
-export const UPDATE_TOKEN = 'accounts:updateToken';
-/**
- * @param {string} token
- *
- * @returns {object} - action definition
- */
+interface UpdateTokenAction extends ReduxAction {
+  type: 'accounts:updateToken';
+  payload: string;
+}
+
 export function updateToken(token: string): UpdateTokenAction {
   return {
-    type: UPDATE_TOKEN,
+    type: 'accounts:updateToken',
     payload: token,
   };
 }
+
+export type Action =
+  | AddAction
+  | RemoveAction
+  | ActivateAction
+  | ResetAction
+  | UpdateTokenAction;

@@ -22,7 +22,7 @@ describe('Input', () => {
     );
 
     expect(
-      wrapper.find('input[name="test"]').getDOMNode().value,
+      wrapper.find('input[name="test"]').getDOMNode<HTMLInputElement>().value,
       'to equal',
       'foo',
     );

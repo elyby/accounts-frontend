@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { ApplicationType } from 'app/components/dev/apps';
 import { MessageDescriptor } from 'react-intl';
 import { SKIN_LIGHT } from 'app/components/ui';
@@ -6,20 +6,20 @@ import { Radio } from 'app/components/ui/form';
 
 import styles from './applicationTypeSwitcher.scss';
 
-export default function ApplicationTypeSwitcher({
-  setType,
-  appTypes,
-  selectedType,
-}: {
-  appTypes: {
-    [K in ApplicationType]: MessageDescriptor;
-  };
+interface Props {
+  appTypes: Record<ApplicationType, MessageDescriptor>;
   selectedType: ApplicationType | null;
   setType: (type: ApplicationType) => void;
-}) {
-  return (
-    <div>
-      {Object.keys(appTypes).map((type: ApplicationType) => (
+}
+
+const ApplicationTypeSwitcher: ComponentType<Props> = ({
+  appTypes,
+  selectedType,
+  setType,
+}) => (
+  <div>
+    {((Object.keys(appTypes) as unknown) as Array<ApplicationType>).map(
+      type => (
         <div className={styles.radioContainer} key={type}>
           <Radio
             onChange={() => setType(type)}
@@ -29,7 +29,9 @@ export default function ApplicationTypeSwitcher({
             checked={selectedType === type}
           />
         </div>
-      ))}
-    </div>
-  );
-}
+      ),
+    )}
+  </div>
+);
+
+export default ApplicationTypeSwitcher;

@@ -12,11 +12,13 @@
     "checkJs": true,
     "allowJs": true,
     "strictNullChecks": true,
+    "strictPropertyInitialization": false,
     "isolatedModules": true,
     // we can not enable json modules, because this will disable
     // *.intl.json overrides (@see `webpack-loaders.d.ts`)
     "resolveJsonModule": false,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "strict": true
   },
   "include": ["@types", "packages", "config", ".storybook"]
 }

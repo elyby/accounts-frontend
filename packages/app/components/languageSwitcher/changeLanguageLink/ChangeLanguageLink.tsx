@@ -1,25 +1,23 @@
-import React from 'react';
+import React, { ComponentType, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { localeFlags } from 'app/components/i18n';
 import LANGS from 'app/i18n';
-import { connect } from 'react-redux';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import LanguageSwitcher from 'app/components/languageSwitcher';
 import { RootState } from 'app/reducers';
 
 import styles from './link.scss';
 
-type Props = {
-  userLang: string;
-  interfaceLocale: string;
-  showLanguageSwitcherPopup: (event: React.MouseEvent<HTMLSpanElement>) => void;
-};
+const LanguageLink: ComponentType = () => {
+  const dispatch = useDispatch();
+  const showLanguageSwitcherPopup = useCallback(() => {
+    dispatch(createPopup({ Popup: LanguageSwitcher }));
+  }, [dispatch]);
 
-function LanguageLink({
-  userLang,
-  interfaceLocale,
-  showLanguageSwitcherPopup,
-}: Props) {
+  const userLang = useSelector((state: RootState) => state.user.lang);
+  const interfaceLocale = useSelector((state: RootState) => state.i18n.locale);
+
   const localeDefinition = LANGS[userLang] || LANGS[interfaceLocale];
 
   return (
@@ -40,14 +38,6 @@ function LanguageLink({
       {localeDefinition.name}
     </span>
   );
-}
+};
 
-export default connect(
-  (state: RootState) => ({
-    userLang: state.user.lang,
-    interfaceLocale: state.i18n.locale,
-  }),
-  {
-    showLanguageSwitcherPopup: () => createPopup({ Popup: LanguageSwitcher }),
-  },
-)(LanguageLink);
+export default LanguageLink;

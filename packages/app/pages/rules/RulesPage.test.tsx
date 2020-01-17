@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import sinon from 'sinon';
 import expect from 'app/test/unexpected';
-import { shallow } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 
 import RulesPage from './RulesPage';
+
+type RulesPageShallowType = ShallowWrapper<
+  ComponentProps<typeof RulesPage>,
+  any,
+  RulesPage
+>;
 
 describe('RulesPage', () => {
   describe('#onRuleClick()', () => {
     const id = 'rule-1-2';
     const pathname = '/foo';
     const search = '?bar';
-    let page;
-    let replace;
+    let page: RulesPageShallowType;
+    let replace: Function;
 
     beforeEach(() => {
       replace = sinon.stub().named('history.replace');

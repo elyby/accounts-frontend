@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import { IntlProvider } from 'react-intl';
 import feedback from 'app/services/api/feedback';
 import { User } from 'app/components/user';
 
 import { ContactForm } from './ContactForm';
 
+type ContactFormShallowType = ShallowWrapper<
+  ComponentProps<typeof ContactForm>,
+  any,
+  ContactForm
+>;
+
 describe('ContactForm', () => {
   describe('when rendered', () => {
     const user = {} as User;
-    let component;
+    let component: ContactFormShallowType;
 
     beforeEach(() => {
       component = shallow(<ContactForm user={user} />);
@@ -57,7 +63,7 @@ describe('ContactForm', () => {
     const user = {
       email: 'foo@bar.com',
     } as User;
-    let component;
+    let component: ContactFormShallowType;
 
     beforeEach(() => {
       component = shallow(<ContactForm user={user} />);
@@ -76,7 +82,7 @@ describe('ContactForm', () => {
     const user = {
       email: 'foo@bar.com',
     } as User;
-    let component;
+    let component: ContactFormShallowType;
 
     beforeEach(() => {
       component = shallow(<ContactForm user={user} />);
@@ -93,15 +99,15 @@ describe('ContactForm', () => {
     const user = {
       email: 'foo@bar.com',
     } as User;
-    let component;
-    let wrapper;
+    let component: ContactForm;
+    let wrapper: ReactWrapper;
 
     beforeEach(() => {
       // TODO: add polyfill for from validation for jsdom
 
       wrapper = mount(
         <IntlProvider locale="en" defaultLocale="en">
-          <ContactForm user={user} ref={el => (component = el)} />
+          <ContactForm user={user} ref={el => (component = el!)} />
         </IntlProvider>,
       );
     });
@@ -118,8 +124,8 @@ describe('ContactForm', () => {
     const user = {
       email: 'foo@bar.com',
     } as User;
-    let component;
-    let wrapper;
+    let component: ContactForm;
+    let wrapper: ReactWrapper;
     const requestData = {
       email: user.email,
       subject: 'Test subject',
@@ -137,16 +143,18 @@ describe('ContactForm', () => {
       // TODO: try to rewrite with unexpected-react
       wrapper = mount(
         <IntlProvider locale="en" defaultLocale="en">
-          <ContactForm user={user} ref={el => (component = el)} />
+          <ContactForm user={user} ref={el => (component = el!)} />
         </IntlProvider>,
       );
 
-      wrapper.find('input[name="email"]').getDOMNode().value =
+      wrapper.find('input[name="email"]').getDOMNode<HTMLInputElement>().value =
         requestData.email;
-      wrapper.find('input[name="subject"]').getDOMNode().value =
-        requestData.subject;
-      wrapper.find('textarea[name="message"]').getDOMNode().value =
-        requestData.message;
+      wrapper
+        .find('input[name="subject"]')
+        .getDOMNode<HTMLInputElement>().value = requestData.subject;
+      wrapper
+        .find('textarea[name="message"]')
+        .getDOMNode<HTMLInputElement>().value = requestData.message;
     });
 
     afterEach(() => {

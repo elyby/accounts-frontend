@@ -5,23 +5,26 @@ import PromiseMiddlewareLayer from 'app/services/request/PromiseMiddlewareLayer'
 
 describe('PromiseMiddlewareLayer', () => {
   describe('#add()', () => {
-    let layer;
+    let layer: PromiseMiddlewareLayer;
 
     beforeEach(() => {
       layer = new PromiseMiddlewareLayer();
     });
 
     it('should have no middlewares by default', () => {
+      // @ts-ignore
       expect(layer.middlewares, 'to have length', 0);
     });
 
     it('should add middleware into layer', () => {
       layer.add({});
 
+      // @ts-ignore
       expect(layer.middlewares, 'to have length', 1);
     });
 
     it('throws if middleware is not object', () => {
+      // @ts-ignore
       expect(() => layer.add(1), 'to throw', 'A middleware must be an object');
     });
   });
@@ -36,7 +39,7 @@ describe('PromiseMiddlewareLayer', () => {
     testAction('then');
     testAction('catch');
 
-    function testAction(name) {
+    function testAction(name: string) {
       describe(`run('${name}')`, () => {
         it('should run middleware', () => {
           const layer: any = new PromiseMiddlewareLayer();

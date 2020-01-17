@@ -1,15 +1,15 @@
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import LoginState from 'app/services/authFlow/LoginState';
 import PasswordState from 'app/services/authFlow/PasswordState';
 import RegisterState from 'app/services/authFlow/RegisterState';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import { bootstrap, expectState, expectNavigate, expectRun, MockedAuthContext } from './helpers';
 
 describe('LoginState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: LoginState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new LoginState();
@@ -53,7 +53,7 @@ describe('LoginState', () => {
 
   describe('#resolve', () => {
     it('should call login with email or username', () => {
-      const payload = {};
+      const payload = { login: 'login' };
 
       expectRun(mock, 'login', sinon.match.same(payload)).returns(
         new Promise(() => {}),
@@ -68,7 +68,7 @@ describe('LoginState', () => {
       mock.expects('run').returns(promise);
       expectState(mock, PasswordState);
 
-      state.resolve(context);
+      state.resolve(context, { login: 'login' });
 
       return promise;
     });
@@ -79,7 +79,7 @@ describe('LoginState', () => {
       mock.expects('run').returns(promise);
       mock.expects('setState').never();
 
-      state.resolve(context);
+      state.resolve(context, { login: 'login' });
 
       return promise.catch(mock.verify.bind(mock));
     });

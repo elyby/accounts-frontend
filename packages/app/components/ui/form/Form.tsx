@@ -1,18 +1,33 @@
 import React from 'react';
 import clsx from 'clsx';
+
 import logger from 'app/services/logger';
 
 import FormModel from './FormModel';
 import styles from './form.scss';
 
-interface Props {
+interface BaseProps {
   id: string;
   isLoading: boolean;
-  form?: FormModel;
-  onSubmit: (form: FormModel | FormData) => void | Promise<void>;
-  onInvalid: (errors: { [errorKey: string]: string }) => void;
+  onInvalid: (errors: Record<string, string>) => void;
   children: React.ReactNode;
 }
+
+interface PropsWithoutForm extends BaseProps {
+  onSubmit: (form: FormData) => Promise<void> | void;
+}
+
+interface PropsWithForm extends BaseProps {
+  form: FormModel;
+  onSubmit: (form: FormModel) => Promise<void> | void;
+}
+
+type Props = PropsWithoutForm | PropsWithForm;
+
+function hasForm(props: Props): props is PropsWithForm {
+  return 'form' in props;
+}
+
 interface State {
   id: string; // just to track value for derived updates
   isTouched: boolean;
@@ -39,7 +54,7 @@ export default class Form extends React.Component<Props, State> {
   mounted = false;
 
   componentDidMount() {
-    if (this.props.form) {
+    if (hasForm(this.props)) {
       this.props.form.addLoadingListener(this.onLoading);
     }
 
@@ -65,8 +80,8 @@ export default class Form extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const nextForm = this.props.form;
-    const prevForm = prevProps.form;
+    const nextForm = hasForm(this.props) ? this.props.form : undefined;
+    const prevForm = hasForm(prevProps) ? prevProps.form : undefined;
 
     if (nextForm !== prevForm) {
       if (prevForm) {
@@ -80,7 +95,7 @@ export default class Form extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    if (this.props.form) {
+    if (hasForm(this.props)) {
       this.props.form.removeLoadingListener(this.onLoading);
     }
 
@@ -119,15 +134,19 @@ export default class Form extends React.Component<Props, State> {
     }
 
     if (form.checkValidity()) {
-      const result = this.props.onSubmit(
-        this.props.form ? this.props.form : new FormData(form),
-      );
+      let result: Promise<void> | void;
+
+      if (hasForm(this.props)) {
+        result = this.props.onSubmit(this.props.form);
+      } else {
+        result = this.props.onSubmit(new FormData(form));
+      }
 
       if (result && result.then) {
         this.setState({ isLoading: true });
 
         result
-          .catch((errors: { [key: string]: string }) => {
+          .catch((errors: Record<string, string>) => {
             this.setErrors(errors);
           })
           .finally(() => this.mounted && this.setState({ isLoading: false }));
@@ -136,10 +155,10 @@ export default class Form extends React.Component<Props, State> {
       const invalidEls: NodeListOf<InputElement> = form.querySelectorAll(
         ':invalid',
       );
-      const errors = {};
+      const errors: Record<string, string> = {};
       invalidEls[0].focus(); // focus on first error
 
-      Array.from(invalidEls).reduce((acc, el: InputElement) => {
+      Array.from(invalidEls).reduce((acc, el) => {
         if (!el.name) {
           logger.warn('Found an element without name', { el });
 
@@ -164,7 +183,10 @@ export default class Form extends React.Component<Props, State> {
   }
 
   setErrors(errors: { [key: string]: string }) {
-    this.props.form && this.props.form.setErrors(errors);
+    if (hasForm(this.props)) {
+      this.props.form.setErrors(errors);
+    }
+
     this.props.onInvalid(errors);
   }
 

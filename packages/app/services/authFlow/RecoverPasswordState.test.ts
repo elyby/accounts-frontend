@@ -1,15 +1,21 @@
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import RecoverPasswordState from 'app/services/authFlow/RecoverPasswordState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 import LoginState from 'app/services/authFlow/LoginState';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('RecoverPasswordState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: RecoverPasswordState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new RecoverPasswordState();
@@ -77,7 +83,7 @@ describe('RecoverPasswordState', () => {
       mock.expects('run').returns(promise);
       mock.expects('setState').never();
 
-      state.resolve(context);
+      state.resolve(context, {});
 
       return promise.catch(mock.verify.bind(mock));
     });

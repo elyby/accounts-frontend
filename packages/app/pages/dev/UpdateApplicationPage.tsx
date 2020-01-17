@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { FormModel } from 'app/components/ui/form';
 import { browserHistory } from 'app/services/history';
 import oauth from 'app/services/api/oauth';
-import loader from 'app/services/loader';
+import * as loader from 'app/services/loader';
 import PageNotFound from 'app/pages/404/PageNotFound';
 import {
   getApp,

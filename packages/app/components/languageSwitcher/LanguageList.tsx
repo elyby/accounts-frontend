@@ -1,5 +1,13 @@
-import React from 'react';
-import { TransitionMotion, spring, presets } from 'react-motion';
+import React, { MouseEventHandler } from 'react';
+import {
+  TransitionMotion,
+  spring,
+  presets,
+  TransitionStyle,
+  TransitionPlainStyle,
+  PlainStyle,
+  Style,
+} from 'react-motion';
 import { FormattedMessage as Message } from 'react-intl';
 import clsx from 'clsx';
 
@@ -12,6 +20,34 @@ import thatFuckingPumpkin from './images/that_fucking_pumpkin.svg';
 import mayTheForceBeWithYou from './images/may_the_force_be_with_you.svg';
 import biteMyShinyMetalAss from './images/bite_my_shiny_metal_ass.svg';
 import iTookAnArrowInMyKnee from './images/i_took_an_arrow_in_my_knee.svg';
+
+interface EmptyCaption {
+  src: string;
+  caption: string;
+}
+
+const emptyCaptions: ReadonlyArray<EmptyCaption> = [
+  {
+    // Homestuck
+    src: thatFuckingPumpkin,
+    caption: 'That fucking pumpkin',
+  },
+  {
+    // Star Wars
+    src: mayTheForceBeWithYou,
+    caption: 'May The Force Be With You',
+  },
+  {
+    // Futurama
+    src: biteMyShinyMetalAss,
+    caption: 'Bite my shiny metal ass',
+  },
+  {
+    // The Elder Scrolls V: Skyrim
+    src: iTookAnArrowInMyKnee,
+    caption: 'I took an arrow in my knee',
+  },
+];
 
 const itemHeight = 51;
 
@@ -84,70 +120,60 @@ export default class LanguageList extends React.Component<{
     );
   }
 
-  getEmptyCaption() {
-    const emptyCaptions = [
-      {
-        // Homestuck
-        src: thatFuckingPumpkin,
-        caption: 'That fucking pumpkin',
-      },
-      {
-        // Star Wars
-        src: mayTheForceBeWithYou,
-        caption: 'May The Force Be With You',
-      },
-      {
-        // Futurama
-        src: biteMyShinyMetalAss,
-        caption: 'Bite my shiny metal ass',
-      },
-      {
-        // The Elder Scrolls V: Skyrim
-        src: iTookAnArrowInMyKnee,
-        caption: 'I took an arrow in my knee',
-      },
-    ];
-
+  getEmptyCaption(): EmptyCaption {
     return emptyCaptions[Math.floor(Math.random() * emptyCaptions.length)];
   }
 
-  onChangeLang(lang: string) {
-    return (event: React.MouseEvent<HTMLElement>) => {
+  onChangeLang(lang: string): MouseEventHandler {
+    return event => {
       event.preventDefault();
 
       this.props.onChangeLang(lang);
     };
   }
 
-  getItemsWithDefaultStyles = () =>
-    this.getItemsWithStyles({ useSpring: false });
-
-  getItemsWithStyles = (
-    { useSpring }: { useSpring?: boolean } = { useSpring: true },
-  ) =>
-    Object.keys({ ...this.props.langs }).reduce(
+  getItemsWithDefaultStyles = (): Array<TransitionPlainStyle> => {
+    return Object.keys({ ...this.props.langs }).reduce(
       (previous, key) => [
         ...previous,
         {
           key,
           data: this.props.langs[key],
           style: {
-            height: useSpring ? spring(itemHeight, presets.gentle) : itemHeight,
-            opacity: useSpring ? spring(1, presets.gentle) : 1,
+            height: itemHeight,
+            opacity: 1,
           },
         },
       ],
-      [],
+      [] as Array<TransitionPlainStyle>,
     );
+  };
 
-  willEnter() {
+  getItemsWithStyles = (): Array<TransitionStyle> => {
+    return Object.keys({ ...this.props.langs }).reduce(
+      (previous, key) => [
+        ...previous,
+        {
+          key,
+          data: this.props.langs[key],
+          style: {
+            height: spring(itemHeight, presets.gentle),
+            opacity: spring(1, presets.gentle),
+          },
+        },
+      ],
+      [] as Array<TransitionStyle>,
+    );
+  };
+
+  willEnter(): PlainStyle {
     return {
       height: 0,
       opacity: 1,
     };
   }
 
-  willLeave() {
+  willLeave(): Style {
     return {
       height: spring(0),
       opacity: spring(0),

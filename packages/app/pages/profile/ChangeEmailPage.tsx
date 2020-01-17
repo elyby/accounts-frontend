@@ -83,7 +83,9 @@ class ChangeEmailPage extends React.Component<Props> {
   };
 }
 
-function handleErrors(repeatUrl: string | void) {
+function handleErrors(
+  repeatUrl?: string,
+): <T extends { errors: Record<string, any> }>(resp: T) => Promise<T> {
   return resp => {
     if (resp.errors) {
       if (resp.errors.key) {

@@ -1,14 +1,14 @@
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import PermissionsState from 'app/services/authFlow/PermissionsState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 
-import { bootstrap, expectNavigate } from './helpers';
+import { bootstrap, expectNavigate, MockedAuthContext } from './helpers';
 
 describe('PermissionsState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: PermissionsState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new PermissionsState();

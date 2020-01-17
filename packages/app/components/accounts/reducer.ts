@@ -1,3 +1,5 @@
+import { Action } from './actions/pure-actions';
+
 export type Account = {
   id: number;
   username: string;
@@ -8,24 +10,8 @@ export type Account = {
 
 export type State = {
   active: number | null;
-  available: Account[];
+  available: Array<Account>;
 };
-
-export type AddAction = { type: 'accounts:add'; payload: Account };
-export type RemoveAction = { type: 'accounts:remove'; payload: Account };
-export type ActivateAction = { type: 'accounts:activate'; payload: Account };
-export type UpdateTokenAction = {
-  type: 'accounts:updateToken';
-  payload: string;
-};
-export type ResetAction = { type: 'accounts:reset' };
-
-type Action =
-  | AddAction
-  | RemoveAction
-  | ActivateAction
-  | UpdateTokenAction
-  | ResetAction;
 
 export function getActiveAccount(state: { accounts: State }): Account | null {
   const accountId = state.accounts.active;

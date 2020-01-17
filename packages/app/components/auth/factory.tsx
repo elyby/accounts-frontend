@@ -1,36 +1,36 @@
-import React from 'react';
+import React, { ComponentProps, ComponentType } from 'react';
 import { Button } from 'app/components/ui/form';
-import RejectionLink, {
-  RejectionLinkProps,
-} from 'app/components/auth/RejectionLink';
+import RejectionLink from 'app/components/auth/RejectionLink';
 import AuthTitle from 'app/components/auth/AuthTitle';
 import { MessageDescriptor } from 'react-intl';
 import { Color } from 'app/components/ui';
+import BaseAuthBody from './BaseAuthBody';
 
-/**
- * @param {object} options
- * @param {string|object} options.title - panel title
- * @param {React.ReactElement} options.body
- * @param {object} options.footer - config for footer Button
- * @param {Array|object|null} options.links - link config or an array of link configs
- *
- * @returns {object} - structure, required for auth panel to work
- */
-export default function({
-  title,
-  body,
-  footer,
-  links,
-}: {
+export type Factory = () => {
+  Title: ComponentType;
+  Body: typeof BaseAuthBody;
+  Footer: ComponentType;
+  Links: ComponentType;
+};
+
+type RejectionLinkProps = ComponentProps<typeof RejectionLink>;
+interface FactoryParams {
   title: MessageDescriptor;
-  body: React.ElementType;
+  body: typeof BaseAuthBody;
   footer: {
     color?: Color;
     label: string | MessageDescriptor;
     autoFocus?: boolean;
   };
-  links?: RejectionLinkProps | RejectionLinkProps[];
-}) {
+  links?: RejectionLinkProps | Array<RejectionLinkProps>;
+}
+
+export default function({
+  title,
+  body,
+  footer,
+  links,
+}: FactoryParams): Factory {
   return () => ({
     Title: () => <AuthTitle title={title} />,
     Body: body,
@@ -38,7 +38,7 @@ export default function({
     Links: () =>
       links ? (
         <span>
-          {([] as RejectionLinkProps[])
+          {([] as Array<RejectionLinkProps>)
             .concat(links)
             .map((link, index) => [
               index ? ' | ' : '',

@@ -1,6 +1,6 @@
 import supportedLocales from 'app/i18n';
 
-const localeToCountryCode = {
+const localeToCountryCode: Record<string, string> = {
   en: 'gb',
   be: 'by',
   pt: 'br',

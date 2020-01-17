@@ -29,6 +29,7 @@ const webpackConfig = {
     publicPath: '/',
   },
 
+  // @ts-ignore
   resolve: baseConfig.resolve,
 
   plugins: [

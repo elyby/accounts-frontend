@@ -1,15 +1,21 @@
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import ForgotPasswordState from 'app/services/authFlow/ForgotPasswordState';
 import RecoverPasswordState from 'app/services/authFlow/RecoverPasswordState';
 import LoginState from 'app/services/authFlow/LoginState';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('ForgotPasswordState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: ForgotPasswordState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new ForgotPasswordState();

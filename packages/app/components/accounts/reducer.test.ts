@@ -1,17 +1,8 @@
 import expect from 'app/test/unexpected';
 
 import { updateToken } from './actions';
-import {
-  add,
-  remove,
-  activate,
-  reset,
-  ADD,
-  REMOVE,
-  ACTIVATE,
-  UPDATE_TOKEN,
-  RESET,
-} from './actions/pure-actions';
+import { add, remove, activate, reset } from './actions/pure-actions';
+import { AccountsState } from './index';
 import accounts, { Account } from './reducer';
 
 const account: Account = {
@@ -22,7 +13,7 @@ const account: Account = {
 } as Account;
 
 describe('Accounts reducer', () => {
-  let initial;
+  let initial: AccountsState;
 
   beforeEach(() => {
     initial = accounts(undefined, {} as any);
@@ -39,7 +30,7 @@ describe('Accounts reducer', () => {
       state: 'foo',
     }));
 
-  describe(ACTIVATE, () => {
+  describe('accounts:activate', () => {
     it('sets active account', () => {
       expect(accounts(initial, activate(account)), 'to satisfy', {
         active: account.id,
@@ -47,7 +38,7 @@ describe('Accounts reducer', () => {
     });
   });
 
-  describe(ADD, () => {
+  describe('accounts:add', () => {
     it('adds an account', () =>
       expect(accounts(initial, add(account)), 'to satisfy', {
         available: [account],
@@ -106,7 +97,7 @@ describe('Accounts reducer', () => {
     });
   });
 
-  describe(REMOVE, () => {
+  describe('accounts:remove', () => {
     it('should remove an account', () =>
       expect(
         accounts({ ...initial, available: [account] }, remove(account)),
@@ -128,7 +119,7 @@ describe('Accounts reducer', () => {
     });
   });
 
-  describe(RESET, () => {
+  describe('actions:reset', () => {
     it('should reset accounts state', () =>
       expect(
         accounts({ ...initial, available: [account] }, reset()),
@@ -137,7 +128,7 @@ describe('Accounts reducer', () => {
       ));
   });
 
-  describe(UPDATE_TOKEN, () => {
+  describe('accounts:updateToken', () => {
     it('should update token', () => {
       const newToken = 'newToken';
 

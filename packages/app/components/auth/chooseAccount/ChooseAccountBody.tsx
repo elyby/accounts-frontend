@@ -4,6 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 import { AccountSwitcher } from 'app/components/accounts';
+import { Account } from 'app/components/accounts/reducer';
 
 import styles from './chooseAccount.scss';
 import messages from './ChooseAccount.intl.json';
@@ -46,7 +47,7 @@ export default class ChooseAccountBody extends BaseAuthBody {
     );
   }
 
-  onSwitch = account => {
+  onSwitch = (account: Account): void => {
     this.context.resolve(account);
   };
 }

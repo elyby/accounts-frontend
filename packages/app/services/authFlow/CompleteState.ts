@@ -24,7 +24,7 @@ export default class CompleteState extends AbstractState {
     this.isPermissionsAccepted = options.accept;
   }
 
-  enter(context: AuthContext) {
+  enter(context: AuthContext): Promise<void> | void {
     const {
       auth: { oauth },
       user,
@@ -43,7 +43,7 @@ export default class CompleteState extends AbstractState {
     }
   }
 
-  processOAuth(context: AuthContext) {
+  processOAuth(context: AuthContext): Promise<void> | void {
     const { auth, accounts } = context.getState();
 
     let { isSwitcherEnabled } = auth;

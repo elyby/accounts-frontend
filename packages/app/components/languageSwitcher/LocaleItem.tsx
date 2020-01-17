@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentType, ReactNode } from 'react';
 import { localeFlags } from 'app/components/i18n';
 import { FormattedMessage as Message } from 'react-intl';
 
@@ -6,10 +6,14 @@ import messages from './languageSwitcher.intl.json';
 import styles from './languageSwitcher.scss';
 import { LocaleData } from './LanguageSwitcher';
 
-export default function LocaleItem({ locale }: { locale: LocaleData }) {
-  const { code, name, englishName, progress, isReleased } = locale;
+interface Props {
+  locale: LocaleData;
+}
 
-  let progressLabel;
+const LocaleItem: ComponentType<Props> = ({
+  locale: { code, name, englishName, progress, isReleased },
+}) => {
+  let progressLabel: ReactNode;
 
   if (progress !== 100) {
     progressLabel = (
@@ -41,4 +45,6 @@ export default function LocaleItem({ locale }: { locale: LocaleData }) {
       <span className={styles.languageCircle} />
     </div>
   );
-}
+};
+
+export default LocaleItem;

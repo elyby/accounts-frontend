@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-import loader from 'app/services/loader';
+import * as loader from 'app/services/loader';
 import { SKIN_DARK, COLOR_WHITE, Skin } from 'app/components/ui';
 import { Button } from 'app/components/ui/form';
 import { authenticate, revoke } from 'app/components/accounts/actions';

@@ -8,7 +8,7 @@ import PasswordState from './PasswordState';
 import { AuthContext } from './AuthFlow';
 
 export default class MfaState extends AbstractState {
-  enter(context: AuthContext) {
+  enter(context: AuthContext): Promise<void> | void {
     const { login, password, isTotpRequired } = getCredentials(
       context.getState(),
     );
@@ -20,7 +20,10 @@ export default class MfaState extends AbstractState {
     }
   }
 
-  resolve(context: AuthContext, { totp }: { totp: string }) {
+  resolve(
+    context: AuthContext,
+    { totp }: { totp: string },
+  ): Promise<void> | void {
     const { login, password, rememberMe } = getCredentials(context.getState());
 
     return context

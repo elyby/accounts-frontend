@@ -1,7 +1,7 @@
 import { browserHistory } from 'app/services/history';
 import logger from 'app/services/logger';
 import localStorage from 'app/services/localStorage';
-import { RootState } from 'app/reducers';
+import { RootState, Store } from 'app/reducers';
 
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
@@ -17,7 +17,7 @@ import AbstractState from './AbstractState';
 type Request = {
   path: string;
   query: URLSearchParams;
-  params: { [key: string]: any };
+  params: Record<string, any>;
 };
 
 // TODO: temporary added to improve typing without major refactoring
@@ -61,12 +61,13 @@ export interface AuthContext {
   prevState: AbstractState;
 }
 
-export type ActionsDict = {
-  [key: string]: (action: any) => { [key: string]: any };
-};
+export type ActionsDict = Record<
+  ActionId,
+  (action: any) => Record<string, any>
+>;
 
 export default class AuthFlow implements AuthContext {
-  actions: ActionsDict;
+  actions: Readonly<ActionsDict>;
   state: AbstractState;
   prevState: AbstractState;
   /**
@@ -78,33 +79,18 @@ export default class AuthFlow implements AuthContext {
   navigate: (route: string, options: { replace?: boolean }) => void;
   currentRequest: Request;
   oAuthStateRestored = false;
-  dispatch: (action: { [key: string]: any }) => void;
+  dispatch: (action: Record<string, any>) => void;
   getState: () => RootState;
 
   constructor(actions: ActionsDict) {
-    if (typeof actions !== 'object') {
-      throw new Error('AuthFlow requires an actions object');
-    }
-
-    this.actions = actions;
-
-    if (Object.freeze) {
-      Object.freeze(this.actions);
-    }
+    this.actions = Object.freeze(actions);
   }
 
-  setStore(store: {
-    getState: () => { [key: string]: any };
-    dispatch: (
-      action: { [key: string]: any } | ((...args: any[]) => any),
-    ) => void;
-  }) {
-    /**
-     * @param {string} route
-     * @param {object} options
-     * @param {object} options.replace
-     */
-    this.navigate = (route: string, options: { replace?: boolean } = {}) => {
+  setStore(store: Store): void {
+    this.navigate = (
+      route: string,
+      options: { replace?: boolean } = {},
+    ): void => {
       const { path: currentPath } = this.getRequest();
 
       if (currentPath !== route) {
@@ -141,7 +127,7 @@ export default class AuthFlow implements AuthContext {
     this.state.goBack(this);
   }
 
-  run(actionId: ActionId, payload?: { [key: string]: any }): Promise<any> {
+  run(actionId: ActionId, payload?: Record<string, any>): Promise<any> {
     const action = this.actions[actionId];
 
     if (!action) {
@@ -295,7 +281,8 @@ export default class AuthFlow implements AuthContext {
     }
 
     try {
-      const data = JSON.parse(localStorage.getItem('oauthData'));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const data = JSON.parse(localStorage.getItem('oauthData')!);
       const expirationTime = 2 * 60 * 60 * 1000; // 2h
 
       if (Date.now() - data.timestamp < expirationTime) {

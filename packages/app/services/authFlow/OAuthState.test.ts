@@ -1,15 +1,20 @@
 /* eslint @typescript-eslint/camelcase: off */
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import OAuthState from 'app/services/authFlow/OAuthState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 
-import { bootstrap, expectState, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('OAuthState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: OAuthState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new OAuthState();

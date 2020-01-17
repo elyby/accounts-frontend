@@ -2,7 +2,7 @@ import { Options } from './request';
 
 type Action = 'catch' | 'then' | 'before';
 
-interface MiddlewareRequestOptions {
+export interface MiddlewareRequestOptions {
   url: string;
   options: Options;
 }
@@ -71,7 +71,7 @@ class PromiseMiddlewareLayer {
     options: MiddlewareRequestOptions,
     restart: () => Promise<any>,
   ): Promise<any>;
-  run(action: Action, data, ...rest) {
+  run(action: Action, data: any, ...rest: any) {
     const promiseMethod = action === 'catch' ? 'catch' : 'then';
 
     return this.middlewares
@@ -81,18 +81,18 @@ class PromiseMiddlewareLayer {
           invoke(
             promise,
             promiseMethod,
-          )(resp => invoke(middleware, action)(resp, ...rest)),
+          )((resp: any) => invoke(middleware, action)(resp, ...rest)),
         invoke(Promise, action === 'catch' ? 'reject' : 'resolve')(data),
       );
   }
 }
 
-function invoke(instance: { [key: string]: any }, method: string) {
+function invoke(instance: Record<string, any>, method: string) {
   if (typeof instance[method] !== 'function') {
     throw new Error(`Can not invoke ${method} on ${instance}`);
   }
 
-  return (...args) => instance[method](...args);
+  return (...args: any) => instance[method](...args);
 }
 
 export default PromiseMiddlewareLayer;

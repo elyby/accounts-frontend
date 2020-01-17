@@ -1,14 +1,9 @@
 import expect from 'app/test/unexpected';
 import auth from './reducer';
-import {
-  setLogin,
-  SET_CREDENTIALS,
-  setAccountSwitcher,
-  SET_SWITCHER,
-} from './actions';
+import { setLogin, setAccountSwitcher } from './actions';
 
 describe('components/auth/reducer', () => {
-  describe(SET_CREDENTIALS, () => {
+  describe('auth:setCredentials', () => {
     it('should set login', () => {
       const expectedLogin = 'foo';
 
@@ -22,7 +17,7 @@ describe('components/auth/reducer', () => {
     });
   });
 
-  describe(SET_SWITCHER, () => {
+  describe('auth:setAccountSwitcher', () => {
     it('should be enabled by default', () =>
       expect(auth(undefined, {} as any), 'to satisfy', {
         isSwitcherEnabled: true,

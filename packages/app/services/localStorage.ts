@@ -13,12 +13,15 @@ try {
   logger.info('No storage available'); // log for statistic purposes
 }
 
-export function hasStorage() {
+export function hasStorage(): boolean {
   return _hasStorage;
 }
 
-// TODO: work on
 class DummyStorage implements Storage {
+  [name: string]: any;
+
+  readonly length: number;
+
   getItem(key: string): string | null {
     return this[key] || null;
   }
@@ -29,6 +32,14 @@ class DummyStorage implements Storage {
 
   removeItem(key: string): void {
     Reflect.deleteProperty(this, key);
+  }
+
+  clear(): void {
+    Object.keys(this).forEach(this.removeItem);
+  }
+
+  key(index: number): string | null {
+    return Object.keys(this)[index] || null;
   }
 }
 

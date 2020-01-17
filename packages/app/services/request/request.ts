@@ -10,7 +10,7 @@ export type Resp<T> = T & {
 
 export interface Options extends RequestInit {
   token?: string | null;
-  headers: { [key: string]: any };
+  headers: Record<string, any>;
 }
 
 const buildOptions = (
@@ -143,16 +143,16 @@ const rejectWithJSON = (resp: Response) =>
 
     throw resp;
   });
-const handleResponseSuccess = resp =>
+const handleResponseSuccess = (resp: { success?: boolean }) =>
   resp.success || typeof resp.success === 'undefined'
     ? Promise.resolve(resp)
     : Promise.reject(resp);
 
-async function doFetch(url: string, options: Options) {
+async function doFetch<T>(url: string, options: Options): Promise<Resp<T>> {
   // NOTE: we are wrapping fetch, because it is returning
   // Promise instance that can not be polyfilled with Promise.prototype.finally
 
-  const headers: { [key: string]: string } = { ...options.headers } as any;
+  const headers: Record<string, string> = { ...options.headers } as any;
   headers.Accept = 'application/json';
 
   options.headers = headers;

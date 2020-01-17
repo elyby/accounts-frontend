@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { CSSProperties, MouseEventHandler, ReactElement, ReactNode } from 'react';
 import { AccountsState } from 'app/components/accounts';
 import { User } from 'app/components/user';
 import { connect } from 'react-redux';
-import { TransitionMotion, spring } from 'react-motion';
+import {
+  TransitionMotion,
+  spring,
+  PlainStyle,
+  Style,
+  TransitionStyle,
+  TransitionPlainStyle,
+} from 'react-motion';
 import {
   Panel,
   PanelBody,
@@ -44,7 +51,7 @@ type PanelId = string;
  * - Panel index defines the direction of X transition of both panels
  * (e.g. the panel with lower index will slide from left side, and with greater from right side)
  */
-const contexts: Array<PanelId[]> = [
+const contexts: Array<Array<PanelId>> = [
   ['login', 'password', 'forgotPassword', 'mfa', 'recoverPassword'],
   ['register', 'activation', 'resendActivation'],
   ['acceptRules'],
@@ -70,40 +77,41 @@ if (process.env.NODE_ENV !== 'production') {
     });
 
     return acc;
-  }, {});
+  }, {} as Record<string, Array<PanelId>>);
 }
 
 type ValidationError =
   | string
   | {
       type: string;
-      payload: { [key: string]: any };
+      payload: Record<string, any>;
     };
 
-type AnimationProps = {
+interface AnimationStyle extends PlainStyle {
   opacitySpring: number;
   transformSpring: number;
-};
+}
 
-type AnimationContext = {
+interface AnimationData {
+  Title: ReactElement;
+  Body: ReactElement;
+  Footer: ReactElement;
+  Links: ReactNode;
+  hasBackButton: boolean | ((props: Props) => boolean);
+}
+
+interface AnimationContext extends TransitionPlainStyle {
   key: PanelId;
-  style: AnimationProps;
-  data: {
-    Title: React.ReactElement<any>;
-    Body: React.ReactElement<any>;
-    Footer: React.ReactElement<any>;
-    Links: React.ReactElement<any>;
-    hasBackButton: boolean | ((props: Props) => boolean);
-  };
-};
+  style: AnimationStyle;
+  data: AnimationData;
+}
 
-type OwnProps = {
-  Title: React.ReactElement<any>;
-  Body: React.ReactElement<any>;
-  Footer: React.ReactElement<any>;
-  Links: React.ReactElement<any>;
-  children?: React.ReactElement<any>;
-};
+interface OwnProps {
+  Title: ReactElement;
+  Body: ReactElement;
+  Footer: ReactElement;
+  Links: ReactNode;
+}
 
 interface Props extends OwnProps {
   // context props
@@ -114,17 +122,18 @@ interface Props extends OwnProps {
   resolve: () => void;
   reject: () => void;
 
-  setErrors: (errors: { [key: string]: ValidationError }) => void;
+  setErrors: (errors: Record<string, ValidationError>) => void;
 }
 
-type State = {
+interface State {
   contextHeight: number;
   panelId: PanelId | void;
   prevPanelId: PanelId | void;
   isHeightDirty: boolean;
   forceHeight: 1 | 0;
   direction: 'X' | 'Y';
-};
+  formsHeights: Record<PanelId, number>;
+}
 
 class PanelTransition extends React.PureComponent<Props, State> {
   state: State = {
@@ -134,16 +143,17 @@ class PanelTransition extends React.PureComponent<Props, State> {
     forceHeight: 0 as const,
     direction: 'X' as const,
     prevPanelId: undefined,
+    formsHeights: {},
   };
 
   isHeightMeasured: boolean = false;
   wasAutoFocused: boolean = false;
-  body: null | {
+  body: {
     autoFocus: () => void;
     onFormSubmit: () => void;
-  } = null;
+  } | null = null;
 
-  timerIds: NodeJS.Timeout[] = []; // this is a list of a probably running timeouts to clean on unmount
+  timerIds: Array<number> = []; // this is a list of a probably running timeouts to clean on unmount
 
   componentDidUpdate(prevProps: Props) {
     const nextPanel: PanelId =
@@ -166,7 +176,8 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
       if (forceHeight) {
         this.timerIds.push(
-          setTimeout(() => {
+          // https://stackoverflow.com/a/51040768/5184751
+          window.setTimeout(() => {
             this.setState({ forceHeight: 0 });
           }, 100),
         );
@@ -208,7 +219,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
       hasGoBack: boolean;
     } = Body.type as any;
 
-    const formHeight = this.state[`formHeight${panelId}`] || 0;
+    const formHeight = this.state.formsHeights[panelId] || 0;
 
     // a hack to disable height animation on first render
     const { isHeightMeasured } = this;
@@ -310,7 +321,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
     );
   }
 
-  onFormSubmit = () => {
+  onFormSubmit = (): void => {
     this.props.clearErrors();
 
     if (this.body) {
@@ -318,29 +329,28 @@ class PanelTransition extends React.PureComponent<Props, State> {
     }
   };
 
-  onFormInvalid = (errors: { [key: string]: ValidationError }) =>
+  onFormInvalid = (errors: Record<string, ValidationError>): void =>
     this.props.setErrors(errors);
 
-  willEnter = (config: AnimationContext) => this.getTransitionStyles(config);
-  willLeave = (config: AnimationContext) =>
-    this.getTransitionStyles(config, { isLeave: true });
+  willEnter = (config: TransitionStyle): PlainStyle => {
+    const transform = this.getTransformForPanel(config.key);
 
-  /**
-   * @param {object} config
-   * @param {string} config.key
-   * @param {object} [options]
-   * @param {object} [options.isLeave=false] - true, if this is a leave transition
-   *
-   * @returns {object}
-   */
-  getTransitionStyles(
-    { key }: AnimationContext,
-    options: { isLeave?: boolean } = {},
-  ): {
-    transformSpring: number;
-    opacitySpring: number;
-  } {
-    const { isLeave = false } = options;
+    return {
+      transformSpring: transform,
+      opacitySpring: 1,
+    };
+  };
+
+  willLeave = (config: TransitionStyle): Style => {
+    const transform = this.getTransformForPanel(config.key);
+
+    return {
+      transformSpring: spring(transform, transformSpringConfig),
+      opacitySpring: spring(0, opacitySpringConfig),
+    };
+  };
+
+  getTransformForPanel(key: PanelId): number {
     const { panelId, prevPanelId } = this.state;
 
     const fromLeft = -1;
@@ -363,14 +373,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
       sign *= -1;
     }
 
-    const transform = sign * 100;
-
-    return {
-      transformSpring: isLeave
-        ? spring(transform, transformSpringConfig)
-        : transform,
-      opacitySpring: isLeave ? spring(0, opacitySpringConfig) : 1,
-    };
+    return sign * 100;
   }
 
   getDirection(next: PanelId, prev: PanelId): 'X' | 'Y' {
@@ -383,24 +386,23 @@ class PanelTransition extends React.PureComponent<Props, State> {
     return context.includes(next) ? 'X' : 'Y';
   }
 
-  onUpdateHeight = (height: number, key: PanelId) => {
-    const heightKey = `formHeight${key}`;
-
-    // @ts-ignore
+  onUpdateHeight = (height: number, key: PanelId): void => {
     this.setState({
-      [heightKey]: height,
+      formsHeights: {
+        ...this.state.formsHeights,
+        [key]: height,
+      },
     });
   };
 
-  onUpdateContextHeight = (height: number) => {
+  onUpdateContextHeight = (height: number): void => {
     this.setState({
       contextHeight: height,
     });
   };
 
-  onGoBack = (event: React.MouseEvent<HTMLElement>) => {
+  onGoBack: MouseEventHandler = (event): void => {
     event.preventDefault();
-
     authFlow.goBack();
   };
 
@@ -409,7 +411,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
    *
    * @param {number} length number of panels transitioned
    */
-  tryToAutoFocus(length: number) {
+  tryToAutoFocus(length: number): void {
     if (!this.body) {
       return;
     }
@@ -425,20 +427,17 @@ class PanelTransition extends React.PureComponent<Props, State> {
     }
   }
 
-  shouldMeasureHeight() {
+  shouldMeasureHeight(): string {
     const { user, accounts, auth } = this.props;
     const { isHeightDirty } = this.state;
 
-    const errorString = Object.values(auth.error || {}).reduce(
-      (acc: string, item: ValidationError): string => {
-        if (typeof item === 'string') {
-          return acc + item;
-        }
+    const errorString = Object.values(auth.error || {}).reduce((acc, item) => {
+      if (typeof item === 'string') {
+        return acc + item;
+      }
 
-        return acc + item.type;
-      },
-      '',
-    ) as string;
+      return acc + item.type;
+    }, '') as string;
 
     return [
       errorString,
@@ -448,9 +447,9 @@ class PanelTransition extends React.PureComponent<Props, State> {
     ].join('');
   }
 
-  getHeader({ key, style, data }: AnimationContext) {
-    const { Title } = data;
-    const { transformSpring } = style;
+  getHeader({ key, style, data }: TransitionPlainStyle): ReactElement {
+    const { Title } = data as AnimationData;
+    const { transformSpring } = (style as unknown) as AnimationStyle;
 
     let { hasBackButton } = data;
 
@@ -459,7 +458,10 @@ class PanelTransition extends React.PureComponent<Props, State> {
     }
 
     const transitionStyle = {
-      ...this.getDefaultTransitionStyles(key, style),
+      ...this.getDefaultTransitionStyles(
+        key,
+        (style as unknown) as AnimationStyle,
+      ),
       opacity: 1, // reset default
     };
 
@@ -491,15 +493,12 @@ class PanelTransition extends React.PureComponent<Props, State> {
     );
   }
 
-  getBody({ key, style, data }: AnimationContext) {
-    const { Body } = data;
-    const { transformSpring } = style;
+  getBody({ key, style, data }: TransitionPlainStyle): ReactElement {
+    const { Body } = data as AnimationData;
+    const { transformSpring } = (style as unknown) as AnimationStyle;
     const { direction } = this.state;
 
-    let transform: { [key: string]: string } = this.translate(
-      transformSpring,
-      direction,
-    );
+    let transform = this.translate(transformSpring, direction);
     let verticalOrigin = 'top';
 
     if (direction === 'Y') {
@@ -507,8 +506,11 @@ class PanelTransition extends React.PureComponent<Props, State> {
       transform = {};
     }
 
-    const transitionStyle = {
-      ...this.getDefaultTransitionStyles(key, style),
+    const transitionStyle: CSSProperties = {
+      ...this.getDefaultTransitionStyles(
+        key,
+        (style as unknown) as AnimationStyle,
+      ),
       top: 'auto', // reset default
       [verticalOrigin]: 0,
       ...transform,
@@ -522,6 +524,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
         onMeasure={height => this.onUpdateHeight(height, key)}
       >
         {React.cloneElement(Body, {
+          // @ts-ignore
           ref: body => {
             this.body = body;
           },
@@ -530,10 +533,13 @@ class PanelTransition extends React.PureComponent<Props, State> {
     );
   }
 
-  getFooter({ key, style, data }: AnimationContext) {
-    const { Footer } = data;
+  getFooter({ key, style, data }: TransitionPlainStyle): ReactElement {
+    const { Footer } = data as AnimationData;
 
-    const transitionStyle = this.getDefaultTransitionStyles(key, style);
+    const transitionStyle = this.getDefaultTransitionStyles(
+      key,
+      (style as unknown) as AnimationStyle,
+    );
 
     return (
       <div key={`footer/${key}`} style={transitionStyle}>
@@ -542,10 +548,13 @@ class PanelTransition extends React.PureComponent<Props, State> {
     );
   }
 
-  getLinks({ key, style, data }: AnimationContext) {
-    const { Links } = data;
+  getLinks({ key, style, data }: TransitionPlainStyle): ReactElement {
+    const { Links } = data as AnimationData;
 
-    const transitionStyle = this.getDefaultTransitionStyles(key, style);
+    const transitionStyle = this.getDefaultTransitionStyles(
+      key,
+      (style as unknown) as AnimationStyle,
+    );
 
     return (
       <div key={`links/${key}`} style={transitionStyle}>
@@ -554,16 +563,9 @@ class PanelTransition extends React.PureComponent<Props, State> {
     );
   }
 
-  /**
-   * @param {string} key
-   * @param {object} style
-   * @param {number} style.opacitySpring
-   *
-   * @returns {object}
-   */
   getDefaultTransitionStyles(
     key: string,
-    { opacitySpring }: Readonly<AnimationProps>,
+    { opacitySpring }: Readonly<AnimationStyle>,
   ): {
     position: 'absolute';
     top: number;
@@ -582,7 +584,11 @@ class PanelTransition extends React.PureComponent<Props, State> {
     };
   }
 
-  translate(value: number, direction: 'X' | 'Y' = 'X', unit: '%' | 'px' = '%') {
+  translate(
+    value: number,
+    direction: 'X' | 'Y' = 'X',
+    unit: '%' | 'px' = '%',
+  ): CSSProperties {
     return {
       WebkitTransform: `translate${direction}(${value}${unit})`,
       transform: `translate${direction}(${value}${unit})`,

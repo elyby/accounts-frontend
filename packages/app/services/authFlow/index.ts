@@ -9,7 +9,7 @@ import {
 
 import AuthFlow, { ActionsDict, AuthContext as TAuthContext } from './AuthFlow';
 
-const availableActions = {
+const availableActions: ActionsDict = {
   updateUser,
   authenticate,
   activateAccount,
@@ -42,4 +42,4 @@ const availableActions = {
 };
 
 export type AuthContext = TAuthContext;
-export default new AuthFlow(availableActions as ActionsDict);
+export default new AuthFlow(availableActions);

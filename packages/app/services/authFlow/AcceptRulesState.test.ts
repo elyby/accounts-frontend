@@ -1,12 +1,19 @@
 import AcceptRulesState from 'app/services/authFlow/AcceptRulesState';
 import CompleteState from 'app/services/authFlow/CompleteState';
+import { SinonMock } from 'sinon';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('AcceptRulesState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: AcceptRulesState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new AcceptRulesState();

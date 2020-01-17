@@ -90,7 +90,7 @@ export function authenticate(
 
       if (!newRefreshToken) {
         // mark user as stranger (user does not want us to remember his account)
-        sessionStorage.setItem(`stranger${newAccount.id}`, 1);
+        sessionStorage.setItem(`stranger${newAccount.id}`, '1');
       }
 
       if (auth && auth.oauth && auth.oauth.clientId) {

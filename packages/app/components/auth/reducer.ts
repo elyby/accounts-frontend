@@ -1,26 +1,34 @@
-import { combineReducers } from 'redux';
+import { combineReducers, Reducer } from 'redux';
 import { RootState } from 'app/reducers';
+import { Scope } from '../../services/api/oauth';
 
 import {
-  ERROR,
-  SET_CLIENT,
-  SET_OAUTH,
-  SET_OAUTH_RESULT,
-  SET_SCOPES,
-  SET_LOADING_STATE,
-  REQUIRE_PERMISSIONS_ACCEPT,
-  SET_CREDENTIALS,
-  SET_SWITCHER,
+  ErrorAction,
+  CredentialsAction,
+  AccountSwitcherAction,
+  LoadingAction,
+  ClientAction,
+  OAuthAction,
+  ScopesAction,
 } from './actions';
 
-type Credentials = {
-  login?: string;
+export interface Credentials {
+  login?: string | null; // By some reasons there is can be null value. Need to investigate.
   password?: string;
   rememberMe?: boolean;
   returnUrl?: string;
   isRelogin?: boolean;
   isTotpRequired?: boolean;
-};
+}
+
+type Error = Record<
+  string,
+  | string
+  | {
+      type: string;
+      payload: Record<string, any>;
+    }
+> | null;
 
 export interface Client {
   id: string;
@@ -28,7 +36,7 @@ export interface Client {
   description: string;
 }
 
-interface OAuthState {
+export interface OAuthState {
   clientId: string;
   redirectUrl: string;
   responseType: string;
@@ -39,26 +47,112 @@ interface OAuthState {
   state: string;
   success?: boolean;
   code?: string;
-  displayCode?: string;
+  displayCode?: boolean;
   acceptRequired?: boolean;
 }
 
+type Scopes = Array<Scope>;
+
 export interface State {
   credentials: Credentials;
-  error: null | {
-    [key: string]:
-      | string
-      | {
-          type: string;
-          payload: { [key: string]: any };
-        };
-  };
+  error: Error;
   isLoading: boolean;
   isSwitcherEnabled: boolean;
   client: Client | null;
   oauth: OAuthState | null;
-  scopes: string[];
+  scopes: Scopes;
 }
+
+const error: Reducer<State['error'], ErrorAction> = (
+  state = null,
+  { type, payload },
+) => {
+  if (type === 'auth:error') {
+    return payload;
+  }
+
+  return state;
+};
+
+const credentials: Reducer<State['credentials'], CredentialsAction> = (
+  state = {},
+  { type, payload },
+) => {
+  if (type === 'auth:setCredentials') {
+    if (payload) {
+      return {
+        ...payload,
+      };
+    }
+
+    return {};
+  }
+
+  return state;
+};
+
+const isSwitcherEnabled: Reducer<
+  State['isSwitcherEnabled'],
+  AccountSwitcherAction
+> = (state = true, { type, payload }) => {
+  if (type === 'auth:setAccountSwitcher') {
+    return payload;
+  }
+
+  return state;
+};
+
+const isLoading: Reducer<State['isLoading'], LoadingAction> = (
+  state = false,
+  { type, payload },
+) => {
+  if (type === 'set_loading_state') {
+    return payload;
+  }
+
+  return state;
+};
+
+const client: Reducer<State['client'], ClientAction> = (
+  state = null,
+  { type, payload },
+) => {
+  if (type === 'set_client') {
+    return payload;
+  }
+
+  return state;
+};
+
+const oauth: Reducer<State['oauth'], OAuthAction> = (state = null, action) => {
+  switch (action.type) {
+    case 'set_oauth':
+      return action.payload;
+    case 'set_oauth_result':
+      return {
+        ...(state as OAuthState),
+        ...action.payload,
+      };
+    case 'require_permissions_accept':
+      return {
+        ...(state as OAuthState),
+        acceptRequired: true,
+      };
+    default:
+      return state;
+  }
+};
+
+const scopes: Reducer<State['scopes'], ScopesAction> = (
+  state = [],
+  { type, payload },
+) => {
+  if (type === 'set_scopes') {
+    return payload;
+  }
+
+  return state;
+};
 
 export default combineReducers<State>({
   credentials,
@@ -69,135 +163,6 @@ export default combineReducers<State>({
   oauth,
   scopes,
 });
-
-function error(
-  state = null,
-  { type, payload = null, error = false },
-): State['error'] {
-  switch (type) {
-    case ERROR:
-      if (!error) {
-        throw new Error('Expected payload with error');
-      }
-
-      return payload;
-
-    default:
-      return state;
-  }
-}
-
-function credentials(
-  state = {},
-  {
-    type,
-    payload,
-  }: {
-    type: string;
-    payload: Credentials | null;
-  },
-): State['credentials'] {
-  if (type === SET_CREDENTIALS) {
-    if (payload && typeof payload === 'object') {
-      return {
-        ...payload,
-      };
-    }
-
-    return {};
-  }
-
-  return state;
-}
-
-function isSwitcherEnabled(
-  state = true,
-  { type, payload = false },
-): State['isSwitcherEnabled'] {
-  switch (type) {
-    case SET_SWITCHER:
-      if (typeof payload !== 'boolean') {
-        throw new Error('Expected payload of boolean type');
-      }
-
-      return payload;
-
-    default:
-      return state;
-  }
-}
-
-function isLoading(
-  state = false,
-  { type, payload = null },
-): State['isLoading'] {
-  switch (type) {
-    case SET_LOADING_STATE:
-      return !!payload;
-
-    default:
-      return state;
-  }
-}
-
-function client(state = null, { type, payload }): State['client'] {
-  switch (type) {
-    case SET_CLIENT:
-      return {
-        id: payload.id,
-        name: payload.name,
-        description: payload.description,
-      };
-
-    default:
-      return state;
-  }
-}
-
-function oauth(
-  state: State['oauth'] = null,
-  { type, payload },
-): State['oauth'] {
-  switch (type) {
-    case SET_OAUTH:
-      return {
-        clientId: payload.clientId,
-        redirectUrl: payload.redirectUrl,
-        responseType: payload.responseType,
-        scope: payload.scope,
-        prompt: payload.prompt,
-        loginHint: payload.loginHint,
-        state: payload.state,
-      };
-
-    case SET_OAUTH_RESULT:
-      return {
-        ...(state as OAuthState),
-        success: payload.success,
-        code: payload.code,
-        displayCode: payload.displayCode,
-      };
-
-    case REQUIRE_PERMISSIONS_ACCEPT:
-      return {
-        ...(state as OAuthState),
-        acceptRequired: true,
-      };
-
-    default:
-      return state;
-  }
-}
-
-function scopes(state = [], { type, payload = [] }): State['scopes'] {
-  switch (type) {
-    case SET_SCOPES:
-      return payload;
-
-    default:
-      return state;
-  }
-}
 
 export function getLogin(
   state: RootState | Pick<RootState, 'auth'>,

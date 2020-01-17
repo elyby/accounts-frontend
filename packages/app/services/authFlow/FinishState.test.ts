@@ -1,11 +1,12 @@
 import FinishState from 'app/services/authFlow/FinishState';
+import { SinonMock } from 'sinon';
 
-import { bootstrap, expectNavigate } from './helpers';
+import { bootstrap, expectNavigate, MockedAuthContext } from './helpers';
 
 describe('FinishState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: FinishState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new FinishState();

@@ -3,16 +3,18 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { restoreScroll } from './scroll';
 
-class ScrollIntoView extends React.PureComponent<
-  RouteComponentProps & {
-    top?: boolean; // do not touch any DOM and simply scroll to top on location change
-  }
-> {
+interface OwnProps {
+  top?: boolean; // don't touch any DOM and simply scroll to top on location change
+}
+
+type Props = RouteComponentProps & OwnProps;
+
+class ScrollIntoView extends React.PureComponent<Props> {
   componentDidMount() {
     this.onPageUpdate();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.location !== prevProps.location) {
       this.onPageUpdate();
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import clsx from 'clsx';
 import { AccountSwitcher } from 'app/components/accounts';
 
@@ -21,6 +21,7 @@ export default class LoggedInPanel extends React.Component<
 
   componentDidMount() {
     if (window.document) {
+      // @ts-ignore
       window.document.addEventListener('click', this.onBodyClick);
     }
 
@@ -29,6 +30,7 @@ export default class LoggedInPanel extends React.Component<
 
   componentWillUnmount() {
     if (window.document) {
+      // @ts-ignore
       window.document.removeEventListener('click', this.onBodyClick);
     }
 
@@ -105,15 +107,15 @@ function createOnOutsideComponentClickHandler(
   getEl: () => HTMLElement | null,
   isActive: () => boolean,
   callback: () => void,
-) {
+): MouseEventHandler {
   // TODO: we have the same logic in LangMenu
   // Probably we should decouple this into some helper function
   // TODO: the name of function may be better...
-  return (event: { target: HTMLElement } & MouseEvent) => {
+  return event => {
     const el = getEl();
 
     if (isActive() && el) {
-      if (!el.contains(event.target) && el !== event.target) {
+      if (!el.contains(event.target as HTMLElement) && el !== event.target) {
         event.preventDefault();
 
         // add a small delay for the case someone have alredy called toggle

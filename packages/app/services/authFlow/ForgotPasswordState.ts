@@ -1,20 +1,21 @@
 import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
+import { AuthContext } from './AuthFlow';
 import LoginState from './LoginState';
 import RecoverPasswordState from './RecoverPasswordState';
 
 export default class ForgotPasswordState extends AbstractState {
-  enter(context) {
+  enter(context: AuthContext): Promise<void> | void {
     context.navigate('/forgot-password');
   }
 
   resolve(
-    context,
+    context: AuthContext,
     payload: {
       login?: string;
     } = {},
-  ) {
+  ): Promise<void> | void {
     context
       .run('forgotPassword', payload)
       .then(() => {
@@ -28,11 +29,11 @@ export default class ForgotPasswordState extends AbstractState {
       );
   }
 
-  goBack(context) {
+  goBack(context: AuthContext): void {
     context.setState(new LoginState());
   }
 
-  reject(context) {
+  reject(context: AuthContext): void {
     context.setState(new RecoverPasswordState());
   }
 }
