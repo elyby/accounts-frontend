@@ -11,12 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "@babel/node": "^7.8.3",
+    "@types/mkdirp": "^0.5.2",
+    "@types/progress": "^2.0.3",
     "chalk": "^3.0.0",
-    "crowdin-api": "erickskrauch/crowdin-api#add_missed_methods_and_fix_files_uploading",
+    "crowdin-api": "^4.0.0",
     "glob": "^7.1.6",
     "iso-639-1": "^2.1.0",
     "mkdirp": "^0.5.1",
     "multi-progress": "^2.0.0",
-    "prompt": "^1.0.0"
+    "prompt": "^1.0.0",
+    "utility-types": "^3.10.0"
   }
 }

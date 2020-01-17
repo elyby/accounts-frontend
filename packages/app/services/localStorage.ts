@@ -17,16 +17,17 @@ export function hasStorage() {
   return _hasStorage;
 }
 
-class DummyStorage {
-  getItem(key) {
+// TODO: work on
+class DummyStorage implements Storage {
+  getItem(key: string): string | null {
     return this[key] || null;
   }
 
-  setItem(key, value) {
+  setItem(key: string, value: string): void {
     this[key] = value;
   }
 
-  removeItem(key) {
+  removeItem(key: string): void {
     Reflect.deleteProperty(this, key);
   }
 }

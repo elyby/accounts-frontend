@@ -3,7 +3,7 @@ import options from 'app/services/api/options';
 
 let readyPromise: Promise<void>;
 let lang = 'en';
-let sitekey;
+let sitekey: string;
 
 export type CaptchaID = string;
 

@@ -12,19 +12,27 @@ const LANG_DIR = `${__dirname}/../app/i18n`;
 const DEFAULT_LOCALE = 'en';
 const SUPPORTED_LANGS = [DEFAULT_LOCALE, ...Object.keys(localesMap)];
 
+interface MessageDescriptor {
+  id: string | number;
+  defaultMessage: string;
+}
+
 /**
  * Aggregates the default messages that were extracted from the app's
  * React components via the React Intl Babel plugin. An error will be thrown if
  * there are messages in different components that use the same `id`. The result
  * is a flat collection of `id: message` pairs for the app's default locale.
  */
-let idToFileMap: { [key: string]: string[] } = {};
-let duplicateIds: string[] = [];
+let idToFileMap: Record<string, Array<string>> = {};
+let duplicateIds: Array<string | number> = [];
 const collectedMessages = globSync(MESSAGES_PATTERN)
-  .map(filename => [filename, JSON.parse(fs.readFileSync(filename, 'utf8'))])
-  .reduce((collection, [file, descriptors]) => {
+  .map<[string, Array<MessageDescriptor>]>(filename => [
+    filename,
+    JSON.parse(fs.readFileSync(filename, 'utf8')),
+  ])
+  .reduce<Record<string, string>>((collection, [file, descriptors]) => {
     descriptors.forEach(({ id, defaultMessage }) => {
-      if (collection.hasOwnProperty(id)) {
+      if (collection[id]) {
         duplicateIds.push(id);
       }
 
@@ -52,13 +60,9 @@ idToFileMap = {};
  * Making a diff with the previous DEFAULT_LOCALE version
  */
 const defaultMessagesPath = `${LANG_DIR}/${DEFAULT_LOCALE}.json`;
-let keysToUpdate: string[] = [];
-let keysToAdd: string[] = [];
-let keysToRemove: string[] = [];
-const keysToRename: Array<[string, string]> = [];
 const isNotMarked = (value: string) => value.slice(0, 2) !== '--';
 
-const prevMessages: { [key: string]: string } = readJSON(defaultMessagesPath);
+const prevMessages = readJSON<Record<string, string>>(defaultMessagesPath);
 const prevMessagesMap = Object.entries(prevMessages).reduce(
   (acc, [key, value]) => {
     if (acc[value]) {
@@ -69,21 +73,24 @@ const prevMessagesMap = Object.entries(prevMessages).reduce(
 
     return acc;
   },
-  {} as { [key: string]: string[] },
+  {} as Record<string, Array<string>>,
 );
 
-keysToAdd = Object.keys(collectedMessages).filter(key => !prevMessages[key]);
-keysToRemove = Object.keys(prevMessages)
+const keysToAdd = Object.keys(collectedMessages).filter(
+  key => !prevMessages[key],
+);
+const keysToRemove: Array<string> = Object.keys(prevMessages)
   .filter(key => !collectedMessages[key])
   .filter(isNotMarked);
-keysToUpdate = Object.entries(prevMessages).reduce(
+const keysToUpdate: Array<string> = Object.entries(prevMessages).reduce(
   (acc, [key, message]) =>
     acc.concat(
       collectedMessages[key] && collectedMessages[key] !== message ? key : [],
     ),
-  [] as string[],
+  [] as Array<string>,
 );
 
+const keysToRename: Array<[string, string]> = [];
 // detect keys to rename, mutating keysToAdd and keysToRemove
 [...keysToAdd].forEach(toKey => {
   const keys = prevMessagesMap[collectedMessages[toKey]] || [];
@@ -91,7 +98,6 @@ keysToUpdate = Object.entries(prevMessages).reduce(
 
   if (fromKey) {
     keysToRename.push([fromKey, toKey]);
-
     keysToRemove.splice(keysToRemove.indexOf(fromKey), 1);
     keysToAdd.splice(keysToAdd.indexOf(toKey), 1);
   }
@@ -178,7 +184,7 @@ function buildLocales() {
 
   SUPPORTED_LANGS.map(lang => {
     const destPath = `${LANG_DIR}/${lang}.json`;
-    const newMessages = readJSON(destPath);
+    const newMessages = readJSON<Record<string, string>>(destPath);
 
     keysToRename.forEach(([fromKey, toKey]) => {
       newMessages[toKey] = newMessages[fromKey];
@@ -195,18 +201,23 @@ function buildLocales() {
       newMessages[key] = collectedMessages[key];
     });
 
-    const sortedKeys = Object.keys(newMessages).sort((key1, key2) => {
-      key1 = key1.replace(/^-+/, '');
-      key2 = key2.replace(/^-+/, '');
+    const sortedKeys: Array<string> = Object.keys(newMessages).sort(
+      (key1, key2) => {
+        key1 = key1.replace(/^-+/, '');
+        key2 = key2.replace(/^-+/, '');
 
-      return key1 < key2 || !isNotMarked(key1) ? -1 : 1;
-    });
+        return key1 < key2 || !isNotMarked(key1) ? -1 : 1;
+      },
+    );
 
-    const sortedNewMessages = sortedKeys.reduce((acc, key) => {
-      acc[key] = newMessages[key];
+    const sortedNewMessages = sortedKeys.reduce<typeof newMessages>(
+      (acc, key) => {
+        acc[key] = newMessages[key];
 
-      return acc;
-    }, {});
+        return acc;
+      },
+      {},
+    );
 
     fs.writeFileSync(
       destPath,
@@ -215,15 +226,15 @@ function buildLocales() {
   });
 }
 
-function readJSON(destPath) {
+function readJSON<T extends {}>(destPath: string): T {
   try {
     return JSON.parse(fs.readFileSync(destPath, 'utf8'));
   } catch (err) {
     console.log(
-      chalk.yellow(`Can not read ${destPath}. The new file will be created.`),
+      chalk.yellow(`Can't read ${destPath}. The new file will be created.`),
       `(${err.message})`,
     );
   }
 
-  return {};
+  return {} as T;
 }
