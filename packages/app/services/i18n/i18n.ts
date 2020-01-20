@@ -4,8 +4,8 @@ import locales from 'app/i18n';
 
 import intlPolyfill from './intlPolyfill';
 
-const SUPPORTED_LANGUAGES = Object.keys(locales);
-const DEFAULT_LANGUAGE = 'en';
+export const SUPPORTED_LANGUAGES = Object.keys(locales);
+export const DEFAULT_LANGUAGE = 'en';
 
 function getBrowserPreferredLanguages(): string[] {
   return []
