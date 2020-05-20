@@ -88,8 +88,8 @@
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-intl": "^3.11.0",
     "react-hot-loader": "^4.12.18",
+    "react-intl": "^4.5.5",
     "regenerator-runtime": "^0.13.3"
   },
   "devDependencies": {
@@ -125,7 +125,7 @@
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "babel-loader": "^8.0.0",
-    "babel-plugin-react-intl": "^5.1.16",
+    "babel-plugin-react-intl": "^7.5.8",
     "core-js": "3.6.5",
     "csp-webpack-plugin": "^2.0.2",
     "css-loader": "^3.5.3",
