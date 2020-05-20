@@ -124,7 +124,7 @@ export default class LanguageList extends React.Component<{
     return emptyCaptions[Math.floor(Math.random() * emptyCaptions.length)];
   }
 
-  onChangeLang(lang: string): MouseEventHandler {
+  onChangeLang(lang: string): MouseEventHandler<HTMLDivElement> {
     return (event) => {
       event.preventDefault();
 

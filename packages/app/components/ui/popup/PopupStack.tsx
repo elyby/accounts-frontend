@@ -64,7 +64,7 @@ export class PopupStack extends React.Component<Props> {
   }
 
   onOverlayClick(popup: PopupConfig) {
-    return (event: React.MouseEvent) => {
+    return (event: React.MouseEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget || popup.disableOverlayClose) {
         return;
       }

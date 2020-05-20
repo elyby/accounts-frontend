@@ -77,7 +77,7 @@ export default class AuthFlow implements AuthContext {
   replace: ((path: string) => void) | null;
   onReady: () => void;
   navigate: (route: string, options: { replace?: boolean }) => void;
-  currentRequest: Request;
+  currentRequest: Partial<Request> = {};
   oAuthStateRestored = false;
   dispatch: (action: Record<string, any>) => void;
   getState: () => RootState;

@@ -313,7 +313,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
     return this.state.activeStep + 1 === STEPS_TOTAL;
   }
 
-  onSwitchStep = (event: React.MouseEvent) => {
+  onSwitchStep = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
 
     this.nextStep();

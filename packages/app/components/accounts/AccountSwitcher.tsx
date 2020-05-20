@@ -169,7 +169,7 @@ export class AccountSwitcher extends React.Component<Props> {
     );
   }
 
-  onSwitch = (account: Account) => (event: React.MouseEvent) => {
+  onSwitch = (account: Account) => (event: React.MouseEvent<any>) => {
     event.preventDefault();
 
     loader.show();
@@ -184,7 +184,7 @@ export class AccountSwitcher extends React.Component<Props> {
       .finally(() => loader.hide());
   };
 
-  onRemove = (account: Account) => (event: React.MouseEvent) => {
+  onRemove = (account: Account) => (event: React.MouseEvent<any>) => {
     event.preventDefault();
     event.stopPropagation();
 

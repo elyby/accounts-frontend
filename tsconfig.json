@@ -11,6 +11,7 @@
     "noEmit": true,
     "checkJs": true,
     "allowJs": true,
+    "skipLibCheck": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "isolatedModules": true,

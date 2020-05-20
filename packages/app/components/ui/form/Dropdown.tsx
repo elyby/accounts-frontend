@@ -100,7 +100,7 @@ export default class Dropdown extends FormInputComponent<Props, State> {
     });
   }
 
-  onSelectItem(item: OptionItem): MouseEventHandler {
+  onSelectItem(item: OptionItem): MouseEventHandler<HTMLDivElement> {
     return (event) => {
       event.preventDefault();
 

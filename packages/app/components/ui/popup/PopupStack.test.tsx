@@ -14,7 +14,7 @@ function DummyPopup(_props: Record<string, any>) {
 
 describe('<PopupStack />', () => {
   it('renders all popup components', () => {
-    const props = {
+    const props: any = {
       destroy: () => {},
       popups: [
         {
@@ -35,13 +35,13 @@ describe('<PopupStack />', () => {
       foo: 'bar',
     };
 
-    const props = {
+    const props: any = {
       destroy: () => {},
       popups: [
         {
-          Popup: (props = { onClose: Function }) => {
+          Popup: (popupProps = { onClose: Function }) => {
             // eslint-disable-next-line
-            expect(props.onClose, 'to be a', 'function');
+            expect(popupProps.onClose, 'to be a', 'function');
 
             return <DummyPopup {...expectedProps} />;
           },
@@ -56,7 +56,7 @@ describe('<PopupStack />', () => {
   });
 
   it('should hide popup, when onClose called', () => {
-    const props = {
+    const props: any = {
       popups: [
         {
           Popup: DummyPopup,
@@ -79,7 +79,7 @@ describe('<PopupStack />', () => {
 
   it('should hide popup, when overlay clicked', () => {
     const preventDefault = sinon.stub().named('event.preventDefault');
-    const props = {
+    const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
         {
@@ -97,7 +97,7 @@ describe('<PopupStack />', () => {
   });
 
   it('should hide popup on overlay click if disableOverlayClose', () => {
-    const props = {
+    const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
         {
@@ -119,7 +119,7 @@ describe('<PopupStack />', () => {
   });
 
   it('should hide popup, when esc pressed', () => {
-    const props = {
+    const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
         {
@@ -138,7 +138,7 @@ describe('<PopupStack />', () => {
   });
 
   it('should hide first popup in stack if esc pressed', () => {
-    const props = {
+    const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
         {
@@ -165,7 +165,7 @@ describe('<PopupStack />', () => {
   });
 
   it('should NOT hide popup on esc pressed if disableOverlayClose', () => {
-    const props = {
+    const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
         {

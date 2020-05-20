@@ -8,12 +8,9 @@ export const SUPPORTED_LANGUAGES = Object.keys(locales);
 export const DEFAULT_LANGUAGE = 'en';
 
 function getBrowserPreferredLanguages(): string[] {
-  return []
-    .concat(
-      // @ts-ignore
-      navigator.languages || [],
-    )
-    .concat(navigator.language || []);
+  return ([] as string[])
+    .concat(navigator['languages'] || [])
+    .concat(navigator['language'] || []);
 }
 
 function detectLanguage(

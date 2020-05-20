@@ -406,7 +406,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
     });
   };
 
-  onGoBack: MouseEventHandler = (event): void => {
+  onGoBack: MouseEventHandler<HTMLButtonElement> = (event): void => {
     event.preventDefault();
     authFlow.goBack();
   };

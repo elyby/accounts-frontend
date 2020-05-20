@@ -680,7 +680,7 @@ function validationErrorsHandler(
   repeatUrl?: string,
 ): (
   resp: Resp<{
-    errors?: Record<string, string>;
+    errors?: Record<string, string | ValidationError>;
     data?: Record<string, any>;
   }>,
 ) => Promise<never> {
