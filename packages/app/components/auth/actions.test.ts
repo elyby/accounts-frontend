@@ -176,7 +176,7 @@ describe('components/auth/actions', () => {
 
       (request.post as any).returns(Promise.reject(resp));
 
-      return callThunk(oAuthComplete).catch(error => {
+      return callThunk(oAuthComplete).catch((error) => {
         expect(error.acceptRequired, 'to be true');
         expectDispatchCalls([[requirePermissionsAccept()]]);
       });

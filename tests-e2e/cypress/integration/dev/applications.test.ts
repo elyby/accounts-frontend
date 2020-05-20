@@ -5,13 +5,13 @@ describe('Applications', () => {
         cy.visit('/dev/applications');
 
         // remove all previously added apps
-        cy.window().then(async win => {
+        cy.window().then(async (win) => {
           const { oauthApi } = (win as any) as {
             oauthApi: typeof import('app/services/api/oauth').default;
           };
           const apps = await oauthApi.getAppsByUser(user.id);
 
-          await Promise.all(apps.map(app => oauthApi.delete(app.clientId)));
+          await Promise.all(apps.map((app) => oauthApi.delete(app.clientId)));
         });
       });
     });

@@ -57,7 +57,7 @@ export default class CompleteState extends AbstractState {
 
     if (loginHint) {
       const account = accounts.available.find(
-        item =>
+        (item) =>
           item.id === Number(loginHint) ||
           item.email === loginHint ||
           item.username === loginHint,
@@ -111,7 +111,7 @@ export default class CompleteState extends AbstractState {
             return context.run('redirect', resp.redirectUri);
           }
         },
-        resp => {
+        (resp) => {
           if (resp.unauthorized) {
             context.setState(new LoginState());
           } else if (resp.acceptRequired) {

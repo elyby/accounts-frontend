@@ -72,10 +72,10 @@ class Captcha {
   private loadApi(): Promise<void> {
     if (!readyPromise) {
       readyPromise = Promise.all([
-        new Promise(resolve => {
+        new Promise((resolve) => {
           (window as any).onReCaptchaReady = resolve;
         }),
-        options.get().then(resp => this.setApiKey(resp.reCaptchaPublicKey)),
+        options.get().then((resp) => this.setApiKey(resp.reCaptchaPublicKey)),
       ]).then(() => {});
 
       loadScript(

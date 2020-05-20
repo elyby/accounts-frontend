@@ -22,12 +22,12 @@ const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'build');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const isAnalyze = process.argv.some(arg => arg === '--analyze');
+const isAnalyze = process.argv.some((arg) => arg === '--analyze');
 
 const isDockerized = !!process.env.DOCKERIZED;
 const isStorybook = process.env.APP_ENV === 'storybook';
 const isCI = !!process.env.CI;
-const isSilent = isCI || process.argv.some(arg => /quiet/.test(arg));
+const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
 const isCspEnabled = false;
 const enableDll = !isProduction && !isStorybook;
 
@@ -234,7 +234,7 @@ if (isProduction) {
   if (!isStorybook) {
     let cssExtractApplied = false;
 
-    webpackConfig.module.rules.forEach(rule => {
+    webpackConfig.module.rules.forEach((rule) => {
       if (
         rule.use &&
         (rule.use[0] === 'style-loader' ||
@@ -268,7 +268,7 @@ if (isProduction) {
     splitChunks: {
       cacheGroups: {
         vendor: {
-          test: m =>
+          test: (m) =>
             String(m.context).includes('node_modules') &&
             // icons and intl with relateed polyfills are allowed
             // to be splitted to other chunks

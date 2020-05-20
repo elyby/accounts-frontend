@@ -124,7 +124,7 @@ export default connect(
       form.beginLoading();
 
       return sendData()
-        .catch(resp => {
+        .catch((resp) => {
           const requirePassword = resp.errors && !!resp.errors.password;
 
           // prevalidate user input, because requestPassword popup will block the
@@ -154,7 +154,7 @@ export default connect(
 
           return Promise.reject(resp);
         })
-        .catch(resp => {
+        .catch((resp) => {
           if (!resp || !resp.errors) {
             logger.warn('Unexpected profile editing error', {
               resp,
@@ -176,13 +176,13 @@ export default connect(
                   sendData()
                     .then(resolve)
                     .then(props.onClose)
-                    .catch(resp => {
+                    .catch((resp) => {
                       if (resp.errors) {
                         form.setErrors(resp.errors);
 
                         const parentFormHasErrors =
                           Object.keys(resp.errors).filter(
-                            name => name !== 'password',
+                            (name) => name !== 'password',
                           ).length > 0;
 
                         if (parentFormHasErrors) {

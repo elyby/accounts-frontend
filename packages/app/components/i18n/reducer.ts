@@ -10,7 +10,7 @@ const defaultState: State = {
   locale: i18n.detectLanguage(),
 };
 
-export default function(
+export default function (
   state: State = defaultState,
   { type, payload }: Action,
 ): State {

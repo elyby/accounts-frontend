@@ -13,7 +13,7 @@ export default function AuthFlowRoute(props: RouteProps) {
   return (
     <Route
       {...routeProps}
-      render={routerProps => (
+      render={(routerProps) => (
         <AuthFlowRouteContents
           routerProps={routerProps}
           component={Component}

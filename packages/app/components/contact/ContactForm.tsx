@@ -187,7 +187,7 @@ export class ContactForm extends React.Component<
           lastEmail: this.form.value('email'),
         }),
       )
-      .catch(resp => {
+      .catch((resp) => {
         if (resp.errors) {
           this.form.setErrors(resp.errors);
 

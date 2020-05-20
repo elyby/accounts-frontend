@@ -35,14 +35,12 @@ describe('Forgot / reset password', () => {
     );
 
     cy.window().should('have.property', 'e2eCaptchaSetCode');
-    cy.window().then(win => {
+    cy.window().then((win) => {
       // fake captcha response
       // @ts-ignore
       win.e2eCaptchaSetCode(captchaCode);
     });
-    cy.get('[type=submit]')
-      .should('have.length', 1)
-      .click();
+    cy.get('[type=submit]').should('have.length', 1).click();
 
     cy.wait('@forgot')
       .its('requestBody')
@@ -93,14 +91,12 @@ describe('Forgot / reset password', () => {
 
     cy.get('[name=login]').type(`{selectall}${login}`);
     cy.window().should('have.property', 'e2eCaptchaSetCode');
-    cy.window().then(win => {
+    cy.window().then((win) => {
       // fake captcha response
       // @ts-ignore
       win.e2eCaptchaSetCode(captchaCode);
     });
-    cy.get('[type=submit]')
-      .should('have.length', 1)
-      .click();
+    cy.get('[type=submit]').should('have.length', 1).click();
 
     cy.wait('@forgot')
       .its('requestBody')
@@ -136,14 +132,12 @@ describe('Forgot / reset password', () => {
 
     cy.get('[name=login]').type(login);
     cy.window().should('have.property', 'e2eCaptchaSetCode');
-    cy.window().then(win => {
+    cy.window().then((win) => {
       // fake captcha response
       // @ts-ignore
       win.e2eCaptchaSetCode(captchaCode);
     });
-    cy.get('[type=submit]')
-      .should('have.length', 1)
-      .click();
+    cy.get('[type=submit]').should('have.length', 1).click();
 
     cy.wait('@forgot')
       .its('requestBody')
@@ -187,9 +181,7 @@ describe('Forgot / reset password', () => {
 
     cy.location('pathname').should('eq', '/forgot-password');
 
-    cy.getByTestId('auth-controls-secondary')
-      .contains('Already have')
-      .click();
+    cy.getByTestId('auth-controls-secondary').contains('Already have').click();
 
     cy.location('pathname').should('eq', '/recover-password');
 
@@ -203,9 +195,7 @@ describe('Forgot / reset password', () => {
     cy.get('[name=key]').type(key);
     cy.get('[name=newPassword]').type(newPassword);
     cy.get('[name=newRePassword]').type(newPassword);
-    cy.get('[type=submit]')
-      .should('have.length', 1)
-      .click();
+    cy.get('[type=submit]').should('have.length', 1).click();
 
     cy.wait('@recover')
       .its('requestBody')
@@ -244,9 +234,7 @@ describe('Forgot / reset password', () => {
     cy.get('[name=key]').should('have.attr', 'readonly');
     cy.get('[name=newPassword]').type(newPassword);
     cy.get('[name=newRePassword]').type(newPassword);
-    cy.get('[type=submit]')
-      .should('have.length', 1)
-      .click();
+    cy.get('[type=submit]').should('have.length', 1).click();
 
     cy.wait('@recover')
       .its('requestBody')

@@ -31,7 +31,7 @@ class ScrollIntoView extends React.PureComponent<Props> {
       return null;
     }
 
-    return <span ref={el => el && restoreScroll(el)} />;
+    return <span ref={(el) => el && restoreScroll(el)} />;
   }
 }
 

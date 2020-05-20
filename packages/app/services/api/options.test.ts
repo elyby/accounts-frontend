@@ -23,7 +23,7 @@ describe('services/api/options', () => {
   });
 
   it('should request options without token', () =>
-    options.get().then(resp => {
+    options.get().then((resp) => {
       expect(resp, 'to be', expectedResp);
       expect(request.get, 'to have a call satisfying', [
         '/api/options',
@@ -35,7 +35,7 @@ describe('services/api/options', () => {
   it('should cache options', () =>
     // NOTE: this is bad practice, but we are relying on the state from
     // the previous test
-    options.get().then(resp => {
+    options.get().then((resp) => {
       expect(resp, 'to be', expectedResp);
       expect(request.get, 'was not called');
     }));

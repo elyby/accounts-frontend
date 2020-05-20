@@ -27,7 +27,7 @@ function popups(state: Array<PopupConfig> = [], { type, payload }: Action) {
 
       return state.concat(payload);
     case 'POPUP_DESTROY':
-      return state.filter(popup => popup !== payload);
+      return state.filter((popup) => popup !== payload);
     default:
       return state;
   }

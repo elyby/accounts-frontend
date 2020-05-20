@@ -87,10 +87,10 @@ export function login({
   totp?: string;
   rememberMe?: boolean;
 }) {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     loginEndpoint({ login, password, totp, rememberMe })
       .then(authHandler(dispatch))
-      .catch(resp => {
+      .catch((resp) => {
         if (resp.errors) {
           if (resp.errors.password === PASSWORD_REQUIRED) {
             return dispatch(setLogin(login));
@@ -118,7 +118,7 @@ export function login({
 }
 
 export function acceptRules() {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     dispatch(userAcceptRules()).catch(validationErrorsHandler(dispatch)),
   );
 }
@@ -152,7 +152,7 @@ export function recoverPassword({
   newPassword: string;
   newRePassword: string;
 }) {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     recoverPasswordEndpoint(key, newPassword, newRePassword)
       .then(authHandler(dispatch))
       .catch(validationErrorsHandler(dispatch, '/forgot-password')),
@@ -205,7 +205,7 @@ export function activate({
 }: {
   key: string;
 }): ThunkAction<Promise<Account>> {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     activateEndpoint(key)
       .then(authHandler(dispatch))
       .catch(validationErrorsHandler(dispatch, '/resend-activation')),
@@ -219,9 +219,9 @@ export function resendActivation({
   email: string;
   captcha: string;
 }) {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     resendActivationEndpoint(email, captcha)
-      .then(resp => {
+      .then((resp) => {
         dispatch(
           updateUser({
             email,
@@ -368,17 +368,17 @@ const KNOWN_SCOPES: ReadonlyArray<string> = [
 export function oAuthValidate(oauthData: OauthData) {
   // TODO: move to oAuth actions?
   // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     oauth
       .validate(oauthData)
-      .then(resp => {
+      .then((resp) => {
         const { scopes } = resp.session;
         const invalidScopes = scopes.filter(
-          scope => !KNOWN_SCOPES.includes(scope),
+          (scope) => !KNOWN_SCOPES.includes(scope),
         );
         let prompt = (oauthData.prompt || 'none')
           .split(',')
-          .map(item => item.trim());
+          .map((item) => item.trim());
 
         if (prompt.includes('none')) {
           prompt = ['none'];
@@ -415,7 +415,7 @@ export function oAuthValidate(oauthData: OauthData) {
 /**
  * @param {object} params
  * @param {bool} params.accept=false
- *
+ * @param params.accept
  * @returns {Promise}
  */
 export function oAuthComplete(params: { accept?: boolean } = {}) {
@@ -638,12 +638,12 @@ function wrapInLoader<T>(fn: ThunkAction<Promise<T>>): ThunkAction<Promise<T>> {
     const endLoading = () => dispatch(setLoadingState(false));
 
     return fn(dispatch, getState, undefined).then(
-      resp => {
+      (resp) => {
         endLoading();
 
         return resp;
       },
-      resp => {
+      (resp) => {
         endLoading();
 
         return Promise.reject(resp);
@@ -668,7 +668,7 @@ function authHandler(dispatch: Dispatch) {
         token: oAuthResp.access_token,
         refreshToken: oAuthResp.refresh_token || null,
       }),
-    ).then(resp => {
+    ).then((resp) => {
       dispatch(setLogin(null));
 
       return resp;
@@ -684,7 +684,7 @@ function validationErrorsHandler(
     data?: Record<string, any>;
   }>,
 ) => Promise<never> {
-  return resp => {
+  return (resp) => {
     if (resp.errors) {
       const [firstError] = Object.keys(resp.errors);
       const firstErrorObj: ValidationError = {
@@ -711,7 +711,7 @@ function validationErrorsHandler(
       }
 
       // TODO: can I clone the object or its necessary to catch modified errors list on corresponding catches?
-      const errors: Record<string, ValidationError> = resp.errors;
+      const { errors } = resp;
       errors[firstError] = firstErrorObj;
 
       dispatch(setErrors(errors));

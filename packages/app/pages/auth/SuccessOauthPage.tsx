@@ -42,7 +42,7 @@ export default class SuccessOauthPage extends React.Component<{
     return (
       <div className={styles.page}>
         <Message {...messages.title}>
-          {pageTitle => <Helmet title={pageTitle as string} />}
+          {(pageTitle) => <Helmet title={pageTitle as string} />}
         </Message>
 
         <div className={styles.wrapper}>

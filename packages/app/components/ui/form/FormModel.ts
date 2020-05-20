@@ -130,7 +130,7 @@ export default class FormModel {
     const oldErrors = this.errors;
     this.errors = errors;
 
-    Object.keys(this.fields).forEach(fieldId => {
+    Object.keys(this.fields).forEach((fieldId) => {
       if (this.renderErrors) {
         if (oldErrors[fieldId] || errors[fieldId]) {
           this.fields[fieldId].setError(errors[fieldId] || null);
@@ -192,7 +192,7 @@ export default class FormModel {
    * @param {Function} fn
    */
   removeLoadingListener(fn: LoadingListener): void {
-    this.handlers = this.handlers.filter(handler => handler !== fn);
+    this.handlers = this.handlers.filter((handler) => handler !== fn);
   }
 
   /**
@@ -212,6 +212,6 @@ export default class FormModel {
   }
 
   private notifyHandlers(): void {
-    this.handlers.forEach(fn => fn(this._isLoading));
+    this.handlers.forEach((fn) => fn(this._isLoading));
   }
 }

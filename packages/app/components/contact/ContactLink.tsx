@@ -12,7 +12,7 @@ function ContactLink({ createContactPopup, ...props }: Props) {
     <a
       href="#"
       data-e2e-button="feedbackPopup"
-      onClick={event => {
+      onClick={(event) => {
         event.preventDefault();
 
         createContactPopup();

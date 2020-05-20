@@ -127,16 +127,16 @@ const toJSON = (resp: Response) => {
   }
 
   return resp.json().then(
-    json => {
+    (json) => {
       json.originalResponse = resp;
 
       return json;
     },
-    error => Promise.reject(new InternalServerError(error, resp)),
+    (error) => Promise.reject(new InternalServerError(error, resp)),
   );
 };
 const rejectWithJSON = (resp: Response) =>
-  toJSON(resp).then(resp => {
+  toJSON(resp).then((resp) => {
     if (resp.originalResponse.status >= 500) {
       throw new InternalServerError(resp, resp.originalResponse);
     }
@@ -164,13 +164,13 @@ async function doFetch<T>(url: string, options: Options): Promise<Resp<T>> {
         .then(checkStatus)
         .then(toJSON, rejectWithJSON)
         .then(handleResponseSuccess)
-        .then(resp =>
+        .then((resp) =>
           middlewareLayer.run('then', resp, {
             url: nextUrl,
             options: nextOptions,
           }),
         )
-        .catch(resp =>
+        .catch((resp) =>
           middlewareLayer.run(
             'catch',
             resp,
@@ -213,7 +213,7 @@ function convertQueryValue(value: any): string {
  */
 function buildQuery(data: { [key: string]: any } = {}): string {
   return Object.keys(data)
-    .map(keyName =>
+    .map((keyName) =>
       [keyName, convertQueryValue(data[keyName])]
         .map(encodeURIComponent)
         .join('='),

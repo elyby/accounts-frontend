@@ -69,10 +69,7 @@ describe('<PopupStack />', () => {
     };
     const component = shallow(<PopupStack {...props} />);
 
-    component
-      .find(DummyPopup)
-      .last()
-      .prop('onClose')();
+    component.find(DummyPopup).last().prop('onClose')();
 
     expect(props.destroy, 'was called once');
     expect(props.destroy, 'to have a call satisfying', [

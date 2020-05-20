@@ -101,7 +101,7 @@ export default class Dropdown extends FormInputComponent<Props, State> {
   }
 
   onSelectItem(item: OptionItem): MouseEventHandler {
-    return event => {
+    return (event) => {
       event.preventDefault();
 
       this.setState({
@@ -143,7 +143,7 @@ export default class Dropdown extends FormInputComponent<Props, State> {
     this.toggle();
   };
 
-  onBodyClick: MouseEventHandler = event => {
+  onBodyClick: MouseEventHandler = (event) => {
     if (this.state.isActive) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const el = ReactDOM.findDOMNode(this)!;

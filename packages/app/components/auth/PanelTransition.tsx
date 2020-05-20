@@ -1,4 +1,9 @@
-import React, { CSSProperties, MouseEventHandler, ReactElement, ReactNode } from 'react';
+import React, {
+  CSSProperties,
+  MouseEventHandler,
+  ReactElement,
+  ReactNode,
+} from 'react';
 import { AccountsState } from 'app/components/accounts';
 import { User } from 'app/components/user';
 import { connect } from 'react-redux';
@@ -64,7 +69,7 @@ if (process.env.NODE_ENV !== 'production') {
   // TODO: it may be moved to tests in future
 
   contexts.reduce((acc, context) => {
-    context.forEach(panel => {
+    context.forEach((panel) => {
       if (acc[panel]) {
         throw new Error(
           `Panel ${panel} is already exists in context ${JSON.stringify(
@@ -186,7 +191,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
   }
 
   componentWillUnmount() {
-    this.timerIds.forEach(id => clearTimeout(id));
+    this.timerIds.forEach((id) => clearTimeout(id));
     this.timerIds = [];
   }
 
@@ -262,7 +267,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
           willEnter={this.willEnter}
           willLeave={this.willLeave}
         >
-          {items => {
+          {(items) => {
             const panels = items.filter(({ key }) => key !== 'common');
             const [common] = items.filter(({ key }) => key === 'common');
 
@@ -289,7 +294,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
               >
                 <Panel>
                   <PanelHeader>
-                    {panels.map(config => this.getHeader(config))}
+                    {panels.map((config) => this.getHeader(config))}
                   </PanelHeader>
                   <div style={contentHeight}>
                     <MeasureHeight
@@ -298,11 +303,11 @@ class PanelTransition extends React.PureComponent<Props, State> {
                     >
                       <PanelBody>
                         <div style={bodyHeight}>
-                          {panels.map(config => this.getBody(config))}
+                          {panels.map((config) => this.getBody(config))}
                         </div>
                       </PanelBody>
                       <PanelFooter>
-                        {panels.map(config => this.getFooter(config))}
+                        {panels.map((config) => this.getFooter(config))}
                       </PanelFooter>
                     </MeasureHeight>
                   </div>
@@ -311,7 +316,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
                   className={helpLinksStyles}
                   data-testid="auth-controls-secondary"
                 >
-                  {panels.map(config => this.getLinks(config))}
+                  {panels.map((config) => this.getLinks(config))}
                 </div>
               </Form>
             );
@@ -356,7 +361,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
     const fromLeft = -1;
     const fromRight = 1;
 
-    const currentContext = contexts.find(context => context.includes(key));
+    const currentContext = contexts.find((context) => context.includes(key));
 
     if (!currentContext) {
       throw new Error(`Can not find settings for ${key} panel`);
@@ -377,7 +382,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
   }
 
   getDirection(next: PanelId, prev: PanelId): 'X' | 'Y' {
-    const context = contexts.find(item => item.includes(prev));
+    const context = contexts.find((item) => item.includes(prev));
 
     if (!context) {
       throw new Error(`Can not find context for transition ${prev} -> ${next}`);
@@ -521,11 +526,11 @@ class PanelTransition extends React.PureComponent<Props, State> {
         key={`body/${key}`}
         style={transitionStyle}
         state={this.shouldMeasureHeight()}
-        onMeasure={height => this.onUpdateHeight(height, key)}
+        onMeasure={(height) => this.onUpdateHeight(height, key)}
       >
         {React.cloneElement(Body, {
           // @ts-ignore
-          ref: body => {
+          ref: (body) => {
             this.body = body;
           },
         })}
@@ -596,7 +601,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
   }
 
   requestRedraw = (): Promise<void> =>
-    new Promise(resolve =>
+    new Promise((resolve) =>
       this.setState({ isHeightDirty: true }, () => {
         this.setState({ isHeightDirty: false });
 

@@ -24,18 +24,10 @@ describe('Sign in / Log out', () => {
 
         const [account] = state.accounts.available;
         expect(account.username).to.be.equal(account1.username);
-        expect(account.id)
-          .to.be.a('number')
-          .and.to.be.gt(0);
-        expect(account.email)
-          .to.be.a('string')
-          .and.have.length.gt(0);
-        expect(account.token)
-          .to.be.a('string')
-          .and.have.length.gt(0);
-        expect(account.refreshToken)
-          .to.be.a('string')
-          .and.have.length.gt(0);
+        expect(account.id).to.be.a('number').and.to.be.gt(0);
+        expect(account.email).to.be.a('string').and.have.length.gt(0);
+        expect(account.token).to.be.a('string').and.have.length.gt(0);
+        expect(account.refreshToken).to.be.a('string').and.have.length.gt(0);
 
         expect(state.accounts.active).to.be.equal(account.id);
 
@@ -64,9 +56,7 @@ describe('Sign in / Log out', () => {
     cy.url().should('include', '/password');
 
     cy.get('[name=password]').type(account1.password);
-    cy.get('[name=rememberMe]')
-      .parent()
-      .click();
+    cy.get('[name=rememberMe]').parent().click();
     cy.get('[name=rememberMe]').should('not.be.checked');
     cy.get('[type=submit]').click();
 
@@ -80,15 +70,9 @@ describe('Sign in / Log out', () => {
 
         const [account] = state.accounts.available;
         expect(account.username).to.be.equal(account1.username);
-        expect(account.id)
-          .to.be.a('number')
-          .and.to.be.gt(0);
-        expect(account.email)
-          .to.be.a('string')
-          .and.have.length.gt(0);
-        expect(account.token)
-          .to.be.a('string')
-          .and.have.length.gt(0);
+        expect(account.id).to.be.a('number').and.to.be.gt(0);
+        expect(account.email).to.be.a('string').and.have.length.gt(0);
+        expect(account.token).to.be.a('string').and.have.length.gt(0);
         expect(account.refreshToken).eql(null);
 
         expect(state.accounts.active).to.be.equal(account.id);
@@ -129,9 +113,7 @@ describe('Sign in / Log out', () => {
 
     cy.get('[name=totp]').type('123{enter}');
 
-    cy.wait('@login')
-      .its('requestBody')
-      .should('include', 'totp=123');
+    cy.wait('@login').its('requestBody').should('include', 'totp=123');
 
     cy.location('pathname').should('eq', '/');
   });
@@ -141,13 +123,9 @@ describe('Sign in / Log out', () => {
 
     cy.visit('/');
 
-    cy.getByTestId('toolbar')
-      .contains(account1.username)
-      .click();
+    cy.getByTestId('toolbar').contains(account1.username).click();
 
-    cy.getByTestId('active-account')
-      .getByTestId('logout-account')
-      .click();
+    cy.getByTestId('active-account').getByTestId('logout-account').click();
 
     cy.location('pathname').should('eq', '/login');
     cy.getByTestId('toolbar').should('contain', 'Join');
@@ -159,9 +137,7 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar')
-        .contains(account2.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account2.username).click();
 
       cy.getByTestId('active-account').should('have.length', 1);
       cy.get('[data-e2e-account-id]').should('have.length', 0);
@@ -180,16 +156,12 @@ describe('Sign in / Log out', () => {
 
       cy.location('pathname').should('eq', '/');
 
-      cy.getByTestId('toolbar')
-        .contains(account1.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account1.username).click();
 
       cy.getByTestId('active-account').should('have.length', 1);
       cy.get('[data-e2e-account-id]').should('have.length', 1);
 
-      cy.get('[data-e2e-account-id]')
-        .getByTestId('logout-account')
-        .click();
+      cy.get('[data-e2e-account-id]').getByTestId('logout-account').click();
     });
 
     it('should go back to profile from login screen', () => {
@@ -197,9 +169,7 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar')
-        .contains(account1.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account1.username).click();
 
       cy.getByTestId('add-account').click();
 
@@ -215,17 +185,11 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar')
-        .contains(account1.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account1.username).click();
 
-      cy.getByTestId('active-account')
-        .getByTestId('logout-account')
-        .click();
+      cy.getByTestId('active-account').getByTestId('logout-account').click();
 
-      cy.getByTestId('toolbar')
-        .contains(account2.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account2.username).click();
       cy.get('[data-e2e-account-id]').should('have.length', 0);
       cy.getByTestId('profile-index').should('not.contain', account1.username);
       cy.getByTestId('profile-index').should('contain', account2.username);
@@ -236,9 +200,7 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar')
-        .contains(account1.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account1.username).click();
 
       cy.getByTestId('active-account').should('have.length', 1);
       cy.get('[data-e2e-account-id]').should('have.length', 0);
@@ -257,9 +219,7 @@ describe('Sign in / Log out', () => {
 
       cy.location('pathname').should('eq', '/');
 
-      cy.getByTestId('toolbar')
-        .contains(account1.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account1.username).click();
       cy.get('[data-e2e-account-id]').should('have.length', 0);
     });
   });

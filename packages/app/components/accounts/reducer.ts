@@ -17,7 +17,7 @@ export function getActiveAccount(state: { accounts: State }): Account | null {
   const accountId = state.accounts.active;
 
   return (
-    state.accounts.available.find(account => account.id === accountId) || null
+    state.accounts.available.find((account) => account.id === accountId) || null
   );
 }
 
@@ -43,7 +43,7 @@ export default function accounts(
       const { payload } = action;
 
       state.available = state.available
-        .filter(account => account.id !== payload.id)
+        .filter((account) => account.id !== payload.id)
         .concat(payload);
 
       state.available.sort((account1, account2) => {
@@ -65,7 +65,7 @@ export default function accounts(
       const { payload } = action;
 
       return {
-        available: state.available.map(account => {
+        available: state.available.map((account) => {
           if (account.id === payload.id) {
             return { ...payload };
           }
@@ -91,7 +91,9 @@ export default function accounts(
 
       return {
         ...state,
-        available: state.available.filter(account => account.id !== payload.id),
+        available: state.available.filter(
+          (account) => account.id !== payload.id,
+        ),
       };
     }
 
@@ -104,7 +106,7 @@ export default function accounts(
 
       return {
         ...state,
-        available: state.available.map(account => {
+        available: state.available.map((account) => {
           if (account.id === state.active) {
             return {
               ...account,

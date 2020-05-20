@@ -71,7 +71,7 @@ export default class LanguageList extends React.Component<{
         willLeave={this.willLeave}
         willEnter={this.willEnter}
       >
-        {items => (
+        {(items) => (
           <div className={styles.languagesList} data-testid="language-list">
             <div
               className={clsx(styles.emptyLanguagesListWrapper, {
@@ -125,7 +125,7 @@ export default class LanguageList extends React.Component<{
   }
 
   onChangeLang(lang: string): MouseEventHandler {
-    return event => {
+    return (event) => {
       event.preventDefault();
 
       this.props.onChangeLang(lang);

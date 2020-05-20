@@ -36,10 +36,10 @@ export default class Captcha extends FormInputComponent<
             skin: this.props.skin,
             onSetCode: this.setCode,
           })
-          .then(captchaId => {
+          .then((captchaId) => {
             this.captchaId = captchaId;
           })
-          .catch(error => {
+          .catch((error) => {
             logger.error('Failed rendering captcha', {
               error,
             });

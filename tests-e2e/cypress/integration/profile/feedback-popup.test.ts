@@ -16,9 +16,7 @@ describe('feedback popup', () => {
 
     cy.visit('/');
 
-    cy.getByTestId('footer')
-      .contains('Contact Us')
-      .click();
+    cy.getByTestId('footer').contains('Contact Us').click();
     cy.getByTestId('feedbackPopup').should('be.visible');
 
     cy.get('[name=subject]').type(subject);
@@ -29,16 +27,12 @@ describe('feedback popup', () => {
       .getByTestId('select-label')
       .should('contain', 'What are you interested');
     cy.get('[data-e2e-select-name=category]').click();
-    cy.get('[data-e2e-select-name=category]')
-      .contains('bug')
-      .click();
+    cy.get('[data-e2e-select-name=category]').contains('bug').click();
     cy.get('[data-e2e-select-name=category]')
       .getByTestId('select-label')
       .should('contain', 'bug');
 
-    cy.getByTestId('feedbackPopup')
-      .get('[type=submit]')
-      .click();
+    cy.getByTestId('feedbackPopup').get('[type=submit]').click();
 
     cy.getByTestId('feedbackPopup').should(
       'contain',

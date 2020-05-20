@@ -14,7 +14,7 @@ describe('Input', () => {
         <Input
           defaultValue="foo"
           name="test"
-          ref={el => {
+          ref={(el) => {
             component = el;
           }}
         />

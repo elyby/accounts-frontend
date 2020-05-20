@@ -40,7 +40,7 @@ describe('ContactForm', () => {
         type: 'TextArea',
         name: 'message',
       },
-    ].forEach(el => {
+    ].forEach((el) => {
       it(`should have ${el.name} field`, () => {
         expect(component.find(`${el.type}[name="${el.name}"]`), 'to satisfy', {
           length: 1,
@@ -107,7 +107,7 @@ describe('ContactForm', () => {
 
       wrapper = mount(
         <IntlProvider locale="en" defaultLocale="en">
-          <ContactForm user={user} ref={el => (component = el!)} />
+          <ContactForm user={user} ref={(el) => (component = el!)} />
         </IntlProvider>,
       );
     });
@@ -143,7 +143,7 @@ describe('ContactForm', () => {
       // TODO: try to rewrite with unexpected-react
       wrapper = mount(
         <IntlProvider locale="en" defaultLocale="en">
-          <ContactForm user={user} ref={el => (component = el!)} />
+          <ContactForm user={user} ref={(el) => (component = el!)} />
         </IntlProvider>,
       );
 

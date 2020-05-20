@@ -91,7 +91,7 @@ export default class Box {
       endY: number;
     }> = [];
 
-    Object.values(boxPoints).forEach(point => {
+    Object.values(boxPoints).forEach((point) => {
       const angle = Math.atan2(light.y - point.y, light.x - point.x);
       const endX = point.x + shadowLength * Math.sin(-angle - Math.PI / 2);
       const endY = point.y + shadowLength * Math.cos(-angle - Math.PI / 2);

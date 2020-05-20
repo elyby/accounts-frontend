@@ -48,7 +48,7 @@ describe('components/accounts/actions', () => {
 
   beforeEach(() => {
     dispatch = sinon
-      .spy(arg => (typeof arg === 'function' ? arg(dispatch, getState) : arg))
+      .spy((arg) => (typeof arg === 'function' ? arg(dispatch, getState) : arg))
       .named('store.dispatch');
     getState = sinon.stub().named('store.getState');
 
@@ -146,7 +146,7 @@ describe('components/accounts/actions', () => {
       ));
 
     it('resolves with account', () =>
-      authenticate(account)(dispatch, getState, undefined).then(resp =>
+      authenticate(account)(dispatch, getState, undefined).then((resp) =>
         expect(resp, 'to equal', account),
       ));
 

@@ -170,13 +170,9 @@ describe('Profile — mfa', () => {
 });
 
 function assertOs(name: string, os: string) {
-  cy.getByTestId('os-tile')
-    .contains(name)
-    .click();
+  cy.getByTestId('os-tile').contains(name).click();
 
   cy.getByTestId('os-instruction').should('have.attr', 'data-os', os);
 
-  cy.getByTestId('os-tile')
-    .contains(name)
-    .click();
+  cy.getByTestId('os-tile').contains(name).click();
 }

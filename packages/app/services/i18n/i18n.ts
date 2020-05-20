@@ -23,8 +23,9 @@ function detectLanguage(
 ): string {
   return (
     userLanguages
-      .map(lang => (lang.split('-').shift() || '').toLowerCase())
-      .find(lang => availableLanguages.indexOf(lang) !== -1) || defaultLanguage
+      .map((lang) => (lang.split('-').shift() || '').toLowerCase())
+      .find((lang) => availableLanguages.indexOf(lang) !== -1) ||
+    defaultLanguage
   );
 }
 
@@ -35,7 +36,7 @@ let intl: IntlShape;
 class I18N {
   detectLanguage(lang: string = ''): string {
     return detectLanguage(
-      [lang].concat(getBrowserPreferredLanguages()).filter(item => !!item),
+      [lang].concat(getBrowserPreferredLanguages()).filter((item) => !!item),
       SUPPORTED_LANGUAGES,
       DEFAULT_LANGUAGE,
     );

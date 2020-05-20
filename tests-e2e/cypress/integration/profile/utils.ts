@@ -6,15 +6,11 @@ export function getSectionByName(name: string) {
 }
 
 export function openSectionByName(name: string) {
-  return getSectionByName(name)
-    .getByTestId('profile-action')
-    .click();
+  return getSectionByName(name).getByTestId('profile-action').click();
 }
 
 export function confirmWithPassword(password: string) {
   cy.getByTestId('password-request-form').should('be.visible');
   cy.get('[name=password]').type(password);
-  cy.getByTestId('password-request-form')
-    .find('[type=submit]')
-    .click();
+  cy.getByTestId('password-request-form').find('[type=submit]').click();
 }

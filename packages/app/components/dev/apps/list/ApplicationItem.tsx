@@ -151,7 +151,7 @@ export default class ApplicationItem extends React.Component<
 
             <div
               className={styles.appActionContainer}
-              ref={el => {
+              ref={(el) => {
                 this.actionContainer = el;
               }}
             >

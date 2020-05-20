@@ -22,7 +22,7 @@ const wp = require('@cypress/webpack-preprocessor');
 // for some reason loader can not locate babel.config. So we load it manually
 const config = require('../../../babel.config');
 
-module.exports = on => {
+module.exports = (on) => {
   const options = {
     webpackOptions: {
       mode: 'development',

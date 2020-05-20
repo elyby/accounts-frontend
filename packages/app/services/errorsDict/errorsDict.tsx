@@ -31,12 +31,15 @@ const ResendKey: ComponentType<{ url: string }> = ({ url }) => (
   </>
 );
 
-const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> = {
+const errorsMap: Record<
+  string,
+  (props?: Record<string, any>) => ReactElement
+> = {
   'error.login_required': () => <Message {...messages.loginRequired} />,
   'error.login_not_exist': () => <Message {...messages.loginNotExist} />,
   'error.password_required': () => <Message {...messages.passwordRequired} />,
 
-  'error.password_incorrect': (props ) => (
+  'error.password_incorrect': (props) => (
     // props are handled in validationErrorsHandler in components/auth/actions
     <>
       <Message {...messages.invalidPassword} />
@@ -81,13 +84,13 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
     <Message {...messages.rulesAgreementRequired} />
   ),
   'error.key_required': () => <Message {...messages.keyRequired} />,
-  'error.key_not_exists': props => (
+  'error.key_not_exists': (props) => (
     <>
       <Message {...messages.keyNotExists} />
       {props && props.repeatUrl ? <ResendKey url={props.repeatUrl} /> : null}
     </>
   ),
-  'error.key_expire': props => errorsMap['error.key_not_exists'](props),
+  'error.key_expire': (props) => errorsMap['error.key_not_exists'](props),
 
   'error.newPassword_required': () => (
     <Message {...messages.newPasswordRequired} />
@@ -101,7 +104,7 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
   ),
   'error.account_banned': () => <Message {...messages.accountBanned} />,
 
-  'error.recently_sent_message': props => (
+  'error.recently_sent_message': (props) => (
     <Message
       {...messages.emailFrequency}
       values={{
@@ -117,7 +120,8 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
   ),
 
   'error.captcha_required': () => <Message {...messages.captchaRequired} />,
-  'error.captcha_invalid': props => errorsMap['error.captcha_required'](props),
+  'error.captcha_invalid': (props) =>
+    errorsMap['error.captcha_required'](props),
 
   'error.redirectUri_required': () => (
     <Message {...messages.redirectUriRequired} />

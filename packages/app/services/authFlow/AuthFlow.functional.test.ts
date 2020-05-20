@@ -114,7 +114,7 @@ describe('AuthFlow.functional', () => {
       });
 
       // @ts-ignore
-      flow.run.onCall(0).returns({ then: fn => fn() });
+      flow.run.onCall(0).returns({ then: (fn) => fn() });
       // @ts-ignore
       flow.run.onCall(1).returns({
         then: (fn: Function) =>

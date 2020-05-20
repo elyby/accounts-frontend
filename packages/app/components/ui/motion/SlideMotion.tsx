@@ -67,7 +67,7 @@ class SlideMotion extends React.PureComponent<Props, State> {
 
     return (
       <Motion style={motionStyle}>
-        {interpolatingStyle => (
+        {(interpolatingStyle) => (
           <div
             style={{
               overflow: 'hidden',

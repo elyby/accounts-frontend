@@ -7,3 +7,5 @@ cache
 *.png
 *.gif
 *.svg
+*.hbs
+.gitlab-ci.yml

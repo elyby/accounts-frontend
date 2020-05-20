@@ -16,7 +16,7 @@ const webpackConfig = {
 
   entry: {
     vendor: vendor.filter(
-      item =>
+      (item) =>
         // if we include rhl in dll. It won't work for some reason
         !item.includes('react-hot-loader'),
     ),

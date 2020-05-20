@@ -84,7 +84,7 @@ class Finish extends React.Component<Props> {
     );
   }
 
-  onCopyClick: MouseEventHandler = event => {
+  onCopyClick: MouseEventHandler = (event) => {
     event.preventDefault();
 
     const { code } = this.props;

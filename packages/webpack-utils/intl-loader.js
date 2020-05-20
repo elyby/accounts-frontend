@@ -25,7 +25,7 @@ function transform(src, modulePath, rootContext) {
   );
 }
 
-module.exports = function(content) {
+module.exports = function (content) {
   this.cacheable && this.cacheable();
 
   content = transform(content, this.context, this.rootContext);

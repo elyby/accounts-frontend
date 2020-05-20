@@ -26,7 +26,7 @@ interface MessageDescriptor {
 let idToFileMap: Record<string, Array<string>> = {};
 let duplicateIds: Array<string | number> = [];
 const collectedMessages = globSync(MESSAGES_PATTERN)
-  .map<[string, Array<MessageDescriptor>]>(filename => [
+  .map<[string, Array<MessageDescriptor>]>((filename) => [
     filename,
     JSON.parse(fs.readFileSync(filename, 'utf8')),
   ])
@@ -45,7 +45,7 @@ const collectedMessages = globSync(MESSAGES_PATTERN)
 
 if (duplicateIds.length) {
   console.log('\nFound duplicated ids:');
-  duplicateIds.forEach(id =>
+  duplicateIds.forEach((id) =>
     console.log(`${chalk.yellow(id)}:\n - ${idToFileMap[id].join('\n - ')}\n`),
   );
   console.log(chalk.red('Please correct the errors above to proceed further!'));
@@ -77,10 +77,10 @@ const prevMessagesMap = Object.entries(prevMessages).reduce(
 );
 
 const keysToAdd = Object.keys(collectedMessages).filter(
-  key => !prevMessages[key],
+  (key) => !prevMessages[key],
 );
 const keysToRemove: Array<string> = Object.keys(prevMessages)
-  .filter(key => !collectedMessages[key])
+  .filter((key) => !collectedMessages[key])
   .filter(isNotMarked);
 const keysToUpdate: Array<string> = Object.entries(prevMessages).reduce(
   (acc, [key, message]) =>
@@ -92,9 +92,9 @@ const keysToUpdate: Array<string> = Object.entries(prevMessages).reduce(
 
 const keysToRename: Array<[string, string]> = [];
 // detect keys to rename, mutating keysToAdd and keysToRemove
-[...keysToAdd].forEach(toKey => {
+[...keysToAdd].forEach((toKey) => {
   const keys = prevMessagesMap[collectedMessages[toKey]] || [];
-  const fromKey = keys.find(key => keysToRemove.indexOf(key) > -1);
+  const fromKey = keys.find((key) => keysToRemove.indexOf(key) > -1);
 
   if (fromKey) {
     keysToRename.push([fromKey, toKey]);
@@ -162,7 +162,7 @@ prompt.get(
         pattern: /^y|n$/i,
         message: 'Please enter "y" or "n"',
         default: 'y',
-        before: value => value.toLowerCase() === 'y',
+        before: (value) => value.toLowerCase() === 'y',
       },
     },
   },
@@ -182,7 +182,7 @@ prompt.get(
 function buildLocales() {
   mkdirpSync(LANG_DIR);
 
-  SUPPORTED_LANGS.map(lang => {
+  SUPPORTED_LANGS.map((lang) => {
     const destPath = `${LANG_DIR}/${lang}.json`;
     const newMessages = readJSON<Record<string, string>>(destPath);
 
@@ -190,14 +190,14 @@ function buildLocales() {
       newMessages[toKey] = newMessages[fromKey];
       delete newMessages[fromKey];
     });
-    keysToRemove.forEach(key => {
+    keysToRemove.forEach((key) => {
       delete newMessages[key];
     });
-    keysToUpdate.forEach(key => {
+    keysToUpdate.forEach((key) => {
       newMessages[`--${key}`] = newMessages[key];
       newMessages[key] = collectedMessages[key];
     });
-    keysToAdd.forEach(key => {
+    keysToAdd.forEach((key) => {
       newMessages[key] = collectedMessages[key];
     });
 

@@ -56,10 +56,7 @@ describe('ForgotPasswordState', () => {
       const promise = Promise.resolve();
       const expectedLogin = 'foo@bar.com';
 
-      mock
-        .expects('run')
-        .twice()
-        .returns(promise);
+      mock.expects('run').twice().returns(promise);
       expectState(mock, RecoverPasswordState);
 
       state.resolve(context, { login: expectedLogin });
@@ -71,10 +68,7 @@ describe('ForgotPasswordState', () => {
       const promise = Promise.resolve();
       const expectedLogin = 'foo@bar.com';
 
-      mock
-        .expects('run')
-        .withArgs('forgotPassword')
-        .returns(promise);
+      mock.expects('run').withArgs('forgotPassword').returns(promise);
       expectState(mock, RecoverPasswordState);
       mock.expects('run').withArgs('setLogin', expectedLogin);
 

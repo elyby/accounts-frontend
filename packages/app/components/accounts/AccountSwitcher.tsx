@@ -57,7 +57,9 @@ export class AccountSwitcher extends React.Component<Props> {
     let { available } = accounts;
 
     if (highlightActiveAccount) {
-      available = available.filter(account => account.id !== activeAccount.id);
+      available = available.filter(
+        (account) => account.id !== activeAccount.id,
+      );
     }
 
     return (
@@ -152,7 +154,7 @@ export class AccountSwitcher extends React.Component<Props> {
               className={styles.addAccount}
               label={
                 <Message {...messages.addAccount}>
-                  {message => (
+                  {(message) => (
                     <span>
                       <div className={styles.addIcon} />
                       {message}
@@ -178,7 +180,7 @@ export class AccountSwitcher extends React.Component<Props> {
       .then(() => this.props.onSwitch(account))
       // we won't sent any logs to sentry, because an error should be already
       // handled by external logic
-      .catch(error => console.warn('Error switching account', { error }))
+      .catch((error) => console.warn('Error switching account', { error }))
       .finally(() => loader.hide());
   };
 

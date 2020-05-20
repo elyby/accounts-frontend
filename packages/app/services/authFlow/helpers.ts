@@ -53,10 +53,7 @@ export function expectNavigate(
       .withExactArgs(route, sinon.match(options));
   }
 
-  return mock
-    .expects('navigate')
-    .once()
-    .withExactArgs(route);
+  return mock.expects('navigate').once().withExactArgs(route);
 }
 
 export function expectRun(

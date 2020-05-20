@@ -67,9 +67,7 @@ describe('Profile — Change Username', () => {
 
       cy.location('pathname').should('eq', '/');
       cy.getByTestId('profile-item').should('contain', account.username);
-      cy.getByTestId('toolbar')
-        .contains(account.username)
-        .click();
+      cy.getByTestId('toolbar').contains(account.username).click();
       cy.getByTestId('active-account').should('contain', account.username);
     });
   });

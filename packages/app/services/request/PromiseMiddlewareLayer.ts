@@ -41,7 +41,7 @@ class PromiseMiddlewareLayer {
       throw new Error('A middleware must be an object');
     }
 
-    if (!this.middlewares.some(mdware => mdware === middleware)) {
+    if (!this.middlewares.some((mdware) => mdware === middleware)) {
       this.middlewares.push(middleware);
     }
   }
@@ -75,7 +75,7 @@ class PromiseMiddlewareLayer {
     const promiseMethod = action === 'catch' ? 'catch' : 'then';
 
     return this.middlewares
-      .filter(middleware => middleware[action])
+      .filter((middleware) => middleware[action])
       .reduce(
         (promise: Promise<any>, middleware) =>
           invoke(

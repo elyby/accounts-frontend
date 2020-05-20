@@ -25,7 +25,7 @@ interface FactoryParams {
   links?: RejectionLinkProps | Array<RejectionLinkProps>;
 }
 
-export default function({
+export default function ({
   title,
   body,
   footer,

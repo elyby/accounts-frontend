@@ -203,7 +203,7 @@ function browserFilter(key: any, val: any): any {
 
 export { abbreviate, nodeFilter, browserFilter };
 
-export default function(obj: any): string {
+export default function (obj: any): string {
   return abbreviate(obj, {
     filter: browserFilter,
   });

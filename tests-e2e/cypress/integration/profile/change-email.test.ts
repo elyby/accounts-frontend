@@ -59,9 +59,7 @@ describe('Profile — Change Email', () => {
       cy.location('pathname').should('eq', '/profile/change-email/step2');
 
       cy.getByTestId('step2').should('be.visible');
-      cy.getByTestId('step2')
-        .find('[name=key]')
-        .type(key);
+      cy.getByTestId('step2').find('[name=key]').type(key);
       cy.getByTestId('step2')
         .find('[name=email]')
         .type(`${account.email}{enter}`);
@@ -77,15 +75,9 @@ describe('Profile — Change Email', () => {
         );
       cy.location('pathname').should('eq', '/profile/change-email/step3');
 
-      cy.getByTestId('step3')
-        .find('[name=key]')
-        .should('be.visible');
-      cy.getByTestId('step3')
-        .find('[name=key]')
-        .should('have.value', '');
-      cy.getByTestId('step3')
-        .find('[name=key]')
-        .type(`${key2}{enter}`);
+      cy.getByTestId('step3').find('[name=key]').should('be.visible');
+      cy.getByTestId('step3').find('[name=key]').should('have.value', '');
+      cy.getByTestId('step3').find('[name=key]').type(`${key2}{enter}`);
 
       cy.wait('@saveEmail')
         .its('requestBody')
@@ -126,12 +118,8 @@ describe('Profile — Change Email', () => {
 
       cy.visit(`/profile/change-email/step2/${key}`);
 
-      cy.getByTestId('step2')
-        .find('[name=key]')
-        .should('have.value', key);
-      cy.getByTestId('step2')
-        .find('[name=key]')
-        .should('be.disabled');
+      cy.getByTestId('step2').find('[name=key]').should('have.value', key);
+      cy.getByTestId('step2').find('[name=key]').should('be.disabled');
       cy.getByTestId('step2')
         .find('[name=email]')
         .type(`${account.email}{enter}`);
@@ -146,9 +134,7 @@ describe('Profile — Change Email', () => {
           }).toString(),
         );
       cy.location('pathname').should('eq', '/profile/change-email/step3');
-      cy.getByTestId('step3')
-        .find('[name=key]')
-        .should('have.value', '');
+      cy.getByTestId('step3').find('[name=key]').should('have.value', '');
     });
   });
 
@@ -165,25 +151,17 @@ describe('Profile — Change Email', () => {
 
       cy.visit(`/profile/change-email/step3/${key}`);
 
-      cy.getByTestId('step3')
-        .find('[name=key]')
-        .should('have.value', key);
-      cy.getByTestId('step3')
-        .find('[name=key]')
-        .should('be.disabled');
+      cy.getByTestId('step3').find('[name=key]').should('have.value', key);
+      cy.getByTestId('step3').find('[name=key]').should('be.disabled');
 
-      cy.getByTestId('change-email')
-        .find('[type=submit]')
-        .click();
+      cy.getByTestId('change-email').find('[type=submit]').click();
 
-      cy.wait('@saveEmail')
-        .its('requestBody')
-        .should(
-          'eq',
-          new URLSearchParams({
-            key,
-          }).toString(),
-        );
+      cy.wait('@saveEmail').its('requestBody').should(
+        'eq',
+        new URLSearchParams({
+          key,
+        }).toString(),
+      );
       cy.location('pathname').should('eq', '/');
     });
   });

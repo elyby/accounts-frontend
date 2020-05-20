@@ -6,7 +6,7 @@ const multiAccount = createState();
 const multiAccountWithBadTokens = createState();
 const singleAccount = createState();
 singleAccount.accounts.available = singleAccount.accounts.available.filter(
-  account => account.id === singleAccount.accounts.active,
+  (account) => account.id === singleAccount.accounts.active,
 );
 
 describe('User with invalid token and refreshToken', () => {
@@ -18,7 +18,7 @@ describe('User with invalid token and refreshToken', () => {
       rawApiResp: true,
     }).then(({ accounts: [resp] }) => {
       const account = multiAccount.accounts.available.find(
-        item => item.username === account1.username,
+        (item) => item.username === account1.username,
       );
 
       if (!account) {
@@ -49,10 +49,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.url().should('include', '/password');
 
-    cy.getByTestId('toolbar')
-      .get('a')
-      .contains('Ely.by')
-      .click();
+    cy.getByTestId('toolbar').get('a').contains('Ely.by').click();
 
     cy.url().should('include', '/password');
   });
@@ -64,13 +61,9 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.location('pathname').should('eq', '/choose-account');
 
-    cy.get('[data-e2e-content]')
-      .contains(account2.email)
-      .should('not.exist');
+    cy.get('[data-e2e-content]').contains(account2.email).should('not.exist');
 
-    cy.get('[data-e2e-content]')
-      .contains(account1.username)
-      .click();
+    cy.get('[data-e2e-content]').contains(account1.username).click();
     cy.get('[name="password"]').type(`${account2.password}{enter}`);
 
     cy.location('pathname').should('eq', '/');
@@ -104,24 +97,14 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.visit('/');
 
-    cy.wait('@account')
-      .its('status')
-      .should('eq', 401);
+    cy.wait('@account').its('status').should('eq', 401);
 
-    cy.getByTestId('toolbar')
-      .contains(account2.username)
-      .click();
-    cy.getByTestId('toolbar')
-      .contains('Log out')
-      .click();
+    cy.getByTestId('toolbar').contains(account2.username).click();
+    cy.getByTestId('toolbar').contains('Log out').click();
 
     cy.wait('@logout');
-    cy.getByTestId('toolbar')
-      .contains(account2.email)
-      .should('not.exist');
-    cy.getByTestId('toolbar')
-      .contains(account2.username)
-      .should('not.exist');
+    cy.getByTestId('toolbar').contains(account2.email).should('not.exist');
+    cy.getByTestId('toolbar').contains(account2.username).should('not.exist');
   });
 
   it('should allow enter new login from choose account', () => {
@@ -132,9 +115,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.visit('/');
 
-    cy.wait('@account')
-      .its('status')
-      .should('eq', 401);
+    cy.wait('@account').its('status').should('eq', 401);
 
     cy.url().should('include', '/password');
 
@@ -186,9 +167,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.url().should('include', '/choose-account');
 
-    cy.get('[data-e2e-content]')
-      .contains(account1.username)
-      .click();
+    cy.get('[data-e2e-content]').contains(account1.username).click();
 
     cy.url().should('include', '/password');
 
@@ -258,9 +237,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.url().should('contain', '/oauth/choose-account');
 
-    cy.get('[data-e2e-content]')
-      .contains(account2.username)
-      .click();
+    cy.get('[data-e2e-content]').contains(account2.username).click();
 
     cy.url().should('contain', '//dev.ely.by');
   });

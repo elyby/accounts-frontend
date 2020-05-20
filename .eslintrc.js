@@ -69,7 +69,6 @@ module.exports = {
       'error',
       { min: 2, exceptions: ['x', 'y', 'i', 'k', 'l', 'm', 'n', '$', '_'] },
     ],
-    'require-atomic-updates': 'warn',
     'guard-for-in': ['error'],
     'no-var': ['error'],
     'prefer-const': ['error'],

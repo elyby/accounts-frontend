@@ -32,7 +32,7 @@ describe('refreshTokenMiddleware', () => {
 
     getState = sinon.stub().named('store.getState');
     dispatch = sinon
-      .spy(arg => (typeof arg === 'function' ? arg(dispatch, getState) : arg))
+      .spy((arg) => (typeof arg === 'function' ? arg(dispatch, getState) : arg))
       .named('store.dispatch');
 
     middleware = refreshTokenMiddleware({ getState, dispatch } as any);
@@ -94,7 +94,7 @@ describe('refreshTokenMiddleware', () => {
           Promise.resolve(validToken),
         );
 
-        return middleware.before!(data).then(resp => {
+        return middleware.before!(data).then((resp) => {
           expect(resp, 'to satisfy', data);
 
           expect(authentication.requestToken, 'to have a call satisfying', [

@@ -53,7 +53,7 @@ function initAnalytics() {
     const ga: {
       [key: string]: any;
       (...args: any[]): void;
-    } = function(...args) {
+    } = function (...args) {
       // eslint-disable-next-line id-length
       (ga.q = ga.q || []).push(args);
     };

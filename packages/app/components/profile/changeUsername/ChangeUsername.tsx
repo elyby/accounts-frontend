@@ -32,7 +32,7 @@ export default class ChangeUsername extends React.Component<Props> {
           <div className={styles.form}>
             <div className={styles.formBody}>
               <Message {...messages.changeUsernameTitle}>
-                {pageTitle => (
+                {(pageTitle) => (
                   <h3 className={styles.title}>
                     <Helmet title={pageTitle as string} />
                     {pageTitle}
@@ -82,7 +82,7 @@ export default class ChangeUsername extends React.Component<Props> {
   onFormSubmit = () => {
     const { form } = this.props;
 
-    this.props.onSubmit(form).catch(resp => {
+    this.props.onSubmit(form).catch((resp) => {
       if (resp.errors) {
         form.setErrors(resp.errors);
       } else {

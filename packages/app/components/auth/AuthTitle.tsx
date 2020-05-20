@@ -5,7 +5,7 @@ import { FormattedMessage as Message, MessageDescriptor } from 'react-intl';
 export default function AuthTitle({ title }: { title: MessageDescriptor }) {
   return (
     <Message {...title}>
-      {msg => (
+      {(msg) => (
         <span>
           {msg}
           <Helmet title={msg as string} />

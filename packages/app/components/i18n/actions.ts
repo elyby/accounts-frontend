@@ -3,7 +3,7 @@ import i18n from 'app/services/i18n';
 import { ThunkAction } from 'app/reducers';
 
 export function setLocale(desiredLocale: string): ThunkAction<Promise<string>> {
-  return async dispatch => {
+  return async (dispatch) => {
     const locale = i18n.detectLanguage(desiredLocale);
 
     dispatch(_setLocale(locale));

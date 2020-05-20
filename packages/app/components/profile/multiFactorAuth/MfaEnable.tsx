@@ -122,7 +122,7 @@ export default class MfaEnable extends React.PureComponent<Props, State> {
         <Confirmation
           key="step3"
           form={this.props.confirmationForm}
-          formRef={el => (this.confirmationFormEl = el)}
+          formRef={(el) => (this.confirmationFormEl = el)}
           onSubmit={this.onTotpSubmit}
           onInvalid={() => this.forceUpdate()}
         />
@@ -136,7 +136,7 @@ export default class MfaEnable extends React.PureComponent<Props, State> {
     if (props.step === 1 && !isLoading && !qrCodeSrc) {
       this.setState({ isLoading: true });
 
-      getSecret(this.context.userId).then(resp => {
+      getSecret(this.context.userId).then((resp) => {
         this.setState({
           isLoading: false,
           secret: resp.secret,
@@ -164,7 +164,7 @@ export default class MfaEnable extends React.PureComponent<Props, State> {
         return enableMFA(this.context.userId, data.totp, data.password);
       })
       .then(() => this.props.onComplete())
-      .catch(resp => {
+      .catch((resp) => {
         const { errors } = resp || {};
 
         if (errors) {

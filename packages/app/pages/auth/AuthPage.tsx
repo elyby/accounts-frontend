@@ -96,7 +96,7 @@ function renderPanelTransition(
 ): (props: RouteComponentProps<any>) => ReactNode {
   const { Title, Body, Footer, Links } = factory();
 
-  return props => (
+  return (props) => (
     <PanelTransition
       key="panel-transition"
       Title={<Title />}

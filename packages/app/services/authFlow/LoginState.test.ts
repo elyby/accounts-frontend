@@ -4,7 +4,13 @@ import LoginState from 'app/services/authFlow/LoginState';
 import PasswordState from 'app/services/authFlow/PasswordState';
 import RegisterState from 'app/services/authFlow/RegisterState';
 
-import { bootstrap, expectState, expectNavigate, expectRun, MockedAuthContext } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('LoginState', () => {
   let state: LoginState;

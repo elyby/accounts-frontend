@@ -27,7 +27,7 @@ Promise.all([
 
     logResult(chalk.green('Current dlls are up to date!'));
   })
-  .catch(err => {
+  .catch((err) => {
     if (err.code !== 'ENOENT' && err.code !== 'OUTDATED') {
       return Promise.reject(err);
     }
@@ -49,7 +49,7 @@ Promise.all([
       });
     });
   })
-  .catch(err => {
+  .catch((err) => {
     logResult(chalk.red('Unexpected error checking dll state'), err);
     process.exit(1);
   });

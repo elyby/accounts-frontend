@@ -25,7 +25,7 @@ const RejectionLink: ComponentType<Props> = ({
   return (
     <a
       href="#"
-      onClick={event => {
+      onClick={(event) => {
         event.preventDefault();
 
         context.reject(payload);

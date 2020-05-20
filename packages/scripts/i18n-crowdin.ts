@@ -3,7 +3,11 @@
 
 import fs from 'fs';
 import path from 'path';
-import CrowdinApi, { LanguageStatusNode, LanguageStatusResponse, ProjectInfoResponse } from 'crowdin-api';
+import CrowdinApi, {
+  LanguageStatusNode,
+  LanguageStatusResponse,
+  ProjectInfoResponse,
+} from 'crowdin-api';
 import MultiProgress from 'multi-progress';
 import ch from 'chalk';
 import iso639 from 'iso-639-1';
@@ -35,7 +39,16 @@ const progressBar = new MultiProgress();
 /**
  * Locales that has been verified by core team members
  */
-const RELEASED_LOCALES: Array<string> = ['be', 'fr', 'id', 'pt', 'ru', 'uk', 'vi', 'zh'];
+const RELEASED_LOCALES: Array<string> = [
+  'be',
+  'fr',
+  'id',
+  'pt',
+  'ru',
+  'uk',
+  'vi',
+  'zh',
+];
 
 /**
  * Array of Crowdin locales to our internal locales representation
@@ -158,55 +171,57 @@ async function pull() {
   let downloadingReady = 0;
 
   interface Result {
-    locale: ValuesType<typeof locales>,
-    progress: number,
-    translatesFilePath: string,
+    locale: ValuesType<typeof locales>;
+    progress: number;
+    translatesFilePath: string;
   }
 
   const results = await Promise.all(
     // TODO: there is should be some way to reimplement this
     //       with reduce to avoid null values
-    locales.map(async (locale): Promise<Result | null> => {
-      const { files } = await crowdin.languageStatus(locale.code);
-      checkingProgressBar.tick();
-      const fileInfo = findFile(files, CROWDIN_FILE_PATH);
+    locales.map(
+      async (locale): Promise<Result | null> => {
+        const { files } = await crowdin.languageStatus(locale.code);
+        checkingProgressBar.tick();
+        const fileInfo = findFile(files, CROWDIN_FILE_PATH);
 
-      if (fileInfo === null) {
-        throw new Error(
-          'Unable to find translation file. Please check the CROWDIN_FILE_PATH param.',
+        if (fileInfo === null) {
+          throw new Error(
+            'Unable to find translation file. Please check the CROWDIN_FILE_PATH param.',
+          );
+        }
+
+        const progress = (fileInfo.words_approved / fileInfo.words) * 100;
+
+        if (
+          !RELEASED_LOCALES.includes(toInternalLocale(locale.code)) &&
+          progress < MIN_RELEASE_PROGRESS
+        ) {
+          return null;
+        }
+
+        downloadingProgressBar.update(downloadingReady / ++downloadingTotal, {
+          cCurrent: downloadingReady,
+          cTotal: downloadingTotal,
+        });
+
+        const translatesFilePath = await crowdin.exportFile(
+          CROWDIN_FILE_PATH,
+          locale.code,
         );
-      }
 
-      const progress = (fileInfo.words_approved / fileInfo.words) * 100;
+        downloadingProgressBar.update(++downloadingReady / downloadingTotal, {
+          cCurrent: downloadingReady,
+          cTotal: downloadingTotal,
+        });
 
-      if (
-        !RELEASED_LOCALES.includes(toInternalLocale(locale.code)) &&
-        progress < MIN_RELEASE_PROGRESS
-      ) {
-        return null;
-      }
-
-      downloadingProgressBar.update(downloadingReady / ++downloadingTotal, {
-        cCurrent: downloadingReady,
-        cTotal: downloadingTotal,
-      });
-
-      const translatesFilePath = await crowdin.exportFile(
-        CROWDIN_FILE_PATH,
-        locale.code,
-      );
-
-      downloadingProgressBar.update(++downloadingReady / downloadingTotal, {
-        cCurrent: downloadingReady,
-        cTotal: downloadingTotal,
-      });
-
-      return {
-        locale,
-        progress,
-        translatesFilePath,
-      };
-    }),
+        return {
+          locale,
+          progress,
+          translatesFilePath,
+        };
+      },
+    ),
   );
 
   console.log('Locales are downloaded. Writing them to file system.');
@@ -223,31 +238,34 @@ async function pull() {
   await Promise.all(
     results
       .filter((result): result is Result => result !== null)
-      .map(result => new Promise((resolve, reject) => {
-        const {
-          locale: { code, name },
-          progress,
-          translatesFilePath,
-        } = result;
-        const ourCode = toInternalLocale(code);
+      .map(
+        (result) =>
+          new Promise((resolve, reject) => {
+            const {
+              locale: { code, name },
+              progress,
+              translatesFilePath,
+            } = result;
+            const ourCode = toInternalLocale(code);
 
-        indexFileEntries[ourCode] = {
-          code: ourCode,
-          name: NATIVE_NAMES_MAP[ourCode] || iso639.getNativeName(ourCode),
-          englishName: ENGLISH_NAMES_MAP[ourCode] || name,
-          progress: parseFloat(progress.toFixed(1)),
-          isReleased: RELEASED_LOCALES.includes(ourCode),
-        };
+            indexFileEntries[ourCode] = {
+              code: ourCode,
+              name: NATIVE_NAMES_MAP[ourCode] || iso639.getNativeName(ourCode),
+              englishName: ENGLISH_NAMES_MAP[ourCode] || name,
+              progress: parseFloat(progress.toFixed(1)),
+              isReleased: RELEASED_LOCALES.includes(ourCode),
+            };
 
-        fs.copyFile(
-          translatesFilePath,
-          path.join(LANG_DIR, `${ourCode}.json`),
-          0,
-          err => {
-            err ? reject(err) : resolve();
-          },
-        );
-      })),
+            fs.copyFile(
+              translatesFilePath,
+              path.join(LANG_DIR, `${ourCode}.json`),
+              0,
+              (err) => {
+                err ? reject(err) : resolve();
+              },
+            );
+          }),
+      ),
   );
 
   console.log('Writing an index file.');
@@ -271,7 +289,7 @@ function push() {
             pattern: /^y|n$/i,
             message: 'Please enter "y" or "n"',
             default: 'y',
-            before: value => value.toLowerCase() === 'y',
+            before: (value) => value.toLowerCase() === 'y',
           },
         },
       },

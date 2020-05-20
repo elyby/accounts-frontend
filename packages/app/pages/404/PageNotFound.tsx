@@ -11,7 +11,7 @@ import profileStyles from '../profile/profile.scss';
 const PageNotFound: ComponentType = () => (
   <div className={styles.page}>
     <Message {...messages.title}>
-      {pageTitle => <Helmet title={pageTitle as string} />}
+      {(pageTitle) => <Helmet title={pageTitle as string} />}
     </Message>
 
     <div className={styles.loading}>

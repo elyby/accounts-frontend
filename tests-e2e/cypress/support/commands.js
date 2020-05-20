@@ -35,7 +35,7 @@ Cypress.Commands.add(
   'login',
   async ({ accounts, updateState = true, rawApiResp = false }) => {
     const accountsData = await Promise.all(
-      accounts.map(async account => {
+      accounts.map(async (account) => {
         let credentials;
 
         if (account) {
@@ -56,7 +56,7 @@ Cypress.Commands.add(
             password: credentials.password,
             rememberMe: '1',
           })}`,
-        }).then(rawResp => rawResp.json());
+        }).then((rawResp) => rawResp.json());
 
         if (rawApiResp) {
           return resp;

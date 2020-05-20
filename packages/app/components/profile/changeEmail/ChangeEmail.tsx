@@ -88,7 +88,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
           <div className={styles.form}>
             <div className={styles.formBody}>
               <Message {...messages.changeEmailTitle}>
-                {pageTitle => (
+                {(pageTitle) => (
                   <h3 className={styles.violetTitle}>
                     <Helmet title={pageTitle as string} />
                     {pageTitle}
@@ -347,7 +347,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
           code: '',
         });
       },
-      resp => {
+      (resp) => {
         if (resp.errors) {
           form.setErrors(resp.errors);
           this.forceUpdate();

@@ -15,7 +15,7 @@ const SUPPORTED_LANGUAGES: string[] = Object.keys(supportedLocales);
 export default {
   getCountryList(): string[] {
     return SUPPORTED_LANGUAGES.map(
-      locale => localeToCountryCode[locale] || locale,
+      (locale) => localeToCountryCode[locale] || locale,
     );
   },
 
@@ -29,9 +29,9 @@ export default {
    */
   getIconUrl(locale: string): string {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require(`flag-icon-css/flags/4x3/${localeToCountryCode[
-      locale
-    ] || locale}.svg`);
+    const mod = require(`flag-icon-css/flags/4x3/${
+      localeToCountryCode[locale] || locale
+    }.svg`);
 
     return mod.default || mod;
   },

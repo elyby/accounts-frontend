@@ -22,11 +22,11 @@ export function getApp(
   state: { apps: Apps },
   clientId: string,
 ): OauthAppResponse | null {
-  return state.apps.available.find(app => app.clientId === clientId) || null;
+  return state.apps.available.find((app) => app.clientId === clientId) || null;
 }
 
 export function fetchApp(clientId: string): ThunkAction<Promise<void>> {
-  return async dispatch => {
+  return async (dispatch) => {
     const app = await oauth.getApp(clientId);
 
     dispatch(addApp(app));
@@ -88,7 +88,7 @@ export function resetApp(
   clientId: string,
   resetSecret: boolean,
 ): ThunkAction<Promise<void>> {
-  return async dispatch => {
+  return async (dispatch) => {
     const { data: app } = await oauth.reset(clientId, resetSecret);
 
     if (resetSecret) {

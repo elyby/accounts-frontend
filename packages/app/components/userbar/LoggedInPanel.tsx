@@ -42,7 +42,7 @@ export default class LoggedInPanel extends React.Component<
     const { isAccountSwitcherActive } = this.state;
 
     return (
-      <div ref={el => (this.el = el)} className={clsx(styles.loggedInPanel)}>
+      <div ref={(el) => (this.el = el)} className={clsx(styles.loggedInPanel)}>
         <div
           className={clsx(styles.activeAccount, {
             [styles.activeAccountExpanded]: isAccountSwitcherActive,
@@ -111,7 +111,7 @@ function createOnOutsideComponentClickHandler(
   // TODO: we have the same logic in LangMenu
   // Probably we should decouple this into some helper function
   // TODO: the name of function may be better...
-  return event => {
+  return (event) => {
     const el = getEl();
 
     if (isActive() && el) {

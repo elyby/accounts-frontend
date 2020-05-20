@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import BsodMiddleware from 'app/components/ui/bsod/BsodMiddleware';
 
 describe('BsodMiddleware', () => {
-  [500, 503, 555].forEach(code =>
+  [500, 503, 555].forEach((code) =>
     it(`should dispatch for ${code}`, () => {
       const resp = {
         originalResponse: { status: code },
@@ -27,7 +27,7 @@ describe('BsodMiddleware', () => {
     }),
   );
 
-  [200, 404].forEach(code =>
+  [200, 404].forEach((code) =>
     it(`should not dispatch for ${code}`, () => {
       const resp = {
         originalResponse: { status: code },

@@ -49,9 +49,7 @@ describe('OAuth', () => {
 
         cy.getByTestId('auth-header').should('contain', 'Choose an account');
 
-        cy.getByTestId('auth-body')
-          .contains(account.email)
-          .click();
+        cy.getByTestId('auth-body').contains(account.email).click();
 
         cy.url().should('equal', 'https://dev.ely.by/');
       },
@@ -91,9 +89,7 @@ describe('OAuth', () => {
 
     cy.server({ enable: false });
 
-    cy.getByTestId('auth-controls')
-      .contains('Approve')
-      .click();
+    cy.getByTestId('auth-controls').contains('Approve').click();
 
     cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
   });
@@ -145,9 +141,7 @@ describe('OAuth', () => {
 
     cy.server({ enable: false });
 
-    cy.getByTestId('auth-controls-secondary')
-      .contains('Decline')
-      .click();
+    cy.getByTestId('auth-controls-secondary').contains('Decline').click();
 
     cy.url().should('include', 'error=access_denied');
   });
@@ -222,9 +216,7 @@ describe('OAuth', () => {
 
         cy.getByTestId('auth-header').should('contain', 'Choose an account');
 
-        cy.getByTestId('auth-body')
-          .contains(account.email)
-          .click();
+        cy.getByTestId('auth-body').contains(account.email).click();
 
         cy.url().should('equal', 'https://dev.ely.by/');
       });
@@ -242,9 +234,7 @@ describe('OAuth', () => {
 
       cy.url().should('include', '/oauth/choose-account');
 
-      cy.getByTestId('auth-controls')
-        .contains('another account')
-        .click();
+      cy.getByTestId('auth-controls').contains('another account').click();
 
       cy.url().should('include', '/login');
 
@@ -271,9 +261,7 @@ describe('OAuth', () => {
 
       assertPermissions();
 
-      cy.getByTestId('auth-controls')
-        .contains('Approve')
-        .click();
+      cy.getByTestId('auth-controls').contains('Approve').click();
 
       cy.url().should(
         'match',
@@ -296,9 +284,7 @@ describe('OAuth', () => {
 
       cy.url().should('include', '/oauth/permissions');
 
-      cy.getByTestId('auth-controls-secondary')
-        .contains('Decline')
-        .click();
+      cy.getByTestId('auth-controls-secondary').contains('Decline').click();
 
       cy.url().should('include', 'error=access_denied');
     });
@@ -318,15 +304,11 @@ describe('OAuth', () => {
 
         cy.getByTestId('auth-header').should('contain', 'Choose an account');
 
-        cy.getByTestId('auth-body')
-          .contains(account.email)
-          .click();
+        cy.getByTestId('auth-body').contains(account.email).click();
 
         assertPermissions();
 
-        cy.getByTestId('auth-controls')
-          .contains('Approve')
-          .click();
+        cy.getByTestId('auth-controls').contains('Approve').click();
 
         cy.url().should(
           'match',
@@ -355,9 +337,7 @@ describe('OAuth', () => {
 
       assertPermissions();
 
-      cy.getByTestId('auth-controls')
-        .contains('Approve')
-        .click();
+      cy.getByTestId('auth-controls').contains('Approve').click();
 
       cy.url().should(
         'match',
@@ -418,9 +398,7 @@ describe('OAuth', () => {
       // just click on copy, but we won't assert if the string was copied
       // because it is a little bit complicated
       // https://github.com/cypress-io/cypress/issues/2752
-      cy.getByTestId('oauth-code-container')
-        .contains('Copy')
-        .click();
+      cy.getByTestId('oauth-code-container').contains('Copy').click();
     });
   });
 });

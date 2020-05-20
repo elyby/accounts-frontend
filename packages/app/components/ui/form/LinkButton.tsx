@@ -11,7 +11,7 @@ export default function LinkButton(
 
   return (
     <Button
-      component={linkProps => <Link {...linkProps} to={to} />}
+      component={(linkProps) => <Link {...linkProps} to={to} />}
       {...restProps}
     />
   );

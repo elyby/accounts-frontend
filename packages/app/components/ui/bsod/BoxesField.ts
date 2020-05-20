@@ -160,7 +160,7 @@ export default class BoxesField {
 
   bindWindowListeners() {
     window.addEventListener('resize', this.resize.bind(this));
-    window.addEventListener('mousemove', event => {
+    window.addEventListener('mousemove', (event) => {
       this.light.x = event.clientX;
       this.light.y = event.clientY;
     });
