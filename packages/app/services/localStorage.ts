@@ -18,15 +18,20 @@ export function hasStorage(): boolean {
 }
 
 class DummyStorage implements Storage {
-  [name: string]: any;
+  // FIXME: we can't use this declaration because it breaks react-hot-loader/babel
+  // [key: string]: any;
 
-  readonly length: number;
+  get length() {
+    return Object.keys(this).length;
+  }
 
   getItem(key: string): string | null {
+    // @ts-ignore
     return this[key] || null;
   }
 
   setItem(key: string, value: string): void {
+    // @ts-ignore
     this[key] = value;
   }
 
