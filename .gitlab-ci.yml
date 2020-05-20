@@ -65,7 +65,7 @@ Yarn:
   variables:
     CYPRESS_INSTALL_BINARY: 0 # Don't install binary to increase caching performance between jobs
   script:
-    - yarn install --frozen-lockfile
+    - yarn install --frozen-lockfile --ignore-engines
 
 Yarn E2E:
   stage: prepare
@@ -75,7 +75,7 @@ Yarn E2E:
   cache:
     policy: pull-push
   script:
-    - yarn install --frozen-lockfile
+    - yarn install --frozen-lockfile --ignore-engines
   only:
     refs:
       - master
