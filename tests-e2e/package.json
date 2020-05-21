@@ -15,6 +15,6 @@
     "@cypress/webpack-preprocessor": "^5.4.1",
     "@testing-library/cypress": "^6.0.0",
     "@types/testing-library__cypress": "^5.0.5",
-    "cypress": "^4.5.0"
+    "cypress": "^4.6.0"
   }
 }
