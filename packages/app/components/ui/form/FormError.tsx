@@ -30,7 +30,11 @@ const FormError: ComponentType<Props> = ({ error }) => {
     content = resolveError(error);
   }
 
-  return <div className={styles.fieldError}>{content}</div>;
+  return (
+    <div className={styles.fieldError} role="alert">
+      {content}
+    </div>
+  );
 };
 
 export default FormError;

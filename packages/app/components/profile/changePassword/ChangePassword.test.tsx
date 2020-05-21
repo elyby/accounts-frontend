@@ -1,25 +1,57 @@
 import React from 'react';
-import expect from 'app/test/unexpected';
+import uxpect from 'app/test/unexpected';
+import { render, fireEvent, screen } from '@testing-library/react';
 import sinon from 'sinon';
+import { TestContextProvider } from 'app/shell';
 
-import { shallow } from 'enzyme';
-
-import ChangePassword from 'app/components/profile/changePassword/ChangePassword';
+import ChangePassword from './ChangePassword';
 
 describe('<ChangePassword />', () => {
   it('renders two <Input /> components', () => {
-    const component = shallow(<ChangePassword onSubmit={async () => {}} />);
+    render(
+      <TestContextProvider>
+        <ChangePassword onSubmit={async () => {}} />
+      </TestContextProvider>,
+    );
 
-    expect(component.find('Input'), 'to satisfy', { length: 2 });
+    expect(
+      screen.getByLabelText('New password', { exact: false }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Repeat the password', { exact: false }),
+    ).toBeInTheDocument();
   });
 
-  it('should call onSubmit if passwords entered', () => {
-    const onSubmit = sinon.spy(() => ({ catch: () => {} })).named('onSubmit');
-    // @ts-ignore
-    const component = shallow(<ChangePassword onSubmit={onSubmit} />);
+  it('should call onSubmit if passwords entered', async () => {
+    const onSubmit = sinon.spy(() => Promise.resolve()).named('onSubmit');
 
-    component.find('Form').simulate('submit');
+    render(
+      <TestContextProvider>
+        <ChangePassword onSubmit={onSubmit} />
+      </TestContextProvider>,
+    );
 
-    expect(onSubmit, 'was called');
+    fireEvent.change(screen.getByLabelText('New password', { exact: false }), {
+      target: {
+        value: '123',
+      },
+    });
+
+    fireEvent.change(
+      screen.getByLabelText('Repeat the password', { exact: false }),
+      {
+        target: {
+          value: '123',
+        },
+      },
+    );
+
+    fireEvent.click(
+      screen
+        .getByRole('button', { name: 'Change password' })
+        .closest('button') as HTMLButtonElement,
+    );
+
+    uxpect(onSubmit, 'was called');
   });
 });

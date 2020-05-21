@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import expect from 'app/test/unexpected';
 import { IntlProvider } from 'react-intl';
 
@@ -7,9 +7,9 @@ import Input from './Input';
 
 describe('Input', () => {
   it('should return input value', () => {
-    let component: any;
+    let component: Input | null = null;
 
-    const wrapper = mount(
+    render(
       <IntlProvider locale="en" defaultLocale="en">
         <Input
           defaultValue="foo"
@@ -21,11 +21,7 @@ describe('Input', () => {
       </IntlProvider>,
     );
 
-    expect(
-      wrapper.find('input[name="test"]').getDOMNode<HTMLInputElement>().value,
-      'to equal',
-      'foo',
-    );
-    expect(component.getValue(), 'to equal', 'foo');
+    expect(screen.getByDisplayValue('foo'), 'to be a', HTMLElement);
+    expect(component && (component as Input).getValue(), 'to equal', 'foo');
   });
 });

@@ -30,15 +30,6 @@ describe('AuthFlow', () => {
     flow = new AuthFlow(actions);
   });
 
-  it('throws when no actions provided', () => {
-    expect(
-      // @ts-ignore
-      () => new AuthFlow(),
-      'to throw',
-      'AuthFlow requires an actions object',
-    );
-  });
-
   it('should not allow to mutate actions', () => {
     expect(
       // @ts-ignore

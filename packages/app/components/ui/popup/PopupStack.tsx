@@ -48,6 +48,7 @@ export class PopupStack extends React.Component<Props> {
             >
               <div
                 className={styles.overlay}
+                role="dialog"
                 onClick={this.onOverlayClick(popup)}
               >
                 <Popup onClose={this.onClose(popup)} />
@@ -60,7 +61,7 @@ export class PopupStack extends React.Component<Props> {
   }
 
   onClose(popup: PopupConfig) {
-    return this.props.destroy.bind(null, popup);
+    return () => this.props.destroy(popup);
   }
 
   onOverlayClick(popup: PopupConfig) {

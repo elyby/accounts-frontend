@@ -11,6 +11,11 @@ const IntlProvider: ComponentType = ({ children }) => {
   );
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'test') {
+      // disable async modules loading in tests
+      return;
+    }
+
     (async () => {
       setIntl(await i18n.changeLocale(locale));
     })();

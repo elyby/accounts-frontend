@@ -1,15 +1,18 @@
 import sinon from 'sinon';
-import expect from 'app/test/unexpected';
-
+import uxpect from 'app/test/unexpected';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import React from 'react';
 
-import { shallow, mount } from 'enzyme';
+import { PopupStack } from './PopupStack';
 
-import PopupStack from 'app/components/ui/popup/PopupStack';
-import styles from 'app/components/ui/popup/popup.scss';
-
-function DummyPopup(_props: Record<string, any>) {
-  return null;
+function DummyPopup({ onClose }: Record<string, any>) {
+  return (
+    <div>
+      <button type="button" onClick={onClose}>
+        close
+      </button>
+    </div>
+  );
 }
 
 describe('<PopupStack />', () => {
@@ -25,60 +28,42 @@ describe('<PopupStack />', () => {
         },
       ],
     };
-    const component = shallow(<PopupStack {...props} />);
 
-    expect(component.find(DummyPopup), 'to satisfy', { length: 2 });
+    render(<PopupStack {...props} />);
+
+    const popups = screen.getAllByRole('dialog');
+
+    uxpect(popups, 'to have length', 2);
   });
 
-  it('should pass onClose as props', () => {
-    const expectedProps = {
-      foo: 'bar',
-    };
-
-    const props: any = {
-      destroy: () => {},
-      popups: [
-        {
-          Popup: (popupProps = { onClose: Function }) => {
-            // eslint-disable-next-line
-            expect(popupProps.onClose, 'to be a', 'function');
-
-            return <DummyPopup {...expectedProps} />;
-          },
-        },
-      ],
-    };
-    const component = mount(<PopupStack {...props} />);
-
-    const popup = component.find(DummyPopup);
-    expect(popup, 'to satisfy', { length: 1 });
-    expect(popup.props(), 'to equal', expectedProps);
-  });
-
-  it('should hide popup, when onClose called', () => {
+  it('should hide popup, when onClose called', async () => {
+    const destroy = sinon.stub().named('props.destroy');
     const props: any = {
       popups: [
         {
           Popup: DummyPopup,
         },
-        {
-          Popup: DummyPopup,
-        },
       ],
-      destroy: sinon.stub().named('props.destroy'),
+      destroy,
     };
-    const component = shallow(<PopupStack {...props} />);
 
-    component.find(DummyPopup).last().prop('onClose')();
+    const { rerender } = render(<PopupStack {...props} />);
 
-    expect(props.destroy, 'was called once');
-    expect(props.destroy, 'to have a call satisfying', [
-      expect.it('to be', props.popups[1]),
+    fireEvent.click(screen.getByRole('button', { name: 'close' }));
+
+    uxpect(destroy, 'was called once');
+    uxpect(destroy, 'to have a call satisfying', [
+      uxpect.it('to be', props.popups[0]),
     ]);
+
+    rerender(<PopupStack popups={[]} destroy={destroy} />);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
   });
 
   it('should hide popup, when overlay clicked', () => {
-    const preventDefault = sinon.stub().named('event.preventDefault');
     const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
@@ -87,16 +72,15 @@ describe('<PopupStack />', () => {
         },
       ],
     };
-    const component = shallow(<PopupStack {...props} />);
 
-    const overlay = component.find(`.${styles.overlay}`);
-    overlay.simulate('click', { target: 1, currentTarget: 1, preventDefault });
+    render(<PopupStack {...props} />);
 
-    expect(props.destroy, 'was called once');
-    expect(preventDefault, 'was called once');
+    fireEvent.click(screen.getByRole('dialog'));
+
+    uxpect(props.destroy, 'was called once');
   });
 
-  it('should hide popup on overlay click if disableOverlayClose', () => {
+  it('should not hide popup on overlay click if disableOverlayClose', () => {
     const props: any = {
       destroy: sinon.stub().named('props.destroy'),
       popups: [
@@ -106,16 +90,12 @@ describe('<PopupStack />', () => {
         },
       ],
     };
-    const component = shallow(<PopupStack {...props} />);
 
-    const overlay = component.find(`.${styles.overlay}`);
-    overlay.simulate('click', {
-      target: 1,
-      currentTarget: 1,
-      preventDefault() {},
-    });
+    render(<PopupStack {...props} />);
 
-    expect(props.destroy, 'was not called');
+    fireEvent.click(screen.getByRole('dialog'));
+
+    uxpect(props.destroy, 'was not called');
   });
 
   it('should hide popup, when esc pressed', () => {
@@ -127,14 +107,15 @@ describe('<PopupStack />', () => {
         },
       ],
     };
-    mount(<PopupStack {...props} />);
+
+    render(<PopupStack {...props} />);
 
     const event = new Event('keyup');
     // @ts-ignore
     event.which = 27;
     document.dispatchEvent(event);
 
-    expect(props.destroy, 'was called once');
+    uxpect(props.destroy, 'was called once');
   });
 
   it('should hide first popup in stack if esc pressed', () => {
@@ -151,16 +132,17 @@ describe('<PopupStack />', () => {
         },
       ],
     };
-    mount(<PopupStack {...props} />);
+
+    render(<PopupStack {...props} />);
 
     const event = new Event('keyup');
     // @ts-ignore
     event.which = 27;
     document.dispatchEvent(event);
 
-    expect(props.destroy, 'was called once');
-    expect(props.destroy, 'to have a call satisfying', [
-      expect.it('to be', props.popups[1]),
+    uxpect(props.destroy, 'was called once');
+    uxpect(props.destroy, 'to have a call satisfying', [
+      uxpect.it('to be', props.popups[1]),
     ]);
   });
 
@@ -174,13 +156,14 @@ describe('<PopupStack />', () => {
         },
       ],
     };
-    mount(<PopupStack {...props} />);
+
+    render(<PopupStack {...props} />);
 
     const event = new Event('keyup');
     // @ts-ignore
     event.which = 27;
     document.dispatchEvent(event);
 
-    expect(props.destroy, 'was not called');
+    uxpect(props.destroy, 'was not called');
   });
 });

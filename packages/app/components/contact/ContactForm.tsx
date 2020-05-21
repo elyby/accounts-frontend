@@ -140,7 +140,12 @@ export class ContactForm extends React.Component<
         </div>
 
         <div className={styles.footer}>
-          <Button label={messages.send} block type="submit" />
+          <Button
+            label={messages.send}
+            block
+            type="submit"
+            disabled={isLoading}
+          />
         </div>
       </Form>
     );

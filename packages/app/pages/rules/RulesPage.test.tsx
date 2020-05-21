@@ -1,85 +1,63 @@
-import React, { ComponentProps } from 'react';
+import React from 'react';
 import sinon from 'sinon';
 import expect from 'app/test/unexpected';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render, fireEvent, createEvent, screen } from '@testing-library/react';
+import { TestContextProvider } from 'app/shell';
 
 import RulesPage from './RulesPage';
-
-type RulesPageShallowType = ShallowWrapper<
-  ComponentProps<typeof RulesPage>,
-  any,
-  RulesPage
->;
 
 describe('RulesPage', () => {
   describe('#onRuleClick()', () => {
     const id = 'rule-1-2';
     const pathname = '/foo';
     const search = '?bar';
-    let page: RulesPageShallowType;
+    let page: HTMLElement;
     let replace: Function;
 
     beforeEach(() => {
       replace = sinon.stub().named('history.replace');
 
-      page = shallow(
-        <RulesPage
-          location={{ pathname, search } as any}
-          history={{ replace }}
-        />,
-      );
+      ({ container: page } = render(
+        <TestContextProvider>
+          <RulesPage
+            location={{ pathname, search } as any}
+            history={{ replace }}
+          />
+        </TestContextProvider>,
+      ));
     });
 
     it('should update location on rule click', () => {
       const expectedUrl = `/foo?bar#${id}`;
 
-      page.find(`#${id}`).simulate('click', {
-        target: document.createElement('li'),
-
-        currentTarget: {
-          id,
-        },
-      });
+      fireEvent.click(page.querySelector(`#${id}`) as HTMLElement);
 
       expect(replace, 'to have a call satisfying', [expectedUrl]);
     });
 
     it('should not update location if link was clicked', () => {
-      page.find(`#${id}`).simulate('click', {
-        target: document.createElement('a'),
-
-        currentTarget: {
-          id,
-        },
-      });
+      fireEvent.click(screen.getByText('/register', { exact: false }));
 
       expect(replace, 'was not called');
     });
 
     it('should not update location if defaultPrevented', () => {
-      page.find(`#${id}`).simulate('click', {
-        defaultPrevented: true,
+      const el = page.querySelector(`#${id}`) as HTMLElement;
+      const event = createEvent.click(el);
 
-        target: {
-          tagName: 'li',
-        },
+      event.preventDefault();
 
-        currentTarget: {
-          id,
-        },
-      });
+      fireEvent(el, event);
 
       expect(replace, 'was not called');
     });
 
     it('should not update location if no id', () => {
-      page.find(`#${id}`).simulate('click', {
-        target: {
-          tagName: 'li',
-        },
+      const el = page.querySelector(`#${id}`) as HTMLElement;
 
-        currentTarget: {},
-      });
+      el.id = '';
+
+      fireEvent.click(el);
 
       expect(replace, 'was not called');
     });
