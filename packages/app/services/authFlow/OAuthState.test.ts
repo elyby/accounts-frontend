@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/camelcase: off */
 import sinon, { SinonMock } from 'sinon';
 
 import OAuthState from 'app/services/authFlow/OAuthState';

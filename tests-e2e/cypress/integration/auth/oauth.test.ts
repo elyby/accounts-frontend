@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { account1 } from '../../fixtures/accounts.json';
 
 const defaults = {

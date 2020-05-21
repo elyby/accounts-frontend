@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { ApplicationType } from 'app/components/dev/apps';
 import request from 'app/services/request';
 

@@ -21,7 +21,6 @@ class Finish extends React.Component<Props> {
   render() {
     const { appName, code, state, displayCode, success } = this.props;
     const authData = JSON.stringify({
-      // eslint-disable-next-line @typescript-eslint/camelcase
       auth_code: code,
       state,
     });

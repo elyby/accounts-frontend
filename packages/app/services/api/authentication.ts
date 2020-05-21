@@ -169,7 +169,6 @@ export async function requestToken(refreshToken: string): Promise<string> {
     const response: OAuthResponse = await request.post(
       '/api/authentication/refresh-token',
       {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         refresh_token: refreshToken,
       },
       {

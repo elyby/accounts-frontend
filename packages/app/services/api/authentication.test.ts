@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import expect from 'app/test/unexpected';
 import sinon, { SinonFakeServer } from 'sinon';
 
