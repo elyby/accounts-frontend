@@ -49,7 +49,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.url().should('include', '/password');
 
-    cy.getByTestId('toolbar').get('a').contains('Ely.by').click();
+    cy.findByTestId('toolbar').get('a').contains('Ely.by').click();
 
     cy.url().should('include', '/password');
   });
@@ -82,7 +82,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.url().should('include', '/login');
 
-    cy.getByTestId('toolbar').contains('Join');
+    cy.findByTestId('toolbar').contains('Join');
   });
 
   it('should allow logout', () => {
@@ -99,12 +99,12 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.wait('@account').its('status').should('eq', 401);
 
-    cy.getByTestId('toolbar').contains(account2.username).click();
-    cy.getByTestId('toolbar').contains('Log out').click();
+    cy.findByTestId('toolbar').contains(account2.username).click();
+    cy.findByTestId('toolbar').contains('Log out').click();
 
     cy.wait('@logout');
-    cy.getByTestId('toolbar').contains(account2.email).should('not.exist');
-    cy.getByTestId('toolbar').contains(account2.username).should('not.exist');
+    cy.findByTestId('toolbar').contains(account2.email).should('not.exist');
+    cy.findByTestId('toolbar').contains(account2.username).should('not.exist');
   });
 
   it('should allow enter new login from choose account', () => {
@@ -151,7 +151,7 @@ describe('User with invalid token and refreshToken', () => {
 
     cy.url().should('include', '/login');
 
-    cy.getByTestId('toolbar').contains('a', 'Join');
+    cy.findByTestId('toolbar').contains('a', 'Join');
   });
 
   it('should ask for password if selected account with bad token', () => {

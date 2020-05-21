@@ -16,7 +16,7 @@ describe('Sign in / Log out', () => {
 
     cy.location('pathname').should('eq', '/');
 
-    cy.getByTestId('toolbar')
+    cy.findByTestId('toolbar')
       .contains(account1.username)
       .should(() => {
         const state = JSON.parse(localStorage.getItem('redux-storage') || '');
@@ -43,7 +43,7 @@ describe('Sign in / Log out', () => {
 
     cy.location('pathname').should('eq', '/login');
 
-    cy.getByTestId('home-page').click();
+    cy.findByTestId('home-page').click();
 
     cy.location('pathname').should('eq', '/login');
   });
@@ -62,7 +62,7 @@ describe('Sign in / Log out', () => {
 
     cy.location('pathname').should('eq', '/');
 
-    cy.getByTestId('toolbar')
+    cy.findByTestId('toolbar')
       .contains(account1.username)
       .should(() => {
         const state = JSON.parse(localStorage.getItem('redux-storage') || '');
@@ -123,12 +123,12 @@ describe('Sign in / Log out', () => {
 
     cy.visit('/');
 
-    cy.getByTestId('toolbar').contains(account1.username).click();
+    cy.findByTestId('toolbar').contains(account1.username).click();
 
-    cy.getByTestId('active-account').getByTestId('logout-account').click();
+    cy.findByTestId('active-account').findByTestId('logout-account').click();
 
     cy.location('pathname').should('eq', '/login');
-    cy.getByTestId('toolbar').should('contain', 'Join');
+    cy.findByTestId('toolbar').should('contain', 'Join');
   });
 
   describe('multi account', () => {
@@ -137,12 +137,12 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar').contains(account2.username).click();
+      cy.findByTestId('toolbar').contains(account2.username).click();
 
-      cy.getByTestId('active-account').should('have.length', 1);
+      cy.findByTestId('active-account').should('have.length', 1);
       cy.get('[data-e2e-account-id]').should('have.length', 0);
 
-      cy.getByTestId('add-account').click();
+      cy.findByTestId('add-account').click();
 
       cy.location('pathname').should('eq', '/login');
 
@@ -156,12 +156,12 @@ describe('Sign in / Log out', () => {
 
       cy.location('pathname').should('eq', '/');
 
-      cy.getByTestId('toolbar').contains(account1.username).click();
+      cy.findByTestId('toolbar').contains(account1.username).click();
 
-      cy.getByTestId('active-account').should('have.length', 1);
+      cy.findByTestId('active-account').should('have.length', 1);
       cy.get('[data-e2e-account-id]').should('have.length', 1);
 
-      cy.get('[data-e2e-account-id]').getByTestId('logout-account').click();
+      cy.get('[data-e2e-account-id]').findByTestId('logout-account').click();
     });
 
     it('should go back to profile from login screen', () => {
@@ -169,9 +169,9 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar').contains(account1.username).click();
+      cy.findByTestId('toolbar').contains(account1.username).click();
 
-      cy.getByTestId('add-account').click();
+      cy.findByTestId('add-account').click();
 
       cy.location('pathname').should('eq', '/login');
 
@@ -185,14 +185,14 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar').contains(account1.username).click();
+      cy.findByTestId('toolbar').contains(account1.username).click();
 
-      cy.getByTestId('active-account').getByTestId('logout-account').click();
+      cy.findByTestId('active-account').findByTestId('logout-account').click();
 
-      cy.getByTestId('toolbar').contains(account2.username).click();
+      cy.findByTestId('toolbar').contains(account2.username).click();
       cy.get('[data-e2e-account-id]').should('have.length', 0);
-      cy.getByTestId('profile-index').should('not.contain', account1.username);
-      cy.getByTestId('profile-index').should('contain', account2.username);
+      cy.findByTestId('profile-index').should('not.contain', account1.username);
+      cy.findByTestId('profile-index').should('contain', account2.username);
     });
 
     it('should not allow log in the same account twice', () => {
@@ -200,12 +200,12 @@ describe('Sign in / Log out', () => {
 
       cy.visit('/');
 
-      cy.getByTestId('toolbar').contains(account1.username).click();
+      cy.findByTestId('toolbar').contains(account1.username).click();
 
-      cy.getByTestId('active-account').should('have.length', 1);
+      cy.findByTestId('active-account').should('have.length', 1);
       cy.get('[data-e2e-account-id]').should('have.length', 0);
 
-      cy.getByTestId('add-account').click();
+      cy.findByTestId('add-account').click();
 
       cy.location('pathname').should('eq', '/login');
 
@@ -219,7 +219,7 @@ describe('Sign in / Log out', () => {
 
       cy.location('pathname').should('eq', '/');
 
-      cy.getByTestId('toolbar').contains(account1.username).click();
+      cy.findByTestId('toolbar').contains(account1.username).click();
       cy.get('[data-e2e-account-id]').should('have.length', 0);
     });
   });

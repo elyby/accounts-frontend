@@ -23,13 +23,13 @@ describe('Forgot / reset password', () => {
 
     cy.location('pathname').should('eq', '/password');
 
-    cy.getByTestId('auth-controls-secondary')
+    cy.findByTestId('auth-controls-secondary')
       .contains('Forgot password')
       .click();
 
     cy.location('pathname').should('eq', '/forgot-password');
 
-    cy.getByTestId('forgot-password-login').should(
+    cy.findByTestId('forgot-password-login').should(
       'contain',
       account1.username,
     );
@@ -54,7 +54,7 @@ describe('Forgot / reset password', () => {
 
     cy.location('pathname').should('eq', '/recover-password');
 
-    cy.getByTestId('auth-body').should('contain', emailMask);
+    cy.findByTestId('auth-body').should('contain', emailMask);
   });
 
   it('should allow change login', () => {
@@ -80,13 +80,13 @@ describe('Forgot / reset password', () => {
 
     cy.location('pathname').should('eq', '/password');
 
-    cy.getByTestId('auth-controls-secondary')
+    cy.findByTestId('auth-controls-secondary')
       .contains('Forgot password')
       .click();
 
     cy.location('pathname').should('eq', '/forgot-password');
 
-    cy.getByTestId('edit-login').click();
+    cy.findByTestId('edit-login').click();
     cy.get('[name=login]').should('have.value', account1.username);
 
     cy.get('[name=login]').type(`{selectall}${login}`);
@@ -175,22 +175,22 @@ describe('Forgot / reset password', () => {
 
     cy.location('pathname').should('eq', '/password');
 
-    cy.getByTestId('auth-controls-secondary')
+    cy.findByTestId('auth-controls-secondary')
       .contains('Forgot password')
       .click();
 
     cy.location('pathname').should('eq', '/forgot-password');
 
-    cy.getByTestId('auth-controls-secondary').contains('Already have').click();
+    cy.findByTestId('auth-controls-secondary').contains('Already have').click();
 
     cy.location('pathname').should('eq', '/recover-password');
 
-    cy.getByTestId('auth-controls-secondary')
+    cy.findByTestId('auth-controls-secondary')
       .contains('Contact support')
       .click();
-    cy.getByTestId('feedbackPopup').should('be.visible');
-    cy.getByTestId('feedback-popup-close').click();
-    cy.getByTestId('feedbackPopup').should('not.be.visible');
+    cy.findByTestId('feedbackPopup').should('be.visible');
+    cy.findByTestId('feedback-popup-close').click();
+    cy.findByTestId('feedbackPopup').should('not.be.visible');
 
     cy.get('[name=key]').type(key);
     cy.get('[name=newPassword]').type(newPassword);

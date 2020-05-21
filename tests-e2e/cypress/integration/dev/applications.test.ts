@@ -65,20 +65,20 @@ describe('Applications', () => {
       cy.contains('Cancel').should('not.exist');
 
       // test reset client secret
-      cy.getByTestId('client-secret').then(([el]) => {
+      cy.findByTestId('client-secret').then(([el]) => {
         const prevSecret = el.value;
 
-        cy.getByTestId('client-secret').should('have.value', prevSecret);
+        cy.findByTestId('client-secret').should('have.value', prevSecret);
         cy.contains('Reset Client Secret').click();
         cy.contains('Continue').click();
         cy.wait('@revokeSecret');
         cy.contains('Cancel').should('not.exist');
-        cy.getByTestId('client-secret').should('not.have.value', prevSecret);
+        cy.findByTestId('client-secret').should('not.have.value', prevSecret);
       });
 
       // test delete
       cy.contains('Delete').click();
-      cy.getByTestId('delete-app').click();
+      cy.findByTestId('delete-app').click();
       cy.wait('@delete');
       cy.contains("You don't have any app registered yet.").should(
         'be.visible',
@@ -111,7 +111,7 @@ describe('Applications', () => {
       cy.visit('/dev/applications');
 
       cy.get('[data-e2e-content] [data-e2e-button="feedbackPopup"]').click();
-      cy.getByTestId('feedbackPopup').should('be.visible');
+      cy.findByTestId('feedbackPopup').should('be.visible');
     });
   });
 });

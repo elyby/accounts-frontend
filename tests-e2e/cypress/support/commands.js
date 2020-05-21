@@ -1,3 +1,5 @@
+import '@testing-library/cypress/add-commands';
+
 import { account1, account2 } from '../fixtures/accounts';
 
 // ***********************************************
@@ -80,20 +82,6 @@ Cypress.Commands.add(
     }
 
     return { accounts: accountsData };
-  },
-);
-
-Cypress.Commands.add(
-  'getByTestId',
-  { prevSubject: 'optional' },
-  (subject, id, options) => {
-    const selector = `[data-testid=${id}]`;
-
-    if (subject) {
-      return cy.wrap(subject.find(selector));
-    }
-
-    return cy.get(selector, options);
   },
 );
 

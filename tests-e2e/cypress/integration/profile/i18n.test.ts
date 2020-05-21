@@ -2,32 +2,32 @@ describe('Change locale', () => {
   it('should change locale from footer', () => {
     cy.visit('/');
 
-    cy.getByTestId('footer').contains('Site language').click();
+    cy.findByTestId('footer').contains('Site language').click();
 
-    cy.getByTestId('language-switcher').should('be.visible');
-    cy.getByTestId('language-switcher').should(
+    cy.findByTestId('language-switcher').should('be.visible');
+    cy.findByTestId('language-switcher').should(
       'have.attr',
       'data-e2e-active-locale',
       'en',
     );
 
-    cy.getByTestId('language-list').contains('Belarusian').click();
+    cy.findByTestId('language-list').contains('Belarusian').click();
 
-    cy.getByTestId('language-switcher').should('not.be.visible');
+    cy.findByTestId('language-switcher').should('not.be.visible');
 
-    cy.getByTestId('footer').contains('Мова сайта').click();
+    cy.findByTestId('footer').contains('Мова сайта').click();
 
-    cy.getByTestId('language-switcher').should('be.visible');
-    cy.getByTestId('language-switcher').should(
+    cy.findByTestId('language-switcher').should('be.visible');
+    cy.findByTestId('language-switcher').should(
       'have.attr',
       'data-e2e-active-locale',
       'be',
     );
 
-    cy.getByTestId('language-list').contains('English').click();
+    cy.findByTestId('language-list').contains('English').click();
 
-    cy.getByTestId('language-switcher').should('not.be.visible');
-    cy.getByTestId('footer').should('contain', 'Site language');
+    cy.findByTestId('language-switcher').should('not.be.visible');
+    cy.findByTestId('footer').should('contain', 'Site language');
   });
 
   it('should change locale from profile', () => {
@@ -42,20 +42,20 @@ describe('Change locale', () => {
 
     cy.visit('/');
 
-    cy.getByTestId('profile-index').contains('English').click();
+    cy.findByTestId('profile-index').contains('English').click();
 
-    cy.getByTestId('language-switcher').should('be.visible');
-    cy.getByTestId('language-switcher').should(
+    cy.findByTestId('language-switcher').should('be.visible');
+    cy.findByTestId('language-switcher').should(
       'have.attr',
       'data-e2e-active-locale',
       'en',
     );
 
-    cy.getByTestId('language-list').contains('Belarusian').click();
+    cy.findByTestId('language-list').contains('Belarusian').click();
 
     cy.wait('@language').its('requestBody').should('eq', 'lang=be');
 
-    cy.getByTestId('language-switcher').should('not.be.visible');
-    cy.getByTestId('profile-index').should('contain', 'Беларуская');
+    cy.findByTestId('language-switcher').should('not.be.visible');
+    cy.findByTestId('profile-index').should('contain', 'Беларуская');
   });
 });

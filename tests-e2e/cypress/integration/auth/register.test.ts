@@ -27,7 +27,7 @@ describe('Register', () => {
     });
     cy.visit('/');
 
-    cy.getByTestId('toolbar').contains('Join').click();
+    cy.findByTestId('toolbar').contains('Join').click();
 
     cy.location('pathname').should('eq', '/register');
 
@@ -89,7 +89,7 @@ describe('Register', () => {
     });
     cy.visit('/register');
 
-    cy.getByTestId('auth-controls-secondary').contains('Already have').click();
+    cy.findByTestId('auth-controls-secondary').contains('Already have').click();
 
     cy.location('pathname').should('eq', '/activation');
 
@@ -142,7 +142,7 @@ describe('Register', () => {
     }).as('resend');
     cy.visit('/register');
 
-    cy.getByTestId('auth-controls-secondary').contains('not received').click();
+    cy.findByTestId('auth-controls-secondary').contains('not received').click();
 
     cy.location('pathname').should('eq', '/resend-activation');
 
