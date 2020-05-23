@@ -47,12 +47,6 @@
         "sb": "APP_ENV=storybook start-storybook -p 9009 --ci",
         "sb:build": "APP_ENV=storybook build-storybook"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged",
-            "pre-push": "yarn ci:check"
-        }
-    },
     "lint-staged": {
         "*.{json,scss,css,md}": [
             "prettier --write"
@@ -139,7 +133,6 @@
         "file-loader": "^6.0.0",
         "html-loader": "^1.1.0",
         "html-webpack-plugin": "^4.3.0",
-        "husky": "^4.2.5",
         "identity-obj-proxy": "^3.0.0",
         "imports-loader": "^0.8.0",
         "jest": "^26.0.1",
