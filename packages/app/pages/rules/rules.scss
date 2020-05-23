@@ -2,97 +2,97 @@
 @import '~app/components/ui/fonts.scss';
 
 .rules {
-  max-width: 500px;
-  margin: 30px auto 0;
-  padding: 0 20px;
+    max-width: 500px;
+    margin: 30px auto 0;
+    padding: 0 20px;
 }
 
 .rulesSection {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 .rulesSectionTitle {
-  line-height: 50px;
+    line-height: 50px;
 
-  font-family: $font-family-title;
-  font-size: 20px;
-  color: #fff;
-  padding: 0;
-  margin: 0;
-  text-align: center;
+    font-family: $font-family-title;
+    font-size: 20px;
+    color: #fff;
+    padding: 0;
+    margin: 0;
+    text-align: center;
 
-  background: $blue;
+    background: $blue;
 }
 
 .rulesBody {
-  position: relative;
-  // z-index, чтобы положить :before ниже текста, но выше фона блока
-  z-index: 0;
+    position: relative;
+    // z-index, чтобы положить :before ниже текста, но выше фона блока
+    z-index: 0;
 
-  padding: 20px;
-  background: #fff;
-  font-size: 14px;
+    padding: 20px;
+    background: #fff;
+    font-size: 14px;
 }
 
 %rulesTextFormat {
-  line-height: 1.4;
-  margin-bottom: 10px;
+    line-height: 1.4;
+    margin-bottom: 10px;
 }
 
 .blockDescription {
-  @extend %rulesTextFormat;
-
-  p {
     @extend %rulesTextFormat;
-  }
+
+    p {
+        @extend %rulesTextFormat;
+    }
 }
 
 .rulesList {
-  padding: 0;
-  margin: 0;
-  padding-left: 20px;
+    padding: 0;
+    margin: 0;
+    padding-left: 20px;
 }
 
 .rulesItem {
-  @extend %rulesTextFormat;
+    @extend %rulesTextFormat;
 
-  list-style: decimal;
-  position: relative;
-  cursor: pointer;
+    list-style: decimal;
+    position: relative;
+    cursor: pointer;
 
-  &:last-of-type {
-    margin-bottom: 0;
-  }
-
-  &.target {
-    &:before {
-      cursor: default;
-      $border: 8px solid #ddd8ce;
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -40px;
-      width: calc(100% + 60px);
-      height: calc(100% + 20px);
-      background: $white;
-      border-left: $border;
-      border-right: $border;
-      box-sizing: border-box;
-      z-index: -1;
+    &:last-of-type {
+        margin-bottom: 0;
     }
-  }
 
-  a {
-    color: #444;
-    border-bottom-color: #aaa;
-
-    &:hover {
-      border-bottom-color: #444;
+    &.target {
+        &:before {
+            cursor: default;
+            $border: 8px solid #ddd8ce;
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -40px;
+            width: calc(100% + 60px);
+            height: calc(100% + 20px);
+            background: $white;
+            border-left: $border;
+            border-right: $border;
+            box-sizing: border-box;
+            z-index: -1;
+        }
     }
-  }
+
+    a {
+        color: #444;
+        border-bottom-color: #aaa;
+
+        &:hover {
+            border-bottom-color: #444;
+        }
+    }
 }
 
 .footer {
-  text-align: center;
-  margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 20px;
 }

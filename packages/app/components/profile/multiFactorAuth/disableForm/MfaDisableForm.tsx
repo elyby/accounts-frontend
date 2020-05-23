@@ -7,43 +7,43 @@ import messages from '../MultiFactorAuth.intl.json';
 import mfaStyles from '../mfa.scss';
 
 export default class MfaDisableForm extends React.Component<{
-  onSubmit: (form: FormModel) => Promise<void>;
+    onSubmit: (form: FormModel) => Promise<void>;
 }> {
-  form: FormModel = new FormModel();
+    form: FormModel = new FormModel();
 
-  render() {
-    const { form } = this;
-    const { onSubmit } = this.props;
+    render() {
+        const { form } = this;
+        const { onSubmit } = this.props;
 
-    return (
-      <Form form={form} onSubmit={onSubmit}>
-        <div className={styles.formBody}>
-          <div className={styles.formRow}>
-            <p className={`${styles.description} ${mfaStyles.mfaTitle}`}>
-              <Message {...messages.disableMfa} />
-            </p>
-          </div>
+        return (
+            <Form form={form} onSubmit={onSubmit}>
+                <div className={styles.formBody}>
+                    <div className={styles.formRow}>
+                        <p className={`${styles.description} ${mfaStyles.mfaTitle}`}>
+                            <Message {...messages.disableMfa} />
+                        </p>
+                    </div>
 
-          <div className={styles.formRow}>
-            <p className={styles.description}>
-              <Message {...messages.disableMfaInstruction} />
-            </p>
-          </div>
+                    <div className={styles.formRow}>
+                        <p className={styles.description}>
+                            <Message {...messages.disableMfaInstruction} />
+                        </p>
+                    </div>
 
-          <div className={styles.formRow}>
-            <Input
-              {...form.bindField('totp')}
-              required
-              autoFocus
-              autoComplete="off"
-              skin="light"
-              placeholder={messages.codePlaceholder}
-            />
-          </div>
-        </div>
+                    <div className={styles.formRow}>
+                        <Input
+                            {...form.bindField('totp')}
+                            required
+                            autoFocus
+                            autoComplete="off"
+                            skin="light"
+                            placeholder={messages.codePlaceholder}
+                        />
+                    </div>
+                </div>
 
-        <Button type="submit" color="green" block label={messages.disable} />
-      </Form>
-    );
-  }
+                <Button type="submit" color="green" block label={messages.disable} />
+            </Form>
+        );
+    }
 }

@@ -7,25 +7,22 @@ import ActivationState from './ActivationState';
 import ResendActivationState from './ResendActivationState';
 
 export default class RegisterState extends AbstractState {
-  enter(context: AuthContext): Promise<void> | void {
-    context.navigate('/register');
-  }
-
-  resolve(
-    context: AuthContext,
-    payload: Record<string, any>,
-  ): Promise<void> | void {
-    context
-      .run('register', payload)
-      .then(() => context.setState(new CompleteState()))
-      .catch((err = {}) => err.errors || logger.warn('Error registering', err));
-  }
-
-  reject(context: AuthContext, payload: Record<string, any>): void {
-    if (payload.requestEmail) {
-      context.setState(new ResendActivationState());
-    } else {
-      context.setState(new ActivationState());
+    enter(context: AuthContext): Promise<void> | void {
+        context.navigate('/register');
     }
-  }
+
+    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+        context
+            .run('register', payload)
+            .then(() => context.setState(new CompleteState()))
+            .catch((err = {}) => err.errors || logger.warn('Error registering', err));
+    }
+
+    reject(context: AuthContext, payload: Record<string, any>): void {
+        if (payload.requestEmail) {
+            context.setState(new ResendActivationState());
+        } else {
+            context.setState(new ActivationState());
+        }
+    }
 }

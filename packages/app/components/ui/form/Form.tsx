@@ -7,194 +7,189 @@ import FormModel from './FormModel';
 import styles from './form.scss';
 
 interface BaseProps {
-  id: string;
-  isLoading: boolean;
-  onInvalid: (errors: Record<string, string>) => void;
-  children: React.ReactNode;
+    id: string;
+    isLoading: boolean;
+    onInvalid: (errors: Record<string, string>) => void;
+    children: React.ReactNode;
 }
 
 interface PropsWithoutForm extends BaseProps {
-  onSubmit: (form: FormData) => Promise<void> | void;
+    onSubmit: (form: FormData) => Promise<void> | void;
 }
 
 interface PropsWithForm extends BaseProps {
-  form: FormModel;
-  onSubmit: (form: FormModel) => Promise<void> | void;
+    form: FormModel;
+    onSubmit: (form: FormModel) => Promise<void> | void;
 }
 
 type Props = PropsWithoutForm | PropsWithForm;
 
 function hasForm(props: Props): props is PropsWithForm {
-  return 'form' in props;
+    return 'form' in props;
 }
 
 interface State {
-  id: string; // just to track value for derived updates
-  isTouched: boolean;
-  isLoading: boolean;
+    id: string; // just to track value for derived updates
+    isTouched: boolean;
+    isLoading: boolean;
 }
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
 export default class Form extends React.Component<Props, State> {
-  static defaultProps = {
-    id: 'default',
-    isLoading: false,
-    onSubmit() {},
-    onInvalid() {},
-  };
+    static defaultProps = {
+        id: 'default',
+        isLoading: false,
+        onSubmit() {},
+        onInvalid() {},
+    };
 
-  state: State = {
-    id: this.props.id,
-    isTouched: false,
-    isLoading: this.props.isLoading || false,
-  };
+    state: State = {
+        id: this.props.id,
+        isTouched: false,
+        isLoading: this.props.isLoading || false,
+    };
 
-  formEl: HTMLFormElement | null;
+    formEl: HTMLFormElement | null;
 
-  mounted = false;
+    mounted = false;
 
-  componentDidMount() {
-    if (hasForm(this.props)) {
-      this.props.form.addLoadingListener(this.onLoading);
+    componentDidMount() {
+        if (hasForm(this.props)) {
+            this.props.form.addLoadingListener(this.onLoading);
+        }
+
+        this.mounted = true;
     }
 
-    this.mounted = true;
-  }
+    static getDerivedStateFromProps(props: Props, state: State) {
+        const patch: Partial<State> = {};
 
-  static getDerivedStateFromProps(props: Props, state: State) {
-    const patch: Partial<State> = {};
+        if (typeof props.isLoading !== 'undefined' && props.isLoading !== state.isLoading) {
+            patch.isLoading = props.isLoading;
+        }
 
-    if (
-      typeof props.isLoading !== 'undefined' &&
-      props.isLoading !== state.isLoading
-    ) {
-      patch.isLoading = props.isLoading;
+        if (props.id !== state.id) {
+            patch.id = props.id;
+            patch.isTouched = true;
+        }
+
+        return patch;
     }
 
-    if (props.id !== state.id) {
-      patch.id = props.id;
-      patch.isTouched = true;
+    componentDidUpdate(prevProps: Props) {
+        const nextForm = hasForm(this.props) ? this.props.form : undefined;
+        const prevForm = hasForm(prevProps) ? prevProps.form : undefined;
+
+        if (nextForm !== prevForm) {
+            if (prevForm) {
+                prevForm.removeLoadingListener(this.onLoading);
+            }
+
+            if (nextForm) {
+                nextForm.addLoadingListener(this.onLoading);
+            }
+        }
     }
 
-    return patch;
-  }
+    componentWillUnmount() {
+        if (hasForm(this.props)) {
+            this.props.form.removeLoadingListener(this.onLoading);
+        }
 
-  componentDidUpdate(prevProps: Props) {
-    const nextForm = hasForm(this.props) ? this.props.form : undefined;
-    const prevForm = hasForm(prevProps) ? prevProps.form : undefined;
-
-    if (nextForm !== prevForm) {
-      if (prevForm) {
-        prevForm.removeLoadingListener(this.onLoading);
-      }
-
-      if (nextForm) {
-        nextForm.addLoadingListener(this.onLoading);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    if (hasForm(this.props)) {
-      this.props.form.removeLoadingListener(this.onLoading);
+        this.mounted = false;
     }
 
-    this.mounted = false;
-  }
+    render() {
+        const { isLoading } = this.state;
 
-  render() {
-    const { isLoading } = this.state;
-
-    return (
-      <form
-        className={clsx(styles.form, {
-          [styles.isFormLoading]: isLoading,
-          [styles.formTouched]: this.state.isTouched,
-        })}
-        onSubmit={this.onFormSubmit}
-        ref={(el: HTMLFormElement | null) => (this.formEl = el)}
-        noValidate
-      >
-        {this.props.children}
-      </form>
-    );
-  }
-
-  submit() {
-    if (!this.state.isTouched) {
-      this.setState({
-        isTouched: true,
-      });
+        return (
+            <form
+                className={clsx(styles.form, {
+                    [styles.isFormLoading]: isLoading,
+                    [styles.formTouched]: this.state.isTouched,
+                })}
+                onSubmit={this.onFormSubmit}
+                ref={(el: HTMLFormElement | null) => (this.formEl = el)}
+                noValidate
+            >
+                {this.props.children}
+            </form>
+        );
     }
 
-    const form = this.formEl;
+    submit() {
+        if (!this.state.isTouched) {
+            this.setState({
+                isTouched: true,
+            });
+        }
 
-    if (!form) {
-      return;
-    }
+        const form = this.formEl;
 
-    if (form.checkValidity()) {
-      let result: Promise<void> | void;
+        if (!form) {
+            return;
+        }
 
-      if (hasForm(this.props)) {
-        result = this.props.onSubmit(this.props.form);
-      } else {
-        result = this.props.onSubmit(new FormData(form));
-      }
+        if (form.checkValidity()) {
+            let result: Promise<void> | void;
 
-      if (result && result.then) {
-        this.setState({ isLoading: true });
+            if (hasForm(this.props)) {
+                result = this.props.onSubmit(this.props.form);
+            } else {
+                result = this.props.onSubmit(new FormData(form));
+            }
 
-        result
-          .catch((errors: Record<string, string>) => {
+            if (result && result.then) {
+                this.setState({ isLoading: true });
+
+                result
+                    .catch((errors: Record<string, string>) => {
+                        this.setErrors(errors);
+                    })
+                    .finally(() => this.mounted && this.setState({ isLoading: false }));
+            }
+        } else {
+            const invalidEls: NodeListOf<InputElement> = form.querySelectorAll(':invalid');
+            const errors: Record<string, string> = {};
+            invalidEls[0].focus(); // focus on first error
+
+            Array.from(invalidEls).reduce((acc, el) => {
+                if (!el.name) {
+                    logger.warn('Found an element without name', { el });
+
+                    return acc;
+                }
+
+                let errorMessage = el.validationMessage;
+
+                if (el.validity.valueMissing) {
+                    errorMessage = `error.${el.name}_required`;
+                } else if (el.validity.typeMismatch) {
+                    errorMessage = `error.${el.name}_invalid`;
+                }
+
+                acc[el.name] = errorMessage;
+
+                return acc;
+            }, errors);
+
             this.setErrors(errors);
-          })
-          .finally(() => this.mounted && this.setState({ isLoading: false }));
-      }
-    } else {
-      const invalidEls: NodeListOf<InputElement> = form.querySelectorAll(
-        ':invalid',
-      );
-      const errors: Record<string, string> = {};
-      invalidEls[0].focus(); // focus on first error
-
-      Array.from(invalidEls).reduce((acc, el) => {
-        if (!el.name) {
-          logger.warn('Found an element without name', { el });
-
-          return acc;
         }
-
-        let errorMessage = el.validationMessage;
-
-        if (el.validity.valueMissing) {
-          errorMessage = `error.${el.name}_required`;
-        } else if (el.validity.typeMismatch) {
-          errorMessage = `error.${el.name}_invalid`;
-        }
-
-        acc[el.name] = errorMessage;
-
-        return acc;
-      }, errors);
-
-      this.setErrors(errors);
-    }
-  }
-
-  setErrors(errors: { [key: string]: string }) {
-    if (hasForm(this.props)) {
-      this.props.form.setErrors(errors);
     }
 
-    this.props.onInvalid(errors);
-  }
+    setErrors(errors: { [key: string]: string }) {
+        if (hasForm(this.props)) {
+            this.props.form.setErrors(errors);
+        }
 
-  onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+        this.props.onInvalid(errors);
+    }
 
-    this.submit();
-  };
+    onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-  onLoading = (isLoading: boolean) => this.setState({ isLoading });
+        this.submit();
+    };
+
+    onLoading = (isLoading: boolean) => this.setState({ isLoading });
 }

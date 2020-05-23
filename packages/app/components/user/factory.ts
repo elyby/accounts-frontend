@@ -17,34 +17,34 @@ let promise: Promise<void>;
  * @returns {Promise<User>} - a promise, that resolves in User state
  */
 export function factory(store: Store): Promise<void> {
-  if (promise) {
+    if (promise) {
+        return promise;
+    }
+
+    request.addMiddleware(refreshTokenMiddleware(store));
+    request.addMiddleware(bearerHeaderMiddleware(store));
+
+    promise = Promise.resolve()
+        .then(() => store.dispatch(logoutStrangers()))
+        .then(async () => {
+            const activeAccount = getActiveAccount(store.getState());
+
+            if (activeAccount) {
+                // authorizing user if it is possible
+                await store.dispatch(authenticate(activeAccount));
+
+                return;
+            }
+
+            throw new Error('No active account found');
+        })
+        .catch(async () => {
+            // the user is guest or user authentication failed
+            const { user } = store.getState();
+
+            // auto-detect guest language
+            await store.dispatch(changeLang(user.lang));
+        });
+
     return promise;
-  }
-
-  request.addMiddleware(refreshTokenMiddleware(store));
-  request.addMiddleware(bearerHeaderMiddleware(store));
-
-  promise = Promise.resolve()
-    .then(() => store.dispatch(logoutStrangers()))
-    .then(async () => {
-      const activeAccount = getActiveAccount(store.getState());
-
-      if (activeAccount) {
-        // authorizing user if it is possible
-        await store.dispatch(authenticate(activeAccount));
-
-        return;
-      }
-
-      throw new Error('No active account found');
-    })
-    .catch(async () => {
-      // the user is guest or user authentication failed
-      const { user } = store.getState();
-
-      // auto-detect guest language
-      await store.dispatch(changeLang(user.lang));
-    });
-
-  return promise;
 }

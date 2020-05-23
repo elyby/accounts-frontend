@@ -8,7 +8,7 @@ $bodyLeftRightPadding: 20px;
 $lightBorderColor: #eee;
 
 .accountSwitcher {
-  text-align: left;
+    text-align: left;
 }
 
 .accountInfo {
@@ -16,210 +16,210 @@ $lightBorderColor: #eee;
 
 .accountUsername,
 .accountEmail {
-  overflow: hidden;
-  text-overflow: ellipsis;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .lightAccountSwitcher {
-  background: #fff;
-  color: #444;
-  min-width: 205px;
+    background: #fff;
+    color: #444;
+    min-width: 205px;
 
-  $border: 1px solid $lightBorderColor;
-  border-left: $border;
-  border-right: $border;
-  border-bottom: 7px solid darker($green);
+    $border: 1px solid $lightBorderColor;
+    border-left: $border;
+    border-right: $border;
+    border-bottom: 7px solid darker($green);
 
-  .item {
-    padding: 15px;
-    border-bottom: 1px solid $lightBorderColor;
-  }
-
-  .accountSwitchItem {
-    cursor: pointer;
-    transition: 0.25s;
-
-    &:hover {
-      background-color: $whiteButtonLight;
+    .item {
+        padding: 15px;
+        border-bottom: 1px solid $lightBorderColor;
     }
 
-    &:active {
-      background-color: $whiteButtonDark;
+    .accountSwitchItem {
+        cursor: pointer;
+        transition: 0.25s;
+
+        &:hover {
+            background-color: $whiteButtonLight;
+        }
+
+        &:active {
+            background-color: $whiteButtonDark;
+        }
     }
-  }
 
-  .accountIcon {
-    font-size: 27px;
-    width: 20px;
-    text-align: center;
-  }
-
-  .activeAccountIcon {
-    font-size: 40px;
-  }
-
-  .activeAccountInfo {
-    margin-left: 29px;
-  }
-
-  .activeAccountUsername {
-    font-family: $font-family-title;
-    font-size: 20px;
-    color: $green;
-  }
-
-  .activeAccountEmail {
-  }
-
-  .links {
-    margin-top: 6px;
-  }
-
-  .link {
-    font-size: 12px;
-    margin-bottom: 3px;
-    white-space: nowrap;
-
-    &:last-of-type {
-      margin-bottom: 0;
+    .accountIcon {
+        font-size: 27px;
+        width: 20px;
+        text-align: center;
     }
-  }
 
-  .accountInfo {
-    margin-left: 29px;
-    margin-right: 25px;
-  }
+    .activeAccountIcon {
+        font-size: 40px;
+    }
 
-  .accountUsername {
-    font-family: $font-family-title;
-    font-size: 14px;
-    color: #666;
-  }
+    .activeAccountInfo {
+        margin-left: 29px;
+    }
 
-  .accountEmail {
-    font-size: 10px;
-    color: #999;
-  }
+    .activeAccountUsername {
+        font-family: $font-family-title;
+        font-size: 20px;
+        color: $green;
+    }
 
-  .addAccount {
-  }
+    .activeAccountEmail {
+    }
+
+    .links {
+        margin-top: 6px;
+    }
+
+    .link {
+        font-size: 12px;
+        margin-bottom: 3px;
+        white-space: nowrap;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+    }
+
+    .accountInfo {
+        margin-left: 29px;
+        margin-right: 25px;
+    }
+
+    .accountUsername {
+        font-family: $font-family-title;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .accountEmail {
+        font-size: 10px;
+        color: #999;
+    }
+
+    .addAccount {
+    }
 }
 
 .darkAccountSwitcher {
-  background: $black;
+    background: $black;
 
-  $border: 1px solid lighter($black);
+    $border: 1px solid lighter($black);
 
-  .item {
-    padding: 15px 20px;
-    border-top: 1px solid lighter($black);
-    transition: 0.25s;
-    cursor: pointer;
+    .item {
+        padding: 15px 20px;
+        border-top: 1px solid lighter($black);
+        transition: 0.25s;
+        cursor: pointer;
 
-    &:hover {
-      background-color: lighter($black);
+        &:hover {
+            background-color: lighter($black);
+        }
+
+        &:active {
+            background-color: darker($black);
+        }
+
+        &:last-of-type {
+            border-bottom: $border;
+        }
     }
 
-    &:active {
-      background-color: darker($black);
+    .accountIcon {
+        font-size: 35px;
     }
 
-    &:last-of-type {
-      border-bottom: $border;
+    .accountInfo {
+        margin-left: 30px;
+        margin-right: 26px;
     }
-  }
 
-  .accountIcon {
-    font-size: 35px;
-  }
+    .accountUsername {
+        font-family: $font-family-title;
+        color: #fff;
+    }
 
-  .accountInfo {
-    margin-left: 30px;
-    margin-right: 26px;
-  }
-
-  .accountUsername {
-    font-family: $font-family-title;
-    color: #fff;
-  }
-
-  .accountEmail {
-    color: #666;
-    font-size: 12px;
-  }
+    .accountEmail {
+        color: #666;
+        font-size: 12px;
+    }
 }
 
 .accountIcon {
-  composes: minecraft-character from '~app/components/ui/icons.scss';
+    composes: minecraft-character from '~app/components/ui/icons.scss';
 
-  float: left;
+    float: left;
 
-  &1 {
-    color: $green;
-  }
+    &1 {
+        color: $green;
+    }
 
-  &2 {
-    color: $blue;
-  }
+    &2 {
+        color: $blue;
+    }
 
-  &3 {
-    color: $violet;
-  }
+    &3 {
+        color: $violet;
+    }
 
-  &4 {
-    color: $orange;
-  }
+    &4 {
+        color: $orange;
+    }
 
-  &5 {
-    color: $dark_blue;
-  }
+    &5 {
+        color: $dark_blue;
+    }
 
-  &6 {
-    color: $light_violet;
-  }
+    &6 {
+        color: $light_violet;
+    }
 
-  &7 {
-    color: $red;
-  }
+    &7 {
+        color: $red;
+    }
 }
 
 .addIcon {
-  composes: plus from '~app/components/ui/icons.scss';
+    composes: plus from '~app/components/ui/icons.scss';
 
-  color: $green;
-  position: relative;
-  bottom: 1px;
-  margin-right: 3px;
+    color: $green;
+    position: relative;
+    bottom: 1px;
+    margin-right: 3px;
 }
 
 .nextIcon {
-  composes: arrowRight from '~app/components/ui/icons.scss';
+    composes: arrowRight from '~app/components/ui/icons.scss';
 
-  position: relative;
-  float: right;
+    position: relative;
+    float: right;
 
-  font-size: 24px;
-  color: #4e4e4e;
-  line-height: 35px;
-  left: 0;
+    font-size: 24px;
+    color: #4e4e4e;
+    line-height: 35px;
+    left: 0;
 
-  transition: color 0.25s, left 0.5s;
+    transition: color 0.25s, left 0.5s;
 
-  .item:hover & {
-    color: #aaa;
-    left: 5px;
-  }
+    .item:hover & {
+        color: #aaa;
+        left: 5px;
+    }
 }
 
 .logoutIcon {
-  composes: exit from '~app/components/ui/icons.scss';
+    composes: exit from '~app/components/ui/icons.scss';
 
-  color: #cdcdcd;
-  float: right;
-  line-height: 27px;
-  transition: 0.25s;
+    color: #cdcdcd;
+    float: right;
+    line-height: 27px;
+    transition: 0.25s;
 
-  &:hover {
-    color: #777;
-  }
+    &:hover {
+        color: #777;
+    }
 }

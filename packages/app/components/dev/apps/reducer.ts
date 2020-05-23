@@ -3,48 +3,44 @@ import { OauthAppResponse } from 'app/services/api/oauth';
 import { Action } from './actions';
 
 export interface Apps {
-  available: Array<OauthAppResponse>;
+    available: Array<OauthAppResponse>;
 }
 
 const defaults: Apps = {
-  available: [],
+    available: [],
 };
 
 export default function apps(state: Apps = defaults, action: Action): Apps {
-  switch (action.type) {
-    case 'apps:setAvailable':
-      return {
-        ...state,
-        available: action.payload,
-      };
+    switch (action.type) {
+        case 'apps:setAvailable':
+            return {
+                ...state,
+                available: action.payload,
+            };
 
-    case 'apps:addApp': {
-      const { payload } = action;
-      const available = [...state.available];
-      let index = available.findIndex(
-        (app) => app.clientId === payload.clientId,
-      );
+        case 'apps:addApp': {
+            const { payload } = action;
+            const available = [...state.available];
+            let index = available.findIndex((app) => app.clientId === payload.clientId);
 
-      if (index === -1) {
-        index = available.length;
-      }
+            if (index === -1) {
+                index = available.length;
+            }
 
-      available[index] = action.payload;
+            available[index] = action.payload;
 
-      return {
-        ...state,
-        available,
-      };
+            return {
+                ...state,
+                available,
+            };
+        }
+
+        case 'apps:deleteApp':
+            return {
+                ...state,
+                available: state.available.filter((app) => app.clientId !== action.payload),
+            };
     }
 
-    case 'apps:deleteApp':
-      return {
-        ...state,
-        available: state.available.filter(
-          (app) => app.clientId !== action.payload,
-        ),
-      };
-  }
-
-  return state;
+    return state;
 }

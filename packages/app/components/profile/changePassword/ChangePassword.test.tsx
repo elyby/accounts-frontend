@@ -7,51 +7,40 @@ import { TestContextProvider } from 'app/shell';
 import ChangePassword from './ChangePassword';
 
 describe('<ChangePassword />', () => {
-  it('renders two <Input /> components', () => {
-    render(
-      <TestContextProvider>
-        <ChangePassword onSubmit={async () => {}} />
-      </TestContextProvider>,
-    );
+    it('renders two <Input /> components', () => {
+        render(
+            <TestContextProvider>
+                <ChangePassword onSubmit={async () => {}} />
+            </TestContextProvider>,
+        );
 
-    expect(
-      screen.getByLabelText('New password', { exact: false }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('Repeat the password', { exact: false }),
-    ).toBeInTheDocument();
-  });
-
-  it('should call onSubmit if passwords entered', async () => {
-    const onSubmit = sinon.spy(() => Promise.resolve()).named('onSubmit');
-
-    render(
-      <TestContextProvider>
-        <ChangePassword onSubmit={onSubmit} />
-      </TestContextProvider>,
-    );
-
-    fireEvent.change(screen.getByLabelText('New password', { exact: false }), {
-      target: {
-        value: '123',
-      },
+        expect(screen.getByLabelText('New password', { exact: false })).toBeInTheDocument();
+        expect(screen.getByLabelText('Repeat the password', { exact: false })).toBeInTheDocument();
     });
 
-    fireEvent.change(
-      screen.getByLabelText('Repeat the password', { exact: false }),
-      {
-        target: {
-          value: '123',
-        },
-      },
-    );
+    it('should call onSubmit if passwords entered', async () => {
+        const onSubmit = sinon.spy(() => Promise.resolve()).named('onSubmit');
 
-    fireEvent.click(
-      screen
-        .getByRole('button', { name: 'Change password' })
-        .closest('button') as HTMLButtonElement,
-    );
+        render(
+            <TestContextProvider>
+                <ChangePassword onSubmit={onSubmit} />
+            </TestContextProvider>,
+        );
 
-    uxpect(onSubmit, 'was called');
-  });
+        fireEvent.change(screen.getByLabelText('New password', { exact: false }), {
+            target: {
+                value: '123',
+            },
+        });
+
+        fireEvent.change(screen.getByLabelText('Repeat the password', { exact: false }), {
+            target: {
+                value: '123',
+            },
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: 'Change password' }).closest('button') as HTMLButtonElement);
+
+        uxpect(onSubmit, 'was called');
+    });
 });

@@ -5,36 +5,31 @@ import { MessageDescriptor } from 'react-intl';
 import styles from './form.scss';
 
 interface Props {
-  error?: Parameters<typeof resolveError>[0] | MessageDescriptor | null;
+    error?: Parameters<typeof resolveError>[0] | MessageDescriptor | null;
 }
 
-function isMessageDescriptor(
-  message: Props['error'],
-): message is MessageDescriptor {
-  return (
-    typeof message === 'object' &&
-    typeof (message as MessageDescriptor).id !== 'undefined'
-  );
+function isMessageDescriptor(message: Props['error']): message is MessageDescriptor {
+    return typeof message === 'object' && typeof (message as MessageDescriptor).id !== 'undefined';
 }
 
 const FormError: ComponentType<Props> = ({ error }) => {
-  if (!error) {
-    return null;
-  }
+    if (!error) {
+        return null;
+    }
 
-  let content: ReactNode;
+    let content: ReactNode;
 
-  if (isMessageDescriptor(error)) {
-    content = error;
-  } else {
-    content = resolveError(error);
-  }
+    if (isMessageDescriptor(error)) {
+        content = error;
+    } else {
+        content = resolveError(error);
+    }
 
-  return (
-    <div className={styles.fieldError} role="alert">
-      {content}
-    </div>
-  );
+    return (
+        <div className={styles.fieldError} role="alert">
+            {content}
+        </div>
+    );
 };
 
 export default FormError;

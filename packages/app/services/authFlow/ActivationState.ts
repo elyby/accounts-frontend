@@ -6,27 +6,19 @@ import CompleteState from './CompleteState';
 import ResendActivationState from './ResendActivationState';
 
 export default class ActivationState extends AbstractState {
-  enter(context: AuthContext): Promise<void> | void {
-    const url = context.getRequest().path.includes('/activation')
-      ? context.getRequest().path
-      : '/activation';
-    context.navigate(url);
-  }
+    enter(context: AuthContext): Promise<void> | void {
+        const url = context.getRequest().path.includes('/activation') ? context.getRequest().path : '/activation';
+        context.navigate(url);
+    }
 
-  resolve(
-    context: AuthContext,
-    payload: Record<string, any>,
-  ): Promise<void> | void {
-    context
-      .run('activate', payload)
-      .then(() => context.setState(new CompleteState()))
-      .catch(
-        (err = {}) =>
-          err.errors || logger.warn('Error activating account', err),
-      );
-  }
+    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+        context
+            .run('activate', payload)
+            .then(() => context.setState(new CompleteState()))
+            .catch((err = {}) => err.errors || logger.warn('Error activating account', err));
+    }
 
-  reject(context: AuthContext): void {
-    context.setState(new ResendActivationState());
-  }
+    reject(context: AuthContext): void {
+        context.setState(new ResendActivationState());
+    }
 }

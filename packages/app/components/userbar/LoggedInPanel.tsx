@@ -5,90 +5,84 @@ import { AccountSwitcher } from 'app/components/accounts';
 import styles from './loggedInPanel.scss';
 
 export default class LoggedInPanel extends React.Component<
-  {
-    username: string;
-  },
-  {
-    isAccountSwitcherActive: boolean;
-  }
+    {
+        username: string;
+    },
+    {
+        isAccountSwitcherActive: boolean;
+    }
 > {
-  state = {
-    isAccountSwitcherActive: false,
-  };
+    state = {
+        isAccountSwitcherActive: false,
+    };
 
-  _isMounted: boolean = false;
-  el: HTMLElement | null;
+    _isMounted: boolean = false;
+    el: HTMLElement | null;
 
-  componentDidMount() {
-    if (window.document) {
-      // @ts-ignore
-      window.document.addEventListener('click', this.onBodyClick);
+    componentDidMount() {
+        if (window.document) {
+            // @ts-ignore
+            window.document.addEventListener('click', this.onBodyClick);
+        }
+
+        this._isMounted = true;
     }
 
-    this._isMounted = true;
-  }
+    componentWillUnmount() {
+        if (window.document) {
+            // @ts-ignore
+            window.document.removeEventListener('click', this.onBodyClick);
+        }
 
-  componentWillUnmount() {
-    if (window.document) {
-      // @ts-ignore
-      window.document.removeEventListener('click', this.onBodyClick);
+        this._isMounted = false;
     }
 
-    this._isMounted = false;
-  }
+    render() {
+        const { username } = this.props;
+        const { isAccountSwitcherActive } = this.state;
 
-  render() {
-    const { username } = this.props;
-    const { isAccountSwitcherActive } = this.state;
+        return (
+            <div ref={(el) => (this.el = el)} className={clsx(styles.loggedInPanel)}>
+                <div
+                    className={clsx(styles.activeAccount, {
+                        [styles.activeAccountExpanded]: isAccountSwitcherActive,
+                    })}
+                >
+                    <button className={styles.activeAccountButton} onClick={this.onExpandAccountSwitcher}>
+                        <span className={styles.userIcon} />
+                        <span className={styles.userName}>{username}</span>
+                        <span className={styles.expandIcon} />
+                    </button>
 
-    return (
-      <div ref={(el) => (this.el = el)} className={clsx(styles.loggedInPanel)}>
-        <div
-          className={clsx(styles.activeAccount, {
-            [styles.activeAccountExpanded]: isAccountSwitcherActive,
-          })}
-        >
-          <button
-            className={styles.activeAccountButton}
-            onClick={this.onExpandAccountSwitcher}
-          >
-            <span className={styles.userIcon} />
-            <span className={styles.userName}>{username}</span>
-            <span className={styles.expandIcon} />
-          </button>
+                    <div className={clsx(styles.accountSwitcherContainer)}>
+                        <AccountSwitcher skin="light" onAfterAction={this.onToggleAccountSwitcher} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-          <div className={clsx(styles.accountSwitcherContainer)}>
-            <AccountSwitcher
-              skin="light"
-              onAfterAction={this.onToggleAccountSwitcher}
-            />
-          </div>
-        </div>
-      </div>
+    toggleAccountSwitcher = () =>
+        this._isMounted &&
+        this.setState({
+            isAccountSwitcherActive: !this.state.isAccountSwitcherActive,
+        });
+
+    onToggleAccountSwitcher = () => {
+        this.toggleAccountSwitcher();
+    };
+
+    onExpandAccountSwitcher = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+
+        this.toggleAccountSwitcher();
+    };
+
+    onBodyClick = createOnOutsideComponentClickHandler(
+        () => this.el,
+        () => this.state.isAccountSwitcherActive && this._isMounted,
+        () => this.toggleAccountSwitcher(),
     );
-  }
-
-  toggleAccountSwitcher = () =>
-    this._isMounted &&
-    this.setState({
-      isAccountSwitcherActive: !this.state.isAccountSwitcherActive,
-    });
-
-  onToggleAccountSwitcher = () => {
-    this.toggleAccountSwitcher();
-  };
-
-  onExpandAccountSwitcher = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    this.toggleAccountSwitcher();
-  };
-
-  onBodyClick = createOnOutsideComponentClickHandler(
-    () => this.el,
-    () => this.state.isAccountSwitcherActive && this._isMounted,
-    () => this.toggleAccountSwitcher(),
-  );
 }
 
 /**
@@ -104,23 +98,23 @@ export default class LoggedInPanel extends React.Component<
  * @returns {Function}
  */
 function createOnOutsideComponentClickHandler(
-  getEl: () => HTMLElement | null,
-  isActive: () => boolean,
-  callback: () => void,
+    getEl: () => HTMLElement | null,
+    isActive: () => boolean,
+    callback: () => void,
 ): MouseEventHandler {
-  // TODO: we have the same logic in LangMenu
-  // Probably we should decouple this into some helper function
-  // TODO: the name of function may be better...
-  return (event) => {
-    const el = getEl();
+    // TODO: we have the same logic in LangMenu
+    // Probably we should decouple this into some helper function
+    // TODO: the name of function may be better...
+    return (event) => {
+        const el = getEl();
 
-    if (isActive() && el) {
-      if (!el.contains(event.target as HTMLElement) && el !== event.target) {
-        event.preventDefault();
+        if (isActive() && el) {
+            if (!el.contains(event.target as HTMLElement) && el !== event.target) {
+                event.preventDefault();
 
-        // add a small delay for the case someone have alredy called toggle
-        setTimeout(() => isActive() && callback(), 0);
-      }
-    }
-  };
+                // add a small delay for the case someone have alredy called toggle
+                setTimeout(() => isActive() && callback(), 0);
+            }
+        }
+    };
 }

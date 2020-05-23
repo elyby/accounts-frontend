@@ -1,6 +1,6 @@
 {
-  "title": "Page not found",
-  "nothingHere": "This is not a place that you are looking for",
-  "returnToTheHomePage": "Try to go back to the {link}",
-  "homePage": "main page"
+    "title": "Page not found",
+    "nothingHere": "This is not a place that you are looking for",
+    "returnToTheHomePage": "Try to go back to the {link}",
+    "homePage": "main page"
 }

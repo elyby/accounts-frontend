@@ -9,42 +9,42 @@ import styles from './userbar.scss';
 import LoggedInPanel from './LoggedInPanel';
 
 export default class Userbar extends Component<{
-  account: Account | null;
-  guestAction: 'register' | 'login';
+    account: Account | null;
+    guestAction: 'register' | 'login';
 }> {
-  static displayName = 'Userbar';
+    static displayName = 'Userbar';
 
-  static defaultProps = {
-    guestAction: 'register',
-  };
+    static defaultProps = {
+        guestAction: 'register',
+    };
 
-  render() {
-    const { account, guestAction: actionType } = this.props;
+    render() {
+        const { account, guestAction: actionType } = this.props;
 
-    let guestAction: React.ReactElement;
+        let guestAction: React.ReactElement;
 
-    switch (actionType) {
-      case 'login':
-        guestAction = (
-          <Link to="/login" className={buttons.blue}>
-            <Message {...messages.login} />
-          </Link>
+        switch (actionType) {
+            case 'login':
+                guestAction = (
+                    <Link to="/login" className={buttons.blue}>
+                        <Message {...messages.login} />
+                    </Link>
+                );
+                break;
+            case 'register':
+            default:
+                guestAction = (
+                    <Link to="/register" className={buttons.blue}>
+                        <Message {...messages.register} />
+                    </Link>
+                );
+                break;
+        }
+
+        return (
+            <div className={styles.userbar}>
+                {account ? <LoggedInPanel username={account.username} /> : guestAction}
+            </div>
         );
-        break;
-      case 'register':
-      default:
-        guestAction = (
-          <Link to="/register" className={buttons.blue}>
-            <Message {...messages.register} />
-          </Link>
-        );
-        break;
     }
-
-    return (
-      <div className={styles.userbar}>
-        {account ? <LoggedInPanel username={account.username} /> : guestAction}
-      </div>
-    );
-  }
 }

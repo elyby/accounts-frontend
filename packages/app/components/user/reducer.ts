@@ -1,85 +1,82 @@
 import { UPDATE, SET, CHANGE_LANG } from './actions';
 
 export interface User {
-  id: number | null;
-  uuid: string | null;
-  token: string;
-  username: string;
-  email: string;
-  avatar: string;
-  lang: string;
-  isGuest: boolean;
-  isActive: boolean;
-  isOtpEnabled: boolean;
-  passwordChangedAt: number;
-  hasMojangUsernameCollision: boolean;
-  maskedEmail?: string;
-  shouldAcceptRules?: boolean;
+    id: number | null;
+    uuid: string | null;
+    token: string;
+    username: string;
+    email: string;
+    avatar: string;
+    lang: string;
+    isGuest: boolean;
+    isActive: boolean;
+    isOtpEnabled: boolean;
+    passwordChangedAt: number;
+    hasMojangUsernameCollision: boolean;
+    maskedEmail?: string;
+    shouldAcceptRules?: boolean;
 }
 
 export type State = {
-  user: User;
+    user: User;
 };
 
 const defaults: User = {
-  id: null,
-  uuid: null,
-  username: '',
-  token: '',
-  email: '',
-  // will contain user's email or masked email
-  // (e.g. ex**ple@em*il.c**) depending on what information user have already provided
-  maskedEmail: '',
-  avatar: '',
-  lang: '',
-  isActive: false,
-  isOtpEnabled: false,
-  shouldAcceptRules: false, // whether user need to review updated rules
-  passwordChangedAt: 0,
-  hasMojangUsernameCollision: false,
+    id: null,
+    uuid: null,
+    username: '',
+    token: '',
+    email: '',
+    // will contain user's email or masked email
+    // (e.g. ex**ple@em*il.c**) depending on what information user have already provided
+    maskedEmail: '',
+    avatar: '',
+    lang: '',
+    isActive: false,
+    isOtpEnabled: false,
+    shouldAcceptRules: false, // whether user need to review updated rules
+    passwordChangedAt: 0,
+    hasMojangUsernameCollision: false,
 
-  // frontend specific attributes
-  isGuest: true,
+    // frontend specific attributes
+    isGuest: true,
 };
 
-export default function user(
-  state: User = defaults,
-  { type, payload }: { type: string; payload: any },
-) {
-  switch (type) {
-    case CHANGE_LANG:
-      if (!payload || !payload.lang) {
-        throw new Error('payload.lang is required for user reducer');
-      }
+export default function user(state: User = defaults, { type, payload }: { type: string; payload: any }) {
+    switch (type) {
+        case CHANGE_LANG:
+            if (!payload || !payload.lang) {
+                throw new Error('payload.lang is required for user reducer');
+            }
 
-      return {
-        ...state,
-        lang: payload.lang,
-      };
+            return {
+                ...state,
+                lang: payload.lang,
+            };
 
-    case UPDATE:
-      if (!payload) {
-        throw new Error('payload is required for user reducer');
-      }
+        case UPDATE:
+            if (!payload) {
+                throw new Error('payload is required for user reducer');
+            }
 
-      return {
-        ...state,
-        ...payload,
-      };
+            return {
+                ...state,
+                ...payload,
+            };
 
-    case SET:
-      payload = payload || {};
+        case SET:
+            payload = payload || {};
 
-      return {
-        ...defaults,
-        ...payload,
-      };
+            return {
+                ...defaults,
+                ...payload,
+            };
 
-    default:
-      return (
-        state || {
-          ...defaults,
-        }
-      );
-  }
+        default:
+            return (
+                state || {
+                    ...defaults,
+                }
+            );
+    }
 }

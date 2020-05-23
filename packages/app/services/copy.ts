@@ -8,9 +8,9 @@ import copyToClipboard from 'copy-to-clipboard';
  * @returns {Promise<*>}
  */
 export default async function copy(content: string): Promise<void> {
-  if (navigator.clipboard) {
-    return navigator.clipboard.writeText(content);
-  }
+    if (navigator.clipboard) {
+        return navigator.clipboard.writeText(content);
+    }
 
-  copyToClipboard(content);
+    copyToClipboard(content);
 }

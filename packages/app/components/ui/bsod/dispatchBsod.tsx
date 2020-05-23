@@ -11,31 +11,28 @@ let injectedStore: Store;
 let injectedHistory: History<any>;
 let onBsod: undefined | (() => void);
 
-export default function dispatchBsod(
-  store = injectedStore,
-  history = injectedHistory,
-) {
-  store.dispatch(bsod());
-  onBsod && onBsod();
+export default function dispatchBsod(store = injectedStore, history = injectedHistory) {
+    store.dispatch(bsod());
+    onBsod && onBsod();
 
-  ReactDOM.render(
-    <ContextProvider store={store} history={history}>
-      <BSoDContainer />
-    </ContextProvider>,
-    document.getElementById('app'),
-  );
+    ReactDOM.render(
+        <ContextProvider store={store} history={history}>
+            <BSoDContainer />
+        </ContextProvider>,
+        document.getElementById('app'),
+    );
 }
 
 export function inject({
-  store,
-  history,
-  stopLoading,
+    store,
+    history,
+    stopLoading,
 }: {
-  store: Store;
-  history: History<any>;
-  stopLoading: () => void;
+    store: Store;
+    history: History<any>;
+    stopLoading: () => void;
 }) {
-  injectedStore = store;
-  injectedHistory = history;
-  onBsod = stopLoading;
+    injectedStore = store;
+    injectedHistory = history;
+    onBsod = stopLoading;
 }

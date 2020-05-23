@@ -5,19 +5,15 @@ type Options = { reCaptchaPublicKey: string };
 let options: Resp<Options>;
 
 export default {
-  async get(): Promise<Resp<Options>> {
-    if (options) {
-      return Promise.resolve(options);
-    }
+    async get(): Promise<Resp<Options>> {
+        if (options) {
+            return Promise.resolve(options);
+        }
 
-    const resp = await request.get<Options>(
-      '/api/options',
-      {},
-      { token: null },
-    );
+        const resp = await request.get<Options>('/api/options', {}, { token: null });
 
-    options = resp;
+        options = resp;
 
-    return resp;
-  },
+        return resp;
+    },
 };

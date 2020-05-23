@@ -1,8 +1,8 @@
 {
-  "accountActivationTitle": "Account activation",
-  "activationMailWasSent": "Please check {email} for the message with further instructions",
-  "activationMailWasSentNoEmail": "Please check your E‑mail for the message with further instructions",
-  "confirmEmail": "Confirm E‑mail",
-  "didNotReceivedEmail": "Did not received E‑mail?",
-  "enterTheCode": "Enter the code from E‑mail here"
+    "accountActivationTitle": "Account activation",
+    "activationMailWasSent": "Please check {email} for the message with further instructions",
+    "activationMailWasSentNoEmail": "Please check your E‑mail for the message with further instructions",
+    "confirmEmail": "Confirm E‑mail",
+    "didNotReceivedEmail": "Did not received E‑mail?",
+    "enterTheCode": "Enter the code from E‑mail here"
 }

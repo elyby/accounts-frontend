@@ -1,6 +1,6 @@
 let lastId = 0;
 export function uniqueId(prefix: string = 'id'): string {
-  return `${prefix}${++lastId}`;
+    return `${prefix}${++lastId}`;
 }
 
 /**
@@ -9,17 +9,14 @@ export function uniqueId(prefix: string = 'id'): string {
  *
  * @returns {object}
  */
-export function omit(
-  obj: { [key: string]: any },
-  keys: Array<string>,
-): { [key: string]: any } {
-  const newObj = { ...obj };
+export function omit(obj: { [key: string]: any }, keys: Array<string>): { [key: string]: any } {
+    const newObj = { ...obj };
 
-  keys.forEach((key) => {
-    Reflect.deleteProperty(newObj, key);
-  });
+    keys.forEach((key) => {
+        Reflect.deleteProperty(newObj, key);
+    });
 
-  return newObj;
+    return newObj;
 }
 
 /**
@@ -30,20 +27,20 @@ export function omit(
  * @returns {Promise}
  */
 export function loadScript(src: string): Promise<void> {
-  const script = document.createElement('script');
+    const script = document.createElement('script');
 
-  script.async = true;
-  script.defer = true;
-  script.src = src;
+    script.async = true;
+    script.defer = true;
+    script.src = src;
 
-  return new Promise((resolve, reject) => {
-    script.onload = () => resolve();
-    script.onerror = reject;
+    return new Promise((resolve, reject) => {
+        script.onload = () => resolve();
+        script.onerror = reject;
 
-    if (document && document.body) {
-      document.body.appendChild(script);
-    }
-  });
+        if (document && document.body) {
+            document.body.appendChild(script);
+        }
+    });
 }
 
 /**
@@ -69,21 +66,21 @@ export { default as debounce } from 'debounce';
  * @returns {object} - decoded jwt payload
  */
 export function getJwtPayloads(
-  jwt: string,
+    jwt: string,
 ): {
-  sub: string;
-  jti: number;
-  exp: number;
+    sub: string;
+    jti: number;
+    exp: number;
 } {
-  const parts = (jwt || '').split('.');
+    const parts = (jwt || '').split('.');
 
-  if (parts.length !== 3) {
-    throw new Error('Invalid jwt token');
-  }
+    if (parts.length !== 3) {
+        throw new Error('Invalid jwt token');
+    }
 
-  try {
-    return JSON.parse(atob(parts[1]));
-  } catch (err) {
-    throw new Error('Can not decode jwt token');
-  }
+    try {
+        return JSON.parse(atob(parts[1]));
+    } catch (err) {
+        throw new Error('Can not decode jwt token');
+    }
 }

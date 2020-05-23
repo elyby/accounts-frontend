@@ -1,25 +1,25 @@
 {
-  "compilerOptions": {
-    "baseUrl": "packages",
-    "paths": {
-      "chalk": ["../@types/chalk.d.ts"]
+    "compilerOptions": {
+        "baseUrl": "packages",
+        "paths": {
+            "chalk": ["../@types/chalk.d.ts"]
+        },
+        "module": "esnext",
+        "target": "esnext",
+        "esModuleInterop": true, // allow importing commonjs exports as default in es imports
+        "moduleResolution": "node",
+        "noEmit": true,
+        "checkJs": true,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": false,
+        "isolatedModules": true,
+        // we can not enable json modules, because this will disable
+        // *.intl.json overrides (@see `webpack-loaders.d.ts`)
+        "resolveJsonModule": false,
+        "jsx": "preserve",
+        "strict": true
     },
-    "module": "esnext",
-    "target": "esnext",
-    "esModuleInterop": true, // allow importing commonjs exports as default in es imports
-    "moduleResolution": "node",
-    "noEmit": true,
-    "checkJs": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": false,
-    "isolatedModules": true,
-    // we can not enable json modules, because this will disable
-    // *.intl.json overrides (@see `webpack-loaders.d.ts`)
-    "resolveJsonModule": false,
-    "jsx": "preserve",
-    "strict": true
-  },
-  "include": ["@types", "packages", "config", ".storybook"]
+    "include": ["@types", "packages", "config", ".storybook"]
 }

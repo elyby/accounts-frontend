@@ -4,33 +4,33 @@ import request, { InternalServerError } from 'app/services/request';
 import { getInfo as getInfoEndpoint } from 'app/services/api/accounts';
 
 export interface OAuthResponse {
-  access_token: string;
-  refresh_token?: string;
-  expires_in: number; // count seconds before expire
-  success: true;
+    access_token: string;
+    refresh_token?: string;
+    expires_in: number; // count seconds before expire
+    success: true;
 }
 
 export function login({
-  login,
-  password,
-  totp,
-  rememberMe = false,
+    login,
+    password,
+    totp,
+    rememberMe = false,
 }: {
-  login: string;
-  password?: string;
-  totp?: string;
-  rememberMe: boolean;
+    login: string;
+    password?: string;
+    totp?: string;
+    rememberMe: boolean;
 }): Promise<OAuthResponse> {
-  return request.post(
-    '/api/authentication/login',
-    {
-      login,
-      password,
-      totp,
-      rememberMe,
-    },
-    { token: null },
-  );
+    return request.post(
+        '/api/authentication/login',
+        {
+            login,
+            password,
+            totp,
+            rememberMe,
+        },
+        { token: null },
+    );
 }
 
 /**
@@ -40,53 +40,49 @@ export function login({
  * @returns {Promise}
  */
 export function logout(token?: string): Promise<{ success: boolean }> {
-  return request.post(
-    '/api/authentication/logout',
-    {},
-    {
-      token,
-    },
-  );
+    return request.post(
+        '/api/authentication/logout',
+        {},
+        {
+            token,
+        },
+    );
 }
 
 export function forgotPassword(
-  login: string,
-  captcha: string,
+    login: string,
+    captcha: string,
 ): Promise<{
-  success: boolean;
-  data: {
-    canRepeatIn: number;
-    emailMask: string | void;
-    repeatFrequency: number;
-  };
-  errors: {
-    [key: string]: string;
-  };
+    success: boolean;
+    data: {
+        canRepeatIn: number;
+        emailMask: string | void;
+        repeatFrequency: number;
+    };
+    errors: {
+        [key: string]: string;
+    };
 }> {
-  return request.post(
-    '/api/authentication/forgot-password',
-    {
-      login,
-      captcha,
-    },
-    { token: null },
-  );
+    return request.post(
+        '/api/authentication/forgot-password',
+        {
+            login,
+            captcha,
+        },
+        { token: null },
+    );
 }
 
-export function recoverPassword(
-  key: string,
-  newPassword: string,
-  newRePassword: string,
-): Promise<OAuthResponse> {
-  return request.post(
-    '/api/authentication/recover-password',
-    {
-      key,
-      newPassword,
-      newRePassword,
-    },
-    { token: null },
-  );
+export function recoverPassword(key: string, newPassword: string, newRePassword: string): Promise<OAuthResponse> {
+    return request.post(
+        '/api/authentication/recover-password',
+        {
+            key,
+            newPassword,
+            newRePassword,
+        },
+        { token: null },
+    );
 }
 
 /**
@@ -102,59 +98,52 @@ export function recoverPassword(
  *
  */
 export async function validateToken(
-  id: number,
-  token: string,
-  refreshToken: string | void | null,
+    id: number,
+    token: string,
+    refreshToken: string | void | null,
 ): Promise<{
-  token: string;
-  refreshToken: string | null;
-  user: UserResponse;
+    token: string;
+    refreshToken: string | null;
+    user: UserResponse;
 }> {
-  if (typeof token !== 'string') {
-    throw new Error('token must be a string');
-  }
-
-  refreshToken = refreshToken || null;
-
-  let user: UserResponse;
-  try {
-    user = await getInfoEndpoint(id, token);
-  } catch (resp) {
-    token = await handleTokenError(resp, refreshToken);
-    user = await getInfoEndpoint(id, token); // TODO: replace with recursive call
-  }
-
-  return {
-    token,
-    refreshToken,
-    user,
-  };
-}
-
-const recoverableErrors = [
-  'Token expired',
-  'Incorrect token',
-  'You are requesting with an invalid credential.',
-];
-
-function handleTokenError(
-  resp: Error | { message: string },
-  refreshToken: string | null,
-): Promise<string> {
-  if (resp instanceof InternalServerError) {
-    // delegate error recovering to the bsod middleware
-    return new Promise(() => {});
-  }
-
-  if (refreshToken) {
-    if (recoverableErrors.includes(resp.message)) {
-      return requestToken(refreshToken);
+    if (typeof token !== 'string') {
+        throw new Error('token must be a string');
     }
 
-    logger.error('Unexpected error during token validation', { resp });
-  }
+    refreshToken = refreshToken || null;
 
-  return Promise.reject(resp);
+    let user: UserResponse;
+    try {
+        user = await getInfoEndpoint(id, token);
+    } catch (resp) {
+        token = await handleTokenError(resp, refreshToken);
+        user = await getInfoEndpoint(id, token); // TODO: replace with recursive call
+    }
+
+    return {
+        token,
+        refreshToken,
+        user,
+    };
+}
+
+const recoverableErrors = ['Token expired', 'Incorrect token', 'You are requesting with an invalid credential.'];
+
+function handleTokenError(resp: Error | { message: string }, refreshToken: string | null): Promise<string> {
+    if (resp instanceof InternalServerError) {
+        // delegate error recovering to the bsod middleware
+        return new Promise(() => {});
+    }
+
+    if (refreshToken) {
+        if (recoverableErrors.includes(resp.message)) {
+            return requestToken(refreshToken);
+        }
+
+        logger.error('Unexpected error during token validation', { resp });
+    }
+
+    return Promise.reject(resp);
 }
 
 /**
@@ -165,27 +154,27 @@ function handleTokenError(
  * @returns {Promise} - resolves to token
  */
 export async function requestToken(refreshToken: string): Promise<string> {
-  try {
-    const response: OAuthResponse = await request.post(
-      '/api/authentication/refresh-token',
-      {
-        refresh_token: refreshToken,
-      },
-      {
-        token: null,
-      },
-    );
+    try {
+        const response: OAuthResponse = await request.post(
+            '/api/authentication/refresh-token',
+            {
+                refresh_token: refreshToken,
+            },
+            {
+                token: null,
+            },
+        );
 
-    return response.access_token;
-  } catch (resp) {
-    const errors = resp.errors || {};
+        return response.access_token;
+    } catch (resp) {
+        const errors = resp.errors || {};
 
-    if (errors.refresh_token !== 'error.refresh_token_not_exist') {
-      logger.error('Failed refreshing token: unknown error', {
-        resp,
-      });
+        if (errors.refresh_token !== 'error.refresh_token_not_exist') {
+            logger.error('Failed refreshing token: unknown error', {
+                resp,
+            });
+        }
+
+        throw resp;
     }
-
-    throw resp;
-  }
 }

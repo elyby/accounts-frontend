@@ -10,99 +10,95 @@ import { destroy } from './actions';
 import styles from './popup.scss';
 
 interface Props {
-  popups: PopupConfig[];
-  destroy: (popup: PopupConfig) => void;
+    popups: PopupConfig[];
+    destroy: (popup: PopupConfig) => void;
 }
 
 export class PopupStack extends React.Component<Props> {
-  unlistenTransition: () => void;
+    unlistenTransition: () => void;
 
-  componentDidMount() {
-    document.addEventListener('keyup', this.onKeyPress);
-    this.unlistenTransition = browserHistory.listen(this.onRouteLeave);
-  }
+    componentDidMount() {
+        document.addEventListener('keyup', this.onKeyPress);
+        this.unlistenTransition = browserHistory.listen(this.onRouteLeave);
+    }
 
-  componentWillUnmount() {
-    document.removeEventListener('keyup', this.onKeyPress);
-    this.unlistenTransition();
-  }
+    componentWillUnmount() {
+        document.removeEventListener('keyup', this.onKeyPress);
+        this.unlistenTransition();
+    }
 
-  render() {
-    const { popups } = this.props;
+    render() {
+        const { popups } = this.props;
 
-    return (
-      <TransitionGroup>
-        {popups.map((popup, index) => {
-          const { Popup } = popup;
+        return (
+            <TransitionGroup>
+                {popups.map((popup, index) => {
+                    const { Popup } = popup;
 
-          return (
-            <CSSTransition
-              key={index}
-              classNames={{
-                enter: styles.trEnter,
-                enterActive: styles.trEnterActive,
-                exit: styles.trExit,
-                exitActive: styles.trExitActive,
-              }}
-              timeout={500}
-            >
-              <div
-                className={styles.overlay}
-                role="dialog"
-                onClick={this.onOverlayClick(popup)}
-              >
-                <Popup onClose={this.onClose(popup)} />
-              </div>
-            </CSSTransition>
-          );
-        })}
-      </TransitionGroup>
-    );
-  }
+                    return (
+                        <CSSTransition
+                            key={index}
+                            classNames={{
+                                enter: styles.trEnter,
+                                enterActive: styles.trEnterActive,
+                                exit: styles.trExit,
+                                exitActive: styles.trExitActive,
+                            }}
+                            timeout={500}
+                        >
+                            <div className={styles.overlay} role="dialog" onClick={this.onOverlayClick(popup)}>
+                                <Popup onClose={this.onClose(popup)} />
+                            </div>
+                        </CSSTransition>
+                    );
+                })}
+            </TransitionGroup>
+        );
+    }
 
-  onClose(popup: PopupConfig) {
-    return () => this.props.destroy(popup);
-  }
+    onClose(popup: PopupConfig) {
+        return () => this.props.destroy(popup);
+    }
 
-  onOverlayClick(popup: PopupConfig) {
-    return (event: React.MouseEvent<HTMLDivElement>) => {
-      if (event.target !== event.currentTarget || popup.disableOverlayClose) {
-        return;
-      }
+    onOverlayClick(popup: PopupConfig) {
+        return (event: React.MouseEvent<HTMLDivElement>) => {
+            if (event.target !== event.currentTarget || popup.disableOverlayClose) {
+                return;
+            }
 
-      event.preventDefault();
+            event.preventDefault();
 
-      this.props.destroy(popup);
+            this.props.destroy(popup);
+        };
+    }
+
+    popStack() {
+        const [popup] = this.props.popups.slice(-1);
+
+        if (popup && !popup.disableOverlayClose) {
+            this.props.destroy(popup);
+        }
+    }
+
+    onKeyPress = (event: KeyboardEvent) => {
+        if (event.which === 27) {
+            // ESC key
+            this.popStack();
+        }
     };
-  }
 
-  popStack() {
-    const [popup] = this.props.popups.slice(-1);
-
-    if (popup && !popup.disableOverlayClose) {
-      this.props.destroy(popup);
-    }
-  }
-
-  onKeyPress = (event: KeyboardEvent) => {
-    if (event.which === 27) {
-      // ESC key
-      this.popStack();
-    }
-  };
-
-  onRouteLeave = (nextLocation: Location) => {
-    if (nextLocation) {
-      this.popStack();
-    }
-  };
+    onRouteLeave = (nextLocation: Location) => {
+        if (nextLocation) {
+            this.popStack();
+        }
+    };
 }
 
 export default connect(
-  (state: RootState) => ({
-    ...state.popup,
-  }),
-  {
-    destroy,
-  },
+    (state: RootState) => ({
+        ...state.popup,
+    }),
+    {
+        destroy,
+    },
 )(PopupStack);

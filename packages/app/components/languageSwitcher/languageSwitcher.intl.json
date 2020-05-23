@@ -1,10 +1,10 @@
 {
-  "siteLanguage": "Site language",
-  "startTyping": "Start typing…",
-  "translationProgress": "{progress}% translated",
-  "mayBeInaccurate": "May be inaccurate",
-  "weDoNotSupportThisLang": "Sorry, we do not support this language",
-  "improveTranslates": "Improve Ely.by translation",
-  "improveTranslatesDescription": "Ely.by’s localization is a community effort. If you want to improve the translation of Ely.by, we'd love your help.",
-  "improveTranslatesParticipate": "Click here to participate."
+    "siteLanguage": "Site language",
+    "startTyping": "Start typing…",
+    "translationProgress": "{progress}% translated",
+    "mayBeInaccurate": "May be inaccurate",
+    "weDoNotSupportThisLang": "Sorry, we do not support this language",
+    "improveTranslates": "Improve Ely.by translation",
+    "improveTranslatesDescription": "Ely.by’s localization is a community effort. If you want to improve the translation of Ely.by, we'd love your help.",
+    "improveTranslatesParticipate": "Click here to participate."
 }

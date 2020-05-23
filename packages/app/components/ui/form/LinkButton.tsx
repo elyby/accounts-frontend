@@ -7,12 +7,7 @@ type ButtonProps = React.ComponentProps<typeof Button>;
 type LinkProps = React.ComponentProps<typeof Link>;
 
 export default function LinkButton(props: ButtonProps & LinkProps) {
-  const { to, ...restProps } = props;
+    const { to, ...restProps } = props;
 
-  return (
-    <Button
-      component={(linkProps) => <Link {...linkProps} to={to} />}
-      {...(restProps as ButtonProps)}
-    />
-  );
+    return <Button component={(linkProps) => <Link {...linkProps} to={to} />} {...(restProps as ButtonProps)} />;
 }

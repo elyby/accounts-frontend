@@ -7,58 +7,56 @@ import authFlow from 'app/services/authFlow';
 import AuthFlowRouteContents from './AuthFlowRouteContents';
 
 describe('AuthFlowRouteContents', () => {
-  beforeEach(() => {
-    sinon.stub(authFlow, 'handleRequest');
-  });
+    beforeEach(() => {
+        sinon.stub(authFlow, 'handleRequest');
+    });
 
-  afterEach(() => {
-    (authFlow.handleRequest as any).restore();
-  });
+    afterEach(() => {
+        (authFlow.handleRequest as any).restore();
+    });
 
-  let componentProps: { [key: string]: any };
+    let componentProps: { [key: string]: any };
 
-  function Component(props: { [key: string]: any }) {
-    componentProps = props;
+    function Component(props: { [key: string]: any }) {
+        componentProps = props;
 
-    return <div data-testid="test-component" />;
-  }
+        return <div data-testid="test-component" />;
+    }
 
-  it('should render component if route allowed', () => {
-    const authRequest = {
-      path: '/path',
-      params: { foo: 1 },
-      query: new URLSearchParams(),
-    };
+    it('should render component if route allowed', () => {
+        const authRequest = {
+            path: '/path',
+            params: { foo: 1 },
+            query: new URLSearchParams(),
+        };
 
-    const routerProps: any = {
-      location: {
-        pathname: authRequest.path,
-        search: '',
-        query: new URLSearchParams(),
-      },
-      match: {
-        params: authRequest.params,
-      },
-    };
+        const routerProps: any = {
+            location: {
+                pathname: authRequest.path,
+                search: '',
+                query: new URLSearchParams(),
+            },
+            match: {
+                params: authRequest.params,
+            },
+        };
 
-    (authFlow.handleRequest as any).callsArg(2);
+        (authFlow.handleRequest as any).callsArg(2);
 
-    render(
-      <AuthFlowRouteContents routerProps={routerProps} component={Component} />,
-    );
+        render(<AuthFlowRouteContents routerProps={routerProps} component={Component} />);
 
-    const component = screen.getByTestId('test-component');
+        const component = screen.getByTestId('test-component');
 
-    uxpect(authFlow.handleRequest, 'to have a call satisfying', [
-      {
-        ...authRequest,
-        query: uxpect.it('to be a', URLSearchParams),
-      },
-      uxpect.it('to be a function'),
-      uxpect.it('to be a function'),
-    ]);
+        uxpect(authFlow.handleRequest, 'to have a call satisfying', [
+            {
+                ...authRequest,
+                query: uxpect.it('to be a', URLSearchParams),
+            },
+            uxpect.it('to be a function'),
+            uxpect.it('to be a function'),
+        ]);
 
-    expect(component).toBeInTheDocument();
-    uxpect(componentProps, 'to equal', routerProps);
-  });
+        expect(component).toBeInTheDocument();
+        uxpect(componentProps, 'to equal', routerProps);
+    });
 });

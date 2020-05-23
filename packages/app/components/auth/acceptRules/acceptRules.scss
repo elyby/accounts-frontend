@@ -1,16 +1,16 @@
 @import '~app/components/ui/colors.scss';
 
 .descriptionText {
-  font-size: 15px;
-  line-height: 1.4;
-  padding-bottom: 8px;
-  color: #aaa;
+    font-size: 15px;
+    line-height: 1.4;
+    padding-bottom: 8px;
+    color: #aaa;
 }
 
 // TODO: вынести иконки такого типа в какую-то внешнюю структуру?
 .security {
-  color: #fff;
-  font-size: 90px;
-  line-height: 1;
-  margin-bottom: 15px;
+    color: #fff;
+    font-size: 90px;
+    line-height: 1;
+    margin-bottom: 15px;
 }

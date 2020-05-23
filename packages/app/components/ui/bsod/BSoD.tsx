@@ -9,48 +9,45 @@ import styles from './styles.scss';
 import messages from './BSoD.intl.json';
 
 interface State {
-  lastEventId?: string | void;
+    lastEventId?: string | void;
 }
 
 interface Props {
-  lastEventId?: string;
+    lastEventId?: string;
 }
 
 // TODO: probably it's better to render this view from the App view
 //       to remove dependencies from the store and IntlProvider
 const BSoD: ComponentType<Props> = ({ lastEventId }) => {
-  let emailUrl = 'mailto:support@ely.by';
+    let emailUrl = 'mailto:support@ely.by';
 
-  if (lastEventId) {
-    emailUrl += `?subject=Bug report for #${lastEventId}`;
-  }
+    if (lastEventId) {
+        emailUrl += `?subject=Bug report for #${lastEventId}`;
+    }
 
-  return (
-    <div className={styles.body}>
-      <canvas
-        className={styles.canvas}
-        ref={(el: HTMLCanvasElement | null) => el && new BoxesField(el)}
-      />
+    return (
+        <div className={styles.body}>
+            <canvas className={styles.canvas} ref={(el: HTMLCanvasElement | null) => el && new BoxesField(el)} />
 
-      <div className={styles.wrapper}>
-        <div className={styles.title}>
-          <Message {...appInfo.appName} />
+            <div className={styles.wrapper}>
+                <div className={styles.title}>
+                    <Message {...appInfo.appName} />
+                </div>
+                <div className={styles.lineWithMargin}>
+                    <Message {...messages.criticalErrorHappened} />
+                </div>
+                <div className={styles.line}>
+                    <Message {...messages.reloadPageOrContactUs} />
+                </div>
+                <a href={emailUrl} className={styles.support}>
+                    support@ely.by
+                </a>
+                <div className={styles.easterEgg}>
+                    <Message {...messages.alsoYouCanInteractWithBackground} />
+                </div>
+            </div>
         </div>
-        <div className={styles.lineWithMargin}>
-          <Message {...messages.criticalErrorHappened} />
-        </div>
-        <div className={styles.line}>
-          <Message {...messages.reloadPageOrContactUs} />
-        </div>
-        <a href={emailUrl} className={styles.support}>
-          support@ely.by
-        </a>
-        <div className={styles.easterEgg}>
-          <Message {...messages.alsoYouCanInteractWithBackground} />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default BSoD;

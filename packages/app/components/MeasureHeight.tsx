@@ -26,47 +26,46 @@ type ChildState = any;
 // TODO: this may be rewritten in more efficient way using resize/mutation observer
 
 export default class MeasureHeight extends React.PureComponent<
-  {
-    shouldMeasure: (prevState: ChildState, newState: ChildState) => boolean;
-    onMeasure: (height: number) => void;
-    state: ChildState;
-  } & React.HTMLAttributes<HTMLDivElement>
+    {
+        shouldMeasure: (prevState: ChildState, newState: ChildState) => boolean;
+        onMeasure: (height: number) => void;
+        state: ChildState;
+    } & React.HTMLAttributes<HTMLDivElement>
 > {
-  static defaultProps = {
-    shouldMeasure: (prevState: ChildState, newState: ChildState) =>
-      prevState !== newState,
-    onMeasure: () => {},
-  };
+    static defaultProps = {
+        shouldMeasure: (prevState: ChildState, newState: ChildState) => prevState !== newState,
+        onMeasure: () => {},
+    };
 
-  el: HTMLDivElement | null = null;
+    el: HTMLDivElement | null = null;
 
-  componentDidMount() {
-    // we want to measure height immediately on first mount to avoid ui laggs
-    this.measure();
-    window.addEventListener('resize', this.enqueueMeasurement);
-  }
-
-  componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
-    if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
-      this.enqueueMeasurement();
+    componentDidMount() {
+        // we want to measure height immediately on first mount to avoid ui laggs
+        this.measure();
+        window.addEventListener('resize', this.enqueueMeasurement);
     }
-  }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.enqueueMeasurement);
-  }
+    componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
+        if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
+            this.enqueueMeasurement();
+        }
+    }
 
-  render() {
-    const props = omit(this.props, ['shouldMeasure', 'onMeasure', 'state']);
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.enqueueMeasurement);
+    }
 
-    return <div {...props} ref={(el: HTMLDivElement) => (this.el = el)} />;
-  }
+    render() {
+        const props = omit(this.props, ['shouldMeasure', 'onMeasure', 'state']);
 
-  measure = () => {
-    requestAnimationFrame(() => {
-      this.el && this.props.onMeasure(this.el.offsetHeight);
-    });
-  };
+        return <div {...props} ref={(el: HTMLDivElement) => (this.el = el)} />;
+    }
 
-  enqueueMeasurement = debounce(this.measure);
+    measure = () => {
+        requestAnimationFrame(() => {
+            this.el && this.props.onMeasure(this.el.offsetHeight);
+        });
+    };
+
+    enqueueMeasurement = debounce(this.measure);
 }

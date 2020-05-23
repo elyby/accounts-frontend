@@ -7,94 +7,85 @@ import { ThunkAction } from 'app/reducers';
 import { Apps } from './reducer';
 
 interface SetAvailableAction extends ReduxAction {
-  type: 'apps:setAvailable';
-  payload: Array<OauthAppResponse>;
+    type: 'apps:setAvailable';
+    payload: Array<OauthAppResponse>;
 }
 
 export function setAppsList(apps: Array<OauthAppResponse>): SetAvailableAction {
-  return {
-    type: 'apps:setAvailable',
-    payload: apps,
-  };
+    return {
+        type: 'apps:setAvailable',
+        payload: apps,
+    };
 }
 
-export function getApp(
-  state: { apps: Apps },
-  clientId: string,
-): OauthAppResponse | null {
-  return state.apps.available.find((app) => app.clientId === clientId) || null;
+export function getApp(state: { apps: Apps }, clientId: string): OauthAppResponse | null {
+    return state.apps.available.find((app) => app.clientId === clientId) || null;
 }
 
 export function fetchApp(clientId: string): ThunkAction<Promise<void>> {
-  return async (dispatch) => {
-    const app = await oauth.getApp(clientId);
+    return async (dispatch) => {
+        const app = await oauth.getApp(clientId);
 
-    dispatch(addApp(app));
-  };
+        dispatch(addApp(app));
+    };
 }
 
 interface AddAppAction extends ReduxAction {
-  type: 'apps:addApp';
-  payload: OauthAppResponse;
+    type: 'apps:addApp';
+    payload: OauthAppResponse;
 }
 
 function addApp(app: OauthAppResponse): AddAppAction {
-  return {
-    type: 'apps:addApp',
-    payload: app,
-  };
+    return {
+        type: 'apps:addApp',
+        payload: app,
+    };
 }
 
 export function fetchAvailableApps() {
-  return async (
-    dispatch: Dispatch<any>,
-    getState: () => { user: User },
-  ): Promise<void> => {
-    const { id } = getState().user;
+    return async (dispatch: Dispatch<any>, getState: () => { user: User }): Promise<void> => {
+        const { id } = getState().user;
 
-    if (!id) {
-      dispatch(setAppsList([]));
+        if (!id) {
+            dispatch(setAppsList([]));
 
-      return;
-    }
+            return;
+        }
 
-    const apps = await oauth.getAppsByUser(id);
+        const apps = await oauth.getAppsByUser(id);
 
-    dispatch(setAppsList(apps));
-  };
+        dispatch(setAppsList(apps));
+    };
 }
 
 export function deleteApp(clientId: string) {
-  return async (dispatch: Dispatch<any>): Promise<void> => {
-    await oauth.delete(clientId);
+    return async (dispatch: Dispatch<any>): Promise<void> => {
+        await oauth.delete(clientId);
 
-    dispatch(createDeleteAppAction(clientId));
-  };
+        dispatch(createDeleteAppAction(clientId));
+    };
 }
 
 interface DeleteAppAction extends ReduxAction {
-  type: 'apps:deleteApp';
-  payload: string;
+    type: 'apps:deleteApp';
+    payload: string;
 }
 
 function createDeleteAppAction(clientId: string): DeleteAppAction {
-  return {
-    type: 'apps:deleteApp',
-    payload: clientId,
-  };
+    return {
+        type: 'apps:deleteApp',
+        payload: clientId,
+    };
 }
 
-export function resetApp(
-  clientId: string,
-  resetSecret: boolean,
-): ThunkAction<Promise<void>> {
-  return async (dispatch) => {
-    const { data: app } = await oauth.reset(clientId, resetSecret);
+export function resetApp(clientId: string, resetSecret: boolean): ThunkAction<Promise<void>> {
+    return async (dispatch) => {
+        const { data: app } = await oauth.reset(clientId, resetSecret);
 
-    if (resetSecret) {
-      dispatch(addApp(app));
-    }
-  };
+        if (resetSecret) {
+            dispatch(addApp(app));
+        }
+    };
 }
 
 export type Action = SetAvailableAction | DeleteAppAction | AddAppAction;

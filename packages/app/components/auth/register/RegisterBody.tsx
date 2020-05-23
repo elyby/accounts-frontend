@@ -11,73 +11,73 @@ import messages from './Register.intl.json';
 // TODO: password and username can be validate for length and sameness
 
 export default class RegisterBody extends BaseAuthBody {
-  static panelId = 'register';
+    static panelId = 'register';
 
-  autoFocusField = 'username';
+    autoFocusField = 'username';
 
-  render() {
-    return (
-      <div>
-        {this.renderErrors()}
+    render() {
+        return (
+            <div>
+                {this.renderErrors()}
 
-        <Input
-          {...this.bindField('username')}
-          icon="user"
-          color="blue"
-          type="text"
-          required
-          placeholder={messages.yourNickname}
-        />
+                <Input
+                    {...this.bindField('username')}
+                    icon="user"
+                    color="blue"
+                    type="text"
+                    required
+                    placeholder={messages.yourNickname}
+                />
 
-        <Input
-          {...this.bindField('email')}
-          icon="envelope"
-          color="blue"
-          type="email"
-          required
-          placeholder={messages.yourEmail}
-        />
+                <Input
+                    {...this.bindField('email')}
+                    icon="envelope"
+                    color="blue"
+                    type="email"
+                    required
+                    placeholder={messages.yourEmail}
+                />
 
-        <Input
-          {...this.bindField('password')}
-          icon="key"
-          color="blue"
-          type="password"
-          required
-          placeholder={passwordMessages.accountPassword}
-        />
+                <Input
+                    {...this.bindField('password')}
+                    icon="key"
+                    color="blue"
+                    type="password"
+                    required
+                    placeholder={passwordMessages.accountPassword}
+                />
 
-        <Input
-          {...this.bindField('rePassword')}
-          icon="key"
-          color="blue"
-          type="password"
-          required
-          placeholder={messages.repeatPassword}
-        />
+                <Input
+                    {...this.bindField('rePassword')}
+                    icon="key"
+                    color="blue"
+                    type="password"
+                    required
+                    placeholder={messages.repeatPassword}
+                />
 
-        <Captcha {...this.bindField('captcha')} delay={600} />
+                <Captcha {...this.bindField('captcha')} delay={600} />
 
-        <div className={styles.checkboxInput}>
-          <Checkbox
-            {...this.bindField('rulesAgreement')}
-            color="blue"
-            required
-            label={
-              <Message
-                {...messages.acceptRules}
-                values={{
-                  link: (
-                    <Link to="/rules" target="_blank">
-                      <Message {...messages.termsOfService} />
-                    </Link>
-                  ),
-                }}
-              />
-            }
-          />
-        </div>
-      </div>
-    );
-  }
+                <div className={styles.checkboxInput}>
+                    <Checkbox
+                        {...this.bindField('rulesAgreement')}
+                        color="blue"
+                        required
+                        label={
+                            <Message
+                                {...messages.acceptRules}
+                                values={{
+                                    link: (
+                                        <Link to="/rules" target="_blank">
+                                            <Message {...messages.termsOfService} />
+                                        </Link>
+                                    ),
+                                }}
+                            />
+                        }
+                    />
+                </div>
+            </div>
+        );
+    }
 }

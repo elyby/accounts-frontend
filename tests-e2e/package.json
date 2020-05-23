@@ -1,20 +1,20 @@
 {
-  "name": "tests-e2e",
-  "version": "1.0.0",
-  "description": "account.ely.by e2e test suit",
-  "main": "index.js",
-  "scripts": {
-    "test": "cypress open",
-    "test:ci": "cypress run"
-  },
-  "keywords": [],
-  "author": "SleepWalker <dev@udf.su>",
-  "license": "UNLICENSED",
-  "private": true,
-  "dependencies": {
-    "@cypress/webpack-preprocessor": "^5.4.1",
-    "@testing-library/cypress": "^6.0.0",
-    "@types/testing-library__cypress": "^5.0.5",
-    "cypress": "^4.6.0"
-  }
+    "name": "tests-e2e",
+    "version": "1.0.0",
+    "description": "account.ely.by e2e test suit",
+    "main": "index.js",
+    "scripts": {
+        "test": "cypress open",
+        "test:ci": "cypress run"
+    },
+    "keywords": [],
+    "author": "SleepWalker <dev@udf.su>",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+        "@cypress/webpack-preprocessor": "^5.4.1",
+        "@testing-library/cypress": "^6.0.0",
+        "@types/testing-library__cypress": "^5.0.5",
+        "cypress": "^4.6.0"
+    }
 }

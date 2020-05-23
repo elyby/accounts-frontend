@@ -7,26 +7,21 @@ import { User } from 'app/components/user/reducer';
 import messages from './Login.intl.json';
 
 export default class LoginBody extends BaseAuthBody {
-  static displayName = 'LoginBody';
-  static panelId = 'login';
-  static hasGoBack = (state: { user: User }) => {
-    return !state.user.isGuest;
-  };
+    static displayName = 'LoginBody';
+    static panelId = 'login';
+    static hasGoBack = (state: { user: User }) => {
+        return !state.user.isGuest;
+    };
 
-  autoFocusField = 'login';
+    autoFocusField = 'login';
 
-  render() {
-    return (
-      <div>
-        {this.renderErrors()}
+    render() {
+        return (
+            <div>
+                {this.renderErrors()}
 
-        <Input
-          {...this.bindField('login')}
-          icon="envelope"
-          required
-          placeholder={messages.emailOrUsername}
-        />
-      </div>
-    );
-  }
+                <Input {...this.bindField('login')} icon="envelope" required placeholder={messages.emailOrUsername} />
+            </div>
+        );
+    }
 }

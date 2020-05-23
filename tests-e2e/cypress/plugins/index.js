@@ -23,33 +23,33 @@ const wp = require('@cypress/webpack-preprocessor');
 const config = require('../../../babel.config');
 
 module.exports = (on) => {
-  const options = {
-    webpackOptions: {
-      mode: 'development',
-      // webpack will transpile TS and JS files
-      resolve: {
-        extensions: ['.ts', '.js', '.json'],
-      },
-      module: {
-        rules: [
-          {
-            test: /\.[tj]s$/,
-            exclude: [/node_modules/],
-            use: [
-              {
-                loader: 'babel-loader',
-                options: {
-                  envName: 'webpack',
-                  cacheDirectory: true,
-                  ...config,
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  };
+    const options = {
+        webpackOptions: {
+            mode: 'development',
+            // webpack will transpile TS and JS files
+            resolve: {
+                extensions: ['.ts', '.js', '.json'],
+            },
+            module: {
+                rules: [
+                    {
+                        test: /\.[tj]s$/,
+                        exclude: [/node_modules/],
+                        use: [
+                            {
+                                loader: 'babel-loader',
+                                options: {
+                                    envName: 'webpack',
+                                    cacheDirectory: true,
+                                    ...config,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+    };
 
-  on('file:preprocessor', wp(options));
+    on('file:preprocessor', wp(options));
 };

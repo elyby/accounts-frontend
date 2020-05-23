@@ -1,38 +1,34 @@
 import supportedLocales from 'app/i18n';
 
 const localeToCountryCode: Record<string, string> = {
-  en: 'gb',
-  be: 'by',
-  pt: 'br',
-  uk: 'ua',
-  vi: 'vn',
-  sl: 'si',
-  sr: 'rs',
-  zh: 'cn',
+    en: 'gb',
+    be: 'by',
+    pt: 'br',
+    uk: 'ua',
+    vi: 'vn',
+    sl: 'si',
+    sr: 'rs',
+    zh: 'cn',
 };
 const SUPPORTED_LANGUAGES: string[] = Object.keys(supportedLocales);
 
 export default {
-  getCountryList(): string[] {
-    return SUPPORTED_LANGUAGES.map(
-      (locale) => localeToCountryCode[locale] || locale,
-    );
-  },
+    getCountryList(): string[] {
+        return SUPPORTED_LANGUAGES.map((locale) => localeToCountryCode[locale] || locale);
+    },
 
-  /**
-   * Возвращает для указанной локали её флаг с учётом всех нюансов загрузки флага
-   * и подбора соответствующего локали флага.
-   *
-   * @param {string} locale
-   *
-   * @returns {string}
-   */
-  getIconUrl(locale: string): string {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require(`flag-icon-css/flags/4x3/${
-      localeToCountryCode[locale] || locale
-    }.svg`);
+    /**
+     * Возвращает для указанной локали её флаг с учётом всех нюансов загрузки флага
+     * и подбора соответствующего локали флага.
+     *
+     * @param {string} locale
+     *
+     * @returns {string}
+     */
+    getIconUrl(locale: string): string {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const mod = require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
 
-    return mod.default || mod;
-  },
+        return mod.default || mod;
+    },
 };

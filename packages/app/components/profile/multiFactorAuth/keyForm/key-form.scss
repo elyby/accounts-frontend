@@ -1,39 +1,39 @@
 $maxQrCodeSize: 242px;
 
 .qrCode {
-  text-align: center;
-  width: $maxQrCodeSize;
-  margin: 0 auto;
-
-  img {
+    text-align: center;
     width: $maxQrCodeSize;
-    height: $maxQrCodeSize;
-  }
+    margin: 0 auto;
+
+    img {
+        width: $maxQrCodeSize;
+        height: $maxQrCodeSize;
+    }
 }
 
 .manualDescription {
-  position: relative;
+    position: relative;
 }
 
 .or {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  margin-top: -18px;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    margin-top: -18px;
 
-  text-align: center;
-  font-size: 10px;
-  text-transform: capitalize;
+    text-align: center;
+    font-size: 10px;
+    text-transform: capitalize;
 }
 
 .key {
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 16px;
 }
 
 @media screen and (max-width: 359px) {
-  .key {
-    font-size: 13px;
-  }
+    .key {
+        font-size: 13px;
+    }
 }

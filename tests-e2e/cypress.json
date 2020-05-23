@@ -1,6 +1,6 @@
 {
-  "baseUrl": "http://localhost:8080",
-  "testFiles": ["**/*.test.ts"],
-  "chromeWebSecurity": false,
-  "projectId": "uftjbg"
+    "baseUrl": "http://localhost:8080",
+    "testFiles": ["**/*.test.ts"],
+    "chromeWebSecurity": false,
+    "projectId": "uftjbg"
 }

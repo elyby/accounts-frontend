@@ -22,63 +22,58 @@ const win: { [key: string]: any } = window as any;
 history.init();
 
 logger.init({
-  sentryDSN: (window as any).SENTRY_DSN as string,
+    sentryDSN: (window as any).SENTRY_DSN as string,
 });
 
 const store = storeFactory();
 
 bsodFactory({
-  store,
-  history: browserHistory,
-  stopLoading: () => loader.hide(),
+    store,
+    history: browserHistory,
+    stopLoading: () => loader.hide(),
 });
 authFlow.setStore(store);
 
 Promise.all([
-  userFactory(store),
-  font.load(['Roboto', 'Roboto Condensed']),
-  i18n.ensureIntl(), // ensure, that intl is polyfilled before any rendering
+    userFactory(store),
+    font.load(['Roboto', 'Roboto Condensed']),
+    i18n.ensureIntl(), // ensure, that intl is polyfilled before any rendering
 ]).then(() => {
-  ReactDOM.render(
-    <App store={store} history={browserHistory} />,
-    document.getElementById('app'),
-  );
+    ReactDOM.render(<App store={store} history={browserHistory} />, document.getElementById('app'));
 
-  initAnalytics();
+    initAnalytics();
 });
 
 const trackPageView = debounce(_trackPageView);
 function initAnalytics() {
-  if (!win.ga) {
-    const ga: {
-      [key: string]: any;
-      (...args: any[]): void;
-    } = function (...args) {
-      // eslint-disable-next-line id-length
-      (ga.q = ga.q || []).push(args);
-    };
-    win.ga = ga;
-    ga.l = Date.now(); // eslint-disable-line
+    if (!win.ga) {
+        const ga: {
+            [key: string]: any;
+            (...args: any[]): void;
+        } = function (...args) {
+            // eslint-disable-next-line id-length
+            (ga.q = ga.q || []).push(args);
+        };
+        win.ga = ga;
+        ga.l = Date.now(); // eslint-disable-line
 
-    if (win.GA_ID) {
-      // when GA is not available, we will continue to push into array
-      // for debug purposes
-      // Catch to prevent "unhandled rejection" error
-      loadScript(
-        'https://www.google-analytics.com/analytics.js',
-      ).catch(() => {});
+        if (win.GA_ID) {
+            // when GA is not available, we will continue to push into array
+            // for debug purposes
+            // Catch to prevent "unhandled rejection" error
+            loadScript('https://www.google-analytics.com/analytics.js').catch(() => {});
+        }
+
+        ga('create', win.GA_ID, 'auto');
+        trackPageView(location);
+
+        browserHistory.listen(trackPageView);
     }
-
-    ga('create', win.GA_ID, 'auto');
-    trackPageView(location);
-
-    browserHistory.listen(trackPageView);
-  }
 }
 
 function _trackPageView(location: HistoryLocation | Location): void {
-  const { ga } = win;
+    const { ga } = win;
 
-  ga('set', 'page', location.pathname + location.search);
-  ga('send', 'pageview');
+    ga('set', 'page', location.pathname + location.search);
+    ga('send', 'pageview');
 }

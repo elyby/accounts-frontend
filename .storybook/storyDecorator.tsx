@@ -10,11 +10,11 @@ import { IntlDecorator } from './decorators';
 const store = storeFactory();
 
 export default ((story) => {
-  const channel = addons.getChannel();
+    const channel = addons.getChannel();
 
-  return (
-    <ContextProvider store={store} history={browserHistory}>
-      <IntlDecorator channel={channel}>{story()}</IntlDecorator>
-    </ContextProvider>
-  );
+    return (
+        <ContextProvider store={store} history={browserHistory}>
+            <IntlDecorator channel={channel}>{story()}</IntlDecorator>
+        </ContextProvider>
+    );
 }) as DecoratorFunction<React.ReactElement>;

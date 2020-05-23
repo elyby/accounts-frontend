@@ -29,82 +29,54 @@ import styles from './auth.scss';
 let isSidebarHiddenCache = false;
 
 const AuthPage: ComponentType = () => {
-  const [isSidebarHidden, setIsSidebarHidden] = useState<boolean>(
-    isSidebarHiddenCache,
-  );
-  const client = useSelector((state: RootState) => state.auth.client);
+    const [isSidebarHidden, setIsSidebarHidden] = useState<boolean>(isSidebarHiddenCache);
+    const client = useSelector((state: RootState) => state.auth.client);
 
-  const goToAuth = useCallback(() => {
-    isSidebarHiddenCache = true;
-    setIsSidebarHidden(true);
-  }, []);
+    const goToAuth = useCallback(() => {
+        isSidebarHiddenCache = true;
+        setIsSidebarHidden(true);
+    }, []);
 
-  return (
-    <div>
-      <div className={isSidebarHidden ? styles.hiddenSidebar : styles.sidebar}>
-        <AppInfo {...client} onGoToAuth={goToAuth} />
-      </div>
+    return (
+        <div>
+            <div className={isSidebarHidden ? styles.hiddenSidebar : styles.sidebar}>
+                <AppInfo {...client} onGoToAuth={goToAuth} />
+            </div>
 
-      <div className={styles.content} data-e2e-content>
-        <Switch>
-          <Route path="/login" render={renderPanelTransition(Login)} />
-          <Route path="/mfa" render={renderPanelTransition(Mfa)} />
-          <Route path="/password" render={renderPanelTransition(Password)} />
-          <Route path="/register" render={renderPanelTransition(Register)} />
-          <Route
-            path="/activation/:key?"
-            render={renderPanelTransition(Activation)}
-          />
-          <Route
-            path="/resend-activation"
-            render={renderPanelTransition(ResendActivation)}
-          />
-          <Route
-            path="/oauth/permissions"
-            render={renderPanelTransition(Permissions)}
-          />
-          <Route
-            path="/choose-account"
-            render={renderPanelTransition(ChooseAccount)}
-          />
-          <Route
-            path="/oauth/choose-account"
-            render={renderPanelTransition(ChooseAccount)}
-          />
-          <Route path="/oauth/finish" component={Finish} />
-          <Route
-            path="/accept-rules"
-            render={renderPanelTransition(AcceptRules)}
-          />
-          <Route
-            path="/forgot-password"
-            render={renderPanelTransition(ForgotPassword)}
-          />
-          <Route
-            path="/recover-password/:key?"
-            render={renderPanelTransition(RecoverPassword)}
-          />
-          <Redirect to="/404" />
-        </Switch>
-      </div>
-    </div>
-  );
+            <div className={styles.content} data-e2e-content>
+                <Switch>
+                    <Route path="/login" render={renderPanelTransition(Login)} />
+                    <Route path="/mfa" render={renderPanelTransition(Mfa)} />
+                    <Route path="/password" render={renderPanelTransition(Password)} />
+                    <Route path="/register" render={renderPanelTransition(Register)} />
+                    <Route path="/activation/:key?" render={renderPanelTransition(Activation)} />
+                    <Route path="/resend-activation" render={renderPanelTransition(ResendActivation)} />
+                    <Route path="/oauth/permissions" render={renderPanelTransition(Permissions)} />
+                    <Route path="/choose-account" render={renderPanelTransition(ChooseAccount)} />
+                    <Route path="/oauth/choose-account" render={renderPanelTransition(ChooseAccount)} />
+                    <Route path="/oauth/finish" component={Finish} />
+                    <Route path="/accept-rules" render={renderPanelTransition(AcceptRules)} />
+                    <Route path="/forgot-password" render={renderPanelTransition(ForgotPassword)} />
+                    <Route path="/recover-password/:key?" render={renderPanelTransition(RecoverPassword)} />
+                    <Redirect to="/404" />
+                </Switch>
+            </div>
+        </div>
+    );
 };
 
-function renderPanelTransition(
-  factory: Factory,
-): (props: RouteComponentProps<any>) => ReactNode {
-  const { Title, Body, Footer, Links } = factory();
+function renderPanelTransition(factory: Factory): (props: RouteComponentProps<any>) => ReactNode {
+    const { Title, Body, Footer, Links } = factory();
 
-  return (props) => (
-    <PanelTransition
-      key="panel-transition"
-      Title={<Title />}
-      Body={<Body {...props} />}
-      Footer={<Footer />}
-      Links={<Links />}
-    />
-  );
+    return (props) => (
+        <PanelTransition
+            key="panel-transition"
+            Title={<Title />}
+            Body={<Body {...props} />}
+            Footer={<Footer />}
+            Links={<Links />}
+        />
+    );
 }
 
 export default AuthPage;

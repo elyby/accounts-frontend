@@ -13,6 +13,6 @@ export type Middleware = TMiddleware;
  * TODO: find a way to make it more friendly with URLSearchParams type
  */
 export type Query<T extends string> = {
-  get: (key: T) => string | void;
-  set: (key: T, value: any) => void;
+    get: (key: T) => string | void;
+    set: (key: T, value: any) => void;
 };

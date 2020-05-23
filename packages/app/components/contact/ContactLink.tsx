@@ -4,24 +4,24 @@ import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from './ContactForm';
 
 type Props = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  createContactPopup: () => void;
+    createContactPopup: () => void;
 };
 
 function ContactLink({ createContactPopup, ...props }: Props) {
-  return (
-    <a
-      href="#"
-      data-e2e-button="feedbackPopup"
-      onClick={(event) => {
-        event.preventDefault();
+    return (
+        <a
+            href="#"
+            data-e2e-button="feedbackPopup"
+            onClick={(event) => {
+                event.preventDefault();
 
-        createContactPopup();
-      }}
-      {...props}
-    />
-  );
+                createContactPopup();
+            }}
+            {...props}
+        />
+    );
 }
 
 export default connect(null, {
-  createContactPopup: () => createPopup({ Popup: ContactForm }),
+    createContactPopup: () => createPopup({ Popup: ContactForm }),
 })(ContactLink);

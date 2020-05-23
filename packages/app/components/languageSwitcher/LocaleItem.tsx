@@ -7,44 +7,42 @@ import styles from './languageSwitcher.scss';
 import { LocaleData } from './LanguageSwitcher';
 
 interface Props {
-  locale: LocaleData;
+    locale: LocaleData;
 }
 
-const LocaleItem: ComponentType<Props> = ({
-  locale: { code, name, englishName, progress, isReleased },
-}) => {
-  let progressLabel: ReactNode;
+const LocaleItem: ComponentType<Props> = ({ locale: { code, name, englishName, progress, isReleased } }) => {
+    let progressLabel: ReactNode;
 
-  if (progress !== 100) {
-    progressLabel = (
-      <Message
-        {...messages.translationProgress}
-        values={{
-          progress,
-        }}
-      />
-    );
-  } else if (!isReleased) {
-    progressLabel = <Message {...messages.mayBeInaccurate} />;
-  }
+    if (progress !== 100) {
+        progressLabel = (
+            <Message
+                {...messages.translationProgress}
+                values={{
+                    progress,
+                }}
+            />
+        );
+    } else if (!isReleased) {
+        progressLabel = <Message {...messages.mayBeInaccurate} />;
+    }
 
-  return (
-    <div className={styles.languageFlex}>
-      <div
-        className={styles.languageIco}
-        style={{
-          backgroundImage: `url('${localeFlags.getIconUrl(code)}')`,
-        }}
-      />
-      <div className={styles.languageCaptions}>
-        <div className={styles.languageName}>{name}</div>
-        <div className={styles.languageSubName}>
-          {englishName} {progressLabel ? '| ' : ''} {progressLabel}
+    return (
+        <div className={styles.languageFlex}>
+            <div
+                className={styles.languageIco}
+                style={{
+                    backgroundImage: `url('${localeFlags.getIconUrl(code)}')`,
+                }}
+            />
+            <div className={styles.languageCaptions}>
+                <div className={styles.languageName}>{name}</div>
+                <div className={styles.languageSubName}>
+                    {englishName} {progressLabel ? '| ' : ''} {progressLabel}
+                </div>
+            </div>
+            <span className={styles.languageCircle} />
         </div>
-      </div>
-      <span className={styles.languageCircle} />
-    </div>
-  );
+    );
 };
 
 export default LocaleItem;

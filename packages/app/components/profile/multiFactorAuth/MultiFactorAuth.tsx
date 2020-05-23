@@ -10,59 +10,46 @@ import MfaDisable from './MfaDisable';
 import messages from './MultiFactorAuth.intl.json';
 
 class MultiFactorAuth extends React.Component<{
-  step: MfaStep;
-  isMfaEnabled: boolean;
-  onSubmit: (form: FormModel, sendData: () => Promise<void>) => Promise<void>;
-  onComplete: () => void;
-  onChangeStep: (nextStep: number) => void;
+    step: MfaStep;
+    isMfaEnabled: boolean;
+    onSubmit: (form: FormModel, sendData: () => Promise<void>) => Promise<void>;
+    onComplete: () => void;
+    onChangeStep: (nextStep: number) => void;
 }> {
-  render() {
-    const {
-      step,
-      onSubmit,
-      onComplete,
-      onChangeStep,
-      isMfaEnabled,
-    } = this.props;
+    render() {
+        const { step, onSubmit, onComplete, onChangeStep, isMfaEnabled } = this.props;
 
-    return (
-      <div className={styles.contentWithBackButton}>
-        <BackButton />
+        return (
+            <div className={styles.contentWithBackButton}>
+                <BackButton />
 
-        <div className={styles.form}>
-          <div className={styles.formBody}>
-            <Message {...messages.mfaTitle}>
-              {(pageTitle) => (
-                <h3 className={styles.title}>
-                  <Helmet title={pageTitle as string} />
-                  {pageTitle}
-                </h3>
-              )}
-            </Message>
+                <div className={styles.form}>
+                    <div className={styles.formBody}>
+                        <Message {...messages.mfaTitle}>
+                            {(pageTitle) => (
+                                <h3 className={styles.title}>
+                                    <Helmet title={pageTitle as string} />
+                                    {pageTitle}
+                                </h3>
+                            )}
+                        </Message>
 
-            <div className={styles.formRow}>
-              <p className={styles.description}>
-                <Message {...messages.mfaDescription} />
-              </p>
+                        <div className={styles.formRow}>
+                            <p className={styles.description}>
+                                <Message {...messages.mfaDescription} />
+                            </p>
+                        </div>
+                    </div>
+
+                    {isMfaEnabled && <MfaDisable onSubmit={onSubmit} onComplete={onComplete} />}
+                </div>
+
+                {isMfaEnabled || (
+                    <MfaEnable step={step} onSubmit={onSubmit} onChangeStep={onChangeStep} onComplete={onComplete} />
+                )}
             </div>
-          </div>
-
-          {isMfaEnabled && (
-            <MfaDisable onSubmit={onSubmit} onComplete={onComplete} />
-          )}
-        </div>
-
-        {isMfaEnabled || (
-          <MfaEnable
-            step={step}
-            onSubmit={onSubmit}
-            onChangeStep={onChangeStep}
-            onComplete={onComplete}
-          />
-        )}
-      </div>
-    );
-  }
+        );
+    }
 }
 
 export default MultiFactorAuth;

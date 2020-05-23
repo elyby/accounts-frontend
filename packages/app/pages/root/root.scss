@@ -4,63 +4,63 @@
 $userBarHeight: 50px;
 
 .root {
-  height: 100%;
+    height: 100%;
 }
 
 .viewPort {
-  height: 100%;
+    height: 100%;
 }
 
 .isPopupActive {
-  filter: blur(5px);
-  transition: filter 0.4s 0.1s ease;
+    filter: blur(5px);
+    transition: filter 0.4s 0.1s ease;
 }
 
 .wrapper {
-  max-width: 756px;
-  margin: 0 auto;
+    max-width: 756px;
+    margin: 0 auto;
 }
 
 .header {
-  position: fixed;
-  top: 0;
-  z-index: 100;
-  height: $userBarHeight;
-  width: 100%;
-  background: $green;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    height: $userBarHeight;
+    width: 100%;
+    background: $green;
 }
 
 .headerContent {
-  composes: wrapper;
-  position: relative;
+    composes: wrapper;
+    position: relative;
 }
 
 .logo {
-  line-height: 50px;
-  padding: 0 20px;
-  display: inline-block;
-  background: darker($green);
-  border-bottom: none;
+    line-height: 50px;
+    padding: 0 20px;
+    display: inline-block;
+    background: darker($green);
+    border-bottom: none;
 
-  font-family: $font-family-title;
-  font-size: 33px;
-  color: #fff !important;
+    font-family: $font-family-title;
+    font-size: 33px;
+    color: #fff !important;
 }
 
 .body {
-  // TODO: должны ли мы здесь описать базовый шрифт, его размер и базовую линию?
-  composes: wrapper;
-  position: relative;
+    // TODO: должны ли мы здесь описать базовый шрифт, его размер и базовую линию?
+    composes: wrapper;
+    position: relative;
 
-  min-height: 100%;
-  box-sizing: border-box;
+    min-height: 100%;
+    box-sizing: border-box;
 
-  padding-top: $userBarHeight; // place for header
+    padding-top: $userBarHeight; // place for header
 }
 
 .userbar {
-  position: absolute;
-  right: 0;
-  left: 115px;
-  top: 0;
+    position: absolute;
+    right: 0;
+    left: 115px;
+    top: 0;
 }

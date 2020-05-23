@@ -8,22 +8,15 @@ export const SUPPORTED_LANGUAGES = Object.keys(locales);
 export const DEFAULT_LANGUAGE = 'en';
 
 function getBrowserPreferredLanguages(): string[] {
-  return ([] as string[])
-    .concat(navigator['languages'] || [])
-    .concat(navigator['language'] || []);
+    return ([] as string[]).concat(navigator['languages'] || []).concat(navigator['language'] || []);
 }
 
-function detectLanguage(
-  userLanguages: string[],
-  availableLanguages: string[],
-  defaultLanguage: string,
-): string {
-  return (
-    userLanguages
-      .map((lang) => (lang.split('-').shift() || '').toLowerCase())
-      .find((lang) => availableLanguages.indexOf(lang) !== -1) ||
-    defaultLanguage
-  );
+function detectLanguage(userLanguages: string[], availableLanguages: string[], defaultLanguage: string): string {
+    return (
+        userLanguages
+            .map((lang) => (lang.split('-').shift() || '').toLowerCase())
+            .find((lang) => availableLanguages.indexOf(lang) !== -1) || defaultLanguage
+    );
 }
 
 const cache = createIntlCache();
@@ -31,66 +24,64 @@ const cache = createIntlCache();
 let intl: IntlShape;
 
 class I18N {
-  detectLanguage(lang: string = ''): string {
-    return detectLanguage(
-      [lang].concat(getBrowserPreferredLanguages()).filter((item) => !!item),
-      SUPPORTED_LANGUAGES,
-      DEFAULT_LANGUAGE,
-    );
-  }
-
-  getIntl(): IntlShape {
-    if (!intl) {
-      intl = createIntl(
-        {
-          locale: 'en',
-          messages: {},
-        },
-        cache,
-      );
+    detectLanguage(lang: string = ''): string {
+        return detectLanguage(
+            [lang].concat(getBrowserPreferredLanguages()).filter((item) => !!item),
+            SUPPORTED_LANGUAGES,
+            DEFAULT_LANGUAGE,
+        );
     }
 
-    return intl;
-  }
+    getIntl(): IntlShape {
+        if (!intl) {
+            intl = createIntl(
+                {
+                    locale: 'en',
+                    messages: {},
+                },
+                cache,
+            );
+        }
 
-  async changeLocale(locale: string = DEFAULT_LANGUAGE): Promise<IntlShape> {
-    const { messages } = await this.require(locale);
+        return intl;
+    }
 
-    captcha.setLang(locale);
+    async changeLocale(locale: string = DEFAULT_LANGUAGE): Promise<IntlShape> {
+        const { messages } = await this.require(locale);
 
-    intl = createIntl(
-      {
-        locale,
-        messages,
-      },
-      cache,
-    );
+        captcha.setLang(locale);
 
-    return intl;
-  }
+        intl = createIntl(
+            {
+                locale,
+                messages,
+            },
+            cache,
+        );
 
-  async ensureIntl() {
-    await intlPolyfill('en');
-  }
+        return intl;
+    }
 
-  async require(
-    locale: string,
-  ): Promise<{
-    locale: string;
-    messages: { [key: string]: string };
-  }> {
-    const [{ default: messages }] = await Promise.all([
-      import(
-        /* webpackChunkName: "locale-[request]" */ `app/i18n/${locale}.json`
-      ),
-      intlPolyfill(locale),
-    ]);
+    async ensureIntl() {
+        await intlPolyfill('en');
+    }
 
-    return {
-      locale,
-      messages,
-    };
-  }
+    async require(
+        locale: string,
+    ): Promise<{
+        locale: string;
+        messages: { [key: string]: string };
+    }> {
+        const [{ default: messages }] = await Promise.all([
+            import(/* webpackChunkName: "locale-[request]" */ `app/i18n/${locale}.json`),
+            intlPolyfill(locale),
+        ]);
+
+        return {
+            locale,
+            messages,
+        };
+    }
 }
 
 export default new I18N();

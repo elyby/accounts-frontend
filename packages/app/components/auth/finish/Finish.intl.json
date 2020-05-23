@@ -1,7 +1,7 @@
 {
-  "authForAppSuccessful": "Authorization for {appName} was successfully completed",
-  "authForAppFailed": "Authorization for {appName} was failed",
-  "waitAppReaction": "Please, wait till your application response",
-  "passCodeToApp": "To complete authorization process, please, provide the following code to {appName}",
-  "copy": "Copy"
+    "authForAppSuccessful": "Authorization for {appName} was successfully completed",
+    "authForAppFailed": "Authorization for {appName} was failed",
+    "waitAppReaction": "Please, wait till your application response",
+    "passCodeToApp": "To complete authorization process, please, provide the following code to {appName}",
+    "copy": "Copy"
 }

@@ -10,16 +10,4 @@ import Dropdown from './Dropdown';
 import Captcha from './Captcha';
 import FormError from './FormError';
 
-export {
-  Input,
-  TextArea,
-  Button,
-  LinkButton,
-  Checkbox,
-  Radio,
-  Form,
-  FormModel,
-  Dropdown,
-  Captcha,
-  FormError,
-};
+export { Input, TextArea, Button, LinkButton, Checkbox, Radio, Form, FormModel, Dropdown, Captcha, FormError };

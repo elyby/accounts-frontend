@@ -1,64 +1,63 @@
 @import '~app/components/ui/colors.scss';
 
-$font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono',
-  monospace;
+$font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 
 .body {
-  height: 100%;
-  background-color: $dark_blue;
-  color: #fff;
-  text-align: center;
-  font-family: $font-family-monospaced;
-  box-sizing: border-box;
+    height: 100%;
+    background-color: $dark_blue;
+    color: #fff;
+    text-align: center;
+    font-family: $font-family-monospaced;
+    box-sizing: border-box;
 }
 
 .canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .wrapper {
-  position: relative;
-  margin: 85px auto 0;
-  max-width: 500px;
-  padding: 0 20px;
+    position: relative;
+    margin: 85px auto 0;
+    max-width: 500px;
+    padding: 0 20px;
 }
 
 .title {
-  font-size: 26px;
-  margin-bottom: 13px;
+    font-size: 26px;
+    margin-bottom: 13px;
 }
 
 .line {
-  margin: 0 auto;
-  font-size: 16px;
-  color: #ebe8e1;
+    margin: 0 auto;
+    font-size: 16px;
+    color: #ebe8e1;
 }
 
 .lineWithMargin {
-  composes: line;
+    composes: line;
 
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .support {
-  font-size: 18px;
-  line-height: 18px;
-  color: #fff;
-  margin: 5px 0 44px;
-  display: inline-block;
-  border-bottom-color: #39777f;
-
-  &:hover {
+    font-size: 18px;
+    line-height: 18px;
     color: #fff;
-    border-bottom-color: #eee;
-  }
+    margin: 5px 0 44px;
+    display: inline-block;
+    border-bottom-color: #39777f;
+
+    &:hover {
+        color: #fff;
+        border-bottom-color: #eee;
+    }
 }
 
 .easterEgg {
-  font-size: 14px;
-  color: #ebe8e1;
+    font-size: 14px;
+    color: #ebe8e1;
 }

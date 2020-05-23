@@ -6,75 +6,69 @@ import CompleteState from 'app/services/authFlow/CompleteState';
 import { bootstrap, expectNavigate, MockedAuthContext } from './helpers';
 
 describe('PermissionsState', () => {
-  let state: PermissionsState;
-  let context: MockedAuthContext;
-  let mock: SinonMock;
+    let state: PermissionsState;
+    let context: MockedAuthContext;
+    let mock: SinonMock;
 
-  beforeEach(() => {
-    state = new PermissionsState();
+    beforeEach(() => {
+        state = new PermissionsState();
 
-    const data = bootstrap();
-    context = data.context;
-    mock = data.mock;
-  });
-
-  afterEach(() => {
-    mock.verify();
-  });
-
-  describe('#enter', () => {
-    it('should navigate to /oauth/permissions', () => {
-      context.getRequest.returns({
-        path: '/',
-      });
-
-      expectNavigate(mock, '/oauth/permissions', {
-        replace: false,
-      });
-
-      state.enter(context);
+        const data = bootstrap();
+        context = data.context;
+        mock = data.mock;
     });
 
-    it('should replace instead of push if current request contains oauth2', () => {
-      context.getRequest.returns({
-        path: '/oauth2',
-      });
-
-      expectNavigate(mock, '/oauth/permissions', {
-        replace: true,
-      });
-
-      state.enter(context);
+    afterEach(() => {
+        mock.verify();
     });
-  });
 
-  describe('#resolve', () => {
-    it('should transition to complete state with acceptance', () => {
-      mock
-        .expects('setState')
-        .once()
-        .withExactArgs(
-          sinon.match
-            .instanceOf(CompleteState)
-            .and(sinon.match.has('isPermissionsAccepted', true)),
-        );
+    describe('#enter', () => {
+        it('should navigate to /oauth/permissions', () => {
+            context.getRequest.returns({
+                path: '/',
+            });
 
-      state.resolve(context);
+            expectNavigate(mock, '/oauth/permissions', {
+                replace: false,
+            });
+
+            state.enter(context);
+        });
+
+        it('should replace instead of push if current request contains oauth2', () => {
+            context.getRequest.returns({
+                path: '/oauth2',
+            });
+
+            expectNavigate(mock, '/oauth/permissions', {
+                replace: true,
+            });
+
+            state.enter(context);
+        });
     });
-  });
 
-  describe('#reject', () => {
-    it('should transition to complete state without acceptance', () => {
-      mock
-        .expects('setState')
-        .once()
-        .withExactArgs(
-          sinon.match
-            .instanceOf(CompleteState)
-            .and(sinon.match.has('isPermissionsAccepted', false)),
-        );
+    describe('#resolve', () => {
+        it('should transition to complete state with acceptance', () => {
+            mock.expects('setState')
+                .once()
+                .withExactArgs(
+                    sinon.match.instanceOf(CompleteState).and(sinon.match.has('isPermissionsAccepted', true)),
+                );
 
-      state.reject(context);
+            state.resolve(context);
+        });
     });
-  });
+
+    describe('#reject', () => {
+        it('should transition to complete state without acceptance', () => {
+            mock.expects('setState')
+                .once()
+                .withExactArgs(
+                    sinon.match.instanceOf(CompleteState).and(sinon.match.has('isPermissionsAccepted', false)),
+                );
+
+            state.reject(context);
+        });
+    });
 });

@@ -1,7 +1,4 @@
-import {
-  ensureToken,
-  recoverFromTokenError,
-} from 'app/components/accounts/actions';
+import { ensureToken, recoverFromTokenError } from 'app/components/accounts/actions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import { Store } from 'app/reducers';
 import { Middleware } from 'app/services/request';
@@ -15,38 +12,29 @@ import { Middleware } from 'app/services/request';
  *
  * @returns {object} - request middleware
  */
-export default function refreshTokenMiddleware({
-  dispatch,
-  getState,
-}: Store): Middleware {
-  return {
-    async before(req) {
-      const activeAccount = getActiveAccount(getState());
-      const disableMiddleware =
-        !!req.options.token || req.options.token === null;
+export default function refreshTokenMiddleware({ dispatch, getState }: Store): Middleware {
+    return {
+        async before(req) {
+            const activeAccount = getActiveAccount(getState());
+            const disableMiddleware = !!req.options.token || req.options.token === null;
 
-      const isRefreshTokenRequest = req.url.includes('refresh-token');
+            const isRefreshTokenRequest = req.url.includes('refresh-token');
 
-      if (!activeAccount || disableMiddleware || isRefreshTokenRequest) {
-        return Promise.resolve(req);
-      }
+            if (!activeAccount || disableMiddleware || isRefreshTokenRequest) {
+                return Promise.resolve(req);
+            }
 
-      return dispatch(ensureToken()).then(() => req);
-    },
+            return dispatch(ensureToken()).then(() => req);
+        },
 
-    async catch(
-      resp: { status: number; message: string },
-      req,
-      restart,
-    ): Promise<any> {
-      const disableMiddleware =
-        !!req.options.token || req.options.token === null;
+        async catch(resp: { status: number; message: string }, req, restart): Promise<any> {
+            const disableMiddleware = !!req.options.token || req.options.token === null;
 
-      if (disableMiddleware) {
-        return Promise.reject(resp);
-      }
+            if (disableMiddleware) {
+                return Promise.reject(resp);
+            }
 
-      return dispatch(recoverFromTokenError(resp)).then(restart);
-    },
-  };
+            return dispatch(recoverFromTokenError(resp)).then(restart);
+        },
+    };
 }

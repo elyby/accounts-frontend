@@ -12,72 +12,72 @@ import appleLogo from './images/apple.svg';
 import windowsLogo from './images/windows.svg';
 
 interface State {
-  activeOs: null | 'android' | 'ios' | 'windows';
+    activeOs: null | 'android' | 'ios' | 'windows';
 }
 
 export default class Instructions extends React.Component<{}, State> {
-  state: State = {
-    activeOs: null,
-  };
+    state: State = {
+        activeOs: null,
+    };
 
-  render() {
-    const { activeOs } = this.state;
+    render() {
+        const { activeOs } = this.state;
 
-    return (
-      <div className={profileForm.formBody}>
-        <div className={profileForm.formRow}>
-          <p className={profileForm.description}>
-            <Message {...messages.mfaIntroduction} />
-          </p>
-        </div>
+        return (
+            <div className={profileForm.formBody}>
+                <div className={profileForm.formRow}>
+                    <p className={profileForm.description}>
+                        <Message {...messages.mfaIntroduction} />
+                    </p>
+                </div>
 
-        <div className={profileForm.formRow}>
-          <div
-            className={clsx(styles.instructionContainer, {
-              [styles.instructionActive]: !!activeOs,
-            })}
-          >
-            <div
-              className={clsx(styles.osList, {
-                [styles.androidActive]: activeOs === 'android',
-                [styles.appleActive]: activeOs === 'ios',
-                [styles.windowsActive]: activeOs === 'windows',
-              })}
-            >
-              <OsTile
-                className={styles.androidTile}
-                logo={androidLogo}
-                label="Google Play"
-                onClick={(event) => this.onChangeOs(event, 'android')}
-              />
-              <OsTile
-                className={styles.appleTile}
-                logo={appleLogo}
-                label="App Store"
-                onClick={(event) => this.onChangeOs(event, 'ios')}
-              />
-              <OsTile
-                className={styles.windowsTile}
-                logo={windowsLogo}
-                label="Windows Store"
-                onClick={(event) => this.onChangeOs(event, 'windows')}
-              />
+                <div className={profileForm.formRow}>
+                    <div
+                        className={clsx(styles.instructionContainer, {
+                            [styles.instructionActive]: !!activeOs,
+                        })}
+                    >
+                        <div
+                            className={clsx(styles.osList, {
+                                [styles.androidActive]: activeOs === 'android',
+                                [styles.appleActive]: activeOs === 'ios',
+                                [styles.windowsActive]: activeOs === 'windows',
+                            })}
+                        >
+                            <OsTile
+                                className={styles.androidTile}
+                                logo={androidLogo}
+                                label="Google Play"
+                                onClick={(event) => this.onChangeOs(event, 'android')}
+                            />
+                            <OsTile
+                                className={styles.appleTile}
+                                logo={appleLogo}
+                                label="App Store"
+                                onClick={(event) => this.onChangeOs(event, 'ios')}
+                            />
+                            <OsTile
+                                className={styles.windowsTile}
+                                logo={windowsLogo}
+                                label="Windows Store"
+                                onClick={(event) => this.onChangeOs(event, 'windows')}
+                            />
+                        </div>
+
+                        <div className={styles.osInstructionContainer}>
+                            {activeOs ? <OsInstruction os={activeOs} /> : null}
+                        </div>
+                    </div>
+                </div>
             </div>
+        );
+    }
 
-            <div className={styles.osInstructionContainer}>
-              {activeOs ? <OsInstruction os={activeOs} /> : null}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    onChangeOs(event: React.MouseEvent, osName: 'android' | 'ios' | 'windows') {
+        event.preventDefault();
 
-  onChangeOs(event: React.MouseEvent, osName: 'android' | 'ios' | 'windows') {
-    event.preventDefault();
-
-    this.setState({
-      activeOs: this.state.activeOs === osName ? null : osName,
-    });
-  }
+        this.setState({
+            activeOs: this.state.activeOs === osName ? null : osName,
+        });
+    }
 }

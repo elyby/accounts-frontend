@@ -14,21 +14,21 @@ import { Middleware } from 'app/services/request';
  * @returns {object} - request middleware
  */
 export default function bearerHeaderMiddleware(store: Store): Middleware {
-  return {
-    async before(req) {
-      const activeAccount = getActiveAccount(store.getState());
+    return {
+        async before(req) {
+            const activeAccount = getActiveAccount(store.getState());
 
-      let { token = null } = activeAccount || {};
+            let { token = null } = activeAccount || {};
 
-      if (req.options.token || req.options.token === null) {
-        ({ token } = req.options);
-      }
+            if (req.options.token || req.options.token === null) {
+                ({ token } = req.options);
+            }
 
-      if (token) {
-        req.options.headers.Authorization = `Bearer ${token}`;
-      }
+            if (token) {
+                req.options.headers.Authorization = `Bearer ${token}`;
+            }
 
-      return req;
-    },
-  };
+            return req;
+        },
+    };
 }

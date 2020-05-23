@@ -7,31 +7,25 @@ import { Radio } from 'app/components/ui/form';
 import styles from './applicationTypeSwitcher.scss';
 
 interface Props {
-  appTypes: Record<ApplicationType, MessageDescriptor>;
-  selectedType: ApplicationType | null;
-  setType: (type: ApplicationType) => void;
+    appTypes: Record<ApplicationType, MessageDescriptor>;
+    selectedType: ApplicationType | null;
+    setType: (type: ApplicationType) => void;
 }
 
-const ApplicationTypeSwitcher: ComponentType<Props> = ({
-  appTypes,
-  selectedType,
-  setType,
-}) => (
-  <div>
-    {((Object.keys(appTypes) as unknown) as Array<ApplicationType>).map(
-      (type) => (
-        <div className={styles.radioContainer} key={type}>
-          <Radio
-            onChange={() => setType(type)}
-            skin={SKIN_LIGHT}
-            label={appTypes[type]}
-            value={type}
-            checked={selectedType === type}
-          />
-        </div>
-      ),
-    )}
-  </div>
+const ApplicationTypeSwitcher: ComponentType<Props> = ({ appTypes, selectedType, setType }) => (
+    <div>
+        {((Object.keys(appTypes) as unknown) as Array<ApplicationType>).map((type) => (
+            <div className={styles.radioContainer} key={type}>
+                <Radio
+                    onChange={() => setType(type)}
+                    skin={SKIN_LIGHT}
+                    label={appTypes[type]}
+                    value={type}
+                    checked={selectedType === type}
+                />
+            </div>
+        ))}
+    </div>
 );
 
 export default ApplicationTypeSwitcher;

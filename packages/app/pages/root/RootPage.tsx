@@ -22,123 +22,103 @@ import styles from './root.scss';
 import messages from './RootPage.intl.json';
 
 const ProfilePage = React.lazy(() =>
-  import(
-    /* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfilePage'
-  ),
+    import(/* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfilePage'),
 );
-const PageNotFound = React.lazy(() =>
-  import(/* webpackChunkName: "page-not-found" */ 'app/pages/404/PageNotFound'),
-);
-const RulesPage = React.lazy(() =>
-  import(/* webpackChunkName: "page-rules" */ 'app/pages/rules/RulesPage'),
-);
-const DevPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: "page-dev-applications" */ 'app/pages/dev/DevPage'
-  ),
-);
-const AuthPage = React.lazy(() =>
-  import(/* webpackChunkName: "page-auth" */ 'app/pages/auth/AuthPage'),
-);
+const PageNotFound = React.lazy(() => import(/* webpackChunkName: "page-not-found" */ 'app/pages/404/PageNotFound'));
+const RulesPage = React.lazy(() => import(/* webpackChunkName: "page-rules" */ 'app/pages/rules/RulesPage'));
+const DevPage = React.lazy(() => import(/* webpackChunkName: "page-dev-applications" */ 'app/pages/dev/DevPage'));
+const AuthPage = React.lazy(() => import(/* webpackChunkName: "page-auth" */ 'app/pages/auth/AuthPage'));
 
 class RootPage extends React.PureComponent<{
-  account: Account | null;
-  user: User;
-  isPopupActive: boolean;
-  onLogoClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
-  location: {
-    pathname: string;
-  };
+    account: Account | null;
+    user: User;
+    isPopupActive: boolean;
+    onLogoClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+    location: {
+        pathname: string;
+    };
 }> {
-  componentDidMount() {
-    this.onPageUpdate();
-  }
-
-  componentDidUpdate() {
-    this.onPageUpdate();
-  }
-
-  onPageUpdate() {
-    loader.hide();
-  }
-
-  render() {
-    const { props } = this;
-    const { user, account, isPopupActive, onLogoClick } = this.props;
-    const isRegisterPage = props.location.pathname === '/register';
-
-    if (document && document.body) {
-      document.body.style.overflow = isPopupActive ? 'hidden' : '';
+    componentDidMount() {
+        this.onPageUpdate();
     }
 
-    return (
-      <div className={styles.root}>
-        <Helmet>
-          <html lang={user.lang} />
-        </Helmet>
+    componentDidUpdate() {
+        this.onPageUpdate();
+    }
 
-        <ScrollIntoView top />
+    onPageUpdate() {
+        loader.hide();
+    }
 
-        <div
-          id="view-port"
-          className={clsx(styles.viewPort, {
-            [styles.isPopupActive]: isPopupActive,
-          })}
-        >
-          <div className={styles.header} data-testid="toolbar">
-            <div className={styles.headerContent}>
-              <Link
-                to="/"
-                className={styles.logo}
-                onClick={onLogoClick}
-                data-testid="home-page"
-              >
-                <Message {...messages.siteName} />
-              </Link>
-              <div className={styles.userbar}>
-                <Userbar
-                  account={account}
-                  guestAction={isRegisterPage ? 'login' : 'register'}
-                />
-              </div>
+    render() {
+        const { props } = this;
+        const { user, account, isPopupActive, onLogoClick } = this.props;
+        const isRegisterPage = props.location.pathname === '/register';
+
+        if (document && document.body) {
+            document.body.style.overflow = isPopupActive ? 'hidden' : '';
+        }
+
+        return (
+            <div className={styles.root}>
+                <Helmet>
+                    <html lang={user.lang} />
+                </Helmet>
+
+                <ScrollIntoView top />
+
+                <div
+                    id="view-port"
+                    className={clsx(styles.viewPort, {
+                        [styles.isPopupActive]: isPopupActive,
+                    })}
+                >
+                    <div className={styles.header} data-testid="toolbar">
+                        <div className={styles.headerContent}>
+                            <Link to="/" className={styles.logo} onClick={onLogoClick} data-testid="home-page">
+                                <Message {...messages.siteName} />
+                            </Link>
+                            <div className={styles.userbar}>
+                                <Userbar account={account} guestAction={isRegisterPage ? 'login' : 'register'} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.body}>
+                        <React.Suspense fallback={<ComponentLoader />}>
+                            <Switch>
+                                <PrivateRoute path="/profile" component={ProfilePage} />
+                                <Route path="/404" component={PageNotFound} />
+                                <Route path="/rules" component={RulesPage} />
+                                <Route path="/dev" component={DevPage} />
+
+                                <AuthFlowRoute
+                                    exact
+                                    path="/"
+                                    key="indexPage"
+                                    component={user.isGuest ? AuthPage : ProfilePage}
+                                />
+                                <AuthFlowRoute path="/" component={AuthPage} />
+
+                                <Route component={PageNotFound} />
+                            </Switch>
+                        </React.Suspense>
+                    </div>
+                </div>
+                <PopupStack />
             </div>
-          </div>
-          <div className={styles.body}>
-            <React.Suspense fallback={<ComponentLoader />}>
-              <Switch>
-                <PrivateRoute path="/profile" component={ProfilePage} />
-                <Route path="/404" component={PageNotFound} />
-                <Route path="/rules" component={RulesPage} />
-                <Route path="/dev" component={DevPage} />
-
-                <AuthFlowRoute
-                  exact
-                  path="/"
-                  key="indexPage"
-                  component={user.isGuest ? AuthPage : ProfilePage}
-                />
-                <AuthFlowRoute path="/" component={AuthPage} />
-
-                <Route component={PageNotFound} />
-              </Switch>
-            </React.Suspense>
-          </div>
-        </div>
-        <PopupStack />
-      </div>
-    );
-  }
+        );
+    }
 }
 
 export default withRouter(
-  connect(
-    (state: RootState) => ({
-      user: state.user,
-      account: getActiveAccount(state),
-      isPopupActive: state.popup.popups.length > 0,
-    }),
-    {
-      onLogoClick: resetAuth,
-    },
-  )(RootPage),
+    connect(
+        (state: RootState) => ({
+            user: state.user,
+            account: getActiveAccount(state),
+            isPopupActive: state.popup.popups.length > 0,
+        }),
+        {
+            onLogoClick: resetAuth,
+        },
+    )(RootPage),
 );

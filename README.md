@@ -3,8 +3,7 @@
 [![Build Status](https://travis-ci.org/elyby/accounts-frontend.svg?branch=master)](https://travis-ci.org/elyby/accounts-frontend)
 [![Ely.by translation on Crowdin](https://d322cqt584bo4o.cloudfront.net/elyby/localized.svg)](https://translate.ely.by/project/elyby)
 
-Web interface for Ely.by Accounts service. Developed using ReactJS and Flow
-typing.
+Web interface for Ely.by Accounts service. Developed using ReactJS and Flow typing.
 
 ## Development
 
@@ -19,16 +18,15 @@ cd accounts-frontend
 yarn install
 ```
 
-After that you need to copy `config/template.env.js` into `config/env.js` and
-adjust it for yourself. Then you can start the application in dev mode:
+After that you need to copy `config/template.env.js` into `config/env.js` and adjust it for yourself. Then you can start
+the application in dev mode:
 
 ```bash
 yarn start
 ```
 
-This will start the dev server on port 8080, which will automatically apply all
-changes in project files, as well as proxy all requests to the backend on the
-domain specified in `env.js`.
+This will start the dev server on port 8080, which will automatically apply all changes in project files, as well as
+proxy all requests to the backend on the domain specified in `env.js`.
 
 To run the tests execute:
 
@@ -42,8 +40,7 @@ yarn test
 
 2. Place your code in a separate branch `git checkout -b <your_branch_name>`.
 
-3. Add your fork as a remote
-   `git remote add fork https://github.com/<your_username>/accounts-frontend.git`.
+3. Add your fork as a remote `git remote add fork https://github.com/<your_username>/accounts-frontend.git`.
 
 4. Push to your fork repository `git push -u fork <your_branch_name>`.
 
@@ -52,5 +49,4 @@ yarn test
 ## Translating
 
 Ely.by translation is done through the [Crowdin](https://crowdin.com) service.
-[Click here](https://translate.ely.by/project/elyby/invite) to participate in
-the translation of the project.
+[Click here](https://translate.ely.by/project/elyby/invite) to participate in the translation of the project.
