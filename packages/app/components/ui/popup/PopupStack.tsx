@@ -2,16 +2,19 @@ import React from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { browserHistory } from 'app/services/history';
 import { connect } from 'react-redux';
+import { Location } from 'history';
 import { RootState } from 'app/reducers';
 
 import { PopupConfig } from './reducer';
 import { destroy } from './actions';
 import styles from './popup.scss';
 
-export class PopupStack extends React.Component<{
+interface Props {
   popups: PopupConfig[];
   destroy: (popup: PopupConfig) => void;
-}> {
+}
+
+export class PopupStack extends React.Component<Props> {
   unlistenTransition: () => void;
 
   componentDidMount() {
@@ -45,6 +48,7 @@ export class PopupStack extends React.Component<{
             >
               <div
                 className={styles.overlay}
+                role="dialog"
                 onClick={this.onOverlayClick(popup)}
               >
                 <Popup onClose={this.onClose(popup)} />
@@ -57,11 +61,11 @@ export class PopupStack extends React.Component<{
   }
 
   onClose(popup: PopupConfig) {
-    return this.props.destroy.bind(null, popup);
+    return () => this.props.destroy(popup);
   }
 
   onOverlayClick(popup: PopupConfig) {
-    return (event: React.MouseEvent) => {
+    return (event: React.MouseEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget || popup.disableOverlayClose) {
         return;
       }
@@ -87,7 +91,7 @@ export class PopupStack extends React.Component<{
     }
   };
 
-  onRouteLeave = nextLocation => {
+  onRouteLeave = (nextLocation: Location) => {
     if (nextLocation) {
       this.popStack();
     }

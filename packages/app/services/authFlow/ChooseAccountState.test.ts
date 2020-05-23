@@ -1,13 +1,20 @@
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 import LoginState from 'app/services/authFlow/LoginState';
+import { SinonMock } from 'sinon';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('ChooseAccountState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: ChooseAccountState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new ChooseAccountState();

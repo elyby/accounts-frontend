@@ -80,7 +80,7 @@ export function acceptRules(): ThunkAction<Promise<{ success: boolean }>> {
       );
     }
 
-    return acceptRulesEndpoint(id).then(resp => {
+    return acceptRulesEndpoint(id).then((resp) => {
       dispatch(
         updateUser({
           shouldAcceptRules: false,

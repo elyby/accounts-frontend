@@ -2,21 +2,22 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-const fs = require('fs');
-const webpack = require('webpack');
-const chalk = require('chalk');
+import fs, { Stats } from 'fs';
+import webpack, { MultiCompiler } from 'webpack';
+import chalk from 'chalk';
 
-const webpackConfig = require('../../webpack.dll.config');
+import webpackConfig from './../../webpack.dll.config';
 
-const compiler = webpack(webpackConfig);
+// @ts-ignore
+const compiler: MultiCompiler = webpack(webpackConfig);
 
 Promise.all([
   stat(`${__dirname}/../../yarn.lock`),
   stat(`${__dirname}/../../dll/vendor.json`),
 ])
-  .then(stats => {
-    const lockFile = new Date(stats[0].mtime);
-    const dll = new Date(stats[1].mtime);
+  .then(([lockFileStats, dllFileStats]) => {
+    const lockFile = new Date(lockFileStats.mtime);
+    const dll = new Date(dllFileStats.mtime);
 
     if (dll < lockFile) {
       return Promise.reject({
@@ -26,7 +27,7 @@ Promise.all([
 
     logResult(chalk.green('Current dlls are up to date!'));
   })
-  .catch(err => {
+  .catch((err) => {
     if (err.code !== 'ENOENT' && err.code !== 'OUTDATED') {
       return Promise.reject(err);
     }
@@ -41,25 +42,25 @@ Promise.all([
 
         logResult(
           chalk.green('Dll was successfully build in %s ms'),
-          stats.endTime - stats.startTime,
+          stats.endTime! - stats.startTime!,
         );
 
         resolve();
       });
     });
   })
-  .catch(err => {
+  .catch((err) => {
     logResult(chalk.red('Unexpected error checking dll state'), err);
     process.exit(1);
   });
 
-function logResult(...args) {
+function logResult(...args: any[]): void {
   console.log('\n');
   console.log(...args);
   console.log('\n');
 }
 
-function stat(path) {
+function stat(path: string): Promise<Stats> {
   return new Promise((resolve, reject) => {
     fs.stat(path, (err, stats) => {
       err ? reject(err) : resolve(stats);

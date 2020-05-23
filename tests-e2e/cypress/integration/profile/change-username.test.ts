@@ -66,11 +66,9 @@ describe('Profile — Change Username', () => {
         );
 
       cy.location('pathname').should('eq', '/');
-      cy.getByTestId('profile-item').should('contain', account.username);
-      cy.getByTestId('toolbar')
-        .contains(account.username)
-        .click();
-      cy.getByTestId('active-account').should('contain', account.username);
+      cy.findAllByTestId('profile-item').should('contain', account.username);
+      cy.findByTestId('toolbar').contains(account.username).click();
+      cy.findByTestId('active-account').should('contain', account.username);
     });
   });
 
@@ -79,7 +77,7 @@ describe('Profile — Change Username', () => {
 
     cy.visit('/profile/change-username');
 
-    cy.getByTestId('back-to-profile').click();
+    cy.findByTestId('back-to-profile').click();
 
     cy.location('pathname').should('eq', '/');
   });

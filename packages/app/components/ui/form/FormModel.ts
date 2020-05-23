@@ -6,15 +6,13 @@ export type ValidationError =
   | string
   | {
       type: string;
-      payload?: { [key: string]: any };
+      payload?: Record<string, any>;
     };
 
 export default class FormModel {
-  fields = {};
-  errors: {
-    [fieldId: string]: ValidationError;
-  } = {};
-  handlers: LoadingListener[] = [];
+  fields: Record<string, any> = {};
+  errors: Record<string, ValidationError> = {};
+  handlers: Array<LoadingListener> = [];
   renderErrors: boolean;
   _isLoading: boolean;
 
@@ -27,7 +25,7 @@ export default class FormModel {
     this.renderErrors = options.renderErrors !== false;
   }
 
-  hasField(fieldId: string) {
+  hasField(fieldId: string): boolean {
     return !!this.fields[fieldId];
   }
 
@@ -83,7 +81,7 @@ export default class FormModel {
    *
    * @param {string} fieldId - an id of field to focus
    */
-  focus(fieldId: string) {
+  focus(fieldId: string): void {
     if (!this.fields[fieldId]) {
       throw new Error(
         `Can not focus. The field with an id ${fieldId} does not exists`,
@@ -100,7 +98,7 @@ export default class FormModel {
    *
    * @returns {string}
    */
-  value(fieldId: string) {
+  value(fieldId: string): string {
     const field = this.fields[fieldId];
 
     if (!field) {
@@ -124,7 +122,7 @@ export default class FormModel {
    *
    * @param {object} errors - object maping {fieldId: errorType}
    */
-  setErrors(errors: { [key: string]: ValidationError }) {
+  setErrors(errors: Record<string, ValidationError>): void {
     if (typeof errors !== 'object' || errors === null) {
       throw new Error('Errors must be an object');
     }
@@ -132,7 +130,7 @@ export default class FormModel {
     const oldErrors = this.errors;
     this.errors = errors;
 
-    Object.keys(this.fields).forEach(fieldId => {
+    Object.keys(this.fields).forEach((fieldId) => {
       if (this.renderErrors) {
         if (oldErrors[fieldId] || errors[fieldId]) {
           this.fields[fieldId].setError(errors[fieldId] || null);
@@ -151,21 +149,11 @@ export default class FormModel {
     return error || null;
   }
 
-  /**
-   * Get error by id
-   *
-   * @param {string} fieldId - an id of field to get error for
-   *
-   * @returns {string|object|null}
-   */
-  getError(fieldId: string) {
+  getError(fieldId: string): ValidationError | null {
     return this.errors[fieldId] || null;
   }
 
-  /**
-   * @returns {bool}
-   */
-  hasErrors() {
+  hasErrors(): boolean {
     return Object.keys(this.errors).length > 0;
   }
 
@@ -174,7 +162,7 @@ export default class FormModel {
    *
    * @returns {object}
    */
-  serialize(): { [key: string]: any } {
+  serialize(): Record<string, any> {
     return Object.keys(this.fields).reduce((acc, fieldId) => {
       const field = this.fields[fieldId];
 
@@ -185,7 +173,7 @@ export default class FormModel {
       }
 
       return acc;
-    }, {});
+    }, {} as Record<string, any>);
   }
 
   /**
@@ -193,7 +181,7 @@ export default class FormModel {
    *
    * @param {Function} fn
    */
-  addLoadingListener(fn: LoadingListener) {
+  addLoadingListener(fn: LoadingListener): void {
     this.removeLoadingListener(fn);
     this.handlers.push(fn);
   }
@@ -203,14 +191,14 @@ export default class FormModel {
    *
    * @param {Function} fn
    */
-  removeLoadingListener(fn: LoadingListener) {
-    this.handlers = this.handlers.filter(handler => handler !== fn);
+  removeLoadingListener(fn: LoadingListener): void {
+    this.handlers = this.handlers.filter((handler) => handler !== fn);
   }
 
   /**
    * Switch form in loading state
    */
-  beginLoading() {
+  beginLoading(): void {
     this._isLoading = true;
     this.notifyHandlers();
   }
@@ -218,12 +206,12 @@ export default class FormModel {
   /**
    * Disable loading state
    */
-  endLoading() {
+  endLoading(): void {
     this._isLoading = false;
     this.notifyHandlers();
   }
 
-  private notifyHandlers() {
-    this.handlers.forEach(fn => fn(this._isLoading));
+  private notifyHandlers(): void {
+    this.handlers.forEach((fn) => fn(this._isLoading));
   }
 }

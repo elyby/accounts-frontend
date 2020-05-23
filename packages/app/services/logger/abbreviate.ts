@@ -1,5 +1,11 @@
 const STRING_MAX_LENGTH = 128 * 1024;
 
+type Filter = (key: string | undefined, value: Record<string, any>) => any;
+
+interface State {
+  sizeLeft: number;
+}
+
 /**
  * Create a copy of any object without non-serializable elements to make result safe for JSON.stringify().
  * Guaranteed to never throw.
@@ -16,14 +22,17 @@ const STRING_MAX_LENGTH = 128 * 1024;
  *
  * @returns {object}
  */
-function abbreviate(obj, options = {}) {
-  const filter =
-    options.filter ||
-    function(key, value) {
-      return value;
-    };
-  const maxDepth = options.depth || 10;
-  const maxSize = options.maxSize || 1 * 1024 * 1024;
+function abbreviate(
+  obj: Record<string, any>,
+  options: {
+    filter?: Filter;
+    depth?: number;
+    maxSize?: number;
+  } = {},
+): string {
+  const filter: Filter = options.filter || ((key, value) => value);
+  const maxDepth: number = options.depth || 10;
+  const maxSize: number = options.maxSize || 1 * 1024 * 1024;
 
   return abbreviateRecursive(
     undefined,
@@ -34,7 +43,7 @@ function abbreviate(obj, options = {}) {
   );
 }
 
-function limitStringLength(str) {
+function limitStringLength(str: string): string {
   if (str.length > STRING_MAX_LENGTH) {
     return `${str.substring(0, STRING_MAX_LENGTH / 2)} … ${str.substring(
       str.length - STRING_MAX_LENGTH / 2,
@@ -44,7 +53,14 @@ function limitStringLength(str) {
   return str;
 }
 
-function abbreviateRecursive(key, obj, filter, state, maxDepth) {
+function abbreviateRecursive(
+  key: string | undefined,
+  obj: any,
+  filter: Filter,
+  state: State,
+  maxDepth: number,
+): any {
+  // TODO: return type
   if (state.sizeLeft < 0) {
     return '**skipped**';
   }
@@ -64,13 +80,16 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
           break; // fall back to stringification
         }
 
-        const newobj = Array.isArray(obj) ? [] : {};
+        const newobj: Record<string, any> | Array<any> = Array.isArray(obj)
+          ? []
+          : {};
 
         for (const i in obj) {
           if (!obj.hasOwnProperty(i)) {
             continue;
           }
 
+          // @ts-ignore
           newobj[i] = abbreviateRecursive(
             i,
             obj[i],
@@ -113,7 +132,7 @@ function abbreviateRecursive(key, obj, filter, state, maxDepth) {
   }
 }
 
-function commonFilter(key, val) {
+function commonFilter(key: any, val: any): any {
   if (typeof val === 'function') {
     return undefined;
   }
@@ -135,6 +154,7 @@ function commonFilter(key, val) {
         continue;
       }
 
+      // @ts-ignore
       err[i] = val[i];
     }
 
@@ -144,7 +164,7 @@ function commonFilter(key, val) {
   return val;
 }
 
-function nodeFilter(key, val) {
+function nodeFilter(key: any, val: any): any {
   // domain objects are huge and have circular references
   if (key === 'domain' && typeof val === 'object' && val._events) {
     return '**domain ignored**';
@@ -161,7 +181,7 @@ function nodeFilter(key, val) {
   return commonFilter(key, val);
 }
 
-function browserFilter(key, val) {
+function browserFilter(key: any, val: any): any {
   if (val === window) {
     return '**window**';
   }
@@ -183,7 +203,7 @@ function browserFilter(key, val) {
 
 export { abbreviate, nodeFilter, browserFilter };
 
-export default function(obj) {
+export default function (obj: any): string {
   return abbreviate(obj, {
     filter: browserFilter,
   });

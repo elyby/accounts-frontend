@@ -69,7 +69,6 @@ module.exports = {
       'error',
       { min: 2, exceptions: ['x', 'y', 'i', 'k', 'l', 'm', 'n', '$', '_'] },
     ],
-    'require-atomic-updates': 'warn',
     'guard-for-in': ['error'],
     'no-var': ['error'],
     'prefer-const': ['error'],
@@ -159,6 +158,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/no-unused-vars': [

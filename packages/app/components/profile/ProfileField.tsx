@@ -19,11 +19,11 @@ function ProfileField({
   let Action: React.ElementType | null = null;
 
   if (link) {
-    Action = props => <Link to={link} {...props} />;
+    Action = (props) => <Link to={link} {...props} />;
   }
 
   if (onChange) {
-    Action = props => <a {...props} onClick={onChange} href="#" />;
+    Action = (props) => <a {...props} onClick={onChange} href="#" />;
   }
 
   return (

@@ -70,6 +70,6 @@ export default connect(
     username: state.user.username,
   }),
   {
-    updateUsername: username => updateUser({ username }),
+    updateUsername: (username: string) => updateUser({ username }),
   },
 )(ChangeUsernamePage);

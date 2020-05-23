@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { ApplicationType } from 'app/components/dev/apps';
 import request from 'app/services/request';
 
@@ -8,13 +7,13 @@ export type Scope =
   | 'account_info'
   | 'account_email';
 
-export type Client = {
+export interface Client {
   id: string;
   name: string;
   description: string;
-};
+}
 
-export type OauthAppResponse = {
+export interface OauthAppResponse {
   clientId: string;
   clientSecret: string;
   type: ApplicationType;
@@ -27,9 +26,9 @@ export type OauthAppResponse = {
   redirectUri?: string;
   // fields for 'minecraft-server' type
   minecraftServerIp?: string;
-};
+}
 
-type OauthRequestData = {
+interface OauthRequestData {
   client_id: string;
   redirect_uri: string;
   response_type: string;
@@ -38,37 +37,43 @@ type OauthRequestData = {
   prompt: string;
   login_hint?: string;
   state?: string;
-};
+}
 
-export type OauthData = {
+export interface OauthData {
   clientId: string;
   redirectUrl: string;
   responseType: string;
   description?: string;
   scope: string;
+  // TODO: why prompt is not nullable?
   prompt: string; // comma separated list of 'none' | 'consent' | 'select_account';
   loginHint?: string;
   state?: string;
-};
+}
 
-type FormPayloads = {
+export interface OAuthValidateResponse {
+  session: {
+    scopes: Scope[];
+  };
+  client: Client;
+  oAuth: {}; // TODO: improve typing
+}
+
+interface FormPayloads {
   name?: string;
   description?: string;
   websiteUrl?: string;
   redirectUri?: string;
   minecraftServerIp?: string;
-};
+}
 
 const api = {
   validate(oauthData: OauthData) {
     return request
-      .get<{
-        session: {
-          scopes: Scope[];
-        };
-        client: Client;
-        oAuth: {};
-      }>('/api/oauth2/v1/validate', getOAuthRequest(oauthData))
+      .get<OAuthValidateResponse>(
+        '/api/oauth2/v1/validate',
+        getOAuthRequest(oauthData),
+      )
       .catch(handleOauthParamsValidation);
   },
 

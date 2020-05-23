@@ -9,7 +9,7 @@ import { IntlDecorator } from './decorators';
 
 const store = storeFactory();
 
-export default (story => {
+export default ((story) => {
   const channel = addons.getChannel();
 
   return (

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
@@ -15,14 +14,6 @@ export default class RecoverPasswordBody extends BaseAuthBody {
   static displayName = 'RecoverPasswordBody';
   static panelId = 'recoverPassword';
   static hasGoBack = true;
-
-  static propTypes = {
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        key: PropTypes.string,
-      }),
-    }),
-  };
 
   autoFocusField =
     this.props.match.params && this.props.match.params.key

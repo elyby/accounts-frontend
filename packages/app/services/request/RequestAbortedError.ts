@@ -1,12 +1,13 @@
-function RequestAbortedError(error: Error | Response) {
-  this.name = 'RequestAbortedError';
-  this.message = 'RequestAbortedError';
-  this.error = error;
-  this.stack = new Error().stack;
+export default class RequestAbortedError extends Error {
+  private error: Error | Response;
 
-  if (typeof error === 'string') {
-    this.message = error;
-  } else {
+  constructor(error: Error | Response) {
+    super();
+
+    this.name = this.constructor.name;
+    this.message = this.constructor.name;
+    this.stack = new Error().stack;
+
     if ('message' in error) {
       this.message = error.message;
     }
@@ -15,8 +16,3 @@ function RequestAbortedError(error: Error | Response) {
     Object.assign(this, error);
   }
 }
-
-RequestAbortedError.prototype = Object.create(Error.prototype);
-RequestAbortedError.prototype.constructor = RequestAbortedError;
-
-export default RequestAbortedError;

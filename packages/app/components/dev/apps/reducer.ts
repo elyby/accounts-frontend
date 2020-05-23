@@ -3,7 +3,7 @@ import { OauthAppResponse } from 'app/services/api/oauth';
 import { Action } from './actions';
 
 export interface Apps {
-  available: OauthAppResponse[];
+  available: Array<OauthAppResponse>;
 }
 
 const defaults: Apps = {
@@ -21,7 +21,9 @@ export default function apps(state: Apps = defaults, action: Action): Apps {
     case 'apps:addApp': {
       const { payload } = action;
       const available = [...state.available];
-      let index = available.findIndex(app => app.clientId === payload.clientId);
+      let index = available.findIndex(
+        (app) => app.clientId === payload.clientId,
+      );
 
       if (index === -1) {
         index = available.length;
@@ -39,11 +41,9 @@ export default function apps(state: Apps = defaults, action: Action): Apps {
       return {
         ...state,
         available: state.available.filter(
-          app => app.clientId !== action.payload,
+          (app) => app.clientId !== action.payload,
         ),
       };
-
-    default:
   }
 
   return state;

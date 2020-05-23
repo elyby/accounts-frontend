@@ -1,7 +1,8 @@
+import { Action as ReduxAction } from 'redux';
 import { browserHistory } from 'app/services/history';
 import logger from 'app/services/logger';
 import localStorage from 'app/services/localStorage';
-import loader from 'app/services/loader';
+import * as loader from 'app/services/loader';
 import history from 'app/services/history';
 import {
   updateUser,
@@ -15,22 +16,27 @@ import {
   recoverPassword as recoverPasswordEndpoint,
   OAuthResponse,
 } from 'app/services/api/authentication';
-import oauth, { OauthData, Client, Scope } from 'app/services/api/oauth';
-import signup from 'app/services/api/signup';
+import oauth, { OauthData, Scope } from 'app/services/api/oauth';
+import {
+  register as registerEndpoint,
+  activate as activateEndpoint,
+  resendActivation as resendActivationEndpoint,
+} from 'app/services/api/signup';
 import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact/ContactForm';
 import { Account } from 'app/components/accounts/reducer';
 import { ThunkAction, Dispatch } from 'app/reducers';
+import { Resp } from 'app/services/request';
 
-import { getCredentials } from './reducer';
+import { Credentials, Client, OAuthState, getCredentials } from './reducer';
 
-type ValidationError =
-  | string
-  | {
-      type: string;
-      payload: { [key: string]: any };
-    };
+interface ValidationErrorLiteral {
+  type: string;
+  payload: Record<string, any>;
+}
+
+type ValidationError = string | ValidationErrorLiteral;
 
 /**
  * Routes user to the previous page if it is possible
@@ -81,10 +87,10 @@ export function login({
   totp?: string;
   rememberMe?: boolean;
 }) {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     loginEndpoint({ login, password, totp, rememberMe })
       .then(authHandler(dispatch))
-      .catch(resp => {
+      .catch((resp) => {
         if (resp.errors) {
           if (resp.errors.password === PASSWORD_REQUIRED) {
             return dispatch(setLogin(login));
@@ -112,7 +118,7 @@ export function login({
 }
 
 export function acceptRules() {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     dispatch(userAcceptRules()).catch(validationErrorsHandler(dispatch)),
   );
 }
@@ -146,7 +152,7 @@ export function recoverPassword({
   newPassword: string;
   newRePassword: string;
 }) {
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     recoverPasswordEndpoint(key, newPassword, newRePassword)
       .then(authHandler(dispatch))
       .catch(validationErrorsHandler(dispatch, '/forgot-password')),
@@ -169,16 +175,15 @@ export function register({
   rulesAgreement: boolean;
 }) {
   return wrapInLoader((dispatch, getState) =>
-    signup
-      .register({
-        email,
-        username,
-        password,
-        rePassword,
-        rulesAgreement,
-        lang: getState().user.lang,
-        captcha,
-      })
+    registerEndpoint({
+      email,
+      username,
+      password,
+      rePassword,
+      rulesAgreement,
+      lang: getState().user.lang,
+      captcha,
+    })
       .then(() => {
         dispatch(
           updateUser({
@@ -200,9 +205,8 @@ export function activate({
 }: {
   key: string;
 }): ThunkAction<Promise<Account>> {
-  return wrapInLoader(dispatch =>
-    signup
-      .activate({ key })
+  return wrapInLoader((dispatch) =>
+    activateEndpoint(key)
       .then(authHandler(dispatch))
       .catch(validationErrorsHandler(dispatch, '/resend-activation')),
   );
@@ -215,10 +219,9 @@ export function resendActivation({
   email: string;
   captcha: string;
 }) {
-  return wrapInLoader(dispatch =>
-    signup
-      .resendActivation({ email, captcha })
-      .then(resp => {
+  return wrapInLoader((dispatch) =>
+    resendActivationEndpoint(email, captcha)
+      .then((resp) => {
         dispatch(
           updateUser({
             email,
@@ -235,25 +238,26 @@ export function contactUs() {
   return createPopup({ Popup: ContactForm });
 }
 
-export const SET_CREDENTIALS = 'auth:setCredentials';
+interface SetCredentialsAction extends ReduxAction {
+  type: 'auth:setCredentials';
+  payload: Credentials | null;
+}
+
+function setCredentials(payload: Credentials | null): SetCredentialsAction {
+  return {
+    type: 'auth:setCredentials',
+    payload,
+  };
+}
+
 /**
  * Sets login in credentials state
- *
  * Resets the state, when `null` is passed
  *
- * @param {string|null} login
- *
- * @returns {object}
+ * @param login
  */
-export function setLogin(login: string | null) {
-  return {
-    type: SET_CREDENTIALS,
-    payload: login
-      ? {
-          login,
-        }
-      : null,
-  };
+export function setLogin(login: string | null): SetCredentialsAction {
+  return setCredentials(login ? { login } : null);
 }
 
 export function relogin(login: string | null): ThunkAction {
@@ -262,18 +266,19 @@ export function relogin(login: string | null): ThunkAction {
     const returnUrl =
       credentials.returnUrl || location.pathname + location.search;
 
-    dispatch({
-      type: SET_CREDENTIALS,
-      payload: {
+    dispatch(
+      setCredentials({
         login,
         returnUrl,
         isRelogin: true,
-      },
-    });
+      }),
+    );
 
     browserHistory.push('/login');
   };
 }
+
+export type CredentialsAction = SetCredentialsAction;
 
 function requestTotp({
   login,
@@ -288,41 +293,55 @@ function requestTotp({
     // merging with current credentials to propogate returnUrl
     const credentials = getCredentials(getState());
 
-    dispatch({
-      type: SET_CREDENTIALS,
-      payload: {
+    dispatch(
+      setCredentials({
         ...credentials,
         login,
         password,
         rememberMe,
         isTotpRequired: true,
-      },
-    });
+      }),
+    );
   };
 }
 
-export const SET_SWITCHER = 'auth:setAccountSwitcher';
-export function setAccountSwitcher(isOn: boolean) {
+interface SetSwitcherAction extends ReduxAction {
+  type: 'auth:setAccountSwitcher';
+  payload: boolean;
+}
+
+export function setAccountSwitcher(isOn: boolean): SetSwitcherAction {
   return {
-    type: SET_SWITCHER,
+    type: 'auth:setAccountSwitcher',
     payload: isOn,
   };
 }
 
-export const ERROR = 'auth:error';
-export function setErrors(errors: { [key: string]: ValidationError } | null) {
+export type AccountSwitcherAction = SetSwitcherAction;
+
+interface SetErrorAction extends ReduxAction {
+  type: 'auth:error';
+  payload: Record<string, ValidationError> | null;
+  error: boolean;
+}
+
+export function setErrors(
+  errors: Record<string, ValidationError> | null,
+): SetErrorAction {
   return {
-    type: ERROR,
+    type: 'auth:error',
     payload: errors,
     error: true,
   };
 }
 
-export function clearErrors() {
+export function clearErrors(): SetErrorAction {
   return setErrors(null);
 }
 
-const KNOWN_SCOPES = [
+export type ErrorAction = SetErrorAction;
+
+const KNOWN_SCOPES: ReadonlyArray<string> = [
   'minecraft_server_session',
   'offline_access',
   'account_info',
@@ -349,17 +368,17 @@ const KNOWN_SCOPES = [
 export function oAuthValidate(oauthData: OauthData) {
   // TODO: move to oAuth actions?
   // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
-  return wrapInLoader(dispatch =>
+  return wrapInLoader((dispatch) =>
     oauth
       .validate(oauthData)
-      .then(resp => {
+      .then((resp) => {
         const { scopes } = resp.session;
         const invalidScopes = scopes.filter(
-          scope => !KNOWN_SCOPES.includes(scope),
+          (scope) => !KNOWN_SCOPES.includes(scope),
         );
         let prompt = (oauthData.prompt || 'none')
           .split(',')
-          .map(item => item.trim());
+          .map((item) => item.trim());
 
         if (prompt.includes('none')) {
           prompt = ['none'];
@@ -396,7 +415,7 @@ export function oAuthValidate(oauthData: OauthData) {
 /**
  * @param {object} params
  * @param {bool} params.accept=false
- *
+ * @param params.accept
  * @returns {Promise}
  */
 export function oAuthComplete(params: { accept?: boolean } = {}) {
@@ -470,11 +489,76 @@ function handleOauthParamsValidation(
   return Promise.reject(resp);
 }
 
-export const SET_CLIENT = 'set_client';
-export function setClient({ id, name, description }: Client) {
+interface SetClientAction extends ReduxAction {
+  type: 'set_client';
+  payload: Client;
+}
+
+export function setClient(payload: Client): SetClientAction {
   return {
-    type: SET_CLIENT,
-    payload: { id, name, description },
+    type: 'set_client',
+    payload,
+  };
+}
+
+export type ClientAction = SetClientAction;
+
+interface SetOauthAction extends ReduxAction {
+  type: 'set_oauth';
+  payload: Pick<
+    OAuthState,
+    | 'clientId'
+    | 'redirectUrl'
+    | 'responseType'
+    | 'scope'
+    | 'prompt'
+    | 'loginHint'
+    | 'state'
+  >;
+}
+
+// Input data is coming right from the query string, so the names
+// are the same, as used for initializing OAuth2 request
+export function setOAuthRequest(data: {
+  client_id?: string;
+  redirect_uri?: string;
+  response_type?: string;
+  scope?: string;
+  prompt?: string;
+  loginHint?: string;
+  state?: string;
+}): SetOauthAction {
+  return {
+    type: 'set_oauth',
+    payload: {
+      // TODO: there is too much default empty string. Maybe we can somehow validate it
+      //       on the level, where this action is called?
+      clientId: data.client_id || '',
+      redirectUrl: data.redirect_uri || '',
+      responseType: data.response_type || '',
+      scope: data.scope || '',
+      prompt: data.prompt || '',
+      loginHint: data.loginHint || '',
+      state: data.state || '',
+    },
+  };
+}
+
+interface SetOAuthResultAction extends ReduxAction {
+  type: 'set_oauth_result';
+  payload: Pick<OAuthState, 'success' | 'code' | 'displayCode'>;
+}
+
+export const SET_OAUTH_RESULT = 'set_oauth_result'; // TODO: remove
+
+export function setOAuthCode(payload: {
+  success: boolean;
+  code: string;
+  displayCode: boolean;
+}): SetOAuthResultAction {
+  return {
+    type: 'set_oauth_result',
+    payload,
   };
 }
 
@@ -507,69 +591,43 @@ export function resetAuth(): ThunkAction {
   };
 }
 
-export const SET_OAUTH = 'set_oauth';
-export function setOAuthRequest(data: {
-  client_id?: string;
-  redirect_uri?: string;
-  response_type?: string;
-  scope?: string;
-  prompt?: string;
-  loginHint?: string;
-  state?: string;
-}) {
+interface RequestPermissionsAcceptAction extends ReduxAction {
+  type: 'require_permissions_accept';
+}
+
+export function requirePermissionsAccept(): RequestPermissionsAcceptAction {
   return {
-    type: SET_OAUTH,
-    payload: {
-      clientId: data.client_id,
-      redirectUrl: data.redirect_uri,
-      responseType: data.response_type,
-      scope: data.scope,
-      prompt: data.prompt,
-      loginHint: data.loginHint,
-      state: data.state,
-    },
+    type: 'require_permissions_accept',
   };
 }
 
-export const SET_OAUTH_RESULT = 'set_oauth_result';
-export function setOAuthCode(data: {
-  success: boolean;
-  code: string;
-  displayCode: boolean;
-}) {
+export type OAuthAction =
+  | SetOauthAction
+  | SetOAuthResultAction
+  | RequestPermissionsAcceptAction;
+
+interface SetScopesAction extends ReduxAction {
+  type: 'set_scopes';
+  payload: Array<Scope>;
+}
+
+export function setScopes(payload: Array<Scope>): SetScopesAction {
   return {
-    type: SET_OAUTH_RESULT,
-    payload: {
-      success: data.success,
-      code: data.code,
-      displayCode: data.displayCode,
-    },
+    type: 'set_scopes',
+    payload,
   };
 }
 
-export const REQUIRE_PERMISSIONS_ACCEPT = 'require_permissions_accept';
-export function requirePermissionsAccept() {
-  return {
-    type: REQUIRE_PERMISSIONS_ACCEPT,
-  };
+export type ScopesAction = SetScopesAction;
+
+interface SetLoadingAction extends ReduxAction {
+  type: 'set_loading_state';
+  payload: boolean;
 }
 
-export const SET_SCOPES = 'set_scopes';
-export function setScopes(scopes: Scope[]) {
-  if (!Array.isArray(scopes)) {
-    throw new Error('Scopes must be array');
-  }
-
+export function setLoadingState(isLoading: boolean): SetLoadingAction {
   return {
-    type: SET_SCOPES,
-    payload: scopes,
-  };
-}
-
-export const SET_LOADING_STATE = 'set_loading_state';
-export function setLoadingState(isLoading: boolean) {
-  return {
-    type: SET_LOADING_STATE,
+    type: 'set_loading_state',
     payload: isLoading,
   };
 }
@@ -580,12 +638,12 @@ function wrapInLoader<T>(fn: ThunkAction<Promise<T>>): ThunkAction<Promise<T>> {
     const endLoading = () => dispatch(setLoadingState(false));
 
     return fn(dispatch, getState, undefined).then(
-      resp => {
+      (resp) => {
         endLoading();
 
         return resp;
       },
-      resp => {
+      (resp) => {
         endLoading();
 
         return Promise.reject(resp);
@@ -593,6 +651,8 @@ function wrapInLoader<T>(fn: ThunkAction<Promise<T>>): ThunkAction<Promise<T>> {
     );
   };
 }
+
+export type LoadingAction = SetLoadingAction;
 
 function needActivation() {
   return updateUser({
@@ -608,19 +668,27 @@ function authHandler(dispatch: Dispatch) {
         token: oAuthResp.access_token,
         refreshToken: oAuthResp.refresh_token || null,
       }),
-    ).then(resp => {
+    ).then((resp) => {
       dispatch(setLogin(null));
 
       return resp;
     });
 }
 
-function validationErrorsHandler(dispatch: Dispatch, repeatUrl?: string) {
-  return resp => {
+function validationErrorsHandler(
+  dispatch: Dispatch,
+  repeatUrl?: string,
+): (
+  resp: Resp<{
+    errors?: Record<string, string | ValidationError>;
+    data?: Record<string, any>;
+  }>,
+) => Promise<never> {
+  return (resp) => {
     if (resp.errors) {
       const [firstError] = Object.keys(resp.errors);
-      const error = {
-        type: resp.errors[firstError],
+      const firstErrorObj: ValidationError = {
+        type: resp.errors[firstError] as string,
         payload: {
           isGuest: true,
           repeatUrl: '',
@@ -629,20 +697,24 @@ function validationErrorsHandler(dispatch: Dispatch, repeatUrl?: string) {
 
       if (resp.data) {
         // TODO: this should be formatted on backend
-        Object.assign(error.payload, resp.data);
+        Object.assign(firstErrorObj.payload, resp.data);
       }
 
       if (
-        ['error.key_not_exists', 'error.key_expire'].includes(error.type) &&
+        ['error.key_not_exists', 'error.key_expire'].includes(
+          firstErrorObj.type,
+        ) &&
         repeatUrl
       ) {
         // TODO: this should be formatted on backend
-        error.payload.repeatUrl = repeatUrl;
+        firstErrorObj.payload.repeatUrl = repeatUrl;
       }
 
-      resp.errors[firstError] = error;
+      // TODO: can I clone the object or its necessary to catch modified errors list on corresponding catches?
+      const { errors } = resp;
+      errors[firstError] = firstErrorObj;
 
-      dispatch(setErrors(resp.errors));
+      dispatch(setErrors(errors));
     }
 
     return Promise.reject(resp);

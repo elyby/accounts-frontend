@@ -16,38 +16,32 @@ describe('feedback popup', () => {
 
     cy.visit('/');
 
-    cy.getByTestId('footer')
-      .contains('Contact Us')
-      .click();
-    cy.getByTestId('feedbackPopup').should('be.visible');
+    cy.findByTestId('footer').contains('Contact Us').click();
+    cy.findByTestId('feedbackPopup').should('be.visible');
 
     cy.get('[name=subject]').type(subject);
     cy.get('[name=email]').should('have.value', account1.email);
     cy.get('[name=message]').type(message);
 
     cy.get('[data-e2e-select-name=category]')
-      .getByTestId('select-label')
+      .findByTestId('select-label')
       .should('contain', 'What are you interested');
     cy.get('[data-e2e-select-name=category]').click();
+    cy.get('[data-e2e-select-name=category]').contains('bug').click();
     cy.get('[data-e2e-select-name=category]')
-      .contains('bug')
-      .click();
-    cy.get('[data-e2e-select-name=category]')
-      .getByTestId('select-label')
+      .findByTestId('select-label')
       .should('contain', 'bug');
 
-    cy.getByTestId('feedbackPopup')
-      .get('[type=submit]')
-      .click();
+    cy.findByTestId('feedbackPopup').get('[type=submit]').click();
 
-    cy.getByTestId('feedbackPopup').should(
+    cy.findByTestId('feedbackPopup').should(
       'contain',
       'Your message was received',
     );
-    cy.getByTestId('feedbackPopup').should('contain', account1.email);
+    cy.findByTestId('feedbackPopup').should('contain', account1.email);
 
-    cy.getByTestId('feedback-popup-close-button').click();
+    cy.findByTestId('feedback-popup-close-button').click();
 
-    cy.getByTestId('feedbackPopup').should('not.be.visible');
+    cy.findByTestId('feedbackPopup').should('not.be.visible');
   });
 });

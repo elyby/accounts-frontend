@@ -3,7 +3,7 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
 const fileCache = {};
-const isProduction = process.argv.some(arg => arg === '-p');
+const isProduction = process.argv.some((arg) => arg === '-p');
 const rootPath = path.resolve('./src');
 
 module.exports = ({ webpack: loader }) => ({
@@ -12,7 +12,7 @@ module.exports = ({ webpack: loader }) => ({
     'postcss-import': {
       addModulesDirectories: ['./src'],
 
-      resolve: (defaultResolve => (url, basedir, importOptions) =>
+      resolve: ((defaultResolve) => (url, basedir, importOptions) =>
         defaultResolve(
           // mainly to remove '~' from request
           loaderUtils.urlToRequest(url),
@@ -20,7 +20,7 @@ module.exports = ({ webpack: loader }) => ({
           importOptions,
         ))(require('postcss-import/lib/resolve-id')),
 
-      load: (defaultLoad => (filename, importOptions) => {
+      load: ((defaultLoad) => (filename, importOptions) => {
         if (/\.font.(js|json)$/.test(filename)) {
           // separately process calls to font loader
           // e.g. `@import '~app/icons.font.json';`

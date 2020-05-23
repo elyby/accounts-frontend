@@ -11,8 +11,10 @@ import messages from './footerMenu.intl.json';
 
 const FooterMenu: ComponentType = () => {
   const dispatch = useDispatch();
-  const onLanguageSwitcherClick = useCallback<MouseEventHandler>(
-    event => {
+  const onLanguageSwitcherClick = useCallback<
+    MouseEventHandler<HTMLAnchorElement>
+  >(
+    (event) => {
       event.preventDefault();
       dispatch(createPopup({ Popup: LanguageSwitcher }));
     },

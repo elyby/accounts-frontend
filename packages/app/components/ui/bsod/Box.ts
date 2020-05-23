@@ -91,9 +91,7 @@ export default class Box {
       endY: number;
     }> = [];
 
-    // eslint-disable-next-line guard-for-in
-    for (const i in boxPoints) {
-      const point = boxPoints[i];
+    Object.values(boxPoints).forEach((point) => {
       const angle = Math.atan2(light.y - point.y, light.x - point.x);
       const endX = point.x + shadowLength * Math.sin(-angle - Math.PI / 2);
       const endY = point.y + shadowLength * Math.cos(-angle - Math.PI / 2);
@@ -103,7 +101,7 @@ export default class Box {
         endX,
         endY,
       });
-    }
+    });
 
     for (let i = points.length - 1; i >= 0; i--) {
       const n = i === 3 ? 0 : i + 1;

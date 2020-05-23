@@ -1,3 +1,4 @@
+import { Action as ReduxAction } from 'redux';
 import sinon from 'sinon';
 import expect from 'app/test/unexpected';
 
@@ -15,33 +16,36 @@ import {
   login,
   setLogin,
 } from 'app/components/auth/actions';
+import { OauthData, OAuthValidateResponse } from '../../services/api/oauth';
 
-const oauthData = {
+const oauthData: OauthData = {
   clientId: '',
   redirectUrl: '',
   responseType: '',
   scope: '',
   state: '',
+  prompt: 'none',
 };
 
 describe('components/auth/actions', () => {
   const dispatch = sinon.stub().named('store.dispatch');
   const getState = sinon.stub().named('store.getState');
 
-  function callThunk(fn, ...args) {
+  function callThunk<A extends Array<any>, F extends (...args: A) => any>(
+    fn: F,
+    ...args: A
+  ): Promise<void> {
     const thunk = fn(...args);
 
     return thunk(dispatch, getState);
   }
 
-  function expectDispatchCalls(calls) {
-    expect(
-      dispatch,
-      'to have calls satisfying',
-      [[setLoadingState(true)]]
-        .concat(calls)
-        .concat([[setLoadingState(false)]]),
-    );
+  function expectDispatchCalls(calls: Array<Array<ReduxAction>>) {
+    expect(dispatch, 'to have calls satisfying', [
+      [setLoadingState(true)],
+      ...calls,
+      [setLoadingState(false)],
+    ]);
   }
 
   beforeEach(() => {
@@ -58,14 +62,20 @@ describe('components/auth/actions', () => {
   });
 
   describe('#oAuthValidate()', () => {
-    let resp;
+    let resp: OAuthValidateResponse;
 
     beforeEach(() => {
       resp = {
-        client: { id: 123 },
-        oAuth: { state: 123 },
+        client: {
+          id: '123',
+          name: '',
+          description: '',
+        },
+        oAuth: {
+          state: 123,
+        },
         session: {
-          scopes: ['scopes'],
+          scopes: ['account_info'],
         },
       };
 
@@ -114,7 +124,7 @@ describe('components/auth/actions', () => {
 
       return callThunk(oAuthComplete).then(() => {
         expect(request.post, 'to have a call satisfying', [
-          '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&description=&scope=&prompt=&login_hint=&state=',
+          '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&description=&scope=&prompt=none&login_hint=&state=',
           {},
         ]);
       });
@@ -166,7 +176,7 @@ describe('components/auth/actions', () => {
 
       (request.post as any).returns(Promise.reject(resp));
 
-      return callThunk(oAuthComplete).catch(error => {
+      return callThunk(oAuthComplete).catch((error) => {
         expect(error.acceptRequired, 'to be true');
         expectDispatchCalls([[requirePermissionsAccept()]]);
       });

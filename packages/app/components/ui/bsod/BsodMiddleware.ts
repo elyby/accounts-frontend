@@ -18,8 +18,7 @@ class BsodMiddleware implements Middleware {
   async catch<T extends Resp<any>>(
     resp?: T | InternalServerError | Error,
   ): Promise<T> {
-    const { originalResponse }: { originalResponse?: Resp<any> } = (resp ||
-      {}) as InternalServerError;
+    const { originalResponse } = (resp || {}) as InternalServerError;
 
     if (
       resp &&

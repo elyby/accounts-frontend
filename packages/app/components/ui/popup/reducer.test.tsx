@@ -1,7 +1,11 @@
+import React, { ComponentType } from 'react';
+
 import expect from 'app/test/unexpected';
-import React from 'react';
-import reducer from 'app/components/ui/popup/reducer';
-import { create, destroy } from 'app/components/ui/popup/actions';
+
+import reducer, { PopupConfig, State } from './reducer';
+import { create, destroy } from './actions';
+
+const FakeComponent: ComponentType = () => <span />;
 
 describe('popup/reducer', () => {
   it('should have no popups by default', () => {
@@ -61,12 +65,12 @@ describe('popup/reducer', () => {
   });
 
   describe('#destroy', () => {
-    let state;
-    let popup;
+    let state: State;
+    let popup: PopupConfig;
 
     beforeEach(() => {
       state = reducer(state, create({ Popup: FakeComponent }));
-      popup = state.popups[0];
+      [popup] = state.popups;
     });
 
     it('should remove popup', () => {
@@ -92,7 +96,3 @@ describe('popup/reducer', () => {
     });
   });
 });
-
-function FakeComponent() {
-  return <span />;
-}

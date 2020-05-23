@@ -2,11 +2,14 @@
 import { AuthContext } from 'app/services/authFlow';
 
 export default class AbstractState {
-  resolve(context: AuthContext, payload: { [key: string]: any }): any {}
-  goBack(context: AuthContext): any {
+  resolve(
+    context: AuthContext,
+    payload: Record<string, any>,
+  ): Promise<void> | void {}
+  goBack(context: AuthContext): void {
     throw new Error('There is no way back');
   }
-  reject(context: AuthContext, payload: { [key: string]: any }): any {}
-  enter(context: AuthContext): any {}
-  leave(context: AuthContext): any {}
+  reject(context: AuthContext, payload?: Record<string, any>): void {}
+  enter(context: AuthContext): Promise<void> | void {}
+  leave(context: AuthContext): void {}
 }

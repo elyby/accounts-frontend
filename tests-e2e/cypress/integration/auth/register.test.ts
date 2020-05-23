@@ -27,9 +27,7 @@ describe('Register', () => {
     });
     cy.visit('/');
 
-    cy.getByTestId('toolbar')
-      .contains('Join')
-      .click();
+    cy.findByTestId('toolbar').contains('Join').click();
 
     cy.location('pathname').should('eq', '/register');
 
@@ -38,12 +36,10 @@ describe('Register', () => {
     cy.get('[name=password]').type(password);
     cy.get('[name=rePassword]').type(password);
     cy.get('[name=rulesAgreement]').should('not.be.checked');
-    cy.get('[name=rulesAgreement]')
-      .parent()
-      .click();
+    cy.get('[name=rulesAgreement]').parent().click();
     cy.get('[name=rulesAgreement]').should('be.checked');
     cy.window().should('have.property', 'e2eCaptchaSetCode');
-    cy.window().then(win => {
+    cy.window().then((win) => {
       // fake captcha response
       // @ts-ignore
       win.e2eCaptchaSetCode(captchaCode);
@@ -93,9 +89,7 @@ describe('Register', () => {
     });
     cy.visit('/register');
 
-    cy.getByTestId('auth-controls-secondary')
-      .contains('Already have')
-      .click();
+    cy.findByTestId('auth-controls-secondary').contains('Already have').click();
 
     cy.location('pathname').should('eq', '/activation');
 
@@ -148,15 +142,13 @@ describe('Register', () => {
     }).as('resend');
     cy.visit('/register');
 
-    cy.getByTestId('auth-controls-secondary')
-      .contains('not received')
-      .click();
+    cy.findByTestId('auth-controls-secondary').contains('not received').click();
 
     cy.location('pathname').should('eq', '/resend-activation');
 
     cy.get('[name=email]').type(email);
     cy.window().should('have.property', 'e2eCaptchaSetCode');
-    cy.window().then(win => {
+    cy.window().then((win) => {
       // fake captcha response
       // @ts-ignore
       win.e2eCaptchaSetCode(captchaCode);

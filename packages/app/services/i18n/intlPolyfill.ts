@@ -58,6 +58,7 @@ async function polyfillIntl(locale: string): Promise<void> {
   // resolve issue with RegExp errors
   // @see https://github.com/mattlewis92/angular-calendar/issues/274
   // @see https://github.com/mattlewis92/angular-calendar/issues/274
+  // @ts-expect-error
   Intl.__disableRegExpRestore();
 
   window.Intl = Intl;

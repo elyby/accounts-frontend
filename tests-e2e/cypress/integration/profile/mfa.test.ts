@@ -31,7 +31,7 @@ describe('Profile — mfa', () => {
 
       cy.location('pathname').should('eq', '/profile/mfa/step2');
 
-      cy.getByTestId('secret').should('not.be.empty');
+      cy.findByTestId('secret').should('not.be.empty');
 
       cy.contains('Ready').click();
 
@@ -170,13 +170,9 @@ describe('Profile — mfa', () => {
 });
 
 function assertOs(name: string, os: string) {
-  cy.getByTestId('os-tile')
-    .contains(name)
-    .click();
+  cy.findAllByTestId('os-tile').contains(name).click();
 
-  cy.getByTestId('os-instruction').should('have.attr', 'data-os', os);
+  cy.findByTestId('os-instruction').should('have.attr', 'data-os', os);
 
-  cy.getByTestId('os-tile')
-    .contains(name)
-    .click();
+  cy.findAllByTestId('os-tile').contains(name).click();
 }

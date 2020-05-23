@@ -41,7 +41,7 @@ export default class PermissionsBody extends BaseAuthBody {
             <Message {...messages.theAppNeedsAccess2} />
           </div>
           <ul className={styles.permissionsList}>
-            {scopes.map(scope => {
+            {scopes.map((scope) => {
               const key = `scope_${scope}`;
               const message = messages[key];
 
@@ -50,7 +50,7 @@ export default class PermissionsBody extends BaseAuthBody {
                   {message ? (
                     <Message {...message} />
                   ) : (
-                    scope.replace(/^\w|_/g, match =>
+                    scope.replace(/^\w|_/g, (match) =>
                       match.replace('_', ' ').toUpperCase(),
                     )
                   )}

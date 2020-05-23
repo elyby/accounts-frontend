@@ -8,7 +8,7 @@
     "noEmit": true,
     "moduleResolution": "node",
     "lib": ["es6", "dom"],
-    "types": ["cypress"],
+    "types": ["cypress", "@types/testing-library__cypress"],
     "resolveJsonModule": true,
     "noImplicitAny": false
   },

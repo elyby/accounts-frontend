@@ -87,7 +87,7 @@ export default function OsInstruction({ os }: { os: OS }) {
       </h3>
 
       <ul className={styles.appList}>
-        {linksByOs[os].featured.map(item => (
+        {linksByOs[os].featured.map((item) => (
           <li key={item.label}>
             <a href={item.link} target="_blank">
               {item.label}

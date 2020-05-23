@@ -48,19 +48,19 @@ export default class Instructions extends React.Component<{}, State> {
                 className={styles.androidTile}
                 logo={androidLogo}
                 label="Google Play"
-                onClick={event => this.onChangeOs(event, 'android')}
+                onClick={(event) => this.onChangeOs(event, 'android')}
               />
               <OsTile
                 className={styles.appleTile}
                 logo={appleLogo}
                 label="App Store"
-                onClick={event => this.onChangeOs(event, 'ios')}
+                onClick={(event) => this.onChangeOs(event, 'ios')}
               />
               <OsTile
                 className={styles.windowsTile}
                 logo={windowsLogo}
                 label="Windows Store"
-                onClick={event => this.onChangeOs(event, 'windows')}
+                onClick={(event) => this.onChangeOs(event, 'windows')}
               />
             </div>
 

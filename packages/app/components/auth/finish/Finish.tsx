@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
@@ -13,7 +13,7 @@ interface Props {
   appName: string;
   code?: string;
   state: string;
-  displayCode?: string;
+  displayCode?: boolean;
   success?: boolean;
 }
 
@@ -21,7 +21,6 @@ class Finish extends React.Component<Props> {
   render() {
     const { appName, code, state, displayCode, success } = this.props;
     const authData = JSON.stringify({
-      // eslint-disable-next-line @typescript-eslint/camelcase
       auth_code: code,
       state,
     });
@@ -84,7 +83,7 @@ class Finish extends React.Component<Props> {
     );
   }
 
-  onCopyClick = event => {
+  onCopyClick: MouseEventHandler = (event) => {
     event.preventDefault();
 
     const { code } = this.props;

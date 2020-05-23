@@ -7,12 +7,13 @@ import { factory as userFactory } from 'app/components/user/factory';
 import authFlow from 'app/services/authFlow';
 import storeFactory from 'app/storeFactory';
 import bsodFactory from 'app/components/ui/bsod/factory';
-import loader from 'app/services/loader';
+import * as loader from 'app/services/loader';
 import logger from 'app/services/logger';
 import font from 'app/services/font';
 import history, { browserHistory } from 'app/services/history';
 import i18n from 'app/services/i18n';
 import { loadScript, debounce } from 'app/functions';
+import { Location as HistoryLocation } from 'history';
 
 import App from './shell/App';
 
@@ -52,7 +53,7 @@ function initAnalytics() {
     const ga: {
       [key: string]: any;
       (...args: any[]): void;
-    } = function(...args) {
+    } = function (...args) {
       // eslint-disable-next-line id-length
       (ga.q = ga.q || []).push(args);
     };
@@ -75,7 +76,7 @@ function initAnalytics() {
   }
 }
 
-function _trackPageView(location) {
+function _trackPageView(location: HistoryLocation | Location): void {
   const { ga } = win;
 
   ga('set', 'page', location.pathname + location.search);

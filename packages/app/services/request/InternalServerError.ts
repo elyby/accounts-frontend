@@ -1,12 +1,12 @@
 import { Resp } from './request';
 
-class InternalServerError extends Error {
-  error: Error | { [key: string]: any };
-  originalResponse: Resp<any>;
+export default class InternalServerError extends Error {
+  public readonly error: Error | Record<string, any>;
+  public readonly originalResponse: Resp<any>;
 
   constructor(
-    error: Error | string | { [key: string]: any },
-    resp?: Response | { [key: string]: any },
+    error: Error | string | Record<string, any>,
+    resp?: Response | Record<string, any>,
   ) {
     super();
 
@@ -32,5 +32,3 @@ class InternalServerError extends Error {
     Object.assign(this, error);
   }
 }
-
-export default InternalServerError;

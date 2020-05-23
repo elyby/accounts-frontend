@@ -17,7 +17,7 @@ class Logger {
             : 'Development',
         release: process.env.__VERSION__,
         shouldSendCallback: () => !isTest,
-        dataCallback: data => {
+        dataCallback: (data) => {
           if (!data.level) {
             // log unhandled errors as info
             data.level = 'info';
@@ -28,7 +28,7 @@ class Logger {
         whitelistUrls: isProduction ? [/ely\.by/] : [],
       }).install();
 
-      window.addEventListener('unhandledrejection', event => {
+      window.addEventListener('unhandledrejection', (event) => {
         const error = event.reason || {};
 
         let message = error.message || error;
@@ -86,7 +86,7 @@ class Logger {
 function log(
   level: 'error' | 'warning' | 'info' | 'debug',
   message: string | Error,
-  context?: { [key: string]: any },
+  context?: Record<string, any>,
 ) {
   const method: 'error' | 'warn' | 'info' | 'debug' =
     level === 'warning' ? 'warn' : level;
@@ -102,7 +102,7 @@ function log(
     };
   }
 
-  prepareContext(context).then(context => {
+  prepareContext(context).then((context) => {
     console[method](message, context); // eslint-disable-line
 
     Raven.captureException(message, {
@@ -120,13 +120,13 @@ function log(
  *
  * @returns {Promise}
  */
-function prepareContext(context: { [key: string]: any }) {
+function prepareContext(context: Record<string, any>): Promise<string> {
   if (context instanceof Response) {
     // TODO: rewrite abbreviate to use promises and recursively find Response
     return context
       .json()
       .catch(() => context.text())
-      .then(body =>
+      .then((body) =>
         abbreviate({
           type: context.type,
           url: context.url,
@@ -136,7 +136,7 @@ function prepareContext(context: { [key: string]: any }) {
         }),
       );
   } else if (context.originalResponse instanceof Response) {
-    return prepareContext(context.originalResponse).then(originalResponse =>
+    return prepareContext(context.originalResponse).then((originalResponse) =>
       abbreviate({
         ...context,
         originalResponse,

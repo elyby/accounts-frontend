@@ -1,9 +1,10 @@
 import AbstractState from './AbstractState';
+import { AuthContext } from './AuthFlow';
 import LoginState from './LoginState';
 import CompleteState from './CompleteState';
 
 export default class ChooseAccountState extends AbstractState {
-  enter(context) {
+  enter(context: AuthContext): Promise<void> | void {
     const { auth } = context.getState();
 
     if (auth.oauth) {
@@ -13,7 +14,10 @@ export default class ChooseAccountState extends AbstractState {
     }
   }
 
-  resolve(context, payload) {
+  resolve(
+    context: AuthContext,
+    payload: Record<string, any>,
+  ): Promise<void> | void {
     if (payload.id) {
       context.setState(new CompleteState());
     } else {
@@ -23,7 +27,7 @@ export default class ChooseAccountState extends AbstractState {
     }
   }
 
-  reject(context) {
+  reject(context: AuthContext): void {
     context.run('logout');
   }
 }

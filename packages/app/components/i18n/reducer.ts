@@ -1,18 +1,20 @@
 import i18n from 'app/services/i18n';
 
-import { SET_LOCALE } from './actions';
+import { Action } from './actions';
 
-export type State = { locale: string };
+export interface State {
+  locale: string;
+}
 
-const defaultState = {
+const defaultState: State = {
   locale: i18n.detectLanguage(),
 };
 
-export default function(
+export default function (
   state: State = defaultState,
-  { type, payload }: { type: string; payload: State },
+  { type, payload }: Action,
 ): State {
-  if (type === SET_LOCALE) {
+  if (type === 'i18n:setLocale') {
     return payload;
   }
 

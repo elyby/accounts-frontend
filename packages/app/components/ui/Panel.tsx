@@ -103,7 +103,7 @@ export class PanelBodyHeader extends React.Component<
     );
   }
 
-  onClose = (event: React.MouseEvent) => {
+  onClose = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
 
     const { onClose } = this.props;

@@ -140,7 +140,12 @@ export class ContactForm extends React.Component<
         </div>
 
         <div className={styles.footer}>
-          <Button label={messages.send} block type="submit" />
+          <Button
+            label={messages.send}
+            block
+            type="submit"
+            disabled={isLoading}
+          />
         </div>
       </Form>
     );
@@ -172,9 +177,9 @@ export class ContactForm extends React.Component<
     );
   }
 
-  onSubmit = () => {
+  onSubmit = (): Promise<void> => {
     if (this.state.isLoading) {
-      return;
+      return Promise.resolve();
     }
 
     this.setState({ isLoading: true });
@@ -187,7 +192,7 @@ export class ContactForm extends React.Component<
           lastEmail: this.form.value('email'),
         }),
       )
-      .catch(resp => {
+      .catch((resp) => {
         if (resp.errors) {
           this.form.setErrors(resp.errors);
 

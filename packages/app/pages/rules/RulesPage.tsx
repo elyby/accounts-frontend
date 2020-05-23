@@ -98,7 +98,7 @@ export default class RulesPage extends Component<{
     return (
       <div>
         <Message {...messages.title}>
-          {pageTitle => <Helmet title={pageTitle as string} />}
+          {(pageTitle) => <Helmet title={pageTitle as string} />}
         </Message>
 
         <div className={styles.rules}>

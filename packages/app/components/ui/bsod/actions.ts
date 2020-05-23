@@ -1,9 +1,13 @@
-import { Action } from 'redux';
+import { Action as ReduxAction } from 'redux';
 
-export const BSOD = 'BSOD';
+interface BSoDAction extends ReduxAction {
+  type: 'BSOD';
+}
 
-export function bsod(): Action {
+export function bsod(): BSoDAction {
   return {
-    type: BSOD,
+    type: 'BSOD',
   };
 }
+
+export type Action = BSoDAction;

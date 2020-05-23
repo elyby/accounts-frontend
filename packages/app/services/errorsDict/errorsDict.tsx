@@ -1,37 +1,50 @@
-import React from 'react';
-
-import { FormattedMessage as Message } from 'react-intl';
-import { RelativeTime } from 'app/components/ui';
+import React, { ComponentType, ReactElement, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { FormattedMessage as Message } from 'react-intl';
+
+import { RelativeTime } from 'app/components/ui';
 
 import messages from './errorsDict.intl.json';
 
-/* eslint-disable react/prop-types, react/display-name, react/no-multi-comp, no-use-before-define */
+const SuggestResetPassword: ComponentType = () => (
+  <>
+    <br />
+    <Message
+      {...messages.suggestResetPassword}
+      values={{
+        forgotYourPassword: (
+          <Link to="/forgot-password">
+            <Message {...messages.forgotYourPassword} />
+          </Link>
+        ),
+      }}
+    />
+  </>
+);
 
-export default {
-  resolve(error) {
-    let payload = {};
+const ResendKey: ComponentType<{ url: string }> = ({ url }) => (
+  <>
+    {' '}
+    <Link to={url}>
+      <Message {...messages.doYouWantRequestKey} />
+    </Link>
+  </>
+);
 
-    if (error.type) {
-      payload = error.payload || {};
-      error = error.type;
-    }
-
-    return errorsMap[error] ? errorsMap[error](payload) : error;
-  },
-};
-
-const errorsMap = {
+const errorsMap: Record<
+  string,
+  (props?: Record<string, any>) => ReactElement
+> = {
   'error.login_required': () => <Message {...messages.loginRequired} />,
   'error.login_not_exist': () => <Message {...messages.loginNotExist} />,
   'error.password_required': () => <Message {...messages.passwordRequired} />,
 
-  'error.password_incorrect': (props = {}) => (
+  'error.password_incorrect': (props) => (
     // props are handled in validationErrorsHandler in components/auth/actions
-    <span>
+    <>
       <Message {...messages.invalidPassword} />
-      {props.isGuest ? errorsMap.suggestResetPassword() : null}
-    </span>
+      {props && props.isGuest ? <SuggestResetPassword /> : null}
+    </>
   ),
 
   'error.username_required': () => <Message {...messages.usernameRequired} />,
@@ -46,12 +59,12 @@ const errorsMap = {
   'error.email_too_long': () => <Message {...messages.emailToLong} />,
   'error.email_invalid': () => <Message {...messages.emailInvalid} />,
   'error.email_is_tempmail': () => <Message {...messages.emailIsTempmail} />,
-  'error.email_not_available': (props = {}) => (
+  'error.email_not_available': (props) => (
     // props are handled in validationErrorsHandler in components/auth/actions
-    <span>
+    <>
       <Message {...messages.emailNotAvailable} />
-      {props.isGuest ? errorsMap.suggestResetPassword() : null}
-    </span>
+      {props && props.isGuest ? <SuggestResetPassword /> : null}
+    </>
   ),
 
   'error.totp_required': () => <Message {...messages.totpRequired} />,
@@ -71,13 +84,13 @@ const errorsMap = {
     <Message {...messages.rulesAgreementRequired} />
   ),
   'error.key_required': () => <Message {...messages.keyRequired} />,
-  'error.key_not_exists': props => (
-    <span>
+  'error.key_not_exists': (props) => (
+    <>
       <Message {...messages.keyNotExists} />
-      {props.repeatUrl ? errorsMap.resendKey(props.repeatUrl) : null}
-    </span>
+      {props && props.repeatUrl ? <ResendKey url={props.repeatUrl} /> : null}
+    </>
   ),
-  'error.key_expire': props => errorsMap['error.key_not_exists'](props),
+  'error.key_expire': (props) => errorsMap['error.key_not_exists'](props),
 
   'error.newPassword_required': () => (
     <Message {...messages.newPasswordRequired} />
@@ -91,12 +104,12 @@ const errorsMap = {
   ),
   'error.account_banned': () => <Message {...messages.accountBanned} />,
 
-  'error.recently_sent_message': props => (
+  'error.recently_sent_message': (props) => (
     <Message
       {...messages.emailFrequency}
       values={{
         // for msLeft @see AuthError.jsx
-        time: <RelativeTime timestamp={props.msLeft} />,
+        time: <RelativeTime timestamp={props!.msLeft} />,
       }}
     />
   ),
@@ -107,7 +120,8 @@ const errorsMap = {
   ),
 
   'error.captcha_required': () => <Message {...messages.captchaRequired} />,
-  'error.captcha_invalid': () => errorsMap['error.captcha_required'](),
+  'error.captcha_invalid': (props) =>
+    errorsMap['error.captcha_required'](props),
 
   'error.redirectUri_required': () => (
     <Message {...messages.redirectUriRequired} />
@@ -115,29 +129,22 @@ const errorsMap = {
   'error.redirectUri_invalid': () => (
     <Message {...messages.redirectUriInvalid} />
   ),
-
-  suggestResetPassword: () => (
-    <span>
-      <br />
-      <Message
-        {...messages.suggestResetPassword}
-        values={{
-          forgotYourPassword: (
-            <Link to="/forgot-password">
-              <Message {...messages.forgotYourPassword} />
-            </Link>
-          ),
-        }}
-      />
-    </span>
-  ),
-
-  resendKey: url => (
-    <span>
-      {' '}
-      <Link to={url}>
-        <Message {...messages.doYouWantRequestKey} />
-      </Link>
-    </span>
-  ),
 };
+
+interface ErrorLiteral {
+  type: string;
+  payload?: Record<string, any>;
+}
+
+type Error = string | ErrorLiteral;
+
+export function resolve(error: Error): ReactNode {
+  let payload = {};
+
+  if (typeof error !== 'string') {
+    payload = error.payload || {};
+    error = error.type;
+  }
+
+  return errorsMap[error] ? errorsMap[error](payload) : error;
+}

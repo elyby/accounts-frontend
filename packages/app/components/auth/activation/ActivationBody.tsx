@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormattedMessage as Message } from 'react-intl';
@@ -12,14 +11,6 @@ import messages from './Activation.intl.json';
 export default class ActivationBody extends BaseAuthBody {
   static displayName = 'ActivationBody';
   static panelId = 'activation';
-
-  static propTypes = {
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        key: PropTypes.string,
-      }),
-    }),
-  };
 
   autoFocusField =
     this.props.match.params && this.props.match.params.key ? null : 'key';

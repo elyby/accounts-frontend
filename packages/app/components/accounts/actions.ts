@@ -53,7 +53,7 @@ export function authenticate(
     }
 
     const knownAccount = getState().accounts.available.find(
-      item => item.id === accountId,
+      (item) => item.id === accountId,
     );
 
     if (knownAccount) {
@@ -90,7 +90,7 @@ export function authenticate(
 
       if (!newRefreshToken) {
         // mark user as stranger (user does not want us to remember his account)
-        sessionStorage.setItem(`stranger${newAccount.id}`, 1);
+        sessionStorage.setItem(`stranger${newAccount.id}`, '1');
       }
 
       if (auth && auth.oauth && auth.oauth.clientId) {
@@ -246,10 +246,10 @@ export function requestNewToken(): ThunkAction<Promise<void>> {
     }
 
     return requestToken(refreshToken)
-      .then(token => {
+      .then((token) => {
         dispatch(updateToken(token));
       })
-      .catch(resp => {
+      .catch((resp) => {
         // all the logic to get the valid token was failed,
         // looks like we have some problems with token
         // lets redirect to login page
@@ -313,7 +313,7 @@ export function logoutAll(): ThunkAction<Promise<void>> {
       accounts: { available },
     } = getState();
 
-    available.forEach(account =>
+    available.forEach((account) =>
       logout(account.token).catch(() => {
         // we don't care
       }),
@@ -345,10 +345,12 @@ export function logoutStrangers(): ThunkAction<Promise<void>> {
       !refreshToken && !sessionStorage.getItem(`stranger${id}`);
 
     if (available.some(isStranger)) {
-      const accountToReplace = available.find(account => !isStranger(account));
+      const accountToReplace = available.find(
+        (account) => !isStranger(account),
+      );
 
       if (accountToReplace) {
-        available.filter(isStranger).forEach(account => {
+        available.filter(isStranger).forEach((account) => {
           dispatch(remove(account));
           logout(account.token);
         });

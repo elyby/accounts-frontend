@@ -1,16 +1,22 @@
 import expect from 'app/test/unexpected';
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import MfaState from './MfaState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 import PasswordState from 'app/services/authFlow/PasswordState';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('MfaState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: MfaState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new MfaState();

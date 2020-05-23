@@ -1,3 +1,5 @@
+import { Action } from './actions/pure-actions';
+
 export type Account = {
   id: number;
   username: string;
@@ -8,30 +10,14 @@ export type Account = {
 
 export type State = {
   active: number | null;
-  available: Account[];
+  available: Array<Account>;
 };
-
-export type AddAction = { type: 'accounts:add'; payload: Account };
-export type RemoveAction = { type: 'accounts:remove'; payload: Account };
-export type ActivateAction = { type: 'accounts:activate'; payload: Account };
-export type UpdateTokenAction = {
-  type: 'accounts:updateToken';
-  payload: string;
-};
-export type ResetAction = { type: 'accounts:reset' };
-
-type Action =
-  | AddAction
-  | RemoveAction
-  | ActivateAction
-  | UpdateTokenAction
-  | ResetAction;
 
 export function getActiveAccount(state: { accounts: State }): Account | null {
   const accountId = state.accounts.active;
 
   return (
-    state.accounts.available.find(account => account.id === accountId) || null
+    state.accounts.available.find((account) => account.id === accountId) || null
   );
 }
 
@@ -57,7 +43,7 @@ export default function accounts(
       const { payload } = action;
 
       state.available = state.available
-        .filter(account => account.id !== payload.id)
+        .filter((account) => account.id !== payload.id)
         .concat(payload);
 
       state.available.sort((account1, account2) => {
@@ -79,7 +65,7 @@ export default function accounts(
       const { payload } = action;
 
       return {
-        available: state.available.map(account => {
+        available: state.available.map((account) => {
           if (account.id === payload.id) {
             return { ...payload };
           }
@@ -105,7 +91,9 @@ export default function accounts(
 
       return {
         ...state,
-        available: state.available.filter(account => account.id !== payload.id),
+        available: state.available.filter(
+          (account) => account.id !== payload.id,
+        ),
       };
     }
 
@@ -118,7 +106,7 @@ export default function accounts(
 
       return {
         ...state,
-        available: state.available.map(account => {
+        available: state.available.map((account) => {
           if (account.id === state.active) {
             return {
               ...account,

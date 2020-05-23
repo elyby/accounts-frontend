@@ -10,7 +10,7 @@ export type Resp<T> = T & {
 
 export interface Options extends RequestInit {
   token?: string | null;
-  headers: { [key: string]: any };
+  headers: Record<string, any>;
 }
 
 const buildOptions = (
@@ -127,32 +127,32 @@ const toJSON = (resp: Response) => {
   }
 
   return resp.json().then(
-    json => {
+    (json) => {
       json.originalResponse = resp;
 
       return json;
     },
-    error => Promise.reject(new InternalServerError(error, resp)),
+    (error) => Promise.reject(new InternalServerError(error, resp)),
   );
 };
 const rejectWithJSON = (resp: Response) =>
-  toJSON(resp).then(resp => {
+  toJSON(resp).then((resp) => {
     if (resp.originalResponse.status >= 500) {
       throw new InternalServerError(resp, resp.originalResponse);
     }
 
     throw resp;
   });
-const handleResponseSuccess = resp =>
+const handleResponseSuccess = (resp: { success?: boolean }) =>
   resp.success || typeof resp.success === 'undefined'
     ? Promise.resolve(resp)
     : Promise.reject(resp);
 
-async function doFetch(url: string, options: Options) {
+async function doFetch<T>(url: string, options: Options): Promise<Resp<T>> {
   // NOTE: we are wrapping fetch, because it is returning
   // Promise instance that can not be polyfilled with Promise.prototype.finally
 
-  const headers: { [key: string]: string } = { ...options.headers } as any;
+  const headers: Record<string, string> = { ...options.headers } as any;
   headers.Accept = 'application/json';
 
   options.headers = headers;
@@ -164,13 +164,13 @@ async function doFetch(url: string, options: Options) {
         .then(checkStatus)
         .then(toJSON, rejectWithJSON)
         .then(handleResponseSuccess)
-        .then(resp =>
+        .then((resp) =>
           middlewareLayer.run('then', resp, {
             url: nextUrl,
             options: nextOptions,
           }),
         )
-        .catch(resp =>
+        .catch((resp) =>
           middlewareLayer.run(
             'catch',
             resp,
@@ -213,7 +213,7 @@ function convertQueryValue(value: any): string {
  */
 function buildQuery(data: { [key: string]: any } = {}): string {
   return Object.keys(data)
-    .map(keyName =>
+    .map((keyName) =>
       [keyName, convertQueryValue(data[keyName])]
         .map(encodeURIComponent)
         .join('='),

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { SlideMotion } from 'app/components/ui/motion';
@@ -21,25 +21,29 @@ import messages from './ChangeEmail.intl.json';
 const STEPS_TOTAL = 3;
 
 export type ChangeEmailStep = 0 | 1 | 2;
-type HeightProp = 'step0Height' | 'step1Height' | 'step2Height';
-type HeightDict = {
-  [K in HeightProp]?: number;
-};
 
 interface Props {
   onChangeStep: (step: ChangeEmailStep) => void;
   lang: string;
   email: string;
-  stepForms: FormModel[];
+  stepForms: Array<FormModel>;
   onSubmit: (step: ChangeEmailStep, form: FormModel) => Promise<void>;
   step: ChangeEmailStep;
   code?: string;
 }
 
-interface State extends HeightDict {
+interface State {
   newEmail: string | null;
   activeStep: ChangeEmailStep;
   code: string;
+}
+
+interface FormStepParams {
+  form: FormModel;
+  isActiveStep: boolean;
+  isCodeSpecified: boolean;
+  email: string;
+  code?: string;
 }
 
 export default class ChangeEmail extends React.Component<Props, State> {
@@ -84,7 +88,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
           <div className={styles.form}>
             <div className={styles.formBody}>
               <Message {...messages.changeEmailTitle}>
-                {pageTitle => (
+                {(pageTitle) => (
                   <h3 className={styles.violetTitle}>
                     <Helmet title={pageTitle as string} />
                     {pageTitle}
@@ -145,21 +149,28 @@ export default class ChangeEmail extends React.Component<Props, State> {
     return (
       <SlideMotion activeStep={activeStep}>
         {new Array(STEPS_TOTAL).fill(0).map((_, step) => {
-          const form = this.props.stepForms[step];
-
-          return this[`renderStep${step}`]({
+          const formParams: FormStepParams = {
+            form: this.props.stepForms[step],
+            isActiveStep: step === activeStep,
+            isCodeSpecified,
             email,
             code,
-            isCodeSpecified,
-            form,
-            isActiveStep: step === activeStep,
-          });
+          };
+
+          switch (step) {
+            case 0:
+              return this.renderStep0(formParams);
+            case 1:
+              return this.renderStep1(formParams);
+            case 2:
+              return this.renderStep2(formParams);
+          }
         })}
       </SlideMotion>
     );
   }
 
-  renderStep0({ email, form }) {
+  renderStep0({ email, form }: FormStepParams): ReactNode {
     return (
       <div key="step0" data-testid="step1" className={styles.formBody}>
         <div className={styles.formRow}>
@@ -183,7 +194,13 @@ export default class ChangeEmail extends React.Component<Props, State> {
     );
   }
 
-  renderStep1({ email, form, code, isCodeSpecified, isActiveStep }) {
+  renderStep1({
+    email,
+    form,
+    code,
+    isCodeSpecified,
+    isActiveStep,
+  }: FormStepParams): ReactNode {
     return (
       <div key="step1" data-testid="step2" className={styles.formBody}>
         <div className={styles.formRow}>
@@ -230,7 +247,12 @@ export default class ChangeEmail extends React.Component<Props, State> {
     );
   }
 
-  renderStep2({ form, code, isCodeSpecified, isActiveStep }) {
+  renderStep2({
+    form,
+    code,
+    isCodeSpecified,
+    isActiveStep,
+  }: FormStepParams): ReactNode {
     const { newEmail } = this.state;
 
     return (
@@ -268,14 +290,6 @@ export default class ChangeEmail extends React.Component<Props, State> {
     );
   }
 
-  onStepMeasure(step: ChangeEmailStep) {
-    return (height: number) =>
-      // @ts-ignore
-      this.setState({
-        [`step${step}Height`]: height,
-      });
-  }
-
   nextStep() {
     const { activeStep } = this.state;
     const nextStep = activeStep + 1;
@@ -299,7 +313,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
     return this.state.activeStep + 1 === STEPS_TOTAL;
   }
 
-  onSwitchStep = (event: React.MouseEvent) => {
+  onSwitchStep = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
 
     this.nextStep();
@@ -333,7 +347,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
           code: '',
         });
       },
-      resp => {
+      (resp) => {
         if (resp.errors) {
           form.setErrors(resp.errors);
           this.forceUpdate();

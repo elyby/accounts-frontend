@@ -15,7 +15,7 @@ export function omit(
 ): { [key: string]: any } {
   const newObj = { ...obj };
 
-  keys.forEach(key => {
+  keys.forEach((key) => {
     Reflect.deleteProperty(newObj, key);
   });
 

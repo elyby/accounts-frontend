@@ -6,11 +6,14 @@ import ActivationState from './ActivationState';
 import RegisterState from './RegisterState';
 
 export default class ResendActivationState extends AbstractState {
-  enter(context: AuthContext) {
+  enter(context: AuthContext): Promise<void> | void {
     context.navigate('/resend-activation');
   }
 
-  resolve(context: AuthContext, payload: { [key: string]: any }) {
+  resolve(
+    context: AuthContext,
+    payload: Record<string, any>,
+  ): Promise<void> | void {
     context
       .run('resendActivation', payload)
       .then(() => context.setState(new ActivationState()))
@@ -20,11 +23,11 @@ export default class ResendActivationState extends AbstractState {
       );
   }
 
-  reject(context: AuthContext) {
+  reject(context: AuthContext): void {
     context.setState(new ActivationState());
   }
 
-  goBack(context: AuthContext) {
+  goBack(context: AuthContext): void {
     if (context.prevState instanceof RegisterState) {
       context.setState(new RegisterState());
     } else {

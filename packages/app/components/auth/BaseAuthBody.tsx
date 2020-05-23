@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+
 import AuthError from 'app/components/auth/authError/AuthError';
 import { FormModel } from 'app/components/ui/form';
-import { RouteComponentProps } from 'react-router-dom';
 
 import Context, { AuthContext } from './Context';
 
@@ -11,7 +12,7 @@ import Context, { AuthContext } from './Context';
 
 class BaseAuthBody extends React.Component<
   // TODO: this may be converted to generic type RouteComponentProps<T>
-  RouteComponentProps<{ [key: string]: any }>
+  RouteComponentProps<Record<string, any>>
 > {
   static contextType = Context;
   /* TODO: use declare */ context: React.ContextType<typeof Context>;
@@ -32,10 +33,14 @@ class BaseAuthBody extends React.Component<
     this.prevErrors = this.context.auth.error;
   }
 
-  renderErrors() {
+  renderErrors(): ReactNode {
     const error = this.form.getFirstError();
 
-    return error && <AuthError error={error} onClose={this.onClearErrors} />;
+    if (error === null) {
+      return null;
+    }
+
+    return <AuthError error={error} onClose={this.onClearErrors} />;
   }
 
   onFormSubmit() {

@@ -21,7 +21,7 @@ const mimeTypes = {
 
 function absolute(from, to) {
   if (arguments.length < 2) {
-    return function(to) {
+    return function (to) {
       return path.resolve(from, to);
     };
   }
@@ -50,7 +50,7 @@ function getFilesAndDeps(patterns, context) {
   }
 
   // Re-work the files array.
-  patterns.forEach(pattern => {
+  patterns.forEach((pattern) => {
     if (glob.hasMagic(pattern)) {
       addByGlob(pattern);
     } else {
@@ -67,7 +67,7 @@ function getFilesAndDeps(patterns, context) {
   };
 }
 
-module.exports = function(content) {
+module.exports = function (content) {
   this.cacheable();
   const params = loaderUtils.getOptions(this) || {};
   let config;
@@ -121,7 +121,7 @@ module.exports = function(content) {
   if (typeof config.rename === 'function') {
     fontconf.rename = config.rename;
   } else {
-    fontconf.rename = function(filePath) {
+    fontconf.rename = function (filePath) {
       return path.basename(filePath, '.svg');
     };
   }

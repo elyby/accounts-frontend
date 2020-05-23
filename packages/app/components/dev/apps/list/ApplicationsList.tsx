@@ -55,10 +55,10 @@ export default class ApplicationsList extends React.Component<Props, State> {
           />
         </div>
         <div className={styles.appsListContainer}>
-          {applications.map(app => (
+          {applications.map((app) => (
             <div
               key={app.clientId}
-              ref={elem => {
+              ref={(elem) => {
                 this.appsRefs[app.clientId] = elem;
               }}
             >
@@ -83,7 +83,7 @@ export default class ApplicationsList extends React.Component<Props, State> {
     if (
       clientId &&
       expandedApp !== clientId &&
-      applications.some(app => app.clientId === clientId)
+      applications.some((app) => app.clientId === clientId)
     ) {
       requestAnimationFrame(() =>
         this.onTileClick(clientId, { noReset: true }),

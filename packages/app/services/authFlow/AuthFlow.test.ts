@@ -1,5 +1,5 @@
 import expect from 'app/test/unexpected';
-import sinon from 'sinon';
+import sinon, { SinonStub } from 'sinon';
 
 import AuthFlow from 'app/services/authFlow/AuthFlow';
 import AbstractState from 'app/services/authFlow/AbstractState';
@@ -14,10 +14,11 @@ import ResendActivationState from 'app/services/authFlow/ResendActivationState';
 import LoginState from 'app/services/authFlow/LoginState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
+import { Store } from 'redux';
 
 describe('AuthFlow', () => {
-  let flow;
-  let actions;
+  let flow: AuthFlow;
+  let actions: { test: SinonStub };
 
   beforeEach(() => {
     actions = {
@@ -25,31 +26,27 @@ describe('AuthFlow', () => {
     };
     actions.test.returns('passed');
 
+    // @ts-ignore
     flow = new AuthFlow(actions);
-  });
-
-  it('throws when no actions provided', () => {
-    expect(
-      // @ts-ignore
-      () => new AuthFlow(),
-      'to throw',
-      'AuthFlow requires an actions object',
-    );
   });
 
   it('should not allow to mutate actions', () => {
     expect(
+      // @ts-ignore
       () => (flow.actions.foo = 'bar'),
       'to throw',
       /readonly|not extensible/,
     );
+    // @ts-ignore
     expect(() => (flow.actions.test = 'hacked'), 'to throw', /read ?only/);
   });
 
   describe('#setStore', () => {
     it('should create #navigate, #getState, #dispatch', () => {
       flow.setStore({
+        // @ts-ignore
         getState() {},
+        // @ts-ignore
         dispatch() {},
       });
 
@@ -60,7 +57,7 @@ describe('AuthFlow', () => {
   });
 
   describe('#restoreOAuthState', () => {
-    let oauthData;
+    let oauthData: Record<string, string>;
 
     beforeEach(() => {
       oauthData = { foo: 'bar' };
@@ -73,7 +70,8 @@ describe('AuthFlow', () => {
       );
 
       sinon.stub(flow, 'run').named('flow.run');
-      const promiseLike = { then: fn => fn() || promiseLike };
+      const promiseLike = { then: (fn: Function) => fn() || promiseLike };
+      // @ts-ignore
       flow.run.returns(promiseLike);
       sinon.stub(flow, 'setState').named('flow.setState');
     });
@@ -83,15 +81,25 @@ describe('AuthFlow', () => {
     });
 
     it('should call to restoreOAuthState', () => {
+      // @ts-ignore
       sinon.stub(flow, 'restoreOAuthState').named('flow.restoreOAuthState');
 
-      flow.handleRequest({ path: '/' });
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams(''), params: {} },
+        () => {},
+        () => {},
+      );
 
+      // @ts-ignore
       expect(flow.restoreOAuthState, 'was called');
     });
 
     it('should restore oauth state from localStorage', () => {
-      flow.handleRequest({ path: '/' });
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams(''), params: {} },
+        () => {},
+        () => {},
+      );
 
       expect(flow.run, 'to have a call satisfying', [
         'oAuthValidate',
@@ -100,7 +108,11 @@ describe('AuthFlow', () => {
     });
 
     it('should transition to CompleteState', () => {
-      flow.handleRequest({ path: '/' });
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams(''), params: {} },
+        () => {},
+        () => {},
+      );
 
       expect(flow.setState, 'to have a call satisfying', [
         expect.it('to be a', CompleteState),
@@ -108,7 +120,11 @@ describe('AuthFlow', () => {
     });
 
     it('should not handle current request', () => {
-      flow.handleRequest({ path: '/' });
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams(''), params: {} },
+        () => {},
+        () => {},
+      );
 
       expect(flow.setState, 'was called once');
     });
@@ -116,13 +132,22 @@ describe('AuthFlow', () => {
     it('should call onReady after state restoration', () => {
       const onReady = sinon.stub().named('onReady');
 
-      flow.handleRequest({ path: '/login' }, null, onReady);
+      flow.handleRequest(
+        { path: '/login', query: new URLSearchParams(''), params: {} },
+        // @ts-ignore
+        null,
+        onReady,
+      );
 
       expect(onReady, 'was called');
     });
 
     it('should not restore oauth state for /register route', () => {
-      flow.handleRequest({ path: '/register' });
+      flow.handleRequest(
+        { path: '/register', query: new URLSearchParams(''), params: {} },
+        () => {},
+        () => {},
+      );
 
       expect(flow.run, 'was not called'); // this.run('oAuthValidate'...
     });
@@ -136,7 +161,11 @@ describe('AuthFlow', () => {
         }),
       );
 
-      flow.handleRequest({ path: '/' });
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams(''), params: {} },
+        () => {},
+        () => {},
+      );
 
       expect(flow.run, 'was not called');
     });
@@ -189,14 +218,16 @@ describe('AuthFlow', () => {
     });
 
     it('should throw if no state', () => {
+      // @ts-ignore
       expect(() => flow.setState(), 'to throw', 'State is required');
     });
   });
 
   describe('#run', () => {
-    let store;
+    let store: Store;
 
     beforeEach(() => {
+      // @ts-ignore
       store = {
         getState() {},
         dispatch: sinon.stub().named('store.dispatch'),
@@ -206,6 +237,7 @@ describe('AuthFlow', () => {
     });
 
     it('should dispatch an action', () => {
+      // @ts-ignore
       flow.run('test');
 
       expect(store.dispatch, 'was called once');
@@ -213,6 +245,7 @@ describe('AuthFlow', () => {
     });
 
     it('should dispatch an action with payload given', () => {
+      // @ts-ignore
       flow.run('test', 'arg');
 
       expect(actions.test, 'was called once');
@@ -221,12 +254,15 @@ describe('AuthFlow', () => {
 
     it('should resolve to action dispatch result', () => {
       const expected = 'dispatch called';
+      // @ts-ignore
       store.dispatch.returns(expected);
 
+      // @ts-ignore
       return expect(flow.run('test'), 'to be fulfilled with', expected);
     });
 
     it('throws when running unexisted action', () => {
+      // @ts-ignore
       expect(() => flow.run('123'), 'to throw', 'Action 123 does not exists');
     });
   });
@@ -306,7 +342,11 @@ describe('AuthFlow', () => {
       '/resend-activation': ResendActivationState,
     }).forEach(([path, type]) => {
       it(`should transition to ${type.name} if ${path}`, () => {
-        flow.handleRequest({ path });
+        flow.handleRequest(
+          { path, query: new URLSearchParams({}), params: {} },
+          () => {},
+          () => {},
+        );
 
         expect(flow.setState, 'was called once');
         expect(flow.setState, 'to have a call satisfying', [
@@ -318,15 +358,20 @@ describe('AuthFlow', () => {
     it('should call callback', () => {
       const callback = sinon.stub().named('callback');
 
-      flow.handleRequest({ path: '/' }, () => {}, callback);
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams({}), params: {} },
+        () => {},
+        callback,
+      );
 
       expect(callback, 'was called once');
     });
 
     it('should not call callback till returned from #enter() promise will be resolved', () => {
-      let resolve;
-      const promise = {
-        then: cb => {
+      let resolve: Function;
+      const promise: Promise<void> = {
+        // @ts-ignore
+        then: (cb: Function) => {
           resolve = cb;
         },
       };
@@ -337,11 +382,17 @@ describe('AuthFlow', () => {
 
       flow.setState = AuthFlow.prototype.setState.bind(flow, state);
 
-      flow.handleRequest({ path: '/' }, () => {}, callback);
+      flow.handleRequest(
+        { path: '/', query: new URLSearchParams({}), params: {} },
+        () => {},
+        callback,
+      );
 
+      // @ts-ignore
       expect(resolve, 'to be', callback);
 
       expect(callback, 'was not called');
+      // @ts-ignore
       resolve();
       expect(callback, 'was called once');
     });
@@ -350,8 +401,16 @@ describe('AuthFlow', () => {
       const path = '/oauth2';
       const callback = sinon.stub();
 
-      flow.handleRequest({ path }, () => {}, callback);
-      flow.handleRequest({ path }, () => {}, callback);
+      flow.handleRequest(
+        { path, query: new URLSearchParams({}), params: {} },
+        () => {},
+        callback,
+      );
+      flow.handleRequest(
+        { path, query: new URLSearchParams({}), params: {} },
+        () => {},
+        callback,
+      );
 
       expect(flow.setState, 'was called once');
       expect(flow.setState, 'to have a call satisfying', [
@@ -363,7 +422,10 @@ describe('AuthFlow', () => {
     it('throws if unsupported request', () => {
       const replace = sinon.stub().named('replace');
 
-      flow.handleRequest({ path: '/foo/bar' }, replace);
+      flow.handleRequest(
+        { path: '/foo/bar', query: new URLSearchParams({}), params: {} },
+        replace,
+      );
 
       expect(replace, 'to have a call satisfying', ['/404']);
     });
@@ -376,9 +438,13 @@ describe('AuthFlow', () => {
     });
 
     it('should return request with path, query, params', () => {
-      const request = { path: '/' };
+      const request = { path: '/', query: new URLSearchParams({}), params: {} };
 
-      flow.handleRequest(request);
+      flow.handleRequest(
+        request,
+        () => {},
+        () => {},
+      );
 
       expect(flow.getRequest(), 'to satisfy', {
         ...request,
@@ -390,11 +456,15 @@ describe('AuthFlow', () => {
     it('should return a copy of current request', () => {
       const request = {
         path: '/',
-        query: { foo: 'bar' },
+        query: new URLSearchParams({ foo: 'bar' }),
         params: { baz: 'bud' },
       };
 
-      flow.handleRequest(request);
+      flow.handleRequest(
+        request,
+        () => {},
+        () => {},
+      );
 
       expect(flow.getRequest(), 'to equal', request);
       expect(flow.getRequest(), 'not to be', request);

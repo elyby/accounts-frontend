@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
-import loader from 'app/services/loader';
+import * as loader from 'app/services/loader';
 import { SKIN_DARK, COLOR_WHITE, Skin } from 'app/components/ui';
 import { Button } from 'app/components/ui/form';
 import { authenticate, revoke } from 'app/components/accounts/actions';
@@ -57,7 +57,9 @@ export class AccountSwitcher extends React.Component<Props> {
     let { available } = accounts;
 
     if (highlightActiveAccount) {
-      available = available.filter(account => account.id !== activeAccount.id);
+      available = available.filter(
+        (account) => account.id !== activeAccount.id,
+      );
     }
 
     return (
@@ -152,7 +154,7 @@ export class AccountSwitcher extends React.Component<Props> {
               className={styles.addAccount}
               label={
                 <Message {...messages.addAccount}>
-                  {message => (
+                  {(message) => (
                     <span>
                       <div className={styles.addIcon} />
                       {message}
@@ -167,7 +169,7 @@ export class AccountSwitcher extends React.Component<Props> {
     );
   }
 
-  onSwitch = (account: Account) => (event: React.MouseEvent) => {
+  onSwitch = (account: Account) => (event: React.MouseEvent<any>) => {
     event.preventDefault();
 
     loader.show();
@@ -178,11 +180,11 @@ export class AccountSwitcher extends React.Component<Props> {
       .then(() => this.props.onSwitch(account))
       // we won't sent any logs to sentry, because an error should be already
       // handled by external logic
-      .catch(error => console.warn('Error switching account', { error }))
+      .catch((error) => console.warn('Error switching account', { error }))
       .finally(() => loader.hide());
   };
 
-  onRemove = (account: Account) => (event: React.MouseEvent) => {
+  onRemove = (account: Account) => (event: React.MouseEvent<any>) => {
     event.preventDefault();
     event.stopPropagation();
 

@@ -1,17 +1,28 @@
+import { Action as ReduxPopup } from 'redux';
 import { PopupConfig } from './reducer';
 
-export const POPUP_CREATE = 'POPUP_CREATE';
-export function create(payload: PopupConfig) {
-  return {
-    type: POPUP_CREATE,
-    payload,
-  };
+interface PopupCreateAction extends ReduxPopup {
+  type: 'POPUP_CREATE';
+  payload: PopupConfig;
 }
 
-export const POPUP_DESTROY = 'POPUP_DESTROY';
-export function destroy(popup: PopupConfig) {
+export function create(popup: PopupConfig): PopupCreateAction {
   return {
-    type: POPUP_DESTROY,
+    type: 'POPUP_CREATE',
     payload: popup,
   };
 }
+
+interface PopupDestroyAction extends ReduxPopup {
+  type: 'POPUP_DESTROY';
+  payload: PopupConfig;
+}
+
+export function destroy(popup: PopupConfig): PopupDestroyAction {
+  return {
+    type: 'POPUP_DESTROY',
+    payload: popup,
+  };
+}
+
+export type Action = PopupCreateAction | PopupDestroyAction;

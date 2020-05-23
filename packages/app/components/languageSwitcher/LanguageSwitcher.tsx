@@ -15,15 +15,15 @@ import { RootState } from 'app/reducers';
 
 const translateUrl = 'http://ely.by/translate';
 
-export type LocaleData = {
+export interface LocaleData {
   code: string;
   name: string;
   englishName: string;
   progress: number;
   isReleased: boolean;
-};
+}
 
-export type LocalesMap = { [code: string]: LocaleData };
+export type LocalesMap = Record<string, LocaleData>;
 
 type OwnProps = {
   onClose: () => void;
@@ -142,7 +142,7 @@ class LanguageSwitcher extends React.Component<
       previous[key] = langs[key];
 
       return previous;
-    }, {});
+    }, {} as typeof langs);
 
     this.setState({
       filter,

@@ -25,7 +25,7 @@ export default {
       };
     }
 
-    return new Promise(resolve =>
+    return new Promise((resolve) =>
       webFont.load({
         classes: false,
         active: resolve,

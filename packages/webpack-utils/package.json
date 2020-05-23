@@ -6,7 +6,7 @@
   "author": "",
   "dependencies": {
     "glob": "^7.1.6",
-    "loader-utils": "^1.0.0",
+    "loader-utils": "^2.0.0",
     "webfonts-generator": "0.3.5"
   }
 }

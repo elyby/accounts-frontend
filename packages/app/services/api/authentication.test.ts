@@ -1,27 +1,16 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import expect from 'app/test/unexpected';
-import sinon from 'sinon';
+import sinon, { SinonFakeServer } from 'sinon';
 
 import request from 'app/services/request';
 import * as authentication from 'app/services/api/authentication';
 import * as accounts from 'app/services/api/accounts';
 
 describe('authentication api', () => {
-  let server;
+  let server: SinonFakeServer;
 
   beforeEach(() => {
-    server = sinon.createFakeServer({
+    server = sinon.fakeServer.create({
       autoRespond: true,
-    });
-
-    ['get', 'post'].forEach(method => {
-      server[method] = (url, resp = {}, status = 200, headers = {}) => {
-        server.respondWith(method, url, [
-          status,
-          { 'Content-Type': 'application/json', ...headers },
-          JSON.stringify(resp),
-        ]);
-      };
     });
   });
 
@@ -156,12 +145,16 @@ describe('authentication api', () => {
       });
 
       it('resolves with new token and user object', async () => {
-        server.post('/api/authentication/refresh-token', {
-          access_token: newToken,
-          refresh_token: validRefreshToken,
-          success: true,
-          expires_in: 50000,
-        });
+        server.respondWith(
+          'POST',
+          '/api/authentication/refresh-token',
+          JSON.stringify({
+            access_token: newToken,
+            refresh_token: validRefreshToken,
+            success: true,
+            expires_in: 50000,
+          }),
+        );
 
         await expect(
           authentication.validateToken(...validateTokenArgs),
@@ -178,7 +171,11 @@ describe('authentication api', () => {
 
       it('rejects if token request failed', () => {
         const error = { error: 'Unexpected error example' };
-        server.post('/api/authentication/refresh-token', error, 500);
+        server.respondWith('POST', '/api/authentication/refresh-token', [
+          500,
+          [],
+          JSON.stringify(error),
+        ]);
 
         return expect(
           authentication.validateToken(...validateTokenArgs),
@@ -205,12 +202,16 @@ describe('authentication api', () => {
       });
 
       it('resolves with new token and user object', async () => {
-        server.post('/api/authentication/refresh-token', {
-          access_token: newToken,
-          refresh_token: validRefreshToken,
-          success: true,
-          expires_in: 50000,
-        });
+        server.respondWith(
+          'POST',
+          '/api/authentication/refresh-token',
+          JSON.stringify({
+            access_token: newToken,
+            refresh_token: validRefreshToken,
+            success: true,
+            expires_in: 50000,
+          }),
+        );
 
         await expect(
           authentication.validateToken(...validateTokenArgs),
@@ -227,7 +228,11 @@ describe('authentication api', () => {
 
       it('rejects if token request failed', () => {
         const error = { error: 'Unexpected error example' };
-        server.post('/api/authentication/refresh-token', error, 500);
+        server.respondWith('POST', '/api/authentication/refresh-token', [
+          500,
+          [],
+          JSON.stringify(error),
+        ]);
 
         return expect(
           authentication.validateToken(...validateTokenArgs),

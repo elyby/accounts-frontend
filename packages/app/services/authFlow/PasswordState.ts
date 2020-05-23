@@ -14,7 +14,7 @@ import MfaState from './MfaState';
 import { AuthContext } from './AuthFlow';
 
 export default class PasswordState extends AbstractState {
-  enter(context: AuthContext) {
+  enter(context: AuthContext): Promise<void> | void {
     const { login, isTotpRequired } = getCredentials(context.getState());
 
     if (isTotpRequired) {
@@ -35,7 +35,7 @@ export default class PasswordState extends AbstractState {
       password: string;
       rememberMe: boolean;
     },
-  ) {
+  ): Promise<void> | void {
     const { login, returnUrl } = getCredentials(context.getState());
 
     return context
@@ -62,11 +62,11 @@ export default class PasswordState extends AbstractState {
       .catch((err = {}) => err.errors || logger.warn('Error logging in', err));
   }
 
-  reject(context: AuthContext) {
+  reject(context: AuthContext): void {
     context.setState(new ForgotPasswordState());
   }
 
-  goBack(context: AuthContext) {
+  goBack(context: AuthContext): void {
     const state = context.getState();
     const { isRelogin } = getCredentials(state);
 

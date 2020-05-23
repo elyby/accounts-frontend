@@ -31,7 +31,7 @@ export default function MfaStatus({ onProceed }: { onProceed: () => void }) {
         <p className={styles.description}>
           <a
             href="#"
-            onClick={event => {
+            onClick={(event) => {
               event.preventDefault();
               onProceed();
             }}

@@ -60,7 +60,7 @@ class MultiFactorAuthPage extends React.Component<Props> {
     return step;
   }
 
-  onChangeStep = (step: MfaStep) => {
+  onChangeStep = (step: number) => {
     this.props.history.push(`/profile/mfa/step${step + 1}`);
   };
 

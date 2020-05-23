@@ -26,9 +26,7 @@ declare module '*.jpg' {
 declare module '*.intl.json' {
   import { MessageDescriptor } from 'react-intl';
 
-  const descriptor: {
-    [key: string]: MessageDescriptor;
-  };
+  const descriptor: Record<string, MessageDescriptor>;
 
   export = descriptor;
 }

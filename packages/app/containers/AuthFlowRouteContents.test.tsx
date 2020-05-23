@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
-import expect from 'app/test/unexpected';
-import { mount } from 'enzyme';
+import uxpect from 'app/test/unexpected';
+import { render, screen } from '@testing-library/react';
 import authFlow from 'app/services/authFlow';
 
 import AuthFlowRouteContents from './AuthFlowRouteContents';
@@ -15,8 +15,12 @@ describe('AuthFlowRouteContents', () => {
     (authFlow.handleRequest as any).restore();
   });
 
-  function Component() {
-    return <div />;
+  let componentProps: { [key: string]: any };
+
+  function Component(props: { [key: string]: any }) {
+    componentProps = props;
+
+    return <div data-testid="test-component" />;
   }
 
   it('should render component if route allowed', () => {
@@ -26,7 +30,7 @@ describe('AuthFlowRouteContents', () => {
       query: new URLSearchParams(),
     };
 
-    const routerProps = {
+    const routerProps: any = {
       location: {
         pathname: authRequest.path,
         search: '',
@@ -35,26 +39,26 @@ describe('AuthFlowRouteContents', () => {
       match: {
         params: authRequest.params,
       },
-    } as any;
+    };
 
     (authFlow.handleRequest as any).callsArg(2);
 
-    const wrapper = mount(
+    render(
       <AuthFlowRouteContents routerProps={routerProps} component={Component} />,
     );
 
-    const component = wrapper.find(Component);
+    const component = screen.getByTestId('test-component');
 
-    expect(authFlow.handleRequest, 'to have a call satisfying', [
+    uxpect(authFlow.handleRequest, 'to have a call satisfying', [
       {
         ...authRequest,
-        query: expect.it('to be a', URLSearchParams),
+        query: uxpect.it('to be a', URLSearchParams),
       },
-      expect.it('to be a function'),
-      expect.it('to be a function'),
+      uxpect.it('to be a function'),
+      uxpect.it('to be a function'),
     ]);
 
-    expect(component.exists(), 'to be true');
-    expect(component.props(), 'to equal', routerProps);
+    expect(component).toBeInTheDocument();
+    uxpect(componentProps, 'to equal', routerProps);
   });
 });

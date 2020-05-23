@@ -7,7 +7,7 @@ import RegisterState from './RegisterState';
 import { AuthContext } from './AuthFlow';
 
 export default class LoginState extends AbstractState {
-  enter(context: AuthContext) {
+  enter(context: AuthContext): Promise<void> | void {
     const login = getLogin(context.getState());
     const { user } = context.getState();
 
@@ -30,7 +30,7 @@ export default class LoginState extends AbstractState {
     payload: {
       login: string;
     },
-  ) {
+  ): Promise<void> | void {
     context
       .run('login', payload)
       .then(() => context.setState(new PasswordState()))
@@ -39,11 +39,11 @@ export default class LoginState extends AbstractState {
       );
   }
 
-  reject(context: AuthContext) {
+  reject(context: AuthContext): void {
     context.setState(new RegisterState());
   }
 
-  goBack(context: AuthContext) {
+  goBack(context: AuthContext): void {
     context.run('goBack', {
       fallbackUrl: '/',
     });

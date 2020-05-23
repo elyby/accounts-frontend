@@ -19,11 +19,13 @@ describe('services/request', () => {
 
       (fetch as any).returns(Promise.resolve(resp));
 
-      return expect(request.get('/foo'), 'to be rejected').then(error => {
-        expect(error, 'to be an', InternalServerError);
-        expect(error.originalResponse, 'to be', resp);
-        expect(error.message, 'to contain', 'Unexpected token');
-      });
+      return expect(request.get('/foo'), 'to be rejected').then(
+        (error: InternalServerError) => {
+          expect(error, 'to be an', InternalServerError);
+          expect(error.originalResponse, 'to be', resp);
+          expect(error.message, 'to contain', 'Unexpected token');
+        },
+      );
     });
 
     it('should wrap 5xx errors', () => {
@@ -31,10 +33,12 @@ describe('services/request', () => {
 
       (fetch as any).returns(Promise.resolve(resp));
 
-      return expect(request.get('/foo'), 'to be rejected').then(error => {
-        expect(error, 'to be an', InternalServerError);
-        expect(error.originalResponse, 'to be', resp);
-      });
+      return expect(request.get('/foo'), 'to be rejected').then(
+        (error: InternalServerError) => {
+          expect(error, 'to be an', InternalServerError);
+          expect(error.originalResponse, 'to be', resp);
+        },
+      );
     });
 
     it('should wrap aborted errors', () => {
@@ -42,10 +46,13 @@ describe('services/request', () => {
 
       (fetch as any).returns(Promise.resolve(resp));
 
-      return expect(request.get('/foo'), 'to be rejected').then(error => {
-        expect(error, 'to be an', RequestAbortedError);
-        expect(error.error, 'to be', resp);
-      });
+      return expect(request.get('/foo'), 'to be rejected').then(
+        (error: RequestAbortedError) => {
+          expect(error, 'to be an', RequestAbortedError);
+          // @ts-ignore
+          expect(error.error, 'to be', resp);
+        },
+      );
     });
 
     it('should wrap "Failed to fetch" errors', () => {
@@ -53,11 +60,14 @@ describe('services/request', () => {
 
       (fetch as any).returns(Promise.resolve(resp));
 
-      return expect(request.get('/foo'), 'to be rejected').then(error => {
-        expect(error, 'to be an', RequestAbortedError);
-        expect(error.message, 'to be', resp.message);
-        expect(error.error, 'to be', resp);
-      });
+      return expect(request.get('/foo'), 'to be rejected').then(
+        (error: RequestAbortedError) => {
+          expect(error, 'to be an', RequestAbortedError);
+          expect(error.message, 'to be', resp.message);
+          // @ts-ignore
+          expect(error.error, 'to be', resp);
+        },
+      );
     });
   });
 

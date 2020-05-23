@@ -1,5 +1,5 @@
 import expect from 'app/test/unexpected';
-import sinon from 'sinon';
+import sinon, { SinonMock } from 'sinon';
 
 import CompleteState from 'app/services/authFlow/CompleteState';
 import LoginState from 'app/services/authFlow/LoginState';
@@ -8,13 +8,21 @@ import AcceptRulesState from 'app/services/authFlow/AcceptRulesState';
 import FinishState from 'app/services/authFlow/FinishState';
 import PermissionsState from 'app/services/authFlow/PermissionsState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
+import { Account } from 'app/components/accounts/reducer';
+import AbstractState from './AbstractState';
 
-import { bootstrap, expectState, expectNavigate, expectRun } from './helpers';
+import {
+  bootstrap,
+  expectState,
+  expectNavigate,
+  expectRun,
+  MockedAuthContext,
+} from './helpers';
 
 describe('CompleteState', () => {
-  let state;
-  let context;
-  let mock;
+  let state: CompleteState;
+  let context: MockedAuthContext;
+  let mock: SinonMock;
 
   beforeEach(() => {
     state = new CompleteState();
@@ -289,7 +297,7 @@ describe('CompleteState', () => {
       });
 
       expectRun(mock, 'oAuthComplete', sinon.match.object).returns({
-        then(success, fail) {
+        then(success: Function, fail: Function) {
           expect(success, 'to be a', 'function');
           expect(fail, 'to be a', 'function');
         },
@@ -323,7 +331,12 @@ describe('CompleteState', () => {
       return promise.catch(mock.verify.bind(mock));
     });
 
-    const testOAuth = (type, resp, expectedInstance) => {
+    const testOAuth = (
+      type: 'resolve' | 'reject',
+      resp: Record<string, any>,
+      expectedInstance: typeof AbstractState,
+    ) => {
+      // @ts-ignore
       const promise = Promise[type](resp);
 
       context.getState.returns({
@@ -364,11 +377,13 @@ describe('CompleteState', () => {
       testOAuth('reject', { acceptRequired: true }, PermissionsState));
 
     describe('when loginHint is set', () => {
-      const testSuccessLoginHint = field => {
-        const account = {
+      const testSuccessLoginHint = (field: keyof Account) => {
+        const account: Account = {
           id: 9,
           email: 'some@email.com',
           username: 'thatUsername',
+          token: '',
+          refreshToken: '',
         };
 
         context.getState.returns({

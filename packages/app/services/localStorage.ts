@@ -13,21 +13,38 @@ try {
   logger.info('No storage available'); // log for statistic purposes
 }
 
-export function hasStorage() {
+export function hasStorage(): boolean {
   return _hasStorage;
 }
 
-class DummyStorage {
-  getItem(key) {
+class DummyStorage implements Storage {
+  // FIXME: we can't use this declaration because it breaks react-hot-loader/babel
+  // [key: string]: any;
+
+  get length() {
+    return Object.keys(this).length;
+  }
+
+  getItem(key: string): string | null {
+    // @ts-ignore
     return this[key] || null;
   }
 
-  setItem(key, value) {
+  setItem(key: string, value: string): void {
+    // @ts-ignore
     this[key] = value;
   }
 
-  removeItem(key) {
+  removeItem(key: string): void {
     Reflect.deleteProperty(this, key);
+  }
+
+  clear(): void {
+    Object.keys(this).forEach(this.removeItem);
+  }
+
+  key(index: number): string | null {
+    return Object.keys(this)[index] || null;
   }
 }
 

@@ -8,7 +8,7 @@ import logger from 'app/services/logger';
 import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
 import { FormModel } from 'app/components/ui/form';
-import { RootState } from 'app/reducers';
+import { Dispatch, RootState } from 'app/reducers';
 import { Provider } from 'app/components/profile/Context';
 import { ComponentLoader } from 'app/components/ui/loader';
 
@@ -110,7 +110,7 @@ class ProfilePage extends React.Component<Props> {
 
 export default connect(
   (state: RootState) => ({
-    userId: state.user.id,
+    userId: state.user.id!,
   }),
   {
     refreshUserData,
@@ -120,11 +120,11 @@ export default connect(
     }: {
       form: FormModel;
       sendData: () => Promise<any>;
-    }) => dispatch => {
+    }) => (dispatch: Dispatch) => {
       form.beginLoading();
 
       return sendData()
-        .catch(resp => {
+        .catch((resp) => {
           const requirePassword = resp.errors && !!resp.errors.password;
 
           // prevalidate user input, because requestPassword popup will block the
@@ -154,7 +154,7 @@ export default connect(
 
           return Promise.reject(resp);
         })
-        .catch(resp => {
+        .catch((resp) => {
           if (!resp || !resp.errors) {
             logger.warn('Unexpected profile editing error', {
               resp,
@@ -165,7 +165,7 @@ export default connect(
         })
         .finally(() => form.endLoading());
 
-      function requestPassword(form) {
+      function requestPassword(form: FormModel) {
         return new Promise((resolve, reject) => {
           dispatch(
             createPopup({
@@ -176,13 +176,13 @@ export default connect(
                   sendData()
                     .then(resolve)
                     .then(props.onClose)
-                    .catch(resp => {
+                    .catch((resp) => {
                       if (resp.errors) {
                         form.setErrors(resp.errors);
 
                         const parentFormHasErrors =
                           Object.keys(resp.errors).filter(
-                            name => name !== 'password',
+                            (name) => name !== 'password',
                           ).length > 0;
 
                         if (parentFormHasErrors) {

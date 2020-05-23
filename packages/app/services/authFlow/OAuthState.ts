@@ -1,8 +1,9 @@
 import AbstractState from './AbstractState';
+import { AuthContext } from './AuthFlow';
 import CompleteState from './CompleteState';
 
 export default class OAuthState extends AbstractState {
-  enter(context) {
+  enter(context: AuthContext): Promise<void> | void {
     const { query, params } = context.getRequest();
 
     return context

@@ -1,6 +1,8 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
 
+import { Store } from 'redux';
+
 import AuthFlow from 'app/services/authFlow/AuthFlow';
 
 import RegisterState from 'app/services/authFlow/RegisterState';
@@ -8,20 +10,22 @@ import ActivationState from 'app/services/authFlow/ActivationState';
 import ResendActivationState from 'app/services/authFlow/ResendActivationState';
 
 describe('AuthFlow.functional', () => {
-  let flow;
-  let actions;
-  let store;
-  let state;
-  let navigate;
+  let flow: AuthFlow;
+  let actions: {};
+  let store: Store;
+  let state: { user?: { isGuest: boolean; isActive: boolean } };
+  let navigate: (path: string, extra?: {}) => void;
 
   beforeEach(() => {
     actions = {};
     store = {
       getState: sinon.stub().named('store.getState'),
+      // @ts-ignore
       dispatch: sinon
         .spy(({ type, payload = {} }) => {
           if (type === '@@router/TRANSITION' && payload.method === 'push') {
             // emulate redux-router
+            // @ts-ignore
             navigate(...payload.args);
           }
         })
@@ -30,6 +34,7 @@ describe('AuthFlow.functional', () => {
 
     state = {};
 
+    // @ts-ignore
     flow = new AuthFlow(actions);
     flow.setStore(store);
 
@@ -48,6 +53,7 @@ describe('AuthFlow.functional', () => {
 
     sinon.stub(flow, 'run').named('flow.run');
     sinon.spy(flow, 'navigate').named('flow.navigate');
+    // @ts-ignore
     store.getState.returns(state);
   });
 
@@ -107,9 +113,11 @@ describe('AuthFlow.functional', () => {
         },
       });
 
-      flow.run.onCall(0).returns({ then: fn => fn() });
+      // @ts-ignore
+      flow.run.onCall(0).returns({ then: (fn) => fn() });
+      // @ts-ignore
       flow.run.onCall(1).returns({
-        then: fn =>
+        then: (fn: Function) =>
           fn({
             redirectUri: expectedRedirect,
           }),

@@ -82,7 +82,7 @@ describe('Profile — Change password', () => {
 
       confirmWithPassword(account.password);
 
-      cy.getByTestId('password-request-form').should('not.be.visible');
+      cy.findByTestId('password-request-form').should('not.be.visible');
       cy.contains('The passwords does not match').should('be.visible');
     });
   });

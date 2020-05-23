@@ -46,7 +46,7 @@ export default class MfaDisable extends React.Component<
         return disableMFA(this.context.userId, totp, password);
       })
       .then(() => this.props.onComplete())
-      .catch(resp => {
+      .catch((resp) => {
         const { errors } = resp || {};
 
         if (errors) {

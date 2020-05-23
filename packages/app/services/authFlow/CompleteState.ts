@@ -24,7 +24,7 @@ export default class CompleteState extends AbstractState {
     this.isPermissionsAccepted = options.accept;
   }
 
-  enter(context: AuthContext) {
+  enter(context: AuthContext): Promise<void> | void {
     const {
       auth: { oauth },
       user,
@@ -43,7 +43,7 @@ export default class CompleteState extends AbstractState {
     }
   }
 
-  processOAuth(context: AuthContext) {
+  processOAuth(context: AuthContext): Promise<void> | void {
     const { auth, accounts } = context.getState();
 
     let { isSwitcherEnabled } = auth;
@@ -57,7 +57,7 @@ export default class CompleteState extends AbstractState {
 
     if (loginHint) {
       const account = accounts.available.find(
-        item =>
+        (item) =>
           item.id === Number(loginHint) ||
           item.email === loginHint ||
           item.username === loginHint,
@@ -111,7 +111,7 @@ export default class CompleteState extends AbstractState {
             return context.run('redirect', resp.redirectUri);
           }
         },
-        resp => {
+        (resp) => {
           if (resp.unauthorized) {
             context.setState(new LoginState());
           } else if (resp.acceptRequired) {

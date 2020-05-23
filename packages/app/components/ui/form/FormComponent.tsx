@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageDescriptor } from 'react-intl';
 import i18n from 'app/services/i18n';
 
-class FormComponent<P, S = {}> extends React.Component<P, S> {
+export default class FormComponent<P, S = {}> extends React.Component<P, S> {
   /**
    * Formats message resolving intl translations
    *
@@ -37,5 +37,3 @@ class FormComponent<P, S = {}> extends React.Component<P, S> {
    */
   onFormInvalid() {}
 }
-
-export default FormComponent;

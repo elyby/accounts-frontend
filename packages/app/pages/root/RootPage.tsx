@@ -11,7 +11,7 @@ import PrivateRoute from 'app/containers/PrivateRoute';
 import AuthFlowRoute from 'app/containers/AuthFlowRoute';
 import Userbar from 'app/components/userbar/Userbar';
 import PopupStack from 'app/components/ui/popup/PopupStack';
-import loader from 'app/services/loader';
+import * as loader from 'app/services/loader';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import { User } from 'app/components/user';
 import { Account } from 'app/components/accounts/reducer';

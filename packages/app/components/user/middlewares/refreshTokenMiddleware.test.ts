@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import expect from 'app/test/unexpected';
-import sinon from 'sinon';
+import sinon, { SinonSpy, SinonStub } from 'sinon';
 
 import refreshTokenMiddleware from 'app/components/user/middlewares/refreshTokenMiddleware';
 import { browserHistory } from 'app/services/history';
 import * as authentication from 'app/services/api/authentication';
-import { InternalServerError } from 'app/services/request';
+import { InternalServerError, Middleware } from 'app/services/request';
 import { updateToken } from 'app/components/accounts/actions';
+import { MiddlewareRequestOptions } from '../../../services/request/PromiseMiddlewareLayer';
 
 const refreshToken = 'foo';
 const expiredToken =
@@ -15,9 +17,9 @@ const validToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE0NzA3NjE5NzcsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNDcwNzYxOTc3LCJqdGkiOiJpZDEyMzQ1NiJ9.M4KY4QgHOUzhpAZjWoHJbGsEJPR-RBsJ1c1BKyxvAoU';
 
 describe('refreshTokenMiddleware', () => {
-  let middleware;
-  let getState;
-  let dispatch;
+  let middleware: Middleware;
+  let getState: SinonStub;
+  let dispatch: SinonSpy<[any], any>;
 
   const email = 'test@email.com';
 
@@ -30,7 +32,7 @@ describe('refreshTokenMiddleware', () => {
 
     getState = sinon.stub().named('store.getState');
     dispatch = sinon
-      .spy(arg => (typeof arg === 'function' ? arg(dispatch, getState) : arg))
+      .spy((arg) => (typeof arg === 'function' ? arg(dispatch, getState) : arg))
       .named('store.dispatch');
 
     middleware = refreshTokenMiddleware({ getState, dispatch } as any);
@@ -92,7 +94,7 @@ describe('refreshTokenMiddleware', () => {
           Promise.resolve(validToken),
         );
 
-        return middleware.before(data).then(resp => {
+        return middleware.before!(data).then((resp) => {
           expect(resp, 'to satisfy', data);
 
           expect(authentication.requestToken, 'to have a call satisfying', [
@@ -102,8 +104,13 @@ describe('refreshTokenMiddleware', () => {
       });
 
       it('should not apply to refresh-token request', () => {
-        const data = { url: '/refresh-token', options: {} };
-        const resp = middleware.before(data);
+        const data: MiddlewareRequestOptions = {
+          url: '/refresh-token',
+          options: {
+            headers: {},
+          },
+        };
+        const resp = middleware.before!(data);
 
         return expect(resp, 'to be fulfilled with', data).then(() =>
           expect(authentication.requestToken, 'was not called'),
@@ -111,11 +118,14 @@ describe('refreshTokenMiddleware', () => {
       });
 
       it('should not auto refresh token if options.token specified', () => {
-        const data = {
+        const data: MiddlewareRequestOptions = {
           url: 'foo',
-          options: { token: 'foo' },
+          options: {
+            token: 'foo',
+            headers: {},
+          },
         };
-        middleware.before(data);
+        middleware.before!(data);
 
         expect(authentication.requestToken, 'was not called');
       });
@@ -132,13 +142,11 @@ describe('refreshTokenMiddleware', () => {
           Promise.resolve(validToken),
         );
 
-        return middleware
-          .before(data)
-          .then(() =>
-            expect(dispatch, 'to have a call satisfying', [
-              updateToken(validToken),
-            ]),
-          );
+        return middleware.before!(data).then(() =>
+          expect(dispatch, 'to have a call satisfying', [
+            updateToken(validToken),
+          ]),
+        );
       });
 
       it('should relogin if token can not be parsed', () => {
@@ -159,9 +167,12 @@ describe('refreshTokenMiddleware', () => {
           user: {},
         });
 
-        const req = { url: 'foo', options: {} };
+        const req: MiddlewareRequestOptions = {
+          url: 'foo',
+          options: { headers: {} },
+        };
 
-        return expect(middleware.before(req), 'to be rejected with', {
+        return expect(middleware.before!(req), 'to be rejected with', {
           message: 'Invalid token',
         }).then(() => {
           expect(authentication.requestToken, 'was not called');
@@ -174,7 +185,7 @@ describe('refreshTokenMiddleware', () => {
         (authentication.requestToken as any).returns(Promise.reject());
 
         return expect(
-          middleware.before({ url: 'foo', options: {} }),
+          middleware.before!({ url: 'foo', options: { headers: {} } }),
           'to be rejected',
         ).then(() => assertRelogin());
       });
@@ -185,7 +196,7 @@ describe('refreshTokenMiddleware', () => {
         (authentication.requestToken as any).returns(Promise.reject(resp));
 
         return expect(
-          middleware.before({ url: 'foo', options: {} }),
+          middleware.before!({ url: 'foo', options: { headers: {} } }),
           'to be rejected with',
           resp,
         ).then(() =>
@@ -205,11 +216,13 @@ describe('refreshTokenMiddleware', () => {
         user: {},
       });
 
-      const data = {
+      const data: MiddlewareRequestOptions = {
         url: 'foo',
-        options: {},
+        options: {
+          headers: {},
+        },
       };
-      const resp = middleware.before(data);
+      const resp = middleware.before!(data);
 
       return expect(resp, 'to be fulfilled with', data).then(() =>
         expect(authentication.requestToken, 'was not called'),
@@ -242,7 +255,7 @@ describe('refreshTokenMiddleware', () => {
       type: 'yii\\web\\UnauthorizedHttpException',
     };
 
-    let restart;
+    let restart: SinonStub;
 
     beforeEach(() => {
       getState.returns({
@@ -275,19 +288,31 @@ describe('refreshTokenMiddleware', () => {
 
     it('should request new token if expired', () =>
       expect(
-        middleware.catch(expiredResponse, { options: {} }, restart),
+        middleware.catch!(
+          expiredResponse,
+          { url: '', options: { headers: {} } },
+          restart,
+        ),
         'to be fulfilled',
       ).then(assertNewTokenRequest));
 
     it('should request new token if invalid credential', () =>
       expect(
-        middleware.catch(badTokenReponse, { options: {} }, restart),
+        middleware.catch!(
+          badTokenReponse,
+          { url: '', options: { headers: {} } },
+          restart,
+        ),
         'to be fulfilled',
       ).then(assertNewTokenRequest));
 
     it('should request new token if token is incorrect', () =>
       expect(
-        middleware.catch(incorrectTokenReponse, { options: {} }, restart),
+        middleware.catch!(
+          incorrectTokenReponse,
+          { url: '', options: { headers: {} } },
+          restart,
+        ),
         'to be fulfilled',
       ).then(assertNewTokenRequest));
 
@@ -310,7 +335,11 @@ describe('refreshTokenMiddleware', () => {
       });
 
       return expect(
-        middleware.catch(incorrectTokenReponse, { options: {} }, restart),
+        middleware.catch!(
+          incorrectTokenReponse,
+          { url: '', options: { headers: {} } },
+          restart,
+        ),
         'to be rejected',
       ).then(() => {
         assertRelogin();
@@ -318,11 +347,13 @@ describe('refreshTokenMiddleware', () => {
     });
 
     it('should pass the request through if options.token specified', () => {
-      const promise = middleware.catch(
+      const promise = middleware.catch!(
         expiredResponse,
         {
+          url: '',
           options: {
             token: 'foo',
+            headers: {},
           },
         },
         restart,
@@ -339,10 +370,13 @@ describe('refreshTokenMiddleware', () => {
     it('should pass the rest of failed requests through', () => {
       const resp = {};
 
-      const promise = middleware.catch(
+      const promise = middleware.catch!(
         resp,
         {
-          options: {},
+          url: '',
+          options: {
+            headers: {},
+          },
         },
         restart,
       );
