@@ -49,7 +49,7 @@
     "components.auth.permissions.decline": "拒绝",
     "components.auth.permissions.permissionsTitle": "应用程序权限",
     "components.auth.permissions.scope_account_email": "访问您的邮件地址",
-    "components.auth.permissions.scope_account_info": "访问您的个人资料数据（除了邮件）",
+    "components.auth.permissions.scope_account_info": "访问您的个人资料数据（除了电子邮件地址）",
     "components.auth.permissions.scope_minecraft_server_session": "Minecraft服务器的授权数据",
     "components.auth.permissions.scope_offline_access": "当您离线时访问您的个人资料数据",
     "components.auth.permissions.theAppNeedsAccess1": "此应用程序需要访问",

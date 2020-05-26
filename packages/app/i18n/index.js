@@ -17,14 +17,14 @@ module.exports = {
         code: 'fr',
         name: 'Français',
         englishName: 'French',
-        progress: 72.2,
+        progress: 100,
         isReleased: true,
     },
     id: {
         code: 'id',
         name: 'Bahasa Indonesia',
         englishName: 'Indonesian',
-        progress: 98.7,
+        progress: 98,
         isReleased: true,
     },
     lt: {
@@ -59,14 +59,14 @@ module.exports = {
         code: 'sr',
         name: 'Српски',
         englishName: 'Serbian',
-        progress: 98.7,
+        progress: 100,
         isReleased: false,
     },
     uk: {
         code: 'uk',
         name: 'Українська',
         englishName: 'Ukrainian',
-        progress: 98.7,
+        progress: 98,
         isReleased: true,
     },
     vi: {
