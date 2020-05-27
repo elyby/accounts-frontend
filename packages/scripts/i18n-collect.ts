@@ -4,7 +4,7 @@ import fs from 'fs';
 import { sync as globSync } from 'glob';
 import { sync as mkdirpSync } from 'mkdirp';
 import chalk from 'chalk';
-import prompt from 'prompt';
+import { prompt } from 'inquirer';
 import localesMap from 'app/i18n';
 
 const MESSAGES_PATTERN = `${__dirname}/../../build/messages/**/*.json`;
@@ -15,6 +15,55 @@ const SUPPORTED_LANGS = [DEFAULT_LOCALE, ...Object.keys(localesMap)];
 interface MessageDescriptor {
     id: string | number;
     defaultMessage: string;
+}
+
+function buildLocales() {
+    mkdirpSync(LANG_DIR);
+
+    SUPPORTED_LANGS.map((lang) => {
+        const destPath = `${LANG_DIR}/${lang}.json`;
+        const newMessages = readJSON<Record<string, string>>(destPath);
+
+        keysToRename.forEach(([fromKey, toKey]) => {
+            newMessages[toKey] = newMessages[fromKey];
+            delete newMessages[fromKey];
+        });
+        keysToRemove.forEach((key) => {
+            delete newMessages[key];
+        });
+        keysToUpdate.forEach((key) => {
+            newMessages[`--${key}`] = newMessages[key];
+            newMessages[key] = collectedMessages[key];
+        });
+        keysToAdd.forEach((key) => {
+            newMessages[key] = collectedMessages[key];
+        });
+
+        const sortedKeys: Array<string> = Object.keys(newMessages).sort((key1, key2) => {
+            key1 = key1.replace(/^-+/, '');
+            key2 = key2.replace(/^-+/, '');
+
+            return key1 < key2 || !isNotMarked(key1) ? -1 : 1;
+        });
+
+        const sortedNewMessages = sortedKeys.reduce<typeof newMessages>((acc, key) => {
+            acc[key] = newMessages[key];
+
+            return acc;
+        }, {});
+
+        fs.writeFileSync(destPath, `${JSON.stringify(sortedNewMessages, null, 4)}\n`);
+    });
+}
+
+function readJSON<T extends {}>(destPath: string): T {
+    try {
+        return JSON.parse(fs.readFileSync(destPath, 'utf8'));
+    } catch (err) {
+        console.log(chalk.yellow(`Can't read ${destPath}. The new file will be created.`), `(${err.message})`);
+    }
+
+    return {} as T;
 }
 
 /**
@@ -117,77 +166,21 @@ if (keysToRename.length) {
     console.log(keysToRename.reduce((str, pair) => [str, pair[0], chalk.yellow(' -> '), pair[1], '\n'].join(''), ''));
 }
 
-prompt.start();
-prompt.get(
+prompt([
     {
-        properties: {
-            apply: {
-                description: 'Apply changes? [Y/n]',
-                pattern: /^y|n$/i,
-                message: 'Please enter "y" or "n"',
-                default: 'y',
-                before: (value) => value.toLowerCase() === 'y',
-            },
-        },
+        type: 'confirm',
+        name: 'applyChanges',
+        message: 'Apply changes?',
+        default: true,
     },
-    (err, resp) => {
-        console.log('\n');
+]).then(({ applyChanges }) => {
+    if (!applyChanges) {
+        console.log(chalk.red('Aborted'));
 
-        if (err || !resp.apply) {
-            return console.log(chalk.red('Aborted'));
-        }
-
-        buildLocales();
-
-        console.log(chalk.green('All locales was successfuly built'));
-    },
-);
-
-function buildLocales() {
-    mkdirpSync(LANG_DIR);
-
-    SUPPORTED_LANGS.map((lang) => {
-        const destPath = `${LANG_DIR}/${lang}.json`;
-        const newMessages = readJSON<Record<string, string>>(destPath);
-
-        keysToRename.forEach(([fromKey, toKey]) => {
-            newMessages[toKey] = newMessages[fromKey];
-            delete newMessages[fromKey];
-        });
-        keysToRemove.forEach((key) => {
-            delete newMessages[key];
-        });
-        keysToUpdate.forEach((key) => {
-            newMessages[`--${key}`] = newMessages[key];
-            newMessages[key] = collectedMessages[key];
-        });
-        keysToAdd.forEach((key) => {
-            newMessages[key] = collectedMessages[key];
-        });
-
-        const sortedKeys: Array<string> = Object.keys(newMessages).sort((key1, key2) => {
-            key1 = key1.replace(/^-+/, '');
-            key2 = key2.replace(/^-+/, '');
-
-            return key1 < key2 || !isNotMarked(key1) ? -1 : 1;
-        });
-
-        const sortedNewMessages = sortedKeys.reduce<typeof newMessages>((acc, key) => {
-            acc[key] = newMessages[key];
-
-            return acc;
-        }, {});
-
-        fs.writeFileSync(destPath, `${JSON.stringify(sortedNewMessages, null, 4)}\n`);
-    });
-}
-
-function readJSON<T extends {}>(destPath: string): T {
-    try {
-        return JSON.parse(fs.readFileSync(destPath, 'utf8'));
-    } catch (err) {
-        console.log(chalk.yellow(`Can't read ${destPath}. The new file will be created.`), `(${err.message})`);
+        return;
     }
 
-    return {} as T;
-}
+    buildLocales();
+
+    console.log(chalk.green('All locales was successfuly built'));
+});
