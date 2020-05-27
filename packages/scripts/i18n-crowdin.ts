@@ -3,53 +3,40 @@
 
 import fs from 'fs';
 import path from 'path';
+
 import axios from 'axios';
 import JSON5 from 'json5';
-import CrowdinApi, { LanguageStatusNode, LanguageStatusResponse, ProjectInfoResponse } from 'crowdin-api';
-import { TranslationStatus, Translations, Credentials } from '@crowdin/crowdin-api-client';
-import MultiProgress from 'multi-progress';
+import Crowdin, { SourceFilesModel } from '@crowdin/crowdin-api-client';
+import ProgressBar from 'progress';
 import ch from 'chalk';
 import iso639 from 'iso-639-1';
-import prompt from 'prompt';
+import { prompt } from 'inquirer';
 
-import { ValuesType } from 'utility-types';
+import config from './../../config';
 
-import config from '../../config';
-
-if (!config.crowdinApiKey) {
+if (!config.crowdin.apiKey) {
     console.error(ch.red`crowdinApiKey is required`);
     process.exit(126);
 }
 
-const ORGANIZATION_ID = 'elyby';
-const PROJECT_ID = 350687;
-const FILE_ID = 6;
-const PROJECT_KEY = config.crowdinApiKey;
-const CROWDIN_FILE_PATH = 'accounts/site.json';
-const SOURCE_LANG = 'en';
-const LANG_DIR = path.resolve(`${__dirname}/../app/i18n`);
+const PROJECT_ID = config.crowdin.projectId;
+const CROWDIN_FILE_PATH = config.crowdin.filePath;
+const SOURCE_LANG = config.crowdin.sourceLang;
+const LANG_DIR = config.crowdin.basePath;
 const INDEX_FILE_NAME = 'index.js';
-const MIN_RELEASE_PROGRESS = 80; // Minimal ready percent before translation can be published
+const MIN_RELEASE_PROGRESS = config.crowdin.minApproved;
 
-const credentials: Credentials = {
-    token: config.crowdinApiKey,
-};
-const translationStatusApi = new TranslationStatus(credentials);
-const translationsApi = new Translations(credentials);
-
-const crowdin = new CrowdinApi({
-    apiKey: PROJECT_KEY,
-    projectName: ORGANIZATION_ID,
+const crowdin = new Crowdin({
+    token: config.crowdin.apiKey,
 });
-const progressBar = new MultiProgress();
 
 /**
  * Locales that has been verified by core team members
  */
-const releasedLocales: Array<string> = ['be', 'fr', 'id', 'pt', 'ru', 'uk', 'vi', 'zh'];
+const releasedLocales: ReadonlyArray<string> = ['be', 'fr', 'id', 'pt', 'ru', 'uk', 'vi', 'zh'];
 
 /**
- * Array of Crowdin locales to our internal locales representation
+ * Map Crowdin locales into our internal locales representation
  */
 const LOCALES_MAP: Record<string, string> = {
     'pt-BR': 'pt',
@@ -57,7 +44,8 @@ const LOCALES_MAP: Record<string, string> = {
 };
 
 /**
- * This array allows us to customise native languages names, because ISO-639-1 sometimes is strange
+ * This array allows us to customise native languages names,
+ * because ISO-639-1 sometimes is strange
  */
 const NATIVE_NAMES_MAP: Record<string, string> = {
     be: 'Беларуская',
@@ -108,30 +96,6 @@ function sortByKeys<T extends Record<string, any>>(object: T): T {
         }, {} as T);
 }
 
-async function pullLocales(): Promise<ProjectInfoResponse['languages']> {
-    const { languages } = await crowdin.projectInfo();
-
-    return languages;
-}
-
-function findFile(root: LanguageStatusResponse['files'], path: string): LanguageStatusNode | null {
-    const [nodeToSearch, ...rest] = path.split('/');
-
-    for (const node of root) {
-        if (node.name !== nodeToSearch) {
-            continue;
-        }
-
-        if (rest.length === 0) {
-            return node;
-        }
-
-        return findFile(node.files, rest.join('/'));
-    }
-
-    return null;
-}
-
 interface IndexFileEntry {
     code: string;
     name: string;
@@ -140,9 +104,48 @@ interface IndexFileEntry {
     isReleased: boolean;
 }
 
-async function pullNew(): Promise<void> {
+function getLocaleFilePath(languageId: string): string {
+    return path.join(LANG_DIR, `${toInternalLocale(languageId)}.json`);
+}
+
+let directoriesList: Array<SourceFilesModel.Directory>;
+let filesList: Array<SourceFilesModel.File>;
+
+async function findFileId(path: string, parentDir: number|null = null): Promise<number> {
+    const [nodeToSearch, ...rest] = path.split('/');
+    if (rest.length === 0) {
+        if (!filesList) {
+            const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(PROJECT_ID);
+            filesList = filesResponse.map((fileData) => fileData.data);
+        }
+
+        const file = filesList.find((file) => file.directoryId === parentDir && file.name === nodeToSearch);
+        if (file === undefined) {
+            throw new Error('Cannot find file by provided path');
+        }
+
+        return file.id;
+    }
+
+    if (!directoriesList) {
+        const { data: dirsResponse } = await crowdin.sourceFilesApi.listProjectDirectories(PROJECT_ID);
+        directoriesList = dirsResponse.map((dirData) => dirData.data);
+    }
+
+    const dir = directoriesList.find((dir) => dir.directoryId === parentDir && dir.name === nodeToSearch);
+    if (dir === undefined) {
+        throw new Error('Cannot find directory by provided path');
+    }
+
+    return findFileId(rest.join('/'), dir.id);
+}
+
+async function pull(): Promise<void> {
+    console.log('Loading file info...');
+    const fileId = await findFileId(CROWDIN_FILE_PATH);
+
     console.log('Pulling translation progress...');
-    const { data: translationProgress } = await translationStatusApi.getFileProgress(PROJECT_ID, FILE_ID, 100);
+    const { data: translationProgress } = await crowdin.translationStatusApi.getFileProgress(PROJECT_ID, fileId, 100);
 
     const localesToPull: Array<string> = [];
     const indexFileEntries: Record<string, IndexFileEntry> = {
@@ -170,7 +173,7 @@ async function pullNew(): Promise<void> {
     });
 
     // Add prefix 'c' to current and total to prevent filling thees placeholders with real values
-    const downloadingProgressBar = progressBar.newBar('Downloading translates :bar :percent | :cCurrent/:total', {
+    const downloadingProgressBar = new ProgressBar('Downloading translates :bar :percent | :cCurrent/:total', {
         total: localesToPull.length,
         incomplete: '\u2591',
         complete: '\u2588',
@@ -179,18 +182,18 @@ async function pullNew(): Promise<void> {
     let downloadingReady = 0;
 
     const promises = localesToPull.map(async (languageId): Promise<void> => {
-        const { data: { url } } = await translationsApi.buildProjectFileTranslation(PROJECT_ID, FILE_ID, {
+        const { data: { url } } = await crowdin.translationsApi.buildProjectFileTranslation(PROJECT_ID, fileId, {
             targetLanguageId: languageId,
             exportApprovedOnly: true,
         });
 
-        const fileResponse = await axios.get(url, {
+        const { data: fileContents } = await axios.get(url, {
             // Disable response parsing
             transformResponse: [],
         });
-        fs.writeFileSync(path.join(LANG_DIR, `${toInternalLocale(languageId)}.json`), fileResponse.data);
+        fs.writeFileSync(getLocaleFilePath(languageId), fileContents);
 
-        downloadingProgressBar.update(++downloadingReady / localesToPull, {
+        downloadingProgressBar.update(++downloadingReady / localesToPull.length, {
             cCurrent: downloadingReady,
         });
     });
@@ -204,156 +207,32 @@ async function pullNew(): Promise<void> {
     console.log(ch.green('The index file was successfully written'));
 }
 
-async function pull() {
-    console.log('Pulling locales list...');
-    const locales = await pullLocales();
-    const checkingProgressBar = progressBar.newBar('| Pulling locales info   :bar :percent | :current/:total', {
-        total: locales.length,
-        incomplete: '\u2591',
-        complete: '\u2588',
-        width: locales.length,
-    });
-    // Add prefix 'c' to current and total to prevent filling thees placeholders with real values
-    const downloadingProgressBar = progressBar.newBar('| Downloading translates :bar :percent | :cCurrent/:cTotal', {
-        total: 100,
-        incomplete: '\u2591',
-        complete: '\u2588',
-        width: locales.length,
-    });
-    let downloadingTotal = 0;
-    let downloadingReady = 0;
+async function push(): Promise<void> {
+    const { disapproveTranslates } = await prompt([{
+        name: 'disapproveTranslates',
+        type: 'confirm',
+        default: true,
+        message: 'Disapprove changed lines?',
+    }]);
 
-    interface Result {
-        locale: ValuesType<typeof locales>;
-        progress: number;
-        translatesFilePath: string;
-    }
+    console.log('Loading file info...');
+    const fileId = await findFileId(CROWDIN_FILE_PATH);
 
-    const results = await Promise.all(
-        // TODO: there is should be some way to reimplement this
-        //       with reduce to avoid null values
-        locales.map(
-            async (locale): Promise<Result | null> => {
-                const { files } = await crowdin.languageStatus(locale.code);
-                checkingProgressBar.tick();
-                const fileInfo = findFile(files, CROWDIN_FILE_PATH);
-
-                if (fileInfo === null) {
-                    throw new Error('Unable to find translation file. Please check the CROWDIN_FILE_PATH param.');
-                }
-
-                const progress = (fileInfo.words_approved / fileInfo.words) * 100;
-
-                if (!releasedLocales.includes(toInternalLocale(locale.code)) && progress < MIN_RELEASE_PROGRESS) {
-                    return null;
-                }
-
-                downloadingProgressBar.update(downloadingReady / ++downloadingTotal, {
-                    cCurrent: downloadingReady,
-                    cTotal: downloadingTotal,
-                });
-
-                const translatesFilePath = await crowdin.exportFile(CROWDIN_FILE_PATH, locale.code);
-
-                downloadingProgressBar.update(++downloadingReady / downloadingTotal, {
-                    cCurrent: downloadingReady,
-                    cTotal: downloadingTotal,
-                });
-
-                return {
-                    locale,
-                    progress,
-                    translatesFilePath,
-                };
-            },
-        ),
+    console.log('Uploading the source file to the storage...')
+    const { data: { id: storageId } } = await crowdin.uploadStorageApi.addStorage(
+        path.basename(CROWDIN_FILE_PATH),
+        fs.readFileSync(getLocaleFilePath(SOURCE_LANG)),
     );
 
-    console.log('Locales are downloaded. Writing them to file system.');
-
-    const indexFileEntries: Record<string, IndexFileEntry> = {
-        en: {
-            code: 'en',
-            name: 'English',
-            englishName: 'English',
-            progress: 100,
-            isReleased: true,
-        },
-    };
-    await Promise.all(
-        results
-            .filter((result): result is Result => result !== null)
-            .map(
-                (result) =>
-                    new Promise((resolve, reject) => {
-                        const {
-                            locale: { code, name },
-                            progress,
-                            translatesFilePath,
-                        } = result;
-                        const ourCode = toInternalLocale(code);
-
-                        indexFileEntries[ourCode] = {
-                            code: ourCode,
-                            name: NATIVE_NAMES_MAP[ourCode] || iso639.getNativeName(ourCode),
-                            englishName: ENGLISH_NAMES_MAP[ourCode] || name,
-                            progress: parseFloat(progress.toFixed(1)),
-                            isReleased: releasedLocales.includes(ourCode),
-                        };
-
-                        fs.copyFile(translatesFilePath, path.join(LANG_DIR, `${ourCode}.json`), 0, (err) => {
-                            err ? reject(err) : resolve();
-                        });
-                    }),
-            ),
-    );
-
-    console.log('Writing an index file.');
-
-    fs.writeFileSync(path.join(LANG_DIR, INDEX_FILE_NAME), serializeToModule(indexFileEntries));
-
-    console.log(ch.green('The index file was successfully written'));
-}
-
-function push() {
-    return new Promise((resolve, reject) => {
-        prompt.start();
-        prompt.get(
-            {
-                properties: {
-                    disapprove: {
-                        description: 'Disapprove changed lines? [Y/n]',
-                        pattern: /^y|n$/i,
-                        message: 'Please enter "y" or "n"',
-                        default: 'y',
-                        before: (value) => value.toLowerCase() === 'y',
-                    },
-                },
-            },
-            async (err, { disapprove }) => {
-                if (err) {
-                    reject(err);
-
-                    return;
-                }
-
-                console.log(`Publishing ${ch.bold(SOURCE_LANG)} translates file...`);
-
-                await crowdin.updateFile(
-                    {
-                        [CROWDIN_FILE_PATH]: path.join(LANG_DIR, `${SOURCE_LANG}.json`),
-                    },
-                    {
-                        update_option: disapprove ? 'update_as_unapproved' : 'update_without_changes',
-                    },
-                );
-
-                console.log(ch.green('Success'));
-
-                resolve();
-            },
-        );
+    console.log(`Applying the new revision...`);
+    await crowdin.sourceFilesApi.updateOrRestoreFile(PROJECT_ID, fileId, {
+        storageId,
+        updateOption: disapproveTranslates
+            ? SourceFilesModel.UpdateOption.CLEAR_TRANSLATIONS_AND_APPROVALS
+            : SourceFilesModel.UpdateOption.KEEP_TRANSLATIONS_AND_APPROVALS,
     });
+
+    console.log(ch.green('Success'));
 }
 
 try {
@@ -361,7 +240,7 @@ try {
 
     switch (action) {
         case 'pull':
-            pullNew();
+            pull();
             break;
         case 'push':
             push();

@@ -1,4 +1,7 @@
 /* eslint-env node */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const path = require('path');
 
 require('dotenv').config();
 
@@ -9,5 +12,12 @@ module.exports = {
     apiHost: env.API_HOST || 'https://dev.account.ely.by',
     ga: env.GA_ID && { id: env.GA_ID },
     sentryDSN: env.SENTRY_DSN,
-    crowdinApiKey: env.CROWDIN_API_KEY,
+    crowdin: {
+        apiKey: env.CROWDIN_API_KEY,
+        projectId: 350687,
+        filePath: 'accounts/site.json',
+        sourceLang: 'en',
+        basePath: path.resolve(`${__dirname}/packages/app/i18n`),
+        minApproved: 80, // Minimal ready percent before translation can be published
+    },
 };

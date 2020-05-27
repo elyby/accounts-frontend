@@ -8,7 +8,16 @@ module.exports = {
             },
         ],
         '@babel/preset-react',
-        '@babel/preset-env',
+        [
+            '@babel/preset-env',
+            {
+                ignoreBrowserslistConfig: true,
+                targets: {
+                    node: true,
+                },
+                modules: 'commonjs',
+            },
+        ],
     ],
     plugins: [
         '@babel/plugin-syntax-dynamic-import',
@@ -29,6 +38,7 @@ module.exports = {
                 [
                     '@babel/preset-env',
                     {
+                        ignoreBrowserslistConfig: false,
                         modules: false,
                         useBuiltIns: 'usage', // or "entry"
                         corejs: 3,

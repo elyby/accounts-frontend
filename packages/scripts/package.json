@@ -12,20 +12,21 @@
     "dependencies": {
         "@babel/node": "^7.8.3",
         "@crowdin/crowdin-api-client": "^1.8.0",
-        "@types/mkdirp": "^1.0.0",
-        "@types/progress": "^2.0.3",
         "axios": "^0.19.2",
         "chalk": "^4.0.0",
         "crowdin-api": "^4.0.0",
         "glob": "^7.1.6",
+        "inquirer": "^7.1.0",
         "iso-639-1": "^2.1.3",
         "json5": "^2.1.3",
         "mkdirp": "^1.0.4",
-        "multi-progress": "^2.0.0",
-        "prompt": "https://github.com/flatiron/prompt.git#master",
-        "utility-types": "^3.10.0"
+        "progress": "^2.0.3"
     },
     "devDependencies": {
+        "@types/inquirer": "^6.5.0",
+        "@types/json5": "^0.0.30",
+        "@types/mkdirp": "^1.0.0",
+        "@types/progress": "^2.0.3",
         "@types/webpack": "^4.41.13"
     }
 }
