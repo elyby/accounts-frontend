@@ -12,7 +12,7 @@ import { defineMessages } from 'react-intl';
 import Context from '../Context';
 import Instructions from './instructions';
 import KeyForm from './keyForm';
-import Confirmation from './confirmation';
+import Confirmation from './Confirmation';
 
 const STEPS_TOTAL = 3;
 

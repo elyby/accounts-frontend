@@ -32,7 +32,9 @@ const ResendKey: ComponentType<{ url: string }> = ({ url }) => (
 
 const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> = {
     'error.login_required': () => <Message key="loginRequired" defaultMessage="Please enter E‑mail or username" />,
-    'error.login_not_exist': () => <Message key="loginNotExist" defaultMessage="Sorry, Ely doesn't recognise your login." />,
+    'error.login_not_exist': () => (
+        <Message key="loginNotExist" defaultMessage="Sorry, Ely doesn't recognise your login." />
+    ),
     'error.password_required': () => <Message key="passwordRequired" defaultMessage="Please enter password" />,
 
     'error.password_incorrect': (props) => (
@@ -47,12 +49,16 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
     'error.username_invalid': () => <Message key="usernameInvalid" defaultMessage="Username is invalid" />,
     'error.username_too_short': () => <Message key="usernameTooShort" defaultMessage="Username is too short" />,
     'error.username_too_long': () => <Message key="usernameTooLong" defaultMessage="Username is too long" />,
-    'error.username_not_available': () => <Message key="usernameUnavailable" defaultMessage="This username is already taken" />,
+    'error.username_not_available': () => (
+        <Message key="usernameUnavailable" defaultMessage="This username is already taken" />
+    ),
 
     'error.email_required': () => <Message key="emailRequired" defaultMessage="E‑mail is required" />,
     'error.email_too_long': () => <Message key="emailToLong" defaultMessage="E‑mail is too long" />,
     'error.email_invalid': () => <Message key="emailInvalid" defaultMessage="E‑mail is invalid" />,
-    'error.email_is_tempmail': () => <Message key="emailIsTempmail" defaultMessage="Tempmail E‑mail addresses is not allowed" />,
+    'error.email_is_tempmail': () => (
+        <Message key="emailIsTempmail" defaultMessage="Tempmail E‑mail addresses is not allowed" />
+    ),
     'error.email_not_available': (props) => (
         // props are handled in validationErrorsHandler in components/auth/actions
         <>
@@ -63,12 +69,22 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
 
     'error.totp_required': () => <Message key="totpRequired" defaultMessage="Please, enter the code" />,
     'error.totp_incorrect': () => <Message key="totpIncorrect" defaultMessage="The code is incorrect" />,
-    'error.otp_already_enabled': () => <Message key="mfaAlreadyEnabled" defaultMessage="The two factor auth is already enabled" />,
+    'error.otp_already_enabled': () => (
+        <Message key="mfaAlreadyEnabled" defaultMessage="The two factor auth is already enabled" />
+    ),
 
-    'error.rePassword_required': () => <Message key="rePasswordRequired" defaultMessage="Please retype your password" />,
-    'error.password_too_short': () => <Message key="passwordTooShort" defaultMessage="Your password should be at least 8 characters length" />,
-    'error.rePassword_does_not_match': () => <Message key="passwordsDoesNotMatch" defaultMessage="The passwords does not match" />,
-    'error.rulesAgreement_required': () => <Message key="rulesAgreementRequired" defaultMessage="You must accept rules in order to create an account" />,
+    'error.rePassword_required': () => (
+        <Message key="rePasswordRequired" defaultMessage="Please retype your password" />
+    ),
+    'error.password_too_short': () => (
+        <Message key="passwordTooShort" defaultMessage="Your password should be at least 8 characters length" />
+    ),
+    'error.rePassword_does_not_match': () => (
+        <Message key="passwordsDoesNotMatch" defaultMessage="The passwords does not match" />
+    ),
+    'error.rulesAgreement_required': () => (
+        <Message key="rulesAgreementRequired" defaultMessage="You must accept rules in order to create an account" />
+    ),
     'error.key_required': () => <Message key="keyRequired" defaultMessage="Please, enter an activation key" />,
     'error.key_not_exists': (props) => (
         <>
@@ -78,10 +94,16 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
     ),
     'error.key_expire': (props) => errorsMap['error.key_not_exists'](props),
 
-    'error.newPassword_required': () => <Message key="newPasswordRequired" defaultMessage="Please enter new password" />,
-    'error.newRePassword_required': () => <Message key="newRePasswordRequired" defaultMessage="Please repeat new password" />,
+    'error.newPassword_required': () => (
+        <Message key="newPasswordRequired" defaultMessage="Please enter new password" />
+    ),
+    'error.newRePassword_required': () => (
+        <Message key="newRePasswordRequired" defaultMessage="Please repeat new password" />
+    ),
 
-    'error.account_not_activated': () => <Message key="accountNotActivated" defaultMessage="The account is not activated" />,
+    'error.account_not_activated': () => (
+        <Message key="accountNotActivated" defaultMessage="The account is not activated" />
+    ),
     'error.account_banned': () => <Message key="accountBanned" defaultMessage="Account is blocked" />,
 
     'error.recently_sent_message': (props) => (
@@ -96,7 +118,9 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
     ),
 
     'error.email_not_found': () => <Message key="emailNotFound" defaultMessage="Specified E‑mail is not found" />,
-    'error.account_already_activated': () => <Message key="accountAlreadyActivated" defaultMessage="This account is already activated" />,
+    'error.account_already_activated': () => (
+        <Message key="accountAlreadyActivated" defaultMessage="This account is already activated" />
+    ),
 
     'error.captcha_required': () => <Message key="captchaRequired" defaultMessage="Please, solve the captcha" />,
     'error.captcha_invalid': (props) => errorsMap['error.captcha_required'](props),
