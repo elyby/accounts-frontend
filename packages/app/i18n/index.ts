@@ -11,7 +11,9 @@ export interface Locale {
     isReleased: boolean;
 }
 
-const langs: Record<string, Locale> = {
+export type LocalesList = Record<string, Locale>;
+
+const langs: LocalesList = {
     en: {
         code: 'en',
         name: 'English',

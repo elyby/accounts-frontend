@@ -12,6 +12,23 @@ import { Dispatch, RootState } from 'app/reducers';
 
 import { Account } from './reducer';
 
+jest.mock('app/i18n', () => ({
+    en: {
+        code: 'en',
+        name: 'English',
+        englishName: 'English',
+        progress: 100,
+        isReleased: true,
+    },
+    be: {
+        code: 'be',
+        name: 'Беларуская',
+        englishName: 'Belarusian',
+        progress: 97,
+        isReleased: true,
+    },
+}));
+
 const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbHl8MSJ9.pRJ7vakt2eIscjqwG__KhSxKb3qwGsdBBeDbBffJs_I';
 const legacyToken = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOjF9.cRF-sQNrwWQ94xCb3vWioVdjxAZeefEE7GMGwh7708o';
 
