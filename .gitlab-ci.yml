@@ -156,9 +156,10 @@ Build:
   before_script:
     - *defineVars
   script:
+    - yarn i18n:extract
+    - yarn i18n:pull
     - yarn build
     # Remove unneeded files
-    - rm -rf build/messages
     - rm -rf build/*.css.map
     # Move all source maps to its own directory
     - mkdir -p source-maps
