@@ -1,11 +1,14 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { PanelIcon } from 'app/components/ui/Panel';
 import { Input } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
 import styles from './mfa.scss';
-import messages from './Mfa.intl.json';
+
+const messages = defineMessages({
+    enterTotp: 'Enter code',
+});
 
 export default class MfaBody extends BaseAuthBody {
     static panelId = 'mfa';
@@ -21,7 +24,10 @@ export default class MfaBody extends BaseAuthBody {
                 <PanelIcon icon="lock" />
 
                 <p className={styles.descriptionText}>
-                    <Message {...messages.description} />
+                    <Message
+                        key="description"
+                        defaultMessage="In order to sign in this account, you need to enter a one-time password from mobile application"
+                    />
                 </p>
 
                 <Input

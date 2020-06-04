@@ -1,10 +1,13 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
 import FormComponent from 'app/components/ui/form/FormComponent';
 
 import styles from './profileForm.scss';
-import messages from './ProfileForm.intl.json';
+
+const { back: backMsg } = defineMessages({
+    back: 'Back',
+});
 
 export class BackButton extends FormComponent<{
     to: string;
@@ -20,12 +23,12 @@ export class BackButton extends FormComponent<{
             <Link
                 className={styles.backButton}
                 to={to}
-                title={this.formatMessage(messages.back)}
+                title={this.formatMessage(backMsg)}
                 data-testid="back-to-profile"
             >
                 <span className={styles.backIcon} />
                 <span className={styles.backText}>
-                    <Message {...messages.back} />
+                    <Message {...backMsg} />
                 </span>
             </Link>
         );

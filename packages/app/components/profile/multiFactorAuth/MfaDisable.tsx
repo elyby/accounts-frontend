@@ -4,8 +4,8 @@ import { disable as disableMFA } from 'app/services/api/mfa';
 import { FormModel } from 'app/components/ui/form';
 
 import Context from '../Context';
-import MfaDisableForm from './disableForm/MfaDisableForm';
-import MfaStatus from './status/MfaStatus';
+import MfaDisableForm from './MfaDisableForm';
+import MfaStatus from './MfaStatus';
 
 export default class MfaDisable extends React.Component<
     {

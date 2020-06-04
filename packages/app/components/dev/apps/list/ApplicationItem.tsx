@@ -8,7 +8,7 @@ import { OauthAppResponse } from 'app/services/api/oauth';
 import Collapse from 'app/components/ui/collapse';
 
 import styles from '../applicationsIndex.scss';
-import messages from '../ApplicationsIndex.intl.json';
+import messages from '../list.intl';
 
 const ACTION_REVOKE_TOKENS = 'revoke-tokens';
 const ACTION_RESET_SECRET = 'reset-secret';

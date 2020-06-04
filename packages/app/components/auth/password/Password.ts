@@ -1,6 +1,12 @@
+import { defineMessages } from 'react-intl';
 import factory from '../factory';
 import Body from './PasswordBody';
-import messages from './Password.intl.json';
+
+const messages = defineMessages({
+    passwordTitle: 'Enter password',
+    signInButton: 'Sign in',
+    forgotPassword: 'Forgot password',
+});
 
 export default factory({
     title: messages.passwordTitle,

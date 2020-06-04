@@ -7,7 +7,6 @@ import { FormModel } from 'app/components/ui/form';
 
 import MfaEnable, { MfaStep } from './MfaEnable';
 import MfaDisable from './MfaDisable';
-import messages from './MultiFactorAuth.intl.json';
 
 class MultiFactorAuth extends React.Component<{
     step: MfaStep;
@@ -25,7 +24,7 @@ class MultiFactorAuth extends React.Component<{
 
                 <div className={styles.form}>
                     <div className={styles.formBody}>
-                        <Message {...messages.mfaTitle}>
+                        <Message key="mfaTitle" defaultMessage="Two‑factor authentication">
                             {(pageTitle) => (
                                 <h3 className={styles.title}>
                                     <Helmet title={pageTitle as string} />
@@ -36,7 +35,10 @@ class MultiFactorAuth extends React.Component<{
 
                         <div className={styles.formRow}>
                             <p className={styles.description}>
-                                <Message {...messages.mfaDescription} />
+                                <Message
+                                    key="mfaDescription"
+                                    defaultMessage="Two‑factor authentication is an extra layer of security designed to ensure you that you're the only person who can access your account, even if the password gets stolen."
+                                />
                             </p>
                         </div>
                     </div>

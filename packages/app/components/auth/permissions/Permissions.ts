@@ -1,6 +1,12 @@
+import { defineMessages } from 'react-intl';
 import factory from '../factory';
-import messages from './Permissions.intl.json';
 import Body from './PermissionsBody';
+
+const messages = defineMessages({
+    permissionsTitle: 'Application permissions',
+    decline: 'Decline',
+    approve: 'Approve',
+});
 
 export default factory({
     title: messages.permissionsTitle,

@@ -5,7 +5,7 @@ import { LinkButton } from 'app/components/ui/form';
 import { COLOR_GREEN } from 'app/components/ui';
 import { OauthAppResponse } from 'app/services/api/oauth';
 
-import messages from '../ApplicationsIndex.intl.json';
+import messages from '../list.intl';
 import styles from '../applicationsIndex.scss';
 import ApplicationItem from './ApplicationItem';
 

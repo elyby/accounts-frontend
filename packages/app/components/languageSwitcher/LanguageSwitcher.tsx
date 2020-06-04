@@ -9,7 +9,6 @@ import popupStyles from 'app/components/ui/popup/popup.scss';
 import icons from 'app/components/ui/icons.scss';
 
 import styles from './languageSwitcher.scss';
-import messages from './languageSwitcher.intl.json';
 import LanguageList from './LanguageList';
 import { RootState } from 'app/reducers';
 
@@ -70,7 +69,7 @@ class LanguageSwitcher extends React.Component<
                 <div className={popupStyles.popup}>
                     <div className={popupStyles.header}>
                         <h2 className={popupStyles.headerTitle}>
-                            <Message {...messages.siteLanguage} />
+                            <Message key="siteLanguage" defaultMessage="Site language" />
                         </h2>
                         <span className={clsx(icons.close, popupStyles.close)} onClick={onClose} />
                     </div>
@@ -79,7 +78,10 @@ class LanguageSwitcher extends React.Component<
                         <div className={styles.searchBox}>
                             <input
                                 className={clsx(formStyles.lightTextField, formStyles.greenTextField)}
-                                placeholder={intl.formatMessage(messages.startTyping)}
+                                placeholder={intl.formatMessage({
+                                    key: 'startTyping',
+                                    defaultMessage: 'Start typing…',
+                                })}
                                 onChange={this.onFilterUpdate}
                                 onKeyPress={this.onFilterKeyPress()}
                                 autoFocus
@@ -97,12 +99,18 @@ class LanguageSwitcher extends React.Component<
                             <div className={styles.improveTranslatesIcon} />
                             <div className={styles.improveTranslatesContent}>
                                 <div className={styles.improveTranslatesTitle}>
-                                    <Message {...messages.improveTranslates} />
+                                    <Message key="improveTranslates" defaultMessage="Improve Ely.by translation" />
                                 </div>
                                 <div className={styles.improveTranslatesText}>
-                                    <Message {...messages.improveTranslatesDescription} />{' '}
+                                    <Message
+                                        key="improveTranslatesDescription"
+                                        defaultMessage="Ely.by’s localization is a community effort. If you want to improve the translation of Ely.by, we'd love your help."
+                                    />{' '}
                                     <a href={translateUrl} target="_blank">
-                                        <Message {...messages.improveTranslatesParticipate} />
+                                        <Message
+                                            key="improveTranslatesParticipate"
+                                            defaultMessage="Click here to participate."
+                                        />
                                     </a>
                                 </div>
                             </div>

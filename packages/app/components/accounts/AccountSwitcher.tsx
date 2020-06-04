@@ -11,7 +11,6 @@ import { getActiveAccount, Account } from 'app/components/accounts/reducer';
 import { RootState } from 'app/reducers';
 
 import styles from './accountSwitcher.scss';
-import messages from './AccountSwitcher.intl.json';
 
 interface Props {
     switchAccount: (account: Account) => Promise<Account>;
@@ -70,7 +69,7 @@ export class AccountSwitcher extends React.Component<Props> {
                             <div className={styles.links}>
                                 <div className={styles.link}>
                                     <a href={`http://ely.by/u${activeAccount.id}`} target="_blank">
-                                        <Message {...messages.goToEly} />
+                                        <Message key="goToEly" defaultMessage="Go to Ely.by profile" />
                                     </a>
                                 </div>
                                 <div className={styles.link}>
@@ -80,7 +79,7 @@ export class AccountSwitcher extends React.Component<Props> {
                                         onClick={this.onRemove(activeAccount)}
                                         href="#"
                                     >
-                                        <Message {...messages.logout} />
+                                        <Message key="logout" defaultMessage="Log out" />
                                     </a>
                                 </div>
                             </div>
@@ -127,7 +126,7 @@ export class AccountSwitcher extends React.Component<Props> {
                             small
                             className={styles.addAccount}
                             label={
-                                <Message {...messages.addAccount}>
+                                <Message key="addAccount" defaultMessage="Add account">
                                     {(message) => (
                                         <span>
                                             <div className={styles.addIcon} />

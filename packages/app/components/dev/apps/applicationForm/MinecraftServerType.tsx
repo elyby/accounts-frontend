@@ -1,11 +1,18 @@
 import React, { ComponentType } from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
 import { OauthAppResponse } from 'app/services/api/oauth';
 import { Input, FormModel } from 'app/components/ui/form';
 import { SKIN_LIGHT } from 'app/components/ui';
 import styles from 'app/components/profile/profileForm.scss';
 
-import messages from './ApplicationForm.intl.json';
+const messages = defineMessages({
+    serverName: 'Server name:',
+    ipAddressIsOptionButPreferable:
+        'IP address is optional, but is very preferable. It might become handy in case of we suddenly decide to play on your server with the entire band (=',
+    serverIp: 'Server IP:',
+    youCanAlsoSpecifyServerSite: "You also can specify either server's site URL or its community in a social network.",
+    websiteLink: 'Website link:',
+});
 
 interface Props {
     form: FormModel;

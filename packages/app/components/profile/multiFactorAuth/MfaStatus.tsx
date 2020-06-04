@@ -4,8 +4,7 @@ import { ScrollIntoView } from 'app/components/ui/scroll';
 import styles from 'app/components/profile/profileForm.scss';
 import icons from 'app/components/ui/icons.scss';
 
-import messages from '../MultiFactorAuth.intl.json';
-import mfaStyles from '../mfa.scss';
+import mfaStyles from './mfa.scss';
 
 export default function MfaStatus({ onProceed }: { onProceed: () => void }) {
     return (
@@ -17,13 +16,19 @@ export default function MfaStatus({ onProceed }: { onProceed: () => void }) {
                     <span className={icons.lock} />
                 </div>
                 <p className={`${styles.description} ${mfaStyles.mfaTitle}`}>
-                    <Message {...messages.mfaEnabledForYourAcc} />
+                    <Message
+                        key="mfaEnabledForYourAcc"
+                        defaultMessage="Two‑factor authentication for your account is active now"
+                    />
                 </p>
             </div>
 
             <div className={styles.formRow}>
                 <p className={styles.description}>
-                    <Message {...messages.mfaLoginFlowDesc} />
+                    <Message
+                        key="mfaLoginFlowDesc"
+                        defaultMessage="Additional code will be requested next time you log in. Please note, that Minecraft authorization won't work when two‑factor auth is enabled."
+                    />
                 </p>
             </div>
 
@@ -36,7 +41,7 @@ export default function MfaStatus({ onProceed }: { onProceed: () => void }) {
                             onProceed();
                         }}
                     >
-                        <Message {...messages.disable} />
+                        <Message key="disable" defaultMessage="Disable" />
                     </a>
                 </p>
             </div>

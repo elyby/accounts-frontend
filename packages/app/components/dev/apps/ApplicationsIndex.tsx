@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { LinkButton } from 'app/components/ui/form';
 import { COLOR_GREEN, COLOR_BLUE } from 'app/components/ui';
@@ -8,11 +8,15 @@ import { ContactLink } from 'app/components/contact';
 import { OauthAppResponse } from 'app/services/api/oauth';
 
 import styles from './applicationsIndex.scss';
-import messages from './ApplicationsIndex.intl.json';
 import cubeIcon from './icons/cube.svg';
 import loadingCubeIcon from './icons/loading-cube.svg';
 import toolsIcon from './icons/tools.svg';
 import ApplicationsList from './list';
+
+const labels = defineMessages({
+    addNew: 'Add new',
+    authorization: 'Authorization',
+});
 
 type Props = {
     clientId: string | null;
@@ -29,7 +33,7 @@ export default class ApplicationsIndex extends React.Component<Props> {
         return (
             <div className={styles.container}>
                 <div className={styles.welcomeContainer}>
-                    <Message {...messages.accountsForDevelopers}>
+                    <Message key="accountsForDevelopers" defaultMessage="Ely.by Accounts for developers">
                         {(pageTitle: string) => (
                             <h2 className={styles.welcomeTitle}>
                                 <Helmet title={pageTitle} />
@@ -40,11 +44,12 @@ export default class ApplicationsIndex extends React.Component<Props> {
                     <div className={styles.welcomeTitleDelimiter} />
                     <div className={styles.welcomeParagraph}>
                         <Message
-                            {...messages.accountsAllowsYouYoUseOauth2}
+                            key="accountsAllowsYouYoUseOauth2"
+                            defaultMessage="Ely.by Accounts service provides users with a quick and easy-to-use way to login to your site, launcher or Minecraft server via OAuth2 authorization protocol. You can find more information about integration with Ely.by Accounts in {ourDocumentation}."
                             values={{
                                 ourDocumentation: (
                                     <a href="https://docs.ely.by/en/oauth.html" target="_blank">
-                                        <Message {...messages.ourDocumentation} />
+                                        <Message key="ourDocumentation" defaultMessage="our documentation" />
                                     </a>
                                 ),
                             }}
@@ -52,11 +57,12 @@ export default class ApplicationsIndex extends React.Component<Props> {
                     </div>
                     <div className={styles.welcomeParagraph}>
                         <Message
-                            {...messages.ifYouHaveAnyTroubles}
+                            key="ifYouHaveAnyTroubles"
+                            defaultMessage="If you are experiencing difficulties, you can always use {feedback}. We'll surely help you."
                             values={{
                                 feedback: (
                                     <ContactLink>
-                                        <Message {...messages.feedback} />
+                                        <Message key="feedback" defaultMessage="feedback" />
                                     </ContactLink>
                                 ),
                             }}
@@ -104,17 +110,20 @@ function Loader({ noApps }: { noApps: boolean }) {
             >
                 <div className={styles.emptyStateText}>
                     <div>
-                        <Message {...messages.youDontHaveAnyApplication} />
+                        <Message
+                            key="youDontHaveAnyApplication"
+                            defaultMessage="You don't have any app registered yet."
+                        />
                     </div>
                     <div>
-                        <Message {...messages.shallWeStart} />
+                        <Message key="shallWeStart" defaultMessage="Shall we start?" />
                     </div>
                 </div>
 
                 <LinkButton
                     to="/dev/applications/new"
                     data-e2e="newApp"
-                    label={messages.addNew}
+                    label={labels.addNew}
                     color={COLOR_GREEN}
                     className={styles.emptyStateActionButton}
                 />
@@ -129,16 +138,16 @@ function Guest() {
             <img src={toolsIcon} className={styles.emptyStateIcon} />
             <div className={styles.emptyStateText}>
                 <div>
-                    <Message {...messages.weDontKnowAnythingAboutYou} />
+                    <Message key="weDontKnowAnythingAboutYou" defaultMessage="We don't know anything about you yet." />
                 </div>
                 <div>
-                    <Message {...messages.youMustAuthToBegin} />
+                    <Message key="youMustAuthToBegin" defaultMessage="You have to authorize to start." />
                 </div>
             </div>
 
             <LinkButton
                 to="/login"
-                label={messages.authorization}
+                label={labels.authorization}
                 color={COLOR_BLUE}
                 className={styles.emptyStateActionButton}
             />

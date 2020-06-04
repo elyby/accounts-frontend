@@ -1,8 +1,13 @@
+import { defineMessages } from 'react-intl';
 import factory from '../factory';
-import activationMessages from '../activation/Activation.intl.json';
-import forgotPasswordMessages from '../forgotPassword/ForgotPassword.intl.json';
-import messages from './Register.intl.json';
 import Body from './RegisterBody';
+
+const messages = defineMessages({
+    registerTitle: 'Sign Up',
+    signUpButton: 'Register',
+    didNotReceivedEmail: 'Did not received E‑mail?',
+    alreadyHaveCode: 'Already have a code',
+});
 
 export default factory({
     title: messages.registerTitle,
@@ -13,11 +18,11 @@ export default factory({
     },
     links: [
         {
-            label: activationMessages.didNotReceivedEmail,
+            label: messages.didNotReceivedEmail,
             payload: { requestEmail: true },
         },
         {
-            label: forgotPasswordMessages.alreadyHaveCode,
+            label: messages.alreadyHaveCode,
         },
     ],
 });

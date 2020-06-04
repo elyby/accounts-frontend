@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 
 import { Input, Captcha } from 'app/components/ui/form';
 import { getLogin } from 'app/components/auth/reducer';
@@ -8,7 +8,10 @@ import { PanelIcon } from 'app/components/ui/Panel';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
 import styles from './forgotPassword.scss';
-import messages from './ForgotPassword.intl.json';
+
+const messages = defineMessages({
+    emailOrUsername: 'E‑mail or username',
+});
 
 export default class ForgotPasswordBody extends BaseAuthBody {
     static displayName = 'ForgotPasswordBody';
@@ -36,14 +39,17 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                 {isLoginEditShown ? (
                     <div>
                         <p className={styles.descriptionText}>
-                            <Message {...messages.specifyEmail} />
+                            <Message
+                                key="specifyEmail"
+                                defaultMessage="Specify the registration E‑mail address or last used username for your account and we will send an E‑mail with instructions for further password recovery."
+                            />
                         </p>
                         <Input
                             {...this.bindField('login')}
                             icon="envelope"
                             color="lightViolet"
                             required
-                            placeholder={messages.accountEmail}
+                            placeholder={messages.emailOrUsername}
                             defaultValue={login}
                         />
                     </div>
@@ -54,7 +60,10 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                             <span className={styles.editLogin} onClick={this.onClickEdit} data-testid="edit-login" />
                         </div>
                         <p className={styles.descriptionText}>
-                            <Message {...messages.pleasePressButton} />
+                            <Message
+                                key="pleasePressButton"
+                                defaultMessage="Please press the button bellow to get an E‑mail with password recovery code."
+                            />
                         </p>
                     </div>
                 )}

@@ -189,11 +189,6 @@ const webpackConfig = {
                 loader: 'html-loader',
             },
             {
-                test: /\.intl\.json$/,
-                type: 'javascript/auto',
-                use: ['babel-loader', 'intl-loader'],
-            },
-            {
                 // this is consumed by postcss-import
                 // @see postcss.config.js
                 test: /\.font\.(js|json)$/,
@@ -205,7 +200,6 @@ const webpackConfig = {
 
     resolveLoader: {
         alias: {
-            'intl-loader': path.resolve('./packages/webpack-utils/intl-loader'),
             'fontgen-loader': path.resolve('./packages/webpack-utils/fontgen-loader'),
         },
     },

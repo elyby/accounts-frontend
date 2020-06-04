@@ -7,12 +7,12 @@ import { ScrollIntoView } from 'app/components/ui/scroll';
 import logger from 'app/services/logger';
 import { getSecret, enable as enableMFA } from 'app/services/api/mfa';
 import { Form } from 'app/components/ui/form';
+import { defineMessages } from 'react-intl';
 
 import Context from '../Context';
 import Instructions from './instructions';
 import KeyForm from './keyForm';
 import Confirmation from './confirmation';
-import messages from './MultiFactorAuth.intl.json';
 
 const STEPS_TOTAL = 3;
 
@@ -24,6 +24,12 @@ type Props = {
     onComplete: () => void;
     step: MfaStep;
 };
+
+const labels = defineMessages({
+    theAppIsInstalled: 'App has been installed',
+    ready: 'Ready',
+    enable: 'Enable',
+});
 
 interface State {
     isLoading: boolean;
@@ -73,15 +79,15 @@ export default class MfaEnable extends React.PureComponent<Props, State> {
 
         const stepsData = [
             {
-                buttonLabel: messages.theAppIsInstalled,
+                buttonLabel: labels.theAppIsInstalled,
                 buttonAction: () => this.nextStep(),
             },
             {
-                buttonLabel: messages.ready,
+                buttonLabel: labels.ready,
                 buttonAction: () => this.nextStep(),
             },
             {
-                buttonLabel: messages.enable,
+                buttonLabel: labels.enable,
                 buttonAction: () => this.confirmationFormEl && this.confirmationFormEl.submit(),
             },
         ];

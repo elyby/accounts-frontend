@@ -7,7 +7,6 @@ import { AccountSwitcher } from 'app/components/accounts';
 import { Account } from 'app/components/accounts/reducer';
 
 import styles from './chooseAccount.scss';
-import messages from './ChooseAccount.intl.json';
 
 export default class ChooseAccountBody extends BaseAuthBody {
     static displayName = 'ChooseAccountBody';
@@ -23,14 +22,18 @@ export default class ChooseAccountBody extends BaseAuthBody {
                 <div className={styles.description}>
                     {client ? (
                         <Message
-                            {...messages.pleaseChooseAccountForApp}
+                            key="pleaseChooseAccountForApp"
+                            defaultMessage="Please select an account that you want to use to authorize {appName}"
                             values={{
                                 appName: <span className={styles.appName}>{client.name}</span>,
                             }}
                         />
                     ) : (
                         <div className={styles.description}>
-                            <Message {...messages.pleaseChooseAccount} />
+                            <Message
+                                key="pleaseChooseAccount"
+                                defaultMessage="Please select an account you're willing to use"
+                            />
                         </div>
                     )}
                 </div>

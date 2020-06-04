@@ -1,14 +1,19 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { Input, Checkbox, Captcha } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
-import passwordMessages from '../password/Password.intl.json';
 import styles from '../auth.scss';
-import messages from './Register.intl.json';
 
 // TODO: password and username can be validate for length and sameness
+
+const placeholders = defineMessages({
+    yourNickname: 'Your nickname',
+    yourEmail: 'Your E‑mail',
+    accountPassword: 'Account password',
+    repeatPassword: 'Repeat password',
+});
 
 export default class RegisterBody extends BaseAuthBody {
     static panelId = 'register';
@@ -26,7 +31,7 @@ export default class RegisterBody extends BaseAuthBody {
                     color="blue"
                     type="text"
                     required
-                    placeholder={messages.yourNickname}
+                    placeholder={placeholders.yourNickname}
                 />
 
                 <Input
@@ -35,7 +40,7 @@ export default class RegisterBody extends BaseAuthBody {
                     color="blue"
                     type="email"
                     required
-                    placeholder={messages.yourEmail}
+                    placeholder={placeholders.yourEmail}
                 />
 
                 <Input
@@ -44,7 +49,7 @@ export default class RegisterBody extends BaseAuthBody {
                     color="blue"
                     type="password"
                     required
-                    placeholder={passwordMessages.accountPassword}
+                    placeholder={placeholders.accountPassword}
                 />
 
                 <Input
@@ -53,7 +58,7 @@ export default class RegisterBody extends BaseAuthBody {
                     color="blue"
                     type="password"
                     required
-                    placeholder={messages.repeatPassword}
+                    placeholder={placeholders.repeatPassword}
                 />
 
                 <Captcha {...this.bindField('captcha')} delay={600} />
@@ -65,11 +70,12 @@ export default class RegisterBody extends BaseAuthBody {
                         required
                         label={
                             <Message
-                                {...messages.acceptRules}
+                                key="acceptRules"
+                                defaultMessage="I agree with {link}"
                                 values={{
                                     link: (
                                         <Link to="/rules" target="_blank">
-                                            <Message {...messages.termsOfService} />
+                                            <Message key="termsOfService" defaultMessage="terms of service" />
                                         </Link>
                                     ),
                                 }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
-import messages from '../MultiFactorAuth.intl.json';
+import messages from '../instructions.intl';
 import styles from './instructions.scss';
 
 type OS = 'android' | 'ios' | 'windows';

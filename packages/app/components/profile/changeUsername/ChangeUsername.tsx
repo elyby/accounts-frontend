@@ -1,11 +1,14 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { Input, Button, Form, FormModel } from 'app/components/ui/form';
 import { BackButton } from 'app/components/profile/ProfileForm';
 
 import styles from '../profileForm.scss';
-import messages from './ChangeUsername.intl.json';
+
+const labels = defineMessages({
+    changeUsernameButton: 'Change nickname',
+});
 
 interface Props {
     username: string;
@@ -31,7 +34,7 @@ export default class ChangeUsername extends React.Component<Props> {
 
                     <div className={styles.form}>
                         <div className={styles.formBody}>
-                            <Message {...messages.changeUsernameTitle}>
+                            <Message key="changeUsernameTitle" defaultMessage="Change nickname">
                                 {(pageTitle) => (
                                     <h3 className={styles.title}>
                                         <Helmet title={pageTitle as string} />
@@ -42,7 +45,10 @@ export default class ChangeUsername extends React.Component<Props> {
 
                             <div className={styles.formRow}>
                                 <p className={styles.description}>
-                                    <Message {...messages.changeUsernameDescription} />
+                                    <Message
+                                        key="changeUsernameDescription"
+                                        defaultMessage="You can change your nickname to any arbitrary value. Remember that it is not recommended to take a nickname of already existing Mojang account."
+                                    />
                                 </p>
                             </div>
 
@@ -58,12 +64,15 @@ export default class ChangeUsername extends React.Component<Props> {
 
                             <div className={styles.formRow}>
                                 <p className={styles.description}>
-                                    <Message {...messages.changeUsernameWarning} />
+                                    <Message
+                                        key="changeUsernameWarning"
+                                        defaultMessage="Be careful: if you playing on the server with nickname binding, then after changing nickname you may lose all your progress."
+                                    />
                                 </p>
                             </div>
                         </div>
 
-                        <Button color="green" block label={messages.changeUsernameButton} type="submit" />
+                        <Button color="green" block label={labels.changeUsernameButton} type="submit" />
                     </div>
                 </div>
             </Form>

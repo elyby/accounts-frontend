@@ -1,11 +1,17 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import icons from 'app/components/ui/icons.scss';
 import { PanelBodyHeader } from 'app/components/ui/Panel';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
 import styles from './permissions.scss';
-import messages from './Permissions.intl.json';
+
+const scopesMessages = defineMessages({
+    scope_minecraft_server_session: 'Authorization data for minecraft server',
+    scope_offline_access: 'Access to your profile data, when you offline',
+    scope_account_info: 'Access to your profile data (except E‑mail)',
+    scope_account_email: 'Access to your E‑mail address',
+});
 
 export default class PermissionsBody extends BaseAuthBody {
     static displayName = 'PermissionsBody';
@@ -25,21 +31,22 @@ export default class PermissionsBody extends BaseAuthBody {
                             {user.avatar ? <img src={user.avatar} /> : <span className={icons.user} />}
                         </div>
                         <div className={styles.authInfoTitle}>
-                            <Message {...messages.youAuthorizedAs} />
+                            <Message key="youAuthorizedAs" defaultMessage="You authorized as:" />
                         </div>
                         <div className={styles.authInfoEmail}>{user.username}</div>
                     </div>
                 </PanelBodyHeader>
                 <div className={styles.permissionsContainer}>
                     <div className={styles.permissionsTitle}>
-                        <Message {...messages.theAppNeedsAccess1} />
+                        <Message key="theAppNeedsAccess1" defaultMessage="This application needs access" />
                         <br />
-                        <Message {...messages.theAppNeedsAccess2} />
+                        <Message key="theAppNeedsAccess2" defaultMessage="to your data" />
                     </div>
                     <ul className={styles.permissionsList}>
                         {scopes.map((scope) => {
                             const key = `scope_${scope}`;
-                            const message = messages[key];
+                            // @ts-ignore
+                            const message = scopesMessages[key];
 
                             return (
                                 <li key={key}>

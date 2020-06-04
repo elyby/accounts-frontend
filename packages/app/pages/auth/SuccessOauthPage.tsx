@@ -5,9 +5,8 @@ import { Helmet } from 'react-helmet-async';
 import * as loader from 'app/services/loader';
 import { Query } from 'app/services/request';
 
-import rootMessages from '../root/RootPage.intl.json';
+import siteName from 'app/pages/root/siteName.intl';
 import styles from './success-oauth.scss';
-import messages from './SuccessOauthPage.intl.json';
 
 export default class SuccessOauthPage extends React.Component<{
     location: {
@@ -41,15 +40,17 @@ export default class SuccessOauthPage extends React.Component<{
 
         return (
             <div className={styles.page}>
-                <Message {...messages.title}>{(pageTitle) => <Helmet title={pageTitle as string} />}</Message>
+                <Message key="title" defaultMessage="Authorization successful">
+                    {(pageTitle) => <Helmet title={pageTitle as string} />}
+                </Message>
 
                 <div className={styles.wrapper}>
                     <Link to="/" className={styles.logo}>
-                        <Message {...rootMessages.siteName} />
+                        <Message {...siteName} />
                     </Link>
 
                     <div className={styles.title}>
-                        <Message {...messages.applicationAuth} />
+                        <Message key="applicationAuth" defaultMessage="Application authorization" />
                     </div>
 
                     <div className={styles.checkmark} />
@@ -57,16 +58,23 @@ export default class SuccessOauthPage extends React.Component<{
                     <div className={styles.description}>
                         {appName ? (
                             <Message
-                                {...messages.authorizationForAppSuccessful}
+                                key="authorizationForAppSuccessful"
+                                defaultMessage="Authorization for {appName} has been successfully completed."
                                 values={{
                                     appName: <b>{appName}</b>,
                                 }}
                             />
                         ) : (
-                            <Message {...messages.authorizationSuccessful} />
+                            <Message
+                                key="authorizationSuccessful"
+                                defaultMessage="Authorization has been successfully completed."
+                            />
                         )}
                         &nbsp;
-                        <Message {...messages.youCanCloseThisPage} />
+                        <Message
+                            key="youCanCloseThisPage"
+                            defaultMessage="You can close this window and return to your application."
+                        />
                     </div>
                 </div>
             </div>

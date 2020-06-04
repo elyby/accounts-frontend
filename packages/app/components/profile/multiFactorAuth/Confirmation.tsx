@@ -1,10 +1,12 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 
 import { Input, Form, FormModel } from 'app/components/ui/form';
 import profileForm from 'app/components/profile/profileForm.scss';
 
-import messages from '../MultiFactorAuth.intl.json';
+const messages = defineMessages({
+    codePlaceholder: 'Enter the code here',
+});
 
 export default function Confirmation({
     form,
@@ -22,7 +24,10 @@ export default function Confirmation({
             <div className={profileForm.formBody}>
                 <div className={profileForm.formRow}>
                     <p className={profileForm.description}>
-                        <Message {...messages.enterCodeFromApp} />
+                        <Message
+                            key="enterCodeFromApp"
+                            defaultMessage="In order to finish two‑factor auth setup, please enter the code received in the mobile app:"
+                        />
                     </p>
                 </div>
 

@@ -1,10 +1,13 @@
 import React from 'react';
+import { defineMessages } from 'react-intl';
 
 import { Input } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 import { User } from 'app/components/user/reducer';
 
-import messages from './Login.intl.json';
+const messages = defineMessages({
+    emailOrUsername: 'E‑mail or username',
+});
 
 export default class LoginBody extends BaseAuthBody {
     static displayName = 'LoginBody';
