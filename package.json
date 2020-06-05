@@ -73,7 +73,6 @@
             "\\.(css|less|scss)$": "identity-obj-proxy"
         },
         "transform": {
-            "\\.intl\\.json$": "<rootDir>/jest/__mocks__/intlMock.js",
             "^.+\\.[tj]sx?$": "babel-jest"
         }
     },

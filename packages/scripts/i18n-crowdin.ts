@@ -1,6 +1,7 @@
 /* eslint-env node */
 /* eslint-disable */
 
+import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 
@@ -10,24 +11,26 @@ import Crowdin, { SourceFilesModel } from '@crowdin/crowdin-api-client';
 import ProgressBar from 'progress';
 import ch from 'chalk';
 import iso639 from 'iso-639-1';
-import { prompt } from 'inquirer';
+import { prompt, DistinctQuestion } from 'inquirer';
 
-import config from './../../config';
+import getRepoInfo from 'git-repo-info';
 
-if (!config.crowdin.apiKey) {
+import { crowdin as config } from './../../config';
+
+if (!config.apiKey) {
     console.error(ch.red`crowdinApiKey is required`);
     process.exit(126);
 }
 
-const PROJECT_ID = config.crowdin.projectId;
-const CROWDIN_FILE_PATH = config.crowdin.filePath;
-const SOURCE_LANG = config.crowdin.sourceLang;
-const LANG_DIR = config.crowdin.basePath;
+const PROJECT_ID = config.projectId;
+const CROWDIN_FILE_PATH = config.filePath;
+const SOURCE_LANG = config.sourceLang;
+const LANG_DIR = config.basePath;
 const INDEX_FILE_NAME = 'index.js';
-const MIN_RELEASE_PROGRESS = config.crowdin.minApproved;
+const MIN_RELEASE_PROGRESS = config.minApproved;
 
 const crowdin = new Crowdin({
-    token: config.crowdin.apiKey,
+    token: config.apiKey,
 });
 
 /**
@@ -81,7 +84,7 @@ function toInternalLocale(code: string): string {
 function serializeToModule(translates: Record<string, any>): string {
     const src = JSON5.stringify(sortByKeys(translates), null, 4);
 
-    return `module.exports = ${src};\n`;
+    return `export default ${src};\n`;
 }
 
 // http://stackoverflow.com/a/29622653/5184751
@@ -108,41 +111,84 @@ function getLocaleFilePath(languageId: string): string {
     return path.join(LANG_DIR, `${toInternalLocale(languageId)}.json`);
 }
 
-let directoriesList: Array<SourceFilesModel.Directory>;
-let filesList: Array<SourceFilesModel.File>;
+async function findDirectoryId(path: string, branchId?: number): Promise<number|undefined> {
+    const { data: dirsResponse } = await crowdin.sourceFilesApi.listProjectDirectories(PROJECT_ID, branchId);
+    const dirs = dirsResponse.map((dirData) => dirData.data);
 
-async function findFileId(path: string, parentDir: number|null = null): Promise<number> {
-    const [nodeToSearch, ...rest] = path.split('/');
-    if (rest.length === 0) {
-        if (!filesList) {
-            const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(PROJECT_ID);
-            filesList = filesResponse.map((fileData) => fileData.data);
+    const result = path.split('/').reduce((parentDir, dirName) => {
+        // directoryId is nullable when a directory has no parent
+        return dirs.find((dir) => dir.directoryId === parentDir && dir.name === dirName)?.id;
+    }, null as number|null|undefined);
+
+    return result || undefined;
+}
+
+async function findFileId(filePath: string, branchId?: number): Promise<number|undefined> {
+    const fileName = path.basename(filePath);
+    const dirPath = path.dirname(filePath);
+    let directoryId: number|null = null;
+    if (dirPath !== '') {
+        directoryId = await findDirectoryId(dirPath, branchId) || null;
+    }
+
+    // We're receiving files list without branch filter until https://github.com/crowdin/crowdin-api-client-js/issues/63
+    // will be resolved. But right now it doesn't matter because for each branch directories will have its own ids,
+    // so if the file is stored into the some directory, algorithm will find correct file.
+    const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(PROJECT_ID/*, branchId*/);
+    const files = filesResponse.map((fileData) => fileData.data);
+
+    return files.find((file) => file.directoryId === directoryId && file.name === fileName)?.id;
+}
+
+async function findBranchId(branchName: string): Promise<number|undefined> {
+    const { data: branchesList } = await crowdin.sourceFilesApi.listProjectBranches(PROJECT_ID, branchName);
+    const branch = branchesList.find(({ data: branch }) => branch.name === branchName);
+
+    return branch?.data.id;
+}
+
+async function ensureDirectory(dirPath: string, branchId?: number): Promise<number> {
+    const { data: dirsResponse } = await crowdin.sourceFilesApi.listProjectDirectories(PROJECT_ID, branchId);
+    const dirs = dirsResponse.map((dirData) => dirData.data);
+
+    return dirPath.split('/').reduce(async (parentDirPromise, name) => {
+        const parentDir = await parentDirPromise;
+        const directoryId = dirs.find((dir) => dir.directoryId === parentDir && dir.name === name)?.id;
+        if (directoryId) {
+            return directoryId;
         }
 
-        const file = filesList.find((file) => file.directoryId === parentDir && file.name === nodeToSearch);
-        if (file === undefined) {
-            throw new Error('Cannot find file by provided path');
+        const createDirRequest: SourceFilesModel.CreateDirectoryRequest = { name };
+        if (directoryId) {
+            createDirRequest['directoryId'] = directoryId;
+        } else if (branchId) {
+            createDirRequest['branchId'] = branchId;
         }
 
-        return file.id;
-    }
+        const dirResponse = await crowdin.sourceFilesApi.createDirectory(PROJECT_ID, createDirRequest);
 
-    if (!directoriesList) {
-        const { data: dirsResponse } = await crowdin.sourceFilesApi.listProjectDirectories(PROJECT_ID);
-        directoriesList = dirsResponse.map((dirData) => dirData.data);
-    }
-
-    const dir = directoriesList.find((dir) => dir.directoryId === parentDir && dir.name === nodeToSearch);
-    if (dir === undefined) {
-        throw new Error('Cannot find directory by provided path');
-    }
-
-    return findFileId(rest.join('/'), dir.id);
+        return dirResponse.data.id;
+        // @ts-ignore
+    }, Promise.resolve<number>(null));
 }
 
 async function pull(): Promise<void> {
+    const { branch: branchName } = getRepoInfo();
+    const isMasterBranch = branchName === 'master';
+    let branchId: number|undefined;
+    if (!isMasterBranch) {
+        console.log(`Current branch isn't ${chalk.green('master')}, will try to pull translates from the ${chalk.green(branchName)} branch`);
+        branchId = await findBranchId(branchName);
+        if (!branchId) {
+            console.log(`Branch ${chalk.green(branchName)} isn't found, will use ${chalk.green('master')} instead`);
+        }
+    }
+
     console.log('Loading file info...');
-    const fileId = await findFileId(CROWDIN_FILE_PATH);
+    const fileId = await findFileId(CROWDIN_FILE_PATH, branchId);
+    if (!fileId) {
+        throw new Error('Cannot find the file');
+    }
 
     console.log('Pulling translation progress...');
     const { data: translationProgress } = await crowdin.translationStatusApi.getFileProgress(PROJECT_ID, fileId, 100);
@@ -208,29 +254,84 @@ async function pull(): Promise<void> {
 }
 
 async function push(): Promise<void> {
-    const { disapproveTranslates } = await prompt([{
+    if (!fs.existsSync(getLocaleFilePath(SOURCE_LANG))) {
+        console.error(chalk.red(`File for the source language doesn't exists. Run ${chalk.green('yarn i18n:extract')} to generate the source language file.`));
+        return;
+    }
+
+    const questions: Array<DistinctQuestion> = [{
         name: 'disapproveTranslates',
         type: 'confirm',
         default: true,
         message: 'Disapprove changed lines?',
-    }]);
+    }];
 
-    console.log('Loading file info...');
-    const fileId = await findFileId(CROWDIN_FILE_PATH);
+    const { branch: branchName } = getRepoInfo();
+    const isMasterBranch = branchName === 'master';
+    if (!isMasterBranch) {
+        questions.push({
+            name: 'publishInBranch',
+            type: 'confirm',
+            default: true,
+            message: `Should be strings published in its own branch [${chalk.green(getRepoInfo().branch)}]?`,
+        });
+    }
 
-    console.log('Uploading the source file to the storage...')
-    const { data: { id: storageId } } = await crowdin.uploadStorageApi.addStorage(
+    const { disapproveTranslates, publishInBranch = false } = await prompt(questions);
+
+    let branchId: number|undefined;
+    if (publishInBranch) {
+        console.log('Loading the branch info...');
+        branchId = await findBranchId(branchName);
+        if (!branchId) {
+            console.log('Branch doesn\'t exists. Creating...');
+            const { data: branchResponse } = await crowdin.sourceFilesApi.createBranch(PROJECT_ID, {
+                name: branchName,
+            });
+            branchId = branchResponse.id;
+        }
+    }
+
+    console.log("Loading the file info...");
+    const fileId = await findFileId(CROWDIN_FILE_PATH, branchId);
+    let dirId: number|undefined;
+    if (!fileId) {
+        const dirPath = path.dirname(CROWDIN_FILE_PATH);
+        if (dirPath !== '') {
+            console.log("Ensuring necessary directories structure...");
+            dirId = await ensureDirectory(dirPath, branchId);
+        }
+    }
+
+    console.log('Uploading the source file to the storage...');
+    const { data: storageResponse } = await crowdin.uploadStorageApi.addStorage(
         path.basename(CROWDIN_FILE_PATH),
         fs.readFileSync(getLocaleFilePath(SOURCE_LANG)),
     );
 
-    console.log(`Applying the new revision...`);
-    await crowdin.sourceFilesApi.updateOrRestoreFile(PROJECT_ID, fileId, {
-        storageId,
-        updateOption: disapproveTranslates
-            ? SourceFilesModel.UpdateOption.CLEAR_TRANSLATIONS_AND_APPROVALS
-            : SourceFilesModel.UpdateOption.KEEP_TRANSLATIONS_AND_APPROVALS,
-    });
+    if (fileId) {
+        console.log(`Applying the new revision...`);
+        await crowdin.sourceFilesApi.updateOrRestoreFile(PROJECT_ID, fileId, {
+            storageId: storageResponse.id,
+            updateOption: disapproveTranslates
+                ? SourceFilesModel.UpdateOption.CLEAR_TRANSLATIONS_AND_APPROVALS
+                : SourceFilesModel.UpdateOption.KEEP_TRANSLATIONS_AND_APPROVALS,
+        });
+    } else {
+        console.log(`Uploading the file...`);
+        const createFileRequest: SourceFilesModel.CreateFileRequest = {
+            storageId: storageResponse.id,
+            name: path.basename(CROWDIN_FILE_PATH),
+        };
+
+        if (dirId) {
+            createFileRequest['directoryId'] = dirId;
+        } else if (branchId) {
+            createFileRequest['branchId'] = branchId;
+        }
+
+        await crowdin.sourceFilesApi.createFile(PROJECT_ID, createFileRequest);
+    }
 
     console.log(ch.green('Success'));
 }
