@@ -64,6 +64,8 @@ Yarn:
     policy: pull-push
   variables:
     CYPRESS_INSTALL_BINARY: 0 # Don't install binary to increase caching performance between jobs
+  before_script:
+    - apk add git
   script:
     - yarn install --frozen-lockfile
 
@@ -74,6 +76,8 @@ Yarn E2E:
     - .yarnE2ECache
   cache:
     policy: pull-push
+  before_script:
+    - apk add git
   script:
     - yarn install --frozen-lockfile
   only:
