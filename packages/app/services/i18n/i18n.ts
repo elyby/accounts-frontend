@@ -70,7 +70,7 @@ class I18N {
         locale: string,
     ): Promise<{
         locale: string;
-        messages: { [key: string]: string };
+        messages: Record<string, string>;
     }> {
         const [{ default: messages }] = await Promise.all([
             import(/* webpackChunkName: "locale-[request]" */ `app/i18n/${locale}.json`),

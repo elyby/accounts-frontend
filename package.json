@@ -117,7 +117,7 @@
         "@typescript-eslint/eslint-plugin": "^3.0.0",
         "@typescript-eslint/parser": "^3.0.0",
         "babel-loader": "^8.0.0",
-        "babel-plugin-react-intl-auto": "^3.3.0",
+        "babel-plugin-react-intl-auto": "https://github.com/elyby/babel-plugin-react-intl-auto.git#build",
         "core-js": "3.6.5",
         "csp-webpack-plugin": "^2.0.2",
         "css-loader": "^3.5.3",

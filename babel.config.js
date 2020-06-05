@@ -1,6 +1,7 @@
 /* eslint-env node */
 // @ts-nocheck
 module.exports = function (api) {
+    const env = api.env();
     api.cache(true);
 
     return {
@@ -39,6 +40,7 @@ module.exports = function (api) {
                     removePrefix: 'packages.app',
                     messagesDir: './build/messages/',
                     useKey: true,
+                    removeDefaultMessage: env === 'production',
                 },
             ],
         ],

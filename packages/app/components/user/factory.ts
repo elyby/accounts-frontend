@@ -2,6 +2,7 @@ import { authenticate, logoutStrangers } from 'app/components/accounts/actions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import request from 'app/services/request';
 import { Store } from 'app/reducers';
+import i18n from 'app/services/i18n';
 
 import { changeLang } from './actions';
 import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';
@@ -44,6 +45,10 @@ export function factory(store: Store): Promise<void> {
 
             // auto-detect guest language
             await store.dispatch(changeLang(user.lang));
+        })
+        .then(() => {
+            // Preload the current locale before app will be started
+            i18n.require(store.getState().i18n.locale);
         });
 
     return promise;
