@@ -278,7 +278,7 @@ async function push(): Promise<void> {
     }
 
     let disapproveTranslates = true;
-    let publishInBranch = false;
+    let publishInBranch = isMasterBranch;
     try {
         const answers = await prompt(questions);
         disapproveTranslates = answers[0];
