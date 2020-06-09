@@ -14,7 +14,6 @@
         "@crowdin/crowdin-api-client": "^1.8.0",
         "axios": "^0.19.2",
         "chalk": "^4.0.0",
-        "crowdin-api": "^4.0.0",
         "git-repo-info": "^2.1.1",
         "glob": "^7.1.6",
         "inquirer": "^7.1.0",
