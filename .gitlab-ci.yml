@@ -127,7 +127,7 @@ Crowdin push:
     - .yarnCache
   script:
     - yarn i18n:extract
-    - yes | yarn i18n:push
+    - yarn i18n:push
   artifacts:
       name: "Source strings for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
       paths:

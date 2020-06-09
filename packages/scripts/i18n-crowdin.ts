@@ -277,7 +277,18 @@ async function push(): Promise<void> {
         });
     }
 
-    const { disapproveTranslates, publishInBranch = false } = await prompt(questions);
+    let disapproveTranslates = true;
+    let publishInBranch = false;
+    try {
+        const answers = await prompt(questions);
+        disapproveTranslates = answers[0];
+        publishInBranch = answers[1] || false;
+    } catch (err) {
+        // okay if it's tty error
+        if (!err.isTtyError) {
+            throw err;
+        }
+    }
 
     let branchId: number|undefined;
     if (publishInBranch) {
@@ -336,19 +347,21 @@ async function push(): Promise<void> {
     console.log(ch.green('Success'));
 }
 
-try {
-    const action = process.argv[2];
+(async() => {
+    try {
+        const action = process.argv[2];
 
-    switch (action) {
-        case 'pull':
-            pull();
-            break;
-        case 'push':
-            push();
-            break;
-        default:
-            console.error(`Unknown action ${action}`);
+        switch (action) {
+            case 'pull':
+                await pull();
+                break;
+            case 'push':
+                await push();
+                break;
+            default:
+                console.error(`Unknown action ${action}`);
+        }
+    } catch (exception) {
+        console.error(exception);
     }
-} catch (exception) {
-    console.error(exception);
-}
+})();
