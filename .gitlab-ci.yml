@@ -118,7 +118,7 @@ Jest:
   script:
     - yarn test
 
-Crowdin push:
+Crowdin:
   stage: test
   image: $NODE_IMAGE
   needs:
@@ -128,10 +128,12 @@ Crowdin push:
   script:
     - yarn i18n:extract
     - yarn i18n:push
+    - yarn i18n:pull
   artifacts:
-      name: "Source strings for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
+      name: "i18n for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
       paths:
-          - packages/app/i18n/en.json
+        - packages/app/i18n/*.json
+        - packages/app/i18n/index.js
       expire_in: 1 week
 
 Cypress:
@@ -171,13 +173,12 @@ Build:
     - Lint
     - TypeScript
     - Jest
-    - Crowdin push
+    - Crowdin
   extends:
     - .yarnCache
   before_script:
     - *defineVars
   script:
-    - yarn i18n:pull
     - yarn build
     # Remove unneeded files
     - rm -rf build/*.css.map
@@ -200,6 +201,7 @@ Storybook:
   image: $NODE_IMAGE
   needs:
     - Yarn
+    - Crowdin
   extends:
     - .yarnCache
   script:
