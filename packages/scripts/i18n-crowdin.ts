@@ -1,5 +1,5 @@
+/* eslint-disable jsdoc/require-param */
 /* eslint-env node */
-/* eslint-disable */
 
 import chalk from 'chalk';
 import fs from 'fs';
@@ -78,8 +78,8 @@ function toInternalLocale(code: string): string {
 }
 
 /**
- * Форматирует входящий объект с переводами в итоговую строку в том формате, в каком они
- * хранятся в самом приложении
+ * Formats the incoming hash with the translations in the module string in the format
+ * as they are stored in the application itself
  */
 function serializeToModule(translates: Record<string, any>): string {
     const src = JSON5.stringify(sortByKeys(translates), null, 4);
@@ -111,40 +111,41 @@ function getLocaleFilePath(languageId: string): string {
     return path.join(LANG_DIR, `${toInternalLocale(languageId)}.json`);
 }
 
-async function findDirectoryId(path: string, branchId?: number): Promise<number|undefined> {
+async function findDirectoryId(directoryPath: string, branchId?: number): Promise<number | undefined> {
     const { data: dirsResponse } = await crowdin.sourceFilesApi.listProjectDirectories(PROJECT_ID, branchId);
     const dirs = dirsResponse.map((dirData) => dirData.data);
 
-    const result = path.split('/').reduce((parentDir, dirName) => {
+    const result = directoryPath.split('/').reduce((parentDir, dirName) => {
         // directoryId is nullable when a directory has no parent
         return dirs.find((dir) => dir.directoryId === parentDir && dir.name === dirName)?.id;
-    }, null as number|null|undefined);
+    }, null as number | null | undefined);
 
     return result || undefined;
 }
 
-async function findFileId(filePath: string, branchId?: number): Promise<number|undefined> {
+async function findFileId(filePath: string, branchId?: number): Promise<number | undefined> {
     const fileName = path.basename(filePath);
     const dirPath = path.dirname(filePath);
-    let directoryId: number|null = null;
+    let directoryId: number | null = null;
+
     if (dirPath !== '') {
-        directoryId = await findDirectoryId(dirPath, branchId) || null;
+        directoryId = (await findDirectoryId(dirPath, branchId)) || null;
     }
 
     // We're receiving files list without branch filter until https://github.com/crowdin/crowdin-api-client-js/issues/63
     // will be resolved. But right now it doesn't matter because for each branch directories will have its own ids,
     // so if the file is stored into the some directory, algorithm will find correct file.
-    const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(PROJECT_ID/*, branchId*/);
+    const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(PROJECT_ID /*, branchId*/);
     const files = filesResponse.map((fileData) => fileData.data);
 
     return files.find((file) => file.directoryId === directoryId && file.name === fileName)?.id;
 }
 
-async function findBranchId(branchName: string): Promise<number|undefined> {
+async function findBranchId(branchName: string): Promise<number | undefined> {
     const { data: branchesList } = await crowdin.sourceFilesApi.listProjectBranches(PROJECT_ID, branchName);
-    const branch = branchesList.find(({ data: branch }) => branch.name === branchName);
+    const branchData = branchesList.find(({ data: branch }) => branch.name === branchName);
 
-    return branch?.data.id;
+    return branchData?.data.id;
 }
 
 async function ensureDirectory(dirPath: string, branchId?: number): Promise<number> {
@@ -154,11 +155,13 @@ async function ensureDirectory(dirPath: string, branchId?: number): Promise<numb
     return dirPath.split('/').reduce(async (parentDirPromise, name) => {
         const parentDir = await parentDirPromise;
         const directoryId = dirs.find((dir) => dir.directoryId === parentDir && dir.name === name)?.id;
+
         if (directoryId) {
             return directoryId;
         }
 
         const createDirRequest: SourceFilesModel.CreateDirectoryRequest = { name };
+
         if (directoryId) {
             createDirRequest['directoryId'] = directoryId;
         } else if (branchId) {
@@ -175,10 +178,17 @@ async function ensureDirectory(dirPath: string, branchId?: number): Promise<numb
 async function pull(): Promise<void> {
     const { branch: branchName } = getRepoInfo();
     const isMasterBranch = branchName === 'master';
-    let branchId: number|undefined;
+    let branchId: number | undefined;
+
     if (!isMasterBranch) {
-        console.log(`Current branch isn't ${chalk.green('master')}, will try to pull translates from the ${chalk.green(branchName)} branch`);
+        console.log(
+            [
+                `Current branch isn't ${chalk.green('master')},`,
+                `will try to pull translates from the ${chalk.green(branchName)} branch`,
+            ].join(' '),
+        );
         branchId = await findBranchId(branchName);
+
         if (!branchId) {
             console.log(`Branch ${chalk.green(branchName)} isn't found, will use ${chalk.green('master')} instead`);
         }
@@ -186,6 +196,7 @@ async function pull(): Promise<void> {
 
     console.log('Loading file info...');
     const fileId = await findFileId(CROWDIN_FILE_PATH, branchId);
+
     if (!fileId) {
         throw new Error('Cannot find the file');
     }
@@ -206,6 +217,7 @@ async function pull(): Promise<void> {
 
     translationProgress.forEach(({ data: { languageId, approvalProgress } }) => {
         const locale = toInternalLocale(languageId);
+
         if (releasedLocales.includes(locale) || approvalProgress >= MIN_RELEASE_PROGRESS) {
             localesToPull.push(languageId);
             indexFileEntries[locale] = {
@@ -227,22 +239,26 @@ async function pull(): Promise<void> {
     });
     let downloadingReady = 0;
 
-    const promises = localesToPull.map(async (languageId): Promise<void> => {
-        const { data: { url } } = await crowdin.translationsApi.buildProjectFileTranslation(PROJECT_ID, fileId, {
-            targetLanguageId: languageId,
-            exportApprovedOnly: true,
-        });
+    const promises = localesToPull.map(
+        async (languageId): Promise<void> => {
+            const {
+                data: { url },
+            } = await crowdin.translationsApi.buildProjectFileTranslation(PROJECT_ID, fileId, {
+                targetLanguageId: languageId,
+                exportApprovedOnly: true,
+            });
 
-        const { data: fileContents } = await axios.get(url, {
-            // Disable response parsing
-            transformResponse: [],
-        });
-        fs.writeFileSync(getLocaleFilePath(languageId), fileContents);
+            const { data: fileContents } = await axios.get(url, {
+                // Disable response parsing
+                transformResponse: [],
+            });
+            fs.writeFileSync(getLocaleFilePath(languageId), fileContents);
 
-        downloadingProgressBar.update(++downloadingReady / localesToPull.length, {
-            cCurrent: downloadingReady,
-        });
-    });
+            downloadingProgressBar.update(++downloadingReady / localesToPull.length, {
+                cCurrent: downloadingReady,
+            });
+        },
+    );
 
     await Promise.all(promises);
 
@@ -255,19 +271,29 @@ async function pull(): Promise<void> {
 
 async function push(): Promise<void> {
     if (!fs.existsSync(getLocaleFilePath(SOURCE_LANG))) {
-        console.error(chalk.red(`File for the source language doesn't exists. Run ${chalk.green('yarn i18n:extract')} to generate the source language file.`));
+        console.error(
+            chalk.red(
+                `File for the source language doesn't exists. Run ${chalk.green(
+                    'yarn i18n:extract',
+                )} to generate the source language file.`,
+            ),
+        );
+
         return;
     }
 
-    const questions: Array<DistinctQuestion> = [{
-        name: 'disapproveTranslates',
-        type: 'confirm',
-        default: true,
-        message: 'Disapprove changed lines?',
-    }];
+    const questions: Array<DistinctQuestion> = [
+        {
+            name: 'disapproveTranslates',
+            type: 'confirm',
+            default: true,
+            message: 'Disapprove changed lines?',
+        },
+    ];
 
     const { branch: branchName } = getRepoInfo();
     const isMasterBranch = branchName === 'master';
+
     if (!isMasterBranch) {
         questions.push({
             name: 'publishInBranch',
@@ -281,21 +307,23 @@ async function push(): Promise<void> {
     let publishInBranch = isMasterBranch;
     try {
         const answers = await prompt(questions);
-        disapproveTranslates = answers[0];
+        disapproveTranslates = answers[0]; // eslint-disable-line prefer-destructuring
         publishInBranch = answers[1] || false;
     } catch (err) {
-        // okay if it's tty error
+        // okay if it's a tty error
         if (!err.isTtyError) {
             throw err;
         }
     }
 
-    let branchId: number|undefined;
+    let branchId: number | undefined;
+
     if (publishInBranch) {
         console.log('Loading the branch info...');
         branchId = await findBranchId(branchName);
+
         if (!branchId) {
-            console.log('Branch doesn\'t exists. Creating...');
+            console.log("Branch doesn't exists. Creating...");
             const { data: branchResponse } = await crowdin.sourceFilesApi.createBranch(PROJECT_ID, {
                 name: branchName,
             });
@@ -303,13 +331,15 @@ async function push(): Promise<void> {
         }
     }
 
-    console.log("Loading the file info...");
+    console.log('Loading the file info...');
     const fileId = await findFileId(CROWDIN_FILE_PATH, branchId);
-    let dirId: number|undefined;
+    let dirId: number | undefined;
+
     if (!fileId) {
         const dirPath = path.dirname(CROWDIN_FILE_PATH);
+
         if (dirPath !== '') {
-            console.log("Ensuring necessary directories structure...");
+            console.log('Ensuring necessary directories structure...');
             dirId = await ensureDirectory(dirPath, branchId);
         }
     }
@@ -347,9 +377,9 @@ async function push(): Promise<void> {
     console.log(ch.green('Success'));
 }
 
-(async() => {
+(async () => {
     try {
-        const action = process.argv[2];
+        const action = process.argv[2]; // eslint-disable-line prefer-destructuring
 
         switch (action) {
             case 'pull':
