@@ -1,8 +1,6 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const path = require('path');
-
 require('dotenv').config();
 
 const { env } = process;
@@ -17,7 +15,7 @@ module.exports = {
         projectId: 350687,
         filePath: 'accounts/site.json',
         sourceLang: 'en',
-        basePath: path.resolve(`${__dirname}/packages/app/i18n`),
+        basePath: `${__dirname}/packages/app/i18n`,
         minApproved: 80, // Minimal ready percent before translation can be published
     },
 };

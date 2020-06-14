@@ -132,12 +132,19 @@ async function findFileId(filePath: string, branchId?: number): Promise<number |
         directoryId = (await findDirectoryId(dirPath, branchId)) || null;
     }
 
-    // We're receiving files list without branch filter until https://github.com/crowdin/crowdin-api-client-js/issues/63
-    // will be resolved. But right now it doesn't matter because for each branch directories will have its own ids,
-    // so if the file is stored into the some directory, algorithm will find correct file.
-    const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(PROJECT_ID /*, branchId*/);
+    // When the branchId and directoryId aren't specified the list returned recursively,
+    // but if one of this param is specified, the list contains only the specified parent.
+    //
+    // Directories ids for each branch are different, so directoryId is already ensures
+    // that the file will be searched in the correct branch
+    const { data: filesResponse } = await crowdin.sourceFilesApi.listProjectFiles(
+        PROJECT_ID,
+        directoryId === null ? branchId : undefined,
+        directoryId || undefined, // directory ID can't be 0, but can be null
+    );
     const files = filesResponse.map((fileData) => fileData.data);
 
+    // Compare directoryId since when the file is placed in the root
     return files.find((file) => file.directoryId === directoryId && file.name === fileName)?.id;
 }
 
