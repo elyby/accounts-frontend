@@ -76,8 +76,6 @@ Yarn E2E:
     - .yarnE2ECache
   cache:
     policy: pull-push
-  before_script:
-    - apk add git
   script:
     - yarn install --frozen-lockfile
   only:
