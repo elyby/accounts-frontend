@@ -64,6 +64,8 @@ Yarn:
     policy: pull-push
   variables:
     CYPRESS_INSTALL_BINARY: 0 # Don't install binary to increase caching performance between jobs
+  before_script:
+    - apk add git
   script:
     - yarn install --frozen-lockfile
 
@@ -74,6 +76,8 @@ Yarn E2E:
     - .yarnE2ECache
   cache:
     policy: pull-push
+  before_script:
+    - apk add git
   script:
     - yarn install --frozen-lockfile
   only:
@@ -114,6 +118,24 @@ Jest:
   script:
     - yarn test
 
+Crowdin:
+  stage: test
+  image: $NODE_IMAGE
+  needs:
+    - Yarn
+  extends:
+    - .yarnCache
+  script:
+    - yarn i18n:extract
+    - yarn i18n:push
+    - yarn i18n:pull
+  artifacts:
+      name: "i18n for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
+      paths:
+        - packages/app/i18n/*.json
+        - packages/app/i18n/index.js
+      expire_in: 1 week
+
 Cypress:
   stage: test
   image: $NODE_E2E_IMAGE
@@ -151,6 +173,7 @@ Build:
     - Lint
     - TypeScript
     - Jest
+    - Crowdin
   extends:
     - .yarnCache
   before_script:
@@ -158,7 +181,6 @@ Build:
   script:
     - yarn build
     # Remove unneeded files
-    - rm -rf build/messages
     - rm -rf build/*.css.map
     # Move all source maps to its own directory
     - mkdir -p source-maps
@@ -179,6 +201,7 @@ Storybook:
   image: $NODE_IMAGE
   needs:
     - Yarn
+    - Crowdin
   extends:
     - .yarnCache
   script:

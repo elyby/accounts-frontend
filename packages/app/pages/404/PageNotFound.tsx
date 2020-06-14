@@ -5,12 +5,13 @@ import { Helmet } from 'react-helmet-async';
 import { FooterMenu } from 'app/components/footerMenu';
 
 import styles from './404.scss';
-import messages from './PageNotFound.intl.json';
 import profileStyles from '../profile/profile.scss';
 
 const PageNotFound: ComponentType = () => (
     <div className={styles.page}>
-        <Message {...messages.title}>{(pageTitle) => <Helmet title={pageTitle as string} />}</Message>
+        <Message key="title" defaultMessage="Page not found">
+            {(pageTitle) => <Helmet title={pageTitle as string} />}
+        </Message>
 
         <div className={styles.loading}>
             <div className={styles.cube} />
@@ -29,15 +30,16 @@ const PageNotFound: ComponentType = () => (
             </div>
         </div>
         <p className={styles.text}>
-            <Message {...messages.nothingHere} />
+            <Message key="nothingHere" defaultMessage="This is not a place that you are looking for" />
         </p>
         <p className={styles.subText}>
             <Message
-                {...messages.returnToTheHomePage}
+                key="returnToTheHomePage"
+                defaultMessage="Try to go back to the {link}"
                 values={{
                     link: (
                         <Link to="/">
-                            <Message {...messages.homePage} />
+                            <Message key="homePage" defaultMessage="main page" />
                         </Link>
                     ),
                 }}

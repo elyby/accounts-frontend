@@ -1,10 +1,14 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Button, Input, Form, FormModel } from 'app/components/ui/form';
 import styles from 'app/components/profile/profileForm.scss';
 
-import messages from '../MultiFactorAuth.intl.json';
-import mfaStyles from '../mfa.scss';
+import mfaStyles from './mfa.scss';
+
+const messages = defineMessages({
+    codePlaceholder: 'Enter the code here',
+    disable: 'Disable',
+});
 
 export default class MfaDisableForm extends React.Component<{
     onSubmit: (form: FormModel) => Promise<void>;
@@ -20,13 +24,16 @@ export default class MfaDisableForm extends React.Component<{
                 <div className={styles.formBody}>
                     <div className={styles.formRow}>
                         <p className={`${styles.description} ${mfaStyles.mfaTitle}`}>
-                            <Message {...messages.disableMfa} />
+                            <Message key="disableMfa" defaultMessage="Disable two‑factor authentication" />
                         </p>
                     </div>
 
                     <div className={styles.formRow}>
                         <p className={styles.description}>
-                            <Message {...messages.disableMfaInstruction} />
+                            <Message
+                                key="disableMfaInstruction"
+                                defaultMessage="In order to disable two‑factor authentication, you need to provide a code from your mobile app and confirm your action with your current account password."
+                            />
                         </p>
                     </div>
 

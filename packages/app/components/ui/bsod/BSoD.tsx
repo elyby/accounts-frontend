@@ -1,12 +1,11 @@
 import React, { ComponentType } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 
-import appInfo from 'app/components/auth/appInfo/AppInfo.intl.json';
+import appName from 'app/components/auth/appInfo/appName.intl';
 
 import BoxesField from './BoxesField';
 
 import styles from './styles.scss';
-import messages from './BSoD.intl.json';
 
 interface State {
     lastEventId?: string | void;
@@ -31,19 +30,28 @@ const BSoD: ComponentType<Props> = ({ lastEventId }) => {
 
             <div className={styles.wrapper}>
                 <div className={styles.title}>
-                    <Message {...appInfo.appName} />
+                    <Message {...appName} />
                 </div>
                 <div className={styles.lineWithMargin}>
-                    <Message {...messages.criticalErrorHappened} />
+                    <Message
+                        key="criticalErrorHappened"
+                        defaultMessage="There was a critical error due to which the application can not continue its normal operation."
+                    />
                 </div>
                 <div className={styles.line}>
-                    <Message {...messages.reloadPageOrContactUs} />
+                    <Message
+                        key="reloadPageOrContactUs"
+                        defaultMessage="Please reload this page and try again. If problem occurs again, please report it to the developers by sending email to"
+                    />
                 </div>
                 <a href={emailUrl} className={styles.support}>
                     support@ely.by
                 </a>
                 <div className={styles.easterEgg}>
-                    <Message {...messages.alsoYouCanInteractWithBackground} />
+                    <Message
+                        key="alsoYouCanInteractWithBackground"
+                        defaultMessage="You can also play around with the background – it's interactable ;)"
+                    />
                 </div>
             </div>
         </div>

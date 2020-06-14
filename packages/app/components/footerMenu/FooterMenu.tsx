@@ -7,7 +7,6 @@ import { create as createPopup } from 'app/components/ui/popup/actions';
 import { ContactLink } from 'app/components/contact';
 
 import styles from './footerMenu.scss';
-import messages from './footerMenu.intl.json';
 
 const FooterMenu: ComponentType = () => {
     const dispatch = useDispatch();
@@ -22,19 +21,19 @@ const FooterMenu: ComponentType = () => {
     return (
         <div className={styles.footerMenu} data-testid="footer">
             <Link to="/rules" className={styles.footerItem}>
-                <Message {...messages.rules} />
+                <Message key="rules" defaultMessage="Rules" />
             </Link>
             <ContactLink className={styles.footerItem}>
-                <Message {...messages.contactUs} />
+                <Message key="contactUs" defaultMessage="Contact Us" />
             </ContactLink>
             <Link to="/dev" className={styles.footerItem}>
-                <Message {...messages.forDevelopers} />
+                <Message key="forDevelopers" defaultMessage="For developers" />
             </Link>
 
             <div className={styles.langTriggerContainer}>
                 <a href="#" className={styles.langTrigger} onClick={onLanguageSwitcherClick}>
                     <span className={styles.langTriggerIcon} />
-                    <Message {...messages.siteLanguage} />
+                    <Message key="siteLanguage" defaultMessage="Site language" />
                 </a>
             </div>
         </div>

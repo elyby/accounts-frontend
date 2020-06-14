@@ -1,12 +1,15 @@
 import React from 'react';
 
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 
 import { Input } from 'app/components/ui/form';
 
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 import styles from './activation.scss';
-import messages from './Activation.intl.json';
+
+const messages = defineMessages({
+    enterTheCode: 'Enter the code from E‑mail here',
+});
 
 export default class ActivationBody extends BaseAuthBody {
     static displayName = 'ActivationBody';
@@ -28,13 +31,17 @@ export default class ActivationBody extends BaseAuthBody {
                     <div className={styles.descriptionText}>
                         {email ? (
                             <Message
-                                {...messages.activationMailWasSent}
+                                key="activationMailWasSent"
+                                defaultMessage="Please check {email} for the message with further instructions"
                                 values={{
                                     email: <b>{email}</b>,
                                 }}
                             />
                         ) : (
-                            <Message {...messages.activationMailWasSentNoEmail} />
+                            <Message
+                                key="activationMailWasSentNoEmail"
+                                defaultMessage="Please check your E‑mail for the message with further instructions"
+                            />
                         )}
                     </div>
                 </div>

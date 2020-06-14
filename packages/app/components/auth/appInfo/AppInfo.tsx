@@ -1,10 +1,14 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Button } from 'app/components/ui/form';
 import { FooterMenu } from 'app/components/footerMenu';
 
+import appName from './appName.intl';
 import styles from './appInfo.scss';
-import messages from './AppInfo.intl.json';
+
+const messages = defineMessages({
+    goToAuth: 'Go to auth',
+});
 
 export default class AppInfo extends React.Component<{
     name?: string;
@@ -17,7 +21,7 @@ export default class AppInfo extends React.Component<{
         return (
             <div className={styles.appInfo}>
                 <div className={styles.logoContainer}>
-                    <h2 className={styles.logo}>{name ? name : <Message {...messages.appName} />}</h2>
+                    <h2 className={styles.logo}>{name ? name : <Message {...appName} />}</h2>
                 </div>
                 <div className={styles.descriptionContainer}>
                     {description ? (
@@ -25,15 +29,19 @@ export default class AppInfo extends React.Component<{
                     ) : (
                         <div>
                             <p className={styles.description}>
-                                <Message {...messages.appDescription} />
+                                <Message
+                                    key="appDescription"
+                                    defaultMessage="You are on the Ely.by authorization service, that allows you to safely perform any operations on your account. This single entry point for websites and desktop software, including game launchers."
+                                />
                             </p>
                             <p className={styles.description}>
                                 <Message
-                                    {...messages.useItYourself}
+                                    key="useItYourself"
+                                    defaultMessage="Visit our {link}, to learn how to use this service in you projects."
                                     values={{
                                         link: (
                                             <a href="http://docs.ely.by/oauth.html">
-                                                <Message {...messages.documentation} />
+                                                <Message key="documentation" defaultMessage="documentation" />
                                             </a>
                                         ),
                                     }}

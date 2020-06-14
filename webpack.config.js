@@ -16,7 +16,7 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const config = require('./config');
-const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n'));
+const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n').default);
 const localeFlags = require('app/components/i18n/localeFlags').default;
 const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'build');
@@ -189,11 +189,6 @@ const webpackConfig = {
                 loader: 'html-loader',
             },
             {
-                test: /\.intl\.json$/,
-                type: 'javascript/auto',
-                use: ['babel-loader', 'intl-loader'],
-            },
-            {
                 // this is consumed by postcss-import
                 // @see postcss.config.js
                 test: /\.font\.(js|json)$/,
@@ -205,7 +200,6 @@ const webpackConfig = {
 
     resolveLoader: {
         alias: {
-            'intl-loader': path.resolve('./packages/webpack-utils/intl-loader'),
             'fontgen-loader': path.resolve('./packages/webpack-utils/fontgen-loader'),
         },
     },

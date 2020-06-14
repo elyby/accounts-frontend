@@ -70,17 +70,37 @@ class I18N {
         locale: string,
     ): Promise<{
         locale: string;
-        messages: { [key: string]: string };
+        messages: Record<string, string>;
     }> {
-        const [{ default: messages }] = await Promise.all([
-            import(/* webpackChunkName: "locale-[request]" */ `app/i18n/${locale}.json`),
-            intlPolyfill(locale),
-        ]);
+        try {
+            const [{ default: messages }] = await Promise.all([
+                import(/* webpackChunkName: "locale-[request]" */ `app/i18n/${locale}.json`),
+                intlPolyfill(locale),
+            ]);
 
-        return {
-            locale,
-            messages,
-        };
+            return {
+                locale,
+                messages,
+            };
+        } catch (err) {
+            if (process.env.NODE_ENV !== 'production') {
+                if (err.message === "Cannot find module './en.json'") {
+                    console.warn(
+                        [
+                            "Locales module for the source language isn't exists.",
+                            'You may generate this file by running yarn i18n:extract command.',
+                            'Until then, defaultMessages will be used for displaying on the site.',
+                        ].join(' '),
+                    );
+                } else {
+                    console.error(err);
+                }
+
+                return { locale, messages: {} };
+            }
+
+            throw err;
+        }
     }
 }
 

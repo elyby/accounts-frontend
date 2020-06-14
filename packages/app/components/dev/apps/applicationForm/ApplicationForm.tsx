@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { MessageDescriptor } from 'react-intl';
 import { OauthAppResponse } from 'app/services/api/oauth';
@@ -10,11 +10,21 @@ import { COLOR_GREEN } from 'app/components/ui';
 import { TYPE_APPLICATION, TYPE_MINECRAFT_SERVER } from 'app/components/dev/apps';
 import styles from 'app/components/profile/profileForm.scss';
 import logger from 'app/services/logger';
-import messages from './ApplicationForm.intl.json';
 
 import ApplicationTypeSwitcher from './ApplicationTypeSwitcher';
 import WebsiteType from './WebsiteType';
 import MinecraftServerType from './MinecraftServerType';
+
+const messages = defineMessages({
+    website: 'Web site',
+    minecraftServer: 'Minecraft server',
+
+    creatingApplication: 'Creating an application',
+    createApplication: 'Create application',
+
+    updatingApplication: 'Updating an application',
+    updateApplication: 'Update application',
+});
 
 type TypeToForm = Record<
     ApplicationType,
@@ -94,7 +104,10 @@ export default class ApplicationForm extends React.Component<{
                             ) : (
                                 <div className={styles.formRow}>
                                     <p className={styles.description}>
-                                        <Message {...messages.toDisplayRegistrationFormChooseType} />
+                                        <Message
+                                            key="toDisplayRegistrationFormChooseType"
+                                            defaultMessage="To display registration form for a new application choose necessary type."
+                                        />
                                     </p>
                                 </div>
                             )}

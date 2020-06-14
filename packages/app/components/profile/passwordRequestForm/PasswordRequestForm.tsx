@@ -1,12 +1,15 @@
 import React, { ComponentType } from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import clsx from 'clsx';
 
 import { Form, Button, Input, FormModel } from 'app/components/ui/form';
 import popupStyles from 'app/components/ui/popup/popup.scss';
 
 import styles from './passwordRequestForm.scss';
-import messages from './PasswordRequestForm.intl.json';
+
+const labels = defineMessages({
+    continue: 'Continue',
+});
 
 interface Props {
     form: FormModel;
@@ -19,7 +22,7 @@ const PasswordRequestForm: ComponentType<Props> = ({ form, onSubmit }) => (
             <Form onSubmit={onSubmit} form={form}>
                 <div className={popupStyles.header}>
                     <h2 className={popupStyles.headerTitle}>
-                        <Message {...messages.title} />
+                        <Message key="title" defaultMessage="Confirm your action" />
                     </h2>
                 </div>
 
@@ -27,7 +30,7 @@ const PasswordRequestForm: ComponentType<Props> = ({ form, onSubmit }) => (
                     <span className={styles.lockIcon} />
 
                     <div className={styles.description}>
-                        <Message {...messages.description} />
+                        <Message key="description" defaultMessage="To complete action enter the account password" />
                     </div>
 
                     <Input
@@ -40,7 +43,7 @@ const PasswordRequestForm: ComponentType<Props> = ({ form, onSubmit }) => (
                         center
                     />
                 </div>
-                <Button color="green" label={messages.continue} block type="submit" />
+                <Button color="green" label={labels.continue} block type="submit" />
             </Form>
         </div>
     </div>

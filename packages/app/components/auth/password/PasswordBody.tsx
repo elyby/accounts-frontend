@@ -3,9 +3,14 @@ import icons from 'app/components/ui/icons.scss';
 import { Input, Checkbox } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 import authStyles from 'app/components/auth/auth.scss';
+import { defineMessages } from 'react-intl';
 
 import styles from './password.scss';
-import messages from './Password.intl.json';
+
+const messages = defineMessages({
+    accountPassword: 'Account password',
+    rememberMe: 'Remember me on this device',
+});
 
 export default class PasswordBody extends BaseAuthBody {
     static displayName = 'PasswordBody';

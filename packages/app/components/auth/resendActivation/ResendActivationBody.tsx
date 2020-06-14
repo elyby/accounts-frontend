@@ -1,11 +1,13 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Input, Captcha } from 'app/components/ui/form';
 
 import BaseAuthBody from '../BaseAuthBody';
-import registerMessages from '../register/Register.intl.json';
 import styles from './resendActivation.scss';
-import messages from './ResendActivation.intl.json';
+
+const placeholders = defineMessages({
+    yourEmail: 'Your E‑mail',
+});
 
 export default class ResendActivation extends BaseAuthBody {
     static displayName = 'ResendActivation';
@@ -20,7 +22,10 @@ export default class ResendActivation extends BaseAuthBody {
                 {this.renderErrors()}
 
                 <div className={styles.description}>
-                    <Message {...messages.specifyYourEmail} />
+                    <Message
+                        key="specifyYourEmail"
+                        defaultMessage="Please, enter an E‑mail you've registered with and we will send you new activation code"
+                    />
                 </div>
 
                 <Input
@@ -29,7 +34,7 @@ export default class ResendActivation extends BaseAuthBody {
                     color="blue"
                     type="email"
                     required
-                    placeholder={registerMessages.yourEmail}
+                    placeholder={placeholders.yourEmail}
                     defaultValue={this.context.user.email}
                 />
 

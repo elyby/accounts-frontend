@@ -1,7 +1,12 @@
+import { defineMessages } from 'react-intl';
 import factory from '../factory';
-import forgotPasswordMessages from '../forgotPassword/ForgotPassword.intl.json';
-import messages from './ResendActivation.intl.json';
 import Body from './ResendActivationBody';
+
+const messages = defineMessages({
+    title: 'Did not received an E‑mail',
+    sendNewEmail: 'Send new E‑mail',
+    alreadyHaveCode: 'Already have a code',
+});
 
 export default factory({
     title: messages.title,
@@ -11,6 +16,6 @@ export default factory({
         label: messages.sendNewEmail,
     },
     links: {
-        label: forgotPasswordMessages.alreadyHaveCode,
+        label: messages.alreadyHaveCode,
     },
 });

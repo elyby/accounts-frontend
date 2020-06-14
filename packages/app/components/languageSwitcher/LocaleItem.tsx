@@ -2,7 +2,6 @@ import React, { ComponentType, ReactNode } from 'react';
 import { localeFlags } from 'app/components/i18n';
 import { FormattedMessage as Message } from 'react-intl';
 
-import messages from './languageSwitcher.intl.json';
 import styles from './languageSwitcher.scss';
 import { LocaleData } from './LanguageSwitcher';
 
@@ -16,14 +15,15 @@ const LocaleItem: ComponentType<Props> = ({ locale: { code, name, englishName, p
     if (progress !== 100) {
         progressLabel = (
             <Message
-                {...messages.translationProgress}
+                key="translationProgress"
+                defaultMessage="{progress}% translated"
                 values={{
                     progress,
                 }}
             />
         );
     } else if (!isReleased) {
-        progressLabel = <Message {...messages.mayBeInaccurate} />;
+        progressLabel = <Message key="mayBeInaccurate" defaultMessage="May be inaccurate" />;
     }
 
     return (

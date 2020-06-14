@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { SlideMotion } from 'app/components/ui/motion';
 import { ScrollIntoView } from 'app/components/ui/scroll';
@@ -10,7 +10,6 @@ import helpLinks from 'app/components/auth/helpLinks.scss';
 import Stepper from 'app/components/ui/stepper';
 
 import changeEmail from './changeEmail.scss';
-import messages from './ChangeEmail.intl.json';
 
 const STEPS_TOTAL = 3;
 
@@ -39,6 +38,13 @@ interface FormStepParams {
     email: string;
     code?: string;
 }
+
+const labels = defineMessages({
+    changeEmailButton: 'Change E‑mail',
+    sendEmailButton: 'Send E‑mail',
+    codePlaceholder: 'Paste the code here',
+    newEmailPlaceholder: 'Enter new E‑mail',
+});
 
 export default class ChangeEmail extends React.Component<Props, State> {
     static get defaultProps(): Partial<Props> {
@@ -73,7 +79,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
 
                     <div className={styles.form}>
                         <div className={styles.formBody}>
-                            <Message {...messages.changeEmailTitle}>
+                            <Message key="changeEmailTitle" defaultMessage="Change E‑mail">
                                 {(pageTitle) => (
                                     <h3 className={styles.violetTitle}>
                                         <Helmet title={pageTitle as string} />
@@ -84,7 +90,10 @@ export default class ChangeEmail extends React.Component<Props, State> {
 
                             <div className={styles.formRow}>
                                 <p className={styles.description}>
-                                    <Message {...messages.changeEmailDescription} />
+                                    <Message
+                                        key="changeEmailDescription"
+                                        defaultMessage="To change current account E‑mail you must first verify that you own the current address and then confirm the new one."
+                                    />
                                 </p>
                             </div>
                         </div>
@@ -103,14 +112,14 @@ export default class ChangeEmail extends React.Component<Props, State> {
                             color="violet"
                             type="submit"
                             block
-                            label={this.isLastStep() ? messages.changeEmailButton : messages.sendEmailButton}
+                            label={this.isLastStep() ? labels.changeEmailButton : labels.sendEmailButton}
                         />
                     </div>
 
                     <div className={helpLinks.helpLinks}>
                         {this.isLastStep() ? null : (
                             <a href="#" onClick={this.onSwitchStep}>
-                                <Message {...messages.alreadyReceivedCode} />
+                                <Message key="alreadyReceivedCode" defaultMessage="Already received code" />
                             </a>
                         )}
                     </div>
@@ -153,7 +162,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
             <div key="step0" data-testid="step1" className={styles.formBody}>
                 <div className={styles.formRow}>
                     <p className={styles.description}>
-                        <Message {...messages.currentAccountEmail} />
+                        <Message key="currentAccountEmail" defaultMessage="Current account E‑mail address:" />
                     </p>
                 </div>
 
@@ -165,7 +174,10 @@ export default class ChangeEmail extends React.Component<Props, State> {
 
                 <div className={styles.formRow}>
                     <p className={styles.description}>
-                        <Message {...messages.pressButtonToStart} />
+                        <Message
+                            key="pressButtonToStart"
+                            defaultMessage="Press the button below to send a message with the code for E‑mail change initialization."
+                        />
                     </p>
                 </div>
             </div>
@@ -178,7 +190,8 @@ export default class ChangeEmail extends React.Component<Props, State> {
                 <div className={styles.formRow}>
                     <p className={styles.description}>
                         <Message
-                            {...messages.enterInitializationCode}
+                            key="enterInitializationCode"
+                            defaultMessage="The E‑mail with an initialization code for E‑mail change procedure was sent to {email}. Please enter the code into the field below:"
                             values={{
                                 email: <b>{email}</b>,
                             }}
@@ -196,13 +209,16 @@ export default class ChangeEmail extends React.Component<Props, State> {
                         autoComplete="off"
                         skin="light"
                         color="violet"
-                        placeholder={messages.codePlaceholder}
+                        placeholder={labels.codePlaceholder}
                     />
                 </div>
 
                 <div className={styles.formRow}>
                     <p className={styles.description}>
-                        <Message {...messages.enterNewEmail} />
+                        <Message
+                            key="enterNewEmail"
+                            defaultMessage="Then provide your new E‑mail address, that you want to use with this account. You will be mailed with confirmation code."
+                        />
                     </p>
                 </div>
 
@@ -212,7 +228,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
                         required={isActiveStep}
                         skin="light"
                         color="violet"
-                        placeholder={messages.newEmailPlaceholder}
+                        placeholder={labels.newEmailPlaceholder}
                     />
                 </div>
             </div>
@@ -229,14 +245,18 @@ export default class ChangeEmail extends React.Component<Props, State> {
                         {newEmail ? (
                             <span>
                                 <Message
-                                    {...messages.finalizationCodeWasSentToEmail}
+                                    key="finalizationCodeWasSentToEmail"
+                                    defaultMessage="The E‑mail change confirmation code was sent to {email}."
                                     values={{
                                         email: <b>{newEmail}</b>,
                                     }}
                                 />{' '}
                             </span>
                         ) : null}
-                        <Message {...messages.enterFinalizationCode} />
+                        <Message
+                            key="enterFinalizationCode"
+                            defaultMessage="In order to confirm your new E‑mail, please enter the code received into the field below:"
+                        />
                     </p>
                 </div>
 
@@ -250,7 +270,7 @@ export default class ChangeEmail extends React.Component<Props, State> {
                         autoComplete="off"
                         skin="light"
                         color="violet"
-                        placeholder={messages.codePlaceholder}
+                        placeholder={labels.codePlaceholder}
                     />
                 </div>
             </div>

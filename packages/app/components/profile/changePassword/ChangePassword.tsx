@@ -1,11 +1,17 @@
 import React from 'react';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { Input, Button, Checkbox, Form, FormModel } from 'app/components/ui/form';
 
 import { BackButton } from '../ProfileForm';
 import styles from '../profileForm.scss';
-import messages from './ChangePassword.intl.json';
+
+const labels = defineMessages({
+    changePasswordButton: 'Change password',
+    newPasswordLabel: 'New password:',
+    repeatNewPasswordLabel: 'Repeat the password:',
+    logoutOnAllDevices: 'Logout on all devices',
+});
 
 interface Props {
     form: FormModel;
@@ -29,7 +35,7 @@ export default class ChangePassword extends React.Component<Props> {
 
                     <div className={styles.form}>
                         <div className={styles.formBody}>
-                            <Message {...messages.changePasswordTitle}>
+                            <Message key="changePasswordTitle" defaultMessage="Change password">
                                 {(pageTitle) => (
                                     <h3 className={styles.title}>
                                         <Helmet title={pageTitle as string} />
@@ -40,10 +46,16 @@ export default class ChangePassword extends React.Component<Props> {
 
                             <div className={styles.formRow}>
                                 <p className={styles.description}>
-                                    <Message {...messages.changePasswordDescription} />
+                                    <Message
+                                        key="changePasswordDescription"
+                                        defaultMessage="Please take a password, that will be different from your passwords on the other sites and will not be the same you are using to enter Minecraft game servers you are playing."
+                                    />
                                     <br />
                                     <b>
-                                        <Message {...messages.achievementLossWarning} />
+                                        <Message
+                                            key="achievementLossWarning"
+                                            defaultMessage="Are you cherish your game achievements, right?"
+                                        />
                                     </b>
                                 </p>
                             </div>
@@ -54,13 +66,16 @@ export default class ChangePassword extends React.Component<Props> {
                                     type="password"
                                     required
                                     skin="light"
-                                    label={messages.newPasswordLabel}
+                                    label={labels.newPasswordLabel}
                                 />
                             </div>
 
                             <div className={styles.formRow}>
                                 <p className={styles.description}>
-                                    <Message {...messages.passwordRequirements} />
+                                    <Message
+                                        key="passwordRequirements"
+                                        defaultMessage="Password must contain at least 8 characters. It can be any symbols — do not limit yourself, create an unpredictable password!"
+                                    />
                                 </p>
                             </div>
 
@@ -70,7 +85,7 @@ export default class ChangePassword extends React.Component<Props> {
                                     type="password"
                                     required
                                     skin="light"
-                                    label={messages.repeatNewPasswordLabel}
+                                    label={labels.repeatNewPasswordLabel}
                                 />
                             </div>
 
@@ -79,12 +94,12 @@ export default class ChangePassword extends React.Component<Props> {
                                     {...form.bindField('logoutAll')}
                                     defaultChecked
                                     skin="light"
-                                    label={messages.logoutOnAllDevices}
+                                    label={labels.logoutOnAllDevices}
                                 />
                             </div>
                         </div>
 
-                        <Button color="green" block label={messages.changePasswordButton} type="submit" />
+                        <Button color="green" block label={labels.changePasswordButton} type="submit" />
                     </div>
                 </div>
             </Form>

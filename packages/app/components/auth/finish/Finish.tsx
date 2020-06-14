@@ -1,13 +1,16 @@
 import React, { MouseEventHandler } from 'react';
 import { connect } from 'react-redux';
-import { FormattedMessage as Message } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { Button } from 'app/components/ui/form';
 import copy from 'app/services/copy';
 import { RootState } from 'app/reducers';
 
-import messages from './Finish.intl.json';
 import styles from './finish.scss';
+
+const messages = defineMessages({
+    copy: 'Copy',
+});
 
 interface Props {
     appName: string;
@@ -36,7 +39,8 @@ class Finish extends React.Component<Props> {
                         <div className={styles.successBackground} />
                         <div className={styles.greenTitle}>
                             <Message
-                                {...messages.authForAppSuccessful}
+                                key="authForAppSuccessful"
+                                defaultMessage="Authorization for {appName} was successfully completed"
                                 values={{
                                     appName: <span className={styles.appName}>{appName}</span>,
                                 }}
@@ -45,7 +49,11 @@ class Finish extends React.Component<Props> {
                         {displayCode ? (
                             <div data-testid="oauth-code-container">
                                 <div className={styles.description}>
-                                    <Message {...messages.passCodeToApp} values={{ appName }} />
+                                    <Message
+                                        key="passCodeToApp"
+                                        defaultMessage="To complete authorization process, please, provide the following code to {appName}"
+                                        values={{ appName }}
+                                    />
                                 </div>
                                 <div className={styles.codeContainer}>
                                     <div className={styles.code}>{code}</div>
@@ -54,7 +62,10 @@ class Finish extends React.Component<Props> {
                             </div>
                         ) : (
                             <div className={styles.description}>
-                                <Message {...messages.waitAppReaction} />
+                                <Message
+                                    key="waitAppReaction"
+                                    defaultMessage="Please, wait till your application response"
+                                />
                             </div>
                         )}
                     </div>
@@ -63,14 +74,18 @@ class Finish extends React.Component<Props> {
                         <div className={styles.failBackground} />
                         <div className={styles.redTitle}>
                             <Message
-                                {...messages.authForAppFailed}
+                                key="authForAppFailed"
+                                defaultMessage="Authorization for {appName} was failed"
                                 values={{
                                     appName: <span className={styles.appName}>{appName}</span>,
                                 }}
                             />
                         </div>
                         <div className={styles.description}>
-                            <Message {...messages.waitAppReaction} />
+                            <Message
+                                key="waitAppReaction"
+                                defaultMessage="Please, wait till your application response"
+                            />
                         </div>
                     </div>
                 )}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
-import { FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
 import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'app/components/ui/form';
 import feedback from 'app/services/api/feedback';
 import icons from 'app/components/ui/icons.scss';
@@ -11,16 +11,26 @@ import logger from 'app/services/logger';
 import { User } from 'app/components/user';
 
 import styles from './contactForm.scss';
-import messages from './contactForm.intl.json';
 
 const CONTACT_CATEGORIES = {
     // TODO: сюда позже проставить реальные id категорий с backend
-    0: <Message {...messages.cannotAccessMyAccount} />,
-    1: <Message {...messages.foundBugOnSite} />,
-    2: <Message {...messages.improvementsSuggestion} />,
-    3: <Message {...messages.integrationQuestion} />,
-    4: <Message {...messages.other} />,
+    0: <Message key="cannotAccessMyAccount" defaultMessage="Can not access my account" />,
+    1: <Message key="foundBugOnSite" defaultMessage="I found a bug on the site" />,
+    2: <Message key="improvementsSuggestion" defaultMessage="I have a suggestion for improving the functional" />,
+    3: <Message key="integrationQuestion" defaultMessage="Service integration question" />,
+    4: <Message key="other" defaultMessage="Other" />,
 };
+
+const labels = defineMessages({
+    subject: 'Subject',
+    email: 'E‑mail',
+    message: 'Message',
+    whichQuestion: 'What are you interested in?',
+
+    send: 'Send',
+
+    close: 'Close',
+});
 
 export class ContactForm extends React.Component<
     {
@@ -54,7 +64,7 @@ export class ContactForm extends React.Component<
                 <div className={popupStyles.popup}>
                     <div className={popupStyles.header}>
                         <h2 className={popupStyles.headerTitle}>
-                            <Message {...messages.title} />
+                            <Message key="title" defaultMessage="Feedback form" />
                         </h2>
                         <span
                             className={clsx(icons.close, popupStyles.close)}
@@ -78,24 +88,30 @@ export class ContactForm extends React.Component<
             <Form form={form} onSubmit={this.onSubmit} isLoading={isLoading}>
                 <div className={popupStyles.body}>
                     <div className={styles.philosophicalThought}>
-                        <Message {...messages.philosophicalThought} />
+                        <Message
+                            key="philosophicalThought"
+                            defaultMessage="Properly formulated question — half of the answer"
+                        />
                     </div>
 
                     <div className={styles.formDisclaimer}>
-                        <Message {...messages.disclaimer} />
+                        <Message
+                            key="disclaimer"
+                            defaultMessage="Please formulate your feedback providing as much useful information, as possible to help us understand your problem and solve it"
+                        />
                         <br />
                     </div>
 
                     <div className={styles.pairInputRow}>
                         <div className={styles.pairInput}>
-                            <Input {...form.bindField('subject')} required label={messages.subject} skin="light" />
+                            <Input {...form.bindField('subject')} required label={labels.subject} skin="light" />
                         </div>
 
                         <div className={styles.pairInput}>
                             <Input
                                 {...form.bindField('email')}
                                 required
-                                label={messages.email}
+                                label={labels.email}
                                 type="email"
                                 skin="light"
                                 defaultValue={user.email}
@@ -106,7 +122,7 @@ export class ContactForm extends React.Component<
                     <div className={styles.formMargin}>
                         <Dropdown
                             {...form.bindField('category')}
-                            label={messages.whichQuestion}
+                            label={labels.whichQuestion}
                             items={CONTACT_CATEGORIES}
                             block
                         />
@@ -115,7 +131,7 @@ export class ContactForm extends React.Component<
                     <TextArea
                         {...form.bindField('message')}
                         required
-                        label={messages.message}
+                        label={labels.message}
                         skin="light"
                         minRows={6}
                         maxRows={6}
@@ -123,7 +139,7 @@ export class ContactForm extends React.Component<
                 </div>
 
                 <div className={styles.footer}>
-                    <Button label={messages.send} block type="submit" disabled={isLoading} />
+                    <Button label={labels.send} block type="submit" disabled={isLoading} />
                 </div>
             </Form>
         );
@@ -138,13 +154,16 @@ export class ContactForm extends React.Component<
                 <div className={styles.successBody}>
                     <span className={styles.successIcon} />
                     <div className={styles.successDescription}>
-                        <Message {...messages.youMessageReceived} />
+                        <Message
+                            key="youMessageReceived"
+                            defaultMessage="Your message was received. We will respond to you shortly. The answer will come to your E‑mail:"
+                        />
                     </div>
                     <div className={styles.sentToEmail}>{email}</div>
                 </div>
 
                 <div className={styles.footer}>
-                    <Button label={messages.close} block onClick={onClose} data-testid="feedback-popup-close-button" />
+                    <Button label={labels.close} block onClick={onClose} data-testid="feedback-popup-close-button" />
                 </div>
             </div>
         );

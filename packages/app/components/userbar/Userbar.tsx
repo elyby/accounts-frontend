@@ -4,7 +4,6 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Account } from 'app/components/accounts/reducer';
 import buttons from 'app/components/ui/buttons.scss';
 
-import messages from './Userbar.intl.json';
 import styles from './userbar.scss';
 import LoggedInPanel from './LoggedInPanel';
 
@@ -27,7 +26,7 @@ export default class Userbar extends Component<{
             case 'login':
                 guestAction = (
                     <Link to="/login" className={buttons.blue}>
-                        <Message {...messages.login} />
+                        <Message key="login" defaultMessage="Sign in" />
                     </Link>
                 );
                 break;
@@ -35,7 +34,7 @@ export default class Userbar extends Component<{
             default:
                 guestAction = (
                     <Link to="/register" className={buttons.blue}>
-                        <Message {...messages.register} />
+                        <Message key="register" defaultMessage="Join" />
                     </Link>
                 );
                 break;

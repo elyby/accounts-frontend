@@ -3,7 +3,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import clsx from 'clsx';
 
 import profileForm from '../../profileForm.scss';
-import messages from '../MultiFactorAuth.intl.json';
+import messages from '../instructions.intl';
 import OsInstruction from './OsInstruction';
 import OsTile from './OsTile';
 import styles from './instructions.scss';

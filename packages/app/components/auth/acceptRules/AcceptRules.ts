@@ -1,6 +1,12 @@
+import { defineMessages } from 'react-intl';
 import factory from '../factory';
 import Body from './AcceptRulesBody';
-import messages from './AcceptRules.intl.json';
+
+const messages = defineMessages({
+    title: 'User Agreement',
+    accept: 'Accept',
+    declineAndLogout: 'Decline and logout',
+});
 
 export default factory({
     title: messages.title,

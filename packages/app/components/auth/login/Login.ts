@@ -1,6 +1,12 @@
+import { defineMessages } from 'react-intl';
 import factory from '../factory';
 import Body from './LoginBody';
-import messages from './Login.intl.json';
+
+const messages = defineMessages({
+    createNewAccount: 'Create new account',
+    loginTitle: 'Sign in',
+    next: 'Next',
+});
 
 export default factory({
     title: messages.loginTitle,

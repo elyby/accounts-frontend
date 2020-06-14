@@ -19,7 +19,7 @@ import { RootState } from 'app/reducers';
 import { ComponentLoader } from 'app/components/ui/loader';
 
 import styles from './root.scss';
-import messages from './RootPage.intl.json';
+import siteName from './siteName.intl';
 
 const ProfilePage = React.lazy(() =>
     import(/* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfilePage'),
@@ -76,7 +76,7 @@ class RootPage extends React.PureComponent<{
                     <div className={styles.header} data-testid="toolbar">
                         <div className={styles.headerContent}>
                             <Link to="/" className={styles.logo} onClick={onLogoClick} data-testid="home-page">
-                                <Message {...messages.siteName} />
+                                <Message {...siteName} />
                             </Link>
                             <div className={styles.userbar}>
                                 <Userbar account={account} guestAction={isRegisterPage ? 'login' : 'register'} />

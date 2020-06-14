@@ -12,7 +12,6 @@ import { FormattedMessage as Message } from 'react-intl';
 import clsx from 'clsx';
 
 import LocaleItem from './LocaleItem';
-import messages from './languageSwitcher.intl.json';
 import { LocalesMap } from './LanguageSwitcher';
 import styles from './languageSwitcher.scss';
 
@@ -92,7 +91,10 @@ export default class LanguageList extends React.Component<{
                                     className={styles.emptyLanguagesListCaption}
                                 />
                                 <div className={styles.emptyLanguagesListSubtitle}>
-                                    <Message {...messages.weDoNotSupportThisLang} />
+                                    <Message
+                                        key="weDoNotSupportThisLang"
+                                        defaultMessage="Sorry, we do not support this language"
+                                    />
                                 </div>
                             </div>
                         </div>

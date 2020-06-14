@@ -4,7 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import { ImageLoader } from 'app/components/ui/loader';
 import profileForm from 'app/components/profile/profileForm.scss';
 
-import messages from '../MultiFactorAuth.intl.json';
+import messages from '../keyForm.intl';
 import styles from './key-form.scss';
 
 export default function KeyForm({ secret, qrCodeSrc }: { secret: string; qrCodeSrc: string }) {
