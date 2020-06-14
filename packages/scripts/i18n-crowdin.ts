@@ -52,6 +52,7 @@ const LOCALES_MAP: Record<string, string> = {
  */
 const NATIVE_NAMES_MAP: Record<string, string> = {
     be: 'Беларуская',
+    cs: 'Čeština',
     id: 'Bahasa Indonesia',
     lt: 'Lietuvių',
     pl: 'Polski',

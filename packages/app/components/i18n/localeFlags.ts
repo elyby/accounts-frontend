@@ -9,6 +9,7 @@ const localeToCountryCode: Record<string, string> = {
     sl: 'si',
     sr: 'rs',
     zh: 'cn',
+    cs: 'cz',
 };
 const SUPPORTED_LANGUAGES: string[] = Object.keys(supportedLocales);
 
