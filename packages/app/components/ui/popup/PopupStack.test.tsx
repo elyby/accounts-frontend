@@ -110,7 +110,7 @@ describe('<PopupStack />', () => {
 
         const event = new Event('keyup');
         // @ts-ignore
-        event.which = 27;
+        event.code = 'Escape';
         document.dispatchEvent(event);
 
         uxpect(props.destroy, 'was called once');
@@ -135,7 +135,7 @@ describe('<PopupStack />', () => {
 
         const event = new Event('keyup');
         // @ts-ignore
-        event.which = 27;
+        event.code = 'Escape';
         document.dispatchEvent(event);
 
         uxpect(props.destroy, 'was called once');
@@ -157,7 +157,7 @@ describe('<PopupStack />', () => {
 
         const event = new Event('keyup');
         // @ts-ignore
-        event.which = 27;
+        event.code = 'Escape';
         document.dispatchEvent(event);
 
         uxpect(props.destroy, 'was not called');

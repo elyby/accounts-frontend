@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, StoreEnhancer } from 'redux';
 // midleware, который позволяет возвращать из экшенов функции
 // это полезно для работы с асинхронными действиями,
 // а также дает возможность проверить какие-либо условия перед запуском экшена
@@ -8,13 +8,13 @@ import persistState from 'redux-localstorage';
 
 import reducers, { Store } from 'app/reducers';
 
-export default function storeFactory(): Store {
+export default function storeFactory(preloadedState = {}): Store {
     const middlewares = applyMiddleware(thunk);
     const persistStateEnhancer = persistState(['accounts', 'user'], {
         key: 'redux-storage',
     });
 
-    let enhancer;
+    let enhancer: StoreEnhancer;
 
     if (process.env.NODE_ENV === 'production') {
         enhancer = compose(middlewares, persistStateEnhancer);
@@ -23,7 +23,7 @@ export default function storeFactory(): Store {
         enhancer = composeEnhancers(middlewares, persistStateEnhancer);
     }
 
-    const store = createStore(reducers, {}, enhancer) as Store;
+    const store = createStore(reducers, preloadedState, enhancer) as Store;
 
     // Hot reload reducers
     if (module.hot && typeof module.hot.accept === 'function') {

@@ -21,7 +21,7 @@ import {
 } from 'app/services/api/signup';
 import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'app/components/ui/popup/actions';
-import ContactForm from 'app/components/contact/ContactForm';
+import ContactForm from 'app/components/contact';
 import { Account } from 'app/components/accounts/reducer';
 import { ThunkAction, Dispatch } from 'app/reducers';
 import { Resp } from 'app/services/request';

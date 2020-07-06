@@ -35,7 +35,7 @@ describe('feedback popup', () => {
         cy.findByTestId('feedbackPopup').should('contain', 'Your message was received');
         cy.findByTestId('feedbackPopup').should('contain', account1.email);
 
-        cy.findByTestId('feedback-popup-close-button').click();
+        cy.findByTestId('feedbackPopup').find('button').contains('Close').click();
 
         cy.findByTestId('feedbackPopup').should('not.be.visible');
     });

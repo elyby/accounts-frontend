@@ -14,12 +14,12 @@ interface BaseProps {
 }
 
 interface PropsWithoutForm extends BaseProps {
-    onSubmit: (form: FormData) => Promise<void> | void;
+    onSubmit?: (form: FormData) => Promise<void> | void;
 }
 
 interface PropsWithForm extends BaseProps {
     form: FormModel;
-    onSubmit: (form: FormModel) => Promise<void> | void;
+    onSubmit?: (form: FormModel) => Promise<void> | void;
 }
 
 type Props = PropsWithoutForm | PropsWithForm;
@@ -134,8 +134,10 @@ export default class Form extends React.Component<Props, State> {
             let result: Promise<void> | void;
 
             if (hasForm(this.props)) {
+                // @ts-ignore this prop has default value
                 result = this.props.onSubmit(this.props.form);
             } else {
+                // @ts-ignore this prop has default value
                 result = this.props.onSubmit(new FormData(form));
             }
 

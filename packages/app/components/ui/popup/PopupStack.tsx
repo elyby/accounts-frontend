@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { browserHistory } from 'app/services/history';
 import { connect } from 'react-redux';
@@ -17,17 +17,17 @@ interface Props {
 export class PopupStack extends React.Component<Props> {
     unlistenTransition: () => void;
 
-    componentDidMount() {
+    componentDidMount(): void {
         document.addEventListener('keyup', this.onKeyPress);
         this.unlistenTransition = browserHistory.listen(this.onRouteLeave);
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         document.removeEventListener('keyup', this.onKeyPress);
         this.unlistenTransition();
     }
 
-    render() {
+    render(): ReactNode {
         const { popups } = this.props;
 
         return (
@@ -57,11 +57,11 @@ export class PopupStack extends React.Component<Props> {
     }
 
     onClose(popup: PopupConfig) {
-        return () => this.props.destroy(popup);
+        return (): void => this.props.destroy(popup);
     }
 
     onOverlayClick(popup: PopupConfig) {
-        return (event: React.MouseEvent<HTMLDivElement>) => {
+        return (event: React.MouseEvent<HTMLDivElement>): void => {
             if (event.target !== event.currentTarget || popup.disableOverlayClose) {
                 return;
             }
@@ -72,7 +72,7 @@ export class PopupStack extends React.Component<Props> {
         };
     }
 
-    popStack() {
+    popStack(): void {
         const [popup] = this.props.popups.slice(-1);
 
         if (popup && !popup.disableOverlayClose) {
@@ -80,14 +80,14 @@ export class PopupStack extends React.Component<Props> {
         }
     }
 
-    onKeyPress = (event: KeyboardEvent) => {
-        if (event.which === 27) {
+    onKeyPress = (event: KeyboardEvent): void => {
+        if (event.code === 'Escape') {
             // ESC key
             this.popStack();
         }
     };
 
-    onRouteLeave = (nextLocation: Location) => {
+    onRouteLeave = (nextLocation: Location): void => {
         if (nextLocation) {
             this.popStack();
         }

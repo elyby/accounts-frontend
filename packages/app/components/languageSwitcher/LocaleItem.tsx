@@ -3,7 +3,7 @@ import { localeFlags } from 'app/components/i18n';
 import { FormattedMessage as Message } from 'react-intl';
 
 import styles from './languageSwitcher.scss';
-import { LocaleData } from './LanguageSwitcher';
+import { LocaleData } from './LanguageSwitcherPopup';
 
 interface Props {
     locale: LocaleData;
