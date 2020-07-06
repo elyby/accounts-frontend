@@ -178,7 +178,7 @@ describe('Forgot / reset password', () => {
 
         cy.findByTestId('auth-controls-secondary').contains('Contact support').click();
         cy.findByTestId('feedbackPopup').should('be.visible');
-        cy.findByTestId('feedback-popup-close').click();
+        cy.findByTestId('feedbackPopup').findByTestId('popup-close').click();
         cy.findByTestId('feedbackPopup').should('not.be.visible');
 
         cy.get('[name=key]').type(key);
