@@ -1,8 +1,8 @@
 @import '~app/components/ui/colors.scss';
 @import '~app/components/ui/fonts.scss';
 
-$popupPadding: 20px; // Отступ контента внутри попапа
-$popupMargin: 20px; // Отступ попапа от краёв окна
+$popupPadding: 20px; // Default content padding
+$popupMargin: 20px; // Outer popup margins
 
 @mixin popupBounding($width, $padding: null) {
     @if ($padding == null) {
@@ -88,10 +88,12 @@ $popupMargin: 20px; // Отступ попапа от краёв окна
 }
 
 .body {
-    padding: $popupPadding;
+
 }
 
 .close {
+    composes: close from '~app/components/ui/icons.scss';
+
     position: absolute;
     right: 0;
     top: 0;
@@ -107,12 +109,19 @@ $popupMargin: 20px; // Отступ попапа от краёв окна
         color: rgba(#000, 0.6);
         background: rgba(#fff, 0.75);
     }
-}
 
-@media (min-width: 655px) {
-    .close {
+    @media (min-width: 655px) {
         position: fixed;
         padding: 35px;
+    }
+
+    .trEnter &,
+    .trExit & {
+        // don't show the close during transition, because transform forces "position: fixed"
+        // to layout relative container, instead of body
+        opacity: 0;
+        transform: translate(100%);
+        transition: 0s;
     }
 }
 
@@ -159,16 +168,5 @@ $popupInitPosition: translateY(10%) rotateX(-8deg);
             transform: $popupInitPosition;
             transition: 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); // easeOutQuart
         }
-    }
-}
-
-.trEnter,
-.trExit {
-    .close {
-        // do not show close during transition, because transform forces position: fixed
-        // to layout relative container, instead of body
-        opacity: 0;
-        transform: translate(100%);
-        transition: 0s;
     }
 }

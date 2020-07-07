@@ -1,5 +1,5 @@
 describe('Change locale', () => {
-    it('should change locale from footer', () => {
+    it('should change locale from the footer', () => {
         cy.visit('/');
 
         cy.findByTestId('footer').contains('Site language').click();
@@ -7,7 +7,7 @@ describe('Change locale', () => {
         cy.findByTestId('language-switcher').should('be.visible');
         cy.findByTestId('language-switcher').should('have.attr', 'data-e2e-active-locale', 'en');
 
-        cy.findByTestId('language-list').contains('Belarusian').click();
+        cy.findByTestId('languages-list-item').contains('Belarusian').click();
 
         cy.findByTestId('language-switcher').should('not.be.visible');
 
@@ -16,13 +16,13 @@ describe('Change locale', () => {
         cy.findByTestId('language-switcher').should('be.visible');
         cy.findByTestId('language-switcher').should('have.attr', 'data-e2e-active-locale', 'be');
 
-        cy.findByTestId('language-list').contains('English').click();
+        cy.findByTestId('languages-list-item').contains('English').click();
 
         cy.findByTestId('language-switcher').should('not.be.visible');
         cy.findByTestId('footer').should('contain', 'Site language');
     });
 
-    it('should change locale from profile', () => {
+    it('should change locale from the profile', () => {
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
             cy.server();
             cy.route({
@@ -39,7 +39,7 @@ describe('Change locale', () => {
         cy.findByTestId('language-switcher').should('be.visible');
         cy.findByTestId('language-switcher').should('have.attr', 'data-e2e-active-locale', 'en');
 
-        cy.findByTestId('language-list').contains('Belarusian').click();
+        cy.findByTestId('languages-list-item').contains('Belarusian').click();
 
         cy.wait('@language').its('requestBody').should('eq', 'lang=be');
 

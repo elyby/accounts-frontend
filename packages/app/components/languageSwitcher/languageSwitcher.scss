@@ -8,17 +8,14 @@
     }
 }
 
-.languageSwitcher {
-    composes: popupWrapper from '~app/components/ui/popup/popup.scss';
-
+.boundings {
     @include popupBounding(400px);
 }
 
-.languageSwitcherBody {
-    composes: body from '~app/components/ui/popup/popup.scss';
-
+.body {
     display: flex;
     flex-direction: column;
+    padding: $popupPadding;
     max-height: calc(100vh - 132px);
 
     @media screen and (min-height: 630px) {

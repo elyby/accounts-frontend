@@ -3,7 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { refreshUserData } from 'app/components/accounts/actions';
 import { create as createPopup } from 'app/components/ui/popup/actions';
-import PasswordRequestForm from 'app/components/profile/passwordRequestForm/PasswordRequestForm';
+import PasswordRequestForm from 'app/components/profile/passwordRequestForm';
 import logger from 'app/services/logger';
 import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
@@ -163,6 +163,7 @@ export default connect(
 
                                 return <PasswordRequestForm form={form} onSubmit={onSubmit} />;
                             },
+                            // TODO: this property should be automatically extracted from the popup's isClosable prop
                             disableOverlayClose: true,
                         }),
                     );

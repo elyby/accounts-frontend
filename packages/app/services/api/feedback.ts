@@ -1,12 +1,12 @@
 import request from 'app/services/request';
 
-export default {
-    send({ subject = '', email = '', message = '', category = '' }) {
-        return request.post('/api/feedback', {
-            subject,
-            email,
-            message,
-            category,
-        });
-    },
-};
+interface SendFeedbackParams {
+    subject: string;
+    email: string;
+    message: string;
+    category: string | number;
+}
+
+export function send(params: SendFeedbackParams) {
+    return request.post('/api/feedback', params);
+}

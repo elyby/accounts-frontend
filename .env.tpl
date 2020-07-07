@@ -1,4 +1,4 @@
-SENTRY_DSN=https://<key>@sentry.io/<project>
+SENTRY_DSN=
 
 CROWDIN_API_KEY=abc
 

@@ -4,10 +4,12 @@
 
 /* Form state */
 
-.contactForm {
-    composes: popupWrapper from '~app/components/ui/popup/popup.scss';
-
+.contactFormBoundings {
     @include popupBounding(500px);
+}
+
+.body {
+    padding: $popupPadding;
 }
 
 .philosophicalThought {
@@ -45,14 +47,12 @@
 
 /* Success State */
 
-.successState {
-    composes: popupWrapper from '~app/components/ui/popup/popup.scss';
-
+.successStateBoundings {
     @include popupBounding(320px);
 }
 
 .successBody {
-    composes: body from '~app/components/ui/popup/popup.scss';
+    composes: body;
 
     text-align: center;
 }
@@ -61,6 +61,7 @@
     @extend .formDisclaimer;
 
     margin-bottom: 15px;
+    padding: 0 20px;
 }
 
 .successIcon {
@@ -76,10 +77,4 @@
     font-family: $font-family-title;
     color: #444;
     font-size: 18px;
-}
-
-/* Common */
-
-.footer {
-    margin-top: 0;
 }

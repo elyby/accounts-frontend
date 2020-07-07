@@ -12,7 +12,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import clsx from 'clsx';
 
 import LocaleItem from './LocaleItem';
-import { LocalesMap } from './LanguageSwitcher';
+import { LocalesMap } from './LanguageSwitcherPopup';
 import styles from './languageSwitcher.scss';
 
 import thatFuckingPumpkin from './images/that_fucking_pumpkin.svg';
@@ -50,17 +50,21 @@ const emptyCaptions: ReadonlyArray<EmptyCaption> = [
 
 const itemHeight = 51;
 
-export default class LanguageList extends React.Component<{
+export default class LanguagesList extends React.Component<{
+    locales: LocalesMap;
     selectedLocale: string;
-    langs: LocalesMap;
-    onChangeLang: (lang: string) => void;
+    onChangeLang?: (lang: string) => void;
 }> {
     emptyListStateInner: HTMLDivElement | null;
 
+    static defaultProps = {
+        onChangeLang: (): void => {},
+    };
+
     render() {
-        const { selectedLocale, langs } = this.props;
-        const isListEmpty = Object.keys(langs).length === 0;
-        const firstLocale = Object.keys(langs)[0] || null;
+        const { selectedLocale, locales } = this.props;
+        const isListEmpty = Object.keys(locales).length === 0;
+        const firstLocale = Object.keys(locales)[0] || null;
         const emptyCaption = this.getEmptyCaption();
 
         return (
@@ -71,7 +75,7 @@ export default class LanguageList extends React.Component<{
                 willEnter={this.willEnter}
             >
                 {(items) => (
-                    <div className={styles.languagesList} data-testid="language-list">
+                    <div className={styles.languagesList} data-testid="languages-list-item">
                         <div
                             className={clsx(styles.emptyLanguagesListWrapper, {
                                 [styles.emptyLanguagesListVisible]: isListEmpty,
@@ -126,17 +130,18 @@ export default class LanguageList extends React.Component<{
         return (event) => {
             event.preventDefault();
 
+            // @ts-ignore has defaultProps value
             this.props.onChangeLang(lang);
         };
     }
 
     getItemsWithDefaultStyles = (): Array<TransitionPlainStyle> => {
-        return Object.keys({ ...this.props.langs }).reduce(
+        return Object.keys({ ...this.props.locales }).reduce(
             (previous, key) => [
                 ...previous,
                 {
                     key,
-                    data: this.props.langs[key],
+                    data: this.props.locales[key],
                     style: {
                         height: itemHeight,
                         opacity: 1,
@@ -148,12 +153,12 @@ export default class LanguageList extends React.Component<{
     };
 
     getItemsWithStyles = (): Array<TransitionStyle> => {
-        return Object.keys({ ...this.props.langs }).reduce(
+        return Object.keys({ ...this.props.locales }).reduce(
             (previous, key) => [
                 ...previous,
                 {
                     key,
-                    data: this.props.langs[key],
+                    data: this.props.locales[key],
                     style: {
                         height: spring(itemHeight, presets.gentle),
                         opacity: spring(1, presets.gentle),

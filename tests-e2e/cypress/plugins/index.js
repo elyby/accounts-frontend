@@ -41,7 +41,13 @@ module.exports = (on) => {
                                 options: {
                                     envName: 'webpack',
                                     cacheDirectory: true,
-                                    ...config,
+                                    // We don't have the webpack's API object, so just provide necessary methods
+                                    ...config({
+                                        env() {
+                                            return 'development';
+                                        },
+                                        cache() {},
+                                    }),
                                 },
                             },
                         ],
