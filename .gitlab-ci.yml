@@ -154,7 +154,7 @@ Cypress:
       --browser chrome
       --parallel
   parallel: 4
-  timeout: 10m
+  timeout: 20m
   allow_failure: true
   only:
     refs:
