@@ -7,23 +7,15 @@
     line-height: 12px;
 }
 
+.row {
+    margin-bottom: 2px;
+}
+
 .footerItem {
     display: inline-block;
-    margin: 2px 5px 2px 0;
+    margin: 2px 2px;
     color: #666;
     border-bottom-color: #666;
-
-    &:last-of-type {
-        margin-right: 0;
-    }
-}
-
-.langTriggerContainer {
-    margin-top: 1px;
-}
-
-.langTrigger {
-    composes: footerItem;
 }
 
 .langTriggerIcon {

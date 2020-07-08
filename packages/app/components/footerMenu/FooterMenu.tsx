@@ -20,18 +20,33 @@ const FooterMenu: ComponentType = () => {
 
     return (
         <div className={styles.footerMenu} data-testid="footer">
-            <Link to="/rules" className={styles.footerItem}>
-                <Message key="rules" defaultMessage="Rules" />
-            </Link>
-            <ContactLink className={styles.footerItem}>
-                <Message key="contactUs" defaultMessage="Contact Us" />
-            </ContactLink>
-            <Link to="/dev" className={styles.footerItem}>
-                <Message key="forDevelopers" defaultMessage="For developers" />
-            </Link>
+            <div className={styles.row}>
+                <Link to="/rules" className={styles.footerItem}>
+                    <Message key="rules" defaultMessage="Rules" />
+                </Link>
 
-            <div className={styles.langTriggerContainer}>
-                <a href="#" className={styles.langTrigger} onClick={onLanguageSwitcherClick}>
+                {'ꞏ'}
+
+                <ContactLink className={styles.footerItem}>
+                    <Message key="contactUs" defaultMessage="Contact Us" />
+                </ContactLink>
+            </div>
+
+            <div className={styles.row}>
+                <Link to="/dev" className={styles.footerItem}>
+                    <Message key="forDevelopers" defaultMessage="For developers" />
+                </Link>
+
+                {'ꞏ'}
+
+                {/* TODO: on click open the source code popup */}
+                <a href="#" className={styles.footerItem}>
+                    <Message key="sourceCode" defaultMessage="Source code" />
+                </a>
+            </div>
+
+            <div className={styles.row}>
+                <a href="#" className={styles.footerItem} onClick={onLanguageSwitcherClick}>
                     <span className={styles.langTriggerIcon} />
                     <Message key="siteLanguage" defaultMessage="Site language" />
                 </a>
