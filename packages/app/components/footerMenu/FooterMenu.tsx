@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import LanguageSwitcher from 'app/components/languageSwitcher';
+import SourceCode from 'app/components/sourceCode';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import { ContactLink } from 'app/components/contact';
 
@@ -10,10 +11,11 @@ import styles from './footerMenu.scss';
 
 const FooterMenu: ComponentType = () => {
     const dispatch = useDispatch();
-    const onLanguageSwitcherClick = useCallback<MouseEventHandler<HTMLAnchorElement>>(
-        (event) => {
+
+    const createPopupHandler = useCallback(
+        (popup: ComponentType): MouseEventHandler<HTMLAnchorElement> => (event) => {
             event.preventDefault();
-            dispatch(createPopup({ Popup: LanguageSwitcher }));
+            dispatch(createPopup({ Popup: popup }));
         },
         [dispatch],
     );
@@ -39,14 +41,13 @@ const FooterMenu: ComponentType = () => {
 
                 {'ꞏ'}
 
-                {/* TODO: on click open the source code popup */}
-                <a href="#" className={styles.footerItem}>
+                <a href="#" className={styles.footerItem} onClick={createPopupHandler(SourceCode)}>
                     <Message key="sourceCode" defaultMessage="Source code" />
                 </a>
             </div>
 
             <div className={styles.row}>
-                <a href="#" className={styles.footerItem} onClick={onLanguageSwitcherClick}>
+                <a href="#" className={styles.footerItem} onClick={createPopupHandler(LanguageSwitcher)}>
                     <span className={styles.langTriggerIcon} />
                     <Message key="siteLanguage" defaultMessage="Site language" />
                 </a>
