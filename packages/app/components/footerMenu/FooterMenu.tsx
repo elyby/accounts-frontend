@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import LanguageSwitcher from 'app/components/languageSwitcher';
+import SourceCode from 'app/components/sourceCode';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import { ContactLink } from 'app/components/contact';
 
@@ -10,28 +11,43 @@ import styles from './footerMenu.scss';
 
 const FooterMenu: ComponentType = () => {
     const dispatch = useDispatch();
-    const onLanguageSwitcherClick = useCallback<MouseEventHandler<HTMLAnchorElement>>(
-        (event) => {
+
+    const createPopupHandler = useCallback(
+        (popup: ComponentType): MouseEventHandler<HTMLAnchorElement> => (event) => {
             event.preventDefault();
-            dispatch(createPopup({ Popup: LanguageSwitcher }));
+            dispatch(createPopup({ Popup: popup }));
         },
         [dispatch],
     );
 
     return (
         <div className={styles.footerMenu} data-testid="footer">
-            <Link to="/rules" className={styles.footerItem}>
-                <Message key="rules" defaultMessage="Rules" />
-            </Link>
-            <ContactLink className={styles.footerItem}>
-                <Message key="contactUs" defaultMessage="Contact Us" />
-            </ContactLink>
-            <Link to="/dev" className={styles.footerItem}>
-                <Message key="forDevelopers" defaultMessage="For developers" />
-            </Link>
+            <div className={styles.row}>
+                <Link to="/rules" className={styles.footerItem}>
+                    <Message key="rules" defaultMessage="Rules" />
+                </Link>
 
-            <div className={styles.langTriggerContainer}>
-                <a href="#" className={styles.langTrigger} onClick={onLanguageSwitcherClick}>
+                {'ꞏ'}
+
+                <ContactLink className={styles.footerItem}>
+                    <Message key="contactUs" defaultMessage="Contact Us" />
+                </ContactLink>
+            </div>
+
+            <div className={styles.row}>
+                <Link to="/dev" className={styles.footerItem}>
+                    <Message key="forDevelopers" defaultMessage="For developers" />
+                </Link>
+
+                {'ꞏ'}
+
+                <a href="#" className={styles.footerItem} onClick={createPopupHandler(SourceCode)}>
+                    <Message key="sourceCode" defaultMessage="Source code" />
+                </a>
+            </div>
+
+            <div className={styles.row}>
+                <a href="#" className={styles.footerItem} onClick={createPopupHandler(LanguageSwitcher)}>
                     <span className={styles.langTriggerIcon} />
                     <Message key="siteLanguage" defaultMessage="Site language" />
                 </a>

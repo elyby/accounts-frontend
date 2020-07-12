@@ -1,8 +1,12 @@
+// @ts-nocheck
+const { ContextReplacementPlugin } = require('webpack');
+
 const rootConfig = require('../webpack.config');
 
 module.exports = async ({ config }) => ({
     ...config,
     resolve: rootConfig.resolve,
+
     module: {
         ...config.module,
         // our rules should satisfy all storybook needs,
@@ -11,4 +15,9 @@ module.exports = async ({ config }) => ({
     },
 
     resolveLoader: rootConfig.resolveLoader,
+
+    plugins: [
+        ...config.plugins,
+        ...rootConfig.plugins.filter((plugin) => plugin instanceof ContextReplacementPlugin),
+    ],
 });

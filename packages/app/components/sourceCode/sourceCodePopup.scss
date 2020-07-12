@@ -1,0 +1,113 @@
+@import '~app/components/ui/popup/popup.scss';
+@import '~app/components/ui/colors.scss';
+@import '~app/components/ui/fonts.scss';
+
+.boundings {
+    @include popupBounding(420px);
+}
+
+.body {
+    padding: $popupPadding;
+    color: #666;
+}
+
+.item {
+    display: flex;
+    margin-bottom: 15px;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+.blue {
+    color: $blue;
+}
+
+.violet {
+    color: $violet;
+}
+
+.iconWrapper {
+    margin: 4px 12px 0 0;
+}
+
+.dbIcon {
+    composes: database from '~app/components/ui/icons.scss';
+
+    font-size: 40px;
+}
+
+.brushIcon {
+    composes: brush from '~app/components/ui/icons.scss';
+
+    font-size: 30px;
+}
+
+.envelopeIcon {
+    composes: envelope-open from '~app/components/ui/icons.scss';
+
+    font-size: 33px;
+}
+
+.contentWrapper {
+    flex-grow: 1;
+}
+
+.itemLink {
+    display: inline-block;
+    border: none;
+}
+
+.projectTitle {
+    font-family: $font-family-title;
+    font-size: 20px;
+}
+
+.projectRepository {
+    font-family: $font-family-title;
+    font-size: 14px;
+    color: #9a9a9a;
+    margin: 0 0 5px 1px; // Add 1px from the left to make icon look visually aligned with texts
+}
+
+.githubIcon {
+    composes: github from '~app/components/ui/icons.scss';
+
+    font-size: 12px;
+    margin-right: 2px;
+    position: relative;
+    bottom: 1px;
+}
+
+.projectDescription {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.footer {
+    composes: body;
+
+    background: #f5f5f5;
+    text-align: center;
+}
+
+.heartIcon {
+    composes: heart from '~app/components/ui/icons.scss';
+
+    color: $red;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.footerTitle {
+    font-family: $font-family-title;
+    font-size: 22px;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.footerContent {
+    font-size: 12px;
+    line-height: 1.4;
+}
