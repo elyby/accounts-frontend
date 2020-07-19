@@ -43,12 +43,12 @@ storiesOf('Components/Popups', module).add('LanguageSwitcherPopup', () => {
                     isReleased: true,
                 },
                 // A few more languages just to create a scroll and to test some interesting characters
-                pt: {
-                    code: 'pt',
-                    name: 'Português do Brasil',
-                    englishName: 'Portuguese, Brazilian',
-                    progress: 99,
-                    isReleased: true,
+                unk: {
+                    code: 'unk',
+                    name: 'Unknown',
+                    englishName: 'Unknown',
+                    progress: 27,
+                    isReleased: false,
                 },
                 vi: {
                     code: 'vi',
