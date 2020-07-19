@@ -17,9 +17,11 @@ const LanguageSwitcher: ComponentType<Props> = ({ onClose = () => {} }) => {
 
     const onChangeLang = useCallback(
         (lang: string) => {
-            dispatch(changeLang(lang));
-            // TODO: await language change and close popup, but not earlier than after 300ms
-            setTimeout(onClose, 300);
+            Promise.all([
+                // 300ms is necessary for the visual animation of the language change to be completed
+                new Promise((resolve) => setTimeout(resolve, 300)),
+                dispatch(changeLang(lang)),
+            ]).then(onClose);
         },
         [dispatch, onClose],
     );
