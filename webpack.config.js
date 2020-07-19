@@ -114,6 +114,11 @@ const webpackConfig = {
             /flag-icon-css\/flags\/4x3/,
             new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`),
         ),
+        // @see components/i18n/localeFlags.js
+        new webpack.ContextReplacementPlugin(
+            /app\/components\/i18n\/flags/,
+            new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`),
+        ),
     ],
 
     module: {

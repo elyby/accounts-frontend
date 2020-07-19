@@ -27,8 +27,25 @@ export default {
      * @returns {string}
      */
     getIconUrl(locale: string): string {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const mod = require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
+        let mod;
+
+        try {
+            mod = require(`./flags/${locale}.svg`);
+        } catch (err1) {
+            if (!err1.message.startsWith('Cannot find module')) {
+                throw err1;
+            }
+
+            try {
+                mod = require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
+            } catch (err2) {
+                if (!err2.message.startsWith('Cannot find module')) {
+                    throw err2;
+                }
+
+                mod = require('./flags/unknown.svg');
+            }
+        }
 
         return mod.default || mod;
     },
