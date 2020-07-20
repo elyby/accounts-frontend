@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { localeFlags } from 'app/components/i18n';
+import { getLocaleIconUrl } from 'app/components/i18n';
 import { FormattedMessage as Message } from 'react-intl';
 
 import styles from './languageSwitcher.scss';
@@ -31,7 +31,7 @@ const LocaleItem: ComponentType<Props> = ({ locale: { code, name, englishName, p
             <div
                 className={styles.languageIco}
                 style={{
-                    backgroundImage: `url('${localeFlags.getIconUrl(code)}')`,
+                    backgroundImage: `url('${getLocaleIconUrl(code)}')`,
                 }}
             />
             <div className={styles.languageCaptions}>

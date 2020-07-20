@@ -1,7 +1,7 @@
 import React, { ComponentType, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { localeFlags } from 'app/components/i18n';
+import { getLocaleIconUrl } from 'app/components/i18n';
 import LANGS from 'app/i18n';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import LanguageSwitcher from 'app/components/languageSwitcher';
@@ -30,7 +30,7 @@ const LanguageLink: ComponentType = () => {
             <span
                 className={styles.languageIcon}
                 style={{
-                    backgroundImage: `url('${localeFlags.getIconUrl(localeDefinition.code)}')`,
+                    backgroundImage: `url('${getLocaleIconUrl(localeDefinition.code)}')`,
                 }}
             />
             {localeDefinition.name}

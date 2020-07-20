@@ -17,7 +17,7 @@ const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const config = require('./config');
 const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n').default);
-const localeFlags = require('app/components/i18n/localeFlags').default;
+const { getCountriesList } = require('app/components/i18n/localeFlags');
 const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'build');
 
@@ -112,12 +112,12 @@ const webpackConfig = {
         // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
             /flag-icon-css\/flags\/4x3/,
-            new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`),
+            new RegExp(`/(${getCountriesList().join('|')})\\.svg`),
         ),
         // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
             /app\/components\/i18n\/flags/,
-            new RegExp(`/(${localeFlags.getCountryList().join('|')})\\.svg`),
+            new RegExp(`/(${getCountriesList().join('|')})\\.svg`),
         ),
     ],
 

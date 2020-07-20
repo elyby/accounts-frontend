@@ -11,42 +11,36 @@ const localeToCountryCode: Record<string, string> = {
     zh: 'cn',
     cs: 'cz',
 };
-const SUPPORTED_LANGUAGES: string[] = Object.keys(supportedLocales);
+const SUPPORTED_LANGUAGES: ReadonlyArray<string> = Object.keys(supportedLocales);
 
-export default {
-    getCountryList(): string[] {
-        return SUPPORTED_LANGUAGES.map((locale) => localeToCountryCode[locale] || locale);
-    },
+export function getCountriesList(): string[] {
+    return SUPPORTED_LANGUAGES.map((locale) => localeToCountryCode[locale] || locale);
+}
 
-    /**
-     * Возвращает для указанной локали её флаг с учётом всех нюансов загрузки флага
-     * и подбора соответствующего локали флага.
-     *
-     * @param {string} locale
-     *
-     * @returns {string}
-     */
-    getIconUrl(locale: string): string {
-        let mod;
+const flagIconLoadingChain: ReadonlyArray<(locale: string) => string | { default: string }> = [
+    (locale) => require(`./flags/${locale}.svg`),
+    (locale) => require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`),
+    () => require('./flags/unknown.svg'),
+];
 
+/**
+ * Возвращает для указанной локали её флаг с учётом всех нюансов загрузки флага
+ * и подбора соответствующего локали флага.
+ *
+ * @param {string} locale
+ *
+ * @returns {string}
+ */
+export function getLocaleIconUrl(locale: string): string {
+    for (const flagIconLoadingChainElement of flagIconLoadingChain) {
         try {
-            mod = require(`./flags/${locale}.svg`);
-        } catch (err1) {
-            if (!err1.message.startsWith('Cannot find module')) {
-                throw err1;
-            }
+            const mod = flagIconLoadingChainElement(locale);
 
-            try {
-                mod = require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
-            } catch (err2) {
-                if (!err2.message.startsWith('Cannot find module')) {
-                    throw err2;
-                }
-
-                mod = require('./flags/unknown.svg');
+            return mod.default || mod;
+        } catch (err) {
+            if (!err.message.startsWith('Cannot find module')) {
+                throw err;
             }
         }
-
-        return mod.default || mod;
-    },
-};
+    }
+}
