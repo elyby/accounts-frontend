@@ -15,19 +15,11 @@ import { ComponentLoader } from 'app/components/ui/loader';
 
 import styles from './profile.scss';
 
-const Profile = React.lazy(() => import(/* webpackChunkName: "page-profile-index" */ 'app/pages/profile/ProfilePage'));
-const ChangePasswordPage = React.lazy(() =>
-    import(/* webpackChunkName: "page-profile-change-password" */ 'app/pages/profile/ChangePasswordPage'),
-);
-const ChangeUsernamePage = React.lazy(() =>
-    import(/* webpackChunkName: "page-profile-change-username" */ 'app/pages/profile/ChangeUsernamePage'),
-);
-const ChangeEmailPage = React.lazy(() =>
-    import(/* webpackChunkName: "page-profile-change-email" */ 'app/pages/profile/ChangeEmailPage'),
-);
-const MultiFactorAuthPage = React.lazy(() =>
-    import(/* webpackChunkName: "page-profile-mfa" */ 'app/pages/profile/MultiFactorAuthPage'),
-);
+import Profile from 'app/pages/profile/ProfilePage';
+import ChangePasswordPage from 'app/pages/profile/ChangePasswordPage';
+import ChangeUsernamePage from 'app/pages/profile/ChangeUsernamePage';
+import ChangeEmailPage from 'app/pages/profile/ChangeEmailPage';
+import MultiFactorAuthPage from 'app/pages/profile/MultiFactorAuthPage';
 
 interface Props {
     userId: number;

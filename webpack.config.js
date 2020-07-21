@@ -211,7 +211,11 @@ const webpackConfig = {
 };
 
 if (isAnalyze) {
-    webpackConfig.plugins.push(new BundleAnalyzerPlugin());
+    webpackConfig.plugins.push(
+        new BundleAnalyzerPlugin({
+            excludeAssets: /^(vendors~intl|locale-|intl)/,
+        }),
+    );
 }
 
 if (isProduction) {

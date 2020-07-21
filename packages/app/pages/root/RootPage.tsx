@@ -21,10 +21,11 @@ import { ComponentLoader } from 'app/components/ui/loader';
 import styles from './root.scss';
 import siteName from './siteName.intl';
 
+import PageNotFound from 'app/pages/404/PageNotFound';
+
 const ProfileController = React.lazy(() =>
     import(/* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfileController'),
 );
-const PageNotFound = React.lazy(() => import(/* webpackChunkName: "page-not-found" */ 'app/pages/404/PageNotFound'));
 const RulesPage = React.lazy(() => import(/* webpackChunkName: "page-rules" */ 'app/pages/rules/RulesPage'));
 const DevPage = React.lazy(() => import(/* webpackChunkName: "page-dev-applications" */ 'app/pages/dev/DevPage'));
 const AuthPage = React.lazy(() => import(/* webpackChunkName: "page-auth" */ 'app/pages/auth/AuthPage'));
