@@ -29,12 +29,7 @@ module.exports = function (api) {
             '@babel/plugin-proposal-function-bind',
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-optional-chaining',
-            [
-                '@babel/plugin-transform-runtime',
-                {
-                    corejs: 3,
-                },
-            ],
+            '@babel/plugin-transform-runtime',
             [
                 'react-intl-auto',
                 {
