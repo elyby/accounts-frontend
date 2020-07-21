@@ -17,10 +17,9 @@ export function getCountriesList(): string[] {
     return SUPPORTED_LANGUAGES.map((locale) => localeToCountryCode[locale] || locale);
 }
 
-const flagIconLoadingChain: ReadonlyArray<(locale: string) => string | { default: string }> = [
+const flagIconLoadingChain: ReadonlyArray<(locale: string) => { default: string }> = [
     (locale) => require(`./flags/${locale}.svg`),
     (locale) => require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`),
-    () => require('./flags/unknown.svg'),
 ];
 
 /**
@@ -34,13 +33,13 @@ const flagIconLoadingChain: ReadonlyArray<(locale: string) => string | { default
 export function getLocaleIconUrl(locale: string): string {
     for (const flagIconLoadingChainElement of flagIconLoadingChain) {
         try {
-            const mod = flagIconLoadingChainElement(locale);
-
-            return mod.default || mod;
+            return flagIconLoadingChainElement(locale).default;
         } catch (err) {
             if (!err.message.startsWith('Cannot find module')) {
                 throw err;
             }
         }
     }
+
+    return require('./flags/unknown.svg').default;
 }

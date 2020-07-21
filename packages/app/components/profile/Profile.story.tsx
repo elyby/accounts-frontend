@@ -30,7 +30,7 @@ storiesOf('Components/Profile', module).add('Profile', () => (
                 avatar: '',
                 token: '',
             }}
-            interfaceLocale={'en'}
+            activeLocale={'en'}
         />
     </ProfileLayout>
 ));
