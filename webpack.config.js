@@ -47,7 +47,7 @@ const webpackConfig = {
     output: {
         path: outputPath,
         publicPath: '/',
-        filename: '[name].js?[hash]',
+        filename: '[name].js?[chunkhash]',
     },
 
     resolve: {
@@ -179,14 +179,14 @@ const webpackConfig = {
                 test: /\.(png|gif|jpg|svg)$/,
                 loader: 'file-loader',
                 query: {
-                    name: 'assets/[name].[ext]?[hash]',
+                    name: 'assets/[name].[ext]?[contenthash]',
                 },
             },
             {
                 test: /\.(woff|woff2|ttf)$/,
                 loader: 'file-loader',
                 query: {
-                    name: 'assets/fonts/[name].[ext]?[hash]',
+                    name: 'assets/fonts/[name].[ext]?[contenthash]',
                 },
             },
             {
@@ -232,8 +232,7 @@ if (isProduction) {
 
         webpackConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: '[name].css?[hash]',
-                chunkFilename: '[id].css?[hash]',
+                filename: '[name].css?[contenthash]',
             }),
         );
     }
