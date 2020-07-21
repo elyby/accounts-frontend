@@ -21,8 +21,8 @@ import { ComponentLoader } from 'app/components/ui/loader';
 import styles from './root.scss';
 import siteName from './siteName.intl';
 
-const ProfilePage = React.lazy(() =>
-    import(/* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfilePage'),
+const ProfileController = React.lazy(() =>
+    import(/* webpackChunkName: "page-profile-all" */ 'app/pages/profile/ProfileController'),
 );
 const PageNotFound = React.lazy(() => import(/* webpackChunkName: "page-not-found" */ 'app/pages/404/PageNotFound'));
 const RulesPage = React.lazy(() => import(/* webpackChunkName: "page-rules" */ 'app/pages/rules/RulesPage'));
@@ -86,7 +86,7 @@ class RootPage extends React.PureComponent<{
                     <div className={styles.body}>
                         <React.Suspense fallback={<ComponentLoader />}>
                             <Switch>
-                                <PrivateRoute path="/profile" component={ProfilePage} />
+                                <PrivateRoute path="/profile" component={ProfileController} />
                                 <Route path="/404" component={PageNotFound} />
                                 <Route path="/rules" component={RulesPage} />
                                 <Route path="/dev" component={DevPage} />
@@ -95,7 +95,7 @@ class RootPage extends React.PureComponent<{
                                     exact
                                     path="/"
                                     key="indexPage"
-                                    component={user.isGuest ? AuthPage : ProfilePage}
+                                    component={user.isGuest ? AuthPage : ProfileController}
                                 />
                                 <AuthFlowRoute path="/" component={AuthPage} />
 

@@ -17,7 +17,6 @@ export type ChangeEmailStep = 0 | 1 | 2;
 
 interface Props {
     onChangeStep: (step: ChangeEmailStep) => void;
-    lang: string;
     email: string;
     stepForms: Array<FormModel>;
     onSubmit: (step: ChangeEmailStep, form: FormModel) => Promise<void>;

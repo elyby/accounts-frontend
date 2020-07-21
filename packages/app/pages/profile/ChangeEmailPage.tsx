@@ -13,7 +13,6 @@ interface RouteParams {
 }
 
 interface Props extends RouteComponentProps<RouteParams> {
-    lang: string;
     email: string;
 }
 
@@ -33,7 +32,6 @@ class ChangeEmailPage extends React.Component<Props> {
             <ChangeEmail
                 onSubmit={this.onSubmit}
                 email={this.props.email}
-                lang={this.props.lang}
                 step={(Number(step.slice(-1)) - 1) as ChangeEmailStep}
                 onChangeStep={this.onChangeStep}
                 code={code}
@@ -96,5 +94,4 @@ function handleErrors(repeatUrl?: string): <T extends { errors: Record<string, a
 
 export default connect((state: RootState) => ({
     email: state.user.email,
-    lang: state.user.lang,
 }))(ChangeEmailPage);

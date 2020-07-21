@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import logger from 'app/services/logger';
 import { disable as disableMFA } from 'app/services/api/mfa';
 import { FormModel } from 'app/components/ui/form';
@@ -29,7 +29,10 @@ export default class MfaDisable extends React.Component<
         return showForm ? <MfaDisableForm onSubmit={this.onSubmit} /> : <MfaStatus onProceed={this.onProceed} />;
     }
 
-    onProceed = () => this.setState({ showForm: true });
+    onProceed: MouseEventHandler<HTMLAnchorElement> = (event) => {
+        event.preventDefault();
+        this.setState({ showForm: true });
+    };
 
     onSubmit = (form: FormModel) => {
         return this.props

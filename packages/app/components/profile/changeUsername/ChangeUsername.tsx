@@ -55,7 +55,7 @@ export default class ChangeUsername extends React.Component<Props> {
                             <div className={styles.formRow}>
                                 <Input
                                     {...form.bindField('username')}
-                                    value={username}
+                                    defaultValue={username}
                                     onChange={this.onUsernameChange}
                                     required
                                     skin="light"
