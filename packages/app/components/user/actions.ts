@@ -1,39 +1,60 @@
+import { Action as ReduxAction } from 'redux';
+
 import { changeLang as changeLangEndpoint, acceptRules as acceptRulesEndpoint } from 'app/services/api/accounts';
 import { setLocale } from 'app/components/i18n/actions';
 import { ThunkAction } from 'app/reducers';
 
 import { User } from './reducer';
 
-export const UPDATE = 'USER_UPDATE';
+interface UpdateAction extends ReduxAction {
+    type: 'user:update';
+    payload: Partial<User>;
+}
+
 /**
  * Merge data into user's state
  *
  * @param {object} payload
  * @returns {object} - action definition
  */
-export function updateUser(payload: Partial<User>) {
+export function updateUser(payload: Partial<User>): UpdateAction {
     // Temp workaround
     return {
-        type: UPDATE,
+        type: 'user:update',
         payload,
     };
 }
 
-export const SET = 'USER_SET';
+interface SetAction extends ReduxAction {
+    type: 'user:set';
+    payload: Partial<User>;
+}
+
 /**
  * Replace current user's state with a new one
  *
  * @param {User} payload
  * @returns {object} - action definition
  */
-export function setUser(payload: Partial<User>) {
+export function setUser(payload: Partial<User>): SetAction {
     return {
-        type: SET,
+        type: 'user:set',
         payload,
     };
 }
 
-export const CHANGE_LANG = 'USER_CHANGE_LANG';
+interface ChangeLangAction extends ReduxAction {
+    type: 'user:changeLang';
+    payload: string;
+}
+
+function changeLangPure(payload: string): ChangeLangAction {
+    return {
+        type: 'user:changeLang',
+        payload,
+    };
+}
+
 export function changeLang(targetLang: string): ThunkAction<Promise<void>> {
     return (dispatch, getState) =>
         dispatch(setLocale(targetLang)).then((lang: string) => {
@@ -47,12 +68,7 @@ export function changeLang(targetLang: string): ThunkAction<Promise<void>> {
                 changeLangEndpoint(id, lang);
             }
 
-            dispatch({
-                type: CHANGE_LANG,
-                payload: {
-                    lang,
-                },
-            });
+            dispatch(changeLangPure(lang));
         });
 }
 
@@ -86,3 +102,5 @@ export function acceptRules(): ThunkAction<Promise<{ success: boolean }>> {
         });
     };
 }
+
+export type Action = UpdateAction | SetAction | ChangeLangAction;

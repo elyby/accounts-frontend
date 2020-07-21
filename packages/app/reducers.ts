@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import auth, { State as AuthState } from 'app/components/auth/reducer';
-import user, { User } from 'app/components/user/reducer';
+import user, { State as UserState } from 'app/components/user/reducer';
 import accounts, { State as AccountsState } from 'app/components/accounts/reducer';
 import i18n, { State as I18nState } from 'app/components/i18n/reducer';
 import popup, { State as PopupState } from 'app/components/ui/popup/reducer';
@@ -14,7 +14,7 @@ export interface RootState {
     auth: AuthState;
     bsod: BsodState;
     accounts: AccountsState;
-    user: User;
+    user: UserState;
     popup: PopupState;
     apps: Apps;
     i18n: I18nState;

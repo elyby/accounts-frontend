@@ -1,4 +1,4 @@
-import { UPDATE, SET, CHANGE_LANG } from './actions';
+import { Action } from './actions';
 
 export interface User {
     id: number | null;
@@ -17,11 +17,9 @@ export interface User {
     shouldAcceptRules?: boolean;
 }
 
-export type State = {
-    user: User;
-};
+export type State = User;
 
-const defaults: User = {
+const defaults: State = {
     id: null,
     uuid: null,
     username: '',
@@ -42,36 +40,23 @@ const defaults: User = {
     isGuest: true,
 };
 
-export default function user(state: User = defaults, { type, payload }: { type: string; payload: any }) {
-    switch (type) {
-        case CHANGE_LANG:
-            if (!payload || !payload.lang) {
-                throw new Error('payload.lang is required for user reducer');
-            }
-
+export default function user(state: State = defaults, action: Action): State {
+    switch (action.type) {
+        case 'user:changeLang':
             return {
                 ...state,
-                lang: payload.lang,
+                lang: action.payload,
             };
-
-        case UPDATE:
-            if (!payload) {
-                throw new Error('payload is required for user reducer');
-            }
-
+        case 'user:update':
             return {
                 ...state,
-                ...payload,
+                ...action.payload,
             };
-
-        case SET:
-            payload = payload || {};
-
+        case 'user:set':
             return {
                 ...defaults,
-                ...payload,
+                ...action.payload,
             };
-
         default:
             return (
                 state || {
