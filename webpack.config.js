@@ -211,11 +211,7 @@ const webpackConfig = {
 };
 
 if (isAnalyze) {
-    webpackConfig.plugins.push(
-        new BundleAnalyzerPlugin({
-            excludeAssets: /^(vendors~intl|locale-|intl)/,
-        }),
-    );
+    webpackConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 
 if (isProduction) {
@@ -250,14 +246,39 @@ if (isProduction) {
         splitChunks: {
             cacheGroups: {
                 vendor: {
-                    test: (m) =>
-                        String(m.context).includes('node_modules') &&
-                        // icons and intl with relateed polyfills are allowed
-                        // to be splitted to other chunks
-                        !/\/(flag-icon-css|intl|@formatjs)\//.test(String(m.context)),
                     name: 'vendors',
+                    priority: 0,
+                    test: (m) => String(m.context).includes('node_modules'),
                     chunks: 'all',
                 },
+                polyfills: {
+                    name: 'intl-polyfills',
+                    priority: 1,
+                    chunks: ({ name }) => ['intl', 'intl-pluralrules', 'intl-relativetimeformat'].includes(name),
+                    enforce: true,
+                },
+                ...SUPPORTED_LANGUAGES.reduce((acc, locale) => {
+                    const localePolyfills = [
+                        `intl-${locale}-js`,
+                        `intl-pluralrules-${locale}-js`,
+                        `intl-relativetimeformat-${locale}-js`,
+                    ];
+
+                    acc[locale] = {
+                        name: `locale-${locale}`,
+                        priority: 1,
+                        chunks: ({ name }) => name === `locale-${locale}-json`,
+                        enforce: true,
+                    };
+                    acc[`${locale}Polyfill`] = {
+                        name: `locale-${locale}-polyfill`,
+                        priority: 2,
+                        chunks: ({ name }) => localePolyfills.includes(name),
+                        enforce: true,
+                    };
+
+                    return acc;
+                }, {}),
             },
         },
     };
