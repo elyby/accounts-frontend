@@ -35,7 +35,7 @@ export function setUser(payload: Partial<User>) {
 
 export const CHANGE_LANG = 'USER_CHANGE_LANG';
 export function changeLang(targetLang: string): ThunkAction<Promise<void>> {
-    return async (dispatch, getState) =>
+    return (dispatch, getState) =>
         dispatch(setLocale(targetLang)).then((lang: string) => {
             const { id, isGuest, lang: oldLang } = getState().user;
 
