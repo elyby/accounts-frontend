@@ -187,6 +187,10 @@ Build:
     - rm -rf *.js.map
     - find . -name '*.js' | cpio -pdm ../source-maps/
     - cd ..
+    # Cleanup source maps for unimportant bundles
+    - rm -rf source-maps/locale-*
+    - rm -rf source-maps/intl*
+    - rm -rf source-maps/vendors~*
   artifacts:
     name: "Production build for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
     paths:
