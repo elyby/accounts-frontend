@@ -1,8 +1,9 @@
 import { Action as ReduxAction } from 'redux';
-import i18n from 'app/services/i18n';
-import { ThunkAction } from 'app/reducers';
 
-export function setLocale(desiredLocale: string): ThunkAction<Promise<string>> {
+import i18n from 'app/services/i18n';
+import { Action as AppAction } from 'app/types';
+
+export function setLocale(desiredLocale: string): AppAction<Promise<string>> {
     return async (dispatch) => {
         const locale = i18n.detectLanguage(desiredLocale);
 

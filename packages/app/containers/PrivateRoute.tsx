@@ -1,10 +1,10 @@
 import React, { ComponentType } from 'react';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
 import { Location } from 'history';
-import { connect } from 'react-redux';
+
+import { connect } from 'app/functions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import { Account } from 'app/components/accounts';
-import { RootState } from 'app/reducers';
 
 interface Props extends RouteProps {
     component: ComponentType<any>;
@@ -20,6 +20,6 @@ const PrivateRoute = ({ account, component: Component, ...rest }: Props) => (
     />
 );
 
-export default connect((state: RootState) => ({
+export default connect((state) => ({
     account: getActiveAccount(state),
 }))(PrivateRoute);

@@ -1,7 +1,7 @@
 import { authenticate, logoutStrangers } from 'app/components/accounts/actions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import request from 'app/services/request';
-import { Store } from 'app/reducers';
+import { Store } from 'app/types';
 
 import { changeLang } from './actions';
 import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';

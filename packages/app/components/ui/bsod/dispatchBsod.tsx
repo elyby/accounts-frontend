@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import { ContextProvider } from 'app/shell';
-import { Store } from 'app/reducers';
+import { Store } from 'app/types';
 import { History } from 'history';
 
 import { bsod } from './actions';

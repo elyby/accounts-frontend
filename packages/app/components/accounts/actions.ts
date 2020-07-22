@@ -5,7 +5,7 @@ import { relogin as navigateToLogin, setAccountSwitcher } from 'app/components/a
 import { updateUser, setGuest } from 'app/components/user/actions';
 import { setLocale } from 'app/components/i18n/actions';
 import logger from 'app/services/logger';
-import { ThunkAction } from 'app/reducers';
+import { Action as AppAction } from 'app/types';
 
 import { getActiveAccount, Account } from './reducer';
 import { add, remove, activate, reset, updateToken } from './actions/pure-actions';
@@ -26,7 +26,7 @@ export function authenticate(
               token: string;
               refreshToken: string | null;
           },
-): ThunkAction<Promise<Account>> {
+): AppAction<Promise<Account>> {
     const { token, refreshToken } = account;
     const email = 'email' in account ? account.email : null;
 
@@ -106,7 +106,7 @@ export function authenticate(
 /**
  * Re-fetch user data for currently active account
  */
-export function refreshUserData(): ThunkAction<Promise<void>> {
+export function refreshUserData(): AppAction<Promise<void>> {
     return async (dispatch, getState) => {
         const activeAccount = getActiveAccount(getState());
 
@@ -142,7 +142,7 @@ function findAccountIdFromToken(token: string): number {
  *
  * @returns {Function}
  */
-export function ensureToken(): ThunkAction<Promise<void>> {
+export function ensureToken(): AppAction<Promise<void>> {
     return (dispatch, getState) => {
         const { token } = getActiveAccount(getState()) || {};
 
@@ -182,7 +182,7 @@ export function recoverFromTokenError(
         status: number;
         message: string;
     } | void,
-): ThunkAction<Promise<void>> {
+): AppAction<Promise<void>> {
     return (dispatch, getState) => {
         if (error && error.status === 401) {
             const activeAccount = getActiveAccount(getState());
@@ -218,7 +218,7 @@ export function recoverFromTokenError(
  *
  * @returns {Function}
  */
-export function requestNewToken(): ThunkAction<Promise<void>> {
+export function requestNewToken(): AppAction<Promise<void>> {
     return (dispatch, getState) => {
         const { refreshToken } = getActiveAccount(getState()) || {};
 
@@ -250,7 +250,7 @@ export function requestNewToken(): ThunkAction<Promise<void>> {
  *
  * @returns {Function}
  */
-export function revoke(account: Account): ThunkAction<Promise<void>> {
+export function revoke(account: Account): AppAction<Promise<void>> {
     return async (dispatch, getState) => {
         const accountToReplace: Account | null =
             getState().accounts.available.find(({ id }) => id !== account.id) || null;
@@ -276,7 +276,7 @@ export function revoke(account: Account): ThunkAction<Promise<void>> {
     };
 }
 
-export function relogin(email?: string): ThunkAction<Promise<void>> {
+export function relogin(email?: string): AppAction<Promise<void>> {
     return async (dispatch, getState) => {
         const activeAccount = getActiveAccount(getState());
 
@@ -288,7 +288,7 @@ export function relogin(email?: string): ThunkAction<Promise<void>> {
     };
 }
 
-export function logoutAll(): ThunkAction<Promise<void>> {
+export function logoutAll(): AppAction<Promise<void>> {
     return (dispatch, getState) => {
         dispatch(setGuest());
 
@@ -317,7 +317,7 @@ export function logoutAll(): ThunkAction<Promise<void>> {
  *
  * @returns {Function}
  */
-export function logoutStrangers(): ThunkAction<Promise<void>> {
+export function logoutStrangers(): AppAction<Promise<void>> {
     return async (dispatch, getState) => {
         const {
             accounts: { available },

@@ -2,7 +2,7 @@ import { Action as ReduxAction } from 'redux';
 
 import { changeLang as changeLangEndpoint, acceptRules as acceptRulesEndpoint } from 'app/services/api/accounts';
 import { setLocale } from 'app/components/i18n/actions';
-import { ThunkAction } from 'app/reducers';
+import { Action as AppAction } from 'app/types';
 
 import { User } from './reducer';
 
@@ -55,7 +55,7 @@ function changeLangPure(payload: string): ChangeLangAction {
     };
 }
 
-export function changeLang(targetLang: string): ThunkAction<Promise<void>> {
+export function changeLang(targetLang: string): AppAction<Promise<void>> {
     return (dispatch, getState) =>
         dispatch(setLocale(targetLang)).then((lang: string) => {
             const { id, isGuest, lang: oldLang } = getState().user;
@@ -72,7 +72,7 @@ export function changeLang(targetLang: string): ThunkAction<Promise<void>> {
         });
 }
 
-export function setGuest(): ThunkAction<Promise<void>> {
+export function setGuest(): AppAction<Promise<void>> {
     return async (dispatch, getState) => {
         dispatch(
             setUser({
@@ -83,7 +83,7 @@ export function setGuest(): ThunkAction<Promise<void>> {
     };
 }
 
-export function acceptRules(): ThunkAction<Promise<{ success: boolean }>> {
+export function acceptRules(): AppAction<Promise<{ success: boolean }>> {
     return (dispatch, getState) => {
         const { id } = getState().user;
 

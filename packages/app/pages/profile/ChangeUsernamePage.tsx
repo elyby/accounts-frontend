@@ -1,7 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from 'app/functions';
 import { updateUser } from 'app/components/user/actions';
-import { RootState } from 'app/reducers';
 import { changeUsername } from 'app/services/api/accounts';
 import { FormModel } from 'app/components/ui/form';
 import ChangeUsername from 'app/components/profile/changeUsername/ChangeUsername';
@@ -66,7 +66,7 @@ class ChangeUsernamePage extends React.Component<Props> {
 }
 
 export default connect(
-    (state: RootState) => ({
+    (state) => ({
         username: state.user.username,
     }),
     {

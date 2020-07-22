@@ -1,6 +1,7 @@
 import { combineReducers, Reducer } from 'redux';
-import { RootState } from 'app/reducers';
-import { Scope } from '../../services/api/oauth';
+
+import { State as RootState } from 'app/types';
+import { Scope } from 'app/services/api/oauth';
 
 import {
     ErrorAction,

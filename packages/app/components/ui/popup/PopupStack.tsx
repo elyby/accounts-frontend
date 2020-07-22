@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { browserHistory } from 'app/services/history';
-import { connect } from 'react-redux';
 import { Location } from 'history';
-import { RootState } from 'app/reducers';
+
+import { connect } from 'app/functions';
+import { browserHistory } from 'app/services/history';
 
 import { PopupConfig } from './reducer';
 import { destroy } from './actions';
@@ -95,7 +95,7 @@ export class PopupStack extends React.Component<Props> {
 }
 
 export default connect(
-    (state: RootState) => ({
+    (state) => ({
         ...state.popup,
     }),
     {

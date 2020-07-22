@@ -1,11 +1,11 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { connect } from 'react-redux';
+
+import { connect } from 'app/functions';
 import { fetchAvailableApps, resetApp, deleteApp } from 'app/components/dev/apps/actions';
 import ApplicationsIndex from 'app/components/dev/apps/ApplicationsIndex';
 import { User } from 'app/components/user';
 import { OauthAppResponse } from 'app/services/api/oauth';
-import { RootState } from 'app/reducers';
 
 interface Props extends RouteComponentProps {
     user: User;
@@ -75,7 +75,7 @@ class ApplicationsListPage extends React.Component<Props, State> {
 }
 
 export default connect(
-    (state: RootState) => ({
+    (state) => ({
         user: state.user,
         apps: state.apps.available,
     }),

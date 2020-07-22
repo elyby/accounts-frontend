@@ -1,7 +1,7 @@
 import { browserHistory } from 'app/services/history';
 import logger from 'app/services/logger';
 import localStorage from 'app/services/localStorage';
-import { RootState, Store } from 'app/reducers';
+import { Store, State as RootState } from 'app/types';
 
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';

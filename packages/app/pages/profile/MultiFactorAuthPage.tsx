@@ -1,10 +1,10 @@
 import React from 'react';
 import { RouteComponentProps, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+
+import { connect } from 'app/functions';
 import MultiFactorAuth, { MfaStep } from 'app/components/profile/multiFactorAuth';
 import { FormModel } from 'app/components/ui/form';
 import { User } from 'app/components/user';
-import { RootState } from 'app/reducers';
 import Context from 'app/components/profile/Context';
 
 interface Props
@@ -74,4 +74,4 @@ class MultiFactorAuthPage extends React.Component<Props> {
     };
 }
 
-export default connect(({ user }: RootState) => ({ user }))(MultiFactorAuthPage);
+export default connect(({ user }) => ({ user }))(MultiFactorAuthPage);

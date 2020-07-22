@@ -1,9 +1,8 @@
 import React, { ComponentType, useCallback, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import { send as sendFeedback } from 'app/services/api/feedback';
-import { RootState } from 'app/reducers';
 import logger from 'app/services/logger';
+import { useReduxSelector } from 'app/functions';
 
 import ContactFormPopup from './ContactFormPopup';
 import SuccessContactFormPopup from './SuccessContactFormPopup';
@@ -13,7 +12,7 @@ interface Props {
 }
 
 const ContactForm: ComponentType<Props> = ({ onClose }) => {
-    const userEmail = useSelector((state: RootState) => state.user.email);
+    const userEmail = useReduxSelector((state) => state.user.email);
     const usedEmailRef = useRef(userEmail); // Use ref to avoid unneeded redraw
     const [isSent, setIsSent] = useState<boolean>(false);
     const onSubmit = useCallback(

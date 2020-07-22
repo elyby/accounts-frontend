@@ -1,9 +1,8 @@
 import React, { ComponentType, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import LOCALES from 'app/i18n';
 import { changeLang } from 'app/components/user/actions';
-import { RootState } from 'app/reducers';
+import { useReduxDispatch, useReduxSelector } from 'app/functions';
 
 import LanguageSwitcherPopup from './LanguageSwitcherPopup';
 
@@ -12,8 +11,8 @@ type Props = {
 };
 
 const LanguageSwitcher: ComponentType<Props> = ({ onClose = () => {} }) => {
-    const selectedLocale = useSelector((state: RootState) => state.i18n.locale);
-    const dispatch = useDispatch();
+    const selectedLocale = useReduxSelector((state) => state.i18n.locale);
+    const dispatch = useReduxDispatch();
 
     const onChangeLang = useCallback(
         (lang: string) => {

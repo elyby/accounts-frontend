@@ -2,15 +2,15 @@ import { OauthAppResponse } from 'app/services/api/oauth';
 
 import { Action } from './actions';
 
-export interface Apps {
+export interface State {
     available: Array<OauthAppResponse>;
 }
 
-const defaults: Apps = {
+const defaults: State = {
     available: [],
 };
 
-export default function apps(state: Apps = defaults, action: Action): Apps {
+export default function apps(state: State = defaults, action: Action): State {
     switch (action.type) {
         case 'apps:setAvailable':
             return {

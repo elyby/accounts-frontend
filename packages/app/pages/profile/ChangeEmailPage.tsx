@@ -1,10 +1,10 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { RouteComponentProps, Redirect } from 'react-router-dom';
+
+import { connect } from 'app/functions';
 import FormModel from 'app/components/ui/form/FormModel';
 import ChangeEmail, { ChangeEmailStep } from 'app/components/profile/changeEmail/ChangeEmail';
 import { requestEmailChange, setNewEmail, confirmNewEmail } from 'app/services/api/accounts';
-import { RootState } from 'app/reducers';
 import Context from 'app/components/profile/Context';
 
 interface RouteParams {
@@ -92,6 +92,6 @@ function handleErrors(repeatUrl?: string): <T extends { errors: Record<string, a
     };
 }
 
-export default connect((state: RootState) => ({
+export default connect((state) => ({
     email: state.user.email,
 }))(ChangeEmailPage);

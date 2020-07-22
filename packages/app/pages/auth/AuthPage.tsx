@@ -1,6 +1,5 @@
 import React, { ComponentType, ReactNode, useCallback, useState } from 'react';
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 import AppInfo from 'app/components/auth/appInfo/AppInfo';
 import PanelTransition from 'app/components/auth/PanelTransition';
@@ -17,7 +16,7 @@ import RecoverPassword from 'app/components/auth/recoverPassword/RecoverPassword
 import Mfa from 'app/components/auth/mfa/Mfa';
 import Finish from 'app/components/auth/finish/Finish';
 
-import { RootState } from 'app/reducers';
+import { useReduxSelector } from 'app/functions';
 import { Factory } from 'app/components/auth/factory';
 
 import styles from './auth.scss';
@@ -30,7 +29,7 @@ let isSidebarHiddenCache = false;
 
 const AuthPage: ComponentType = () => {
     const [isSidebarHidden, setIsSidebarHidden] = useState<boolean>(isSidebarHiddenCache);
-    const client = useSelector((state: RootState) => state.auth.client);
+    const client = useReduxSelector((state) => state.auth.client);
 
     const goToAuth = useCallback(() => {
         isSidebarHiddenCache = true;

@@ -5,7 +5,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { History } from 'history';
 
 import { IntlProvider } from 'app/components/i18n';
-import { Store } from 'app/reducers';
+import { Store } from 'app/types';
 
 interface Props {
     children: React.ReactNode;

@@ -3,7 +3,7 @@ import { createMemoryHistory } from 'history';
 import { DeepPartial } from 'utility-types';
 
 import storeFactory from 'app/storeFactory';
-import { RootState } from 'app/reducers';
+import { State as RootState } from 'app/types';
 
 import ContextProvider from './ContextProvider';
 

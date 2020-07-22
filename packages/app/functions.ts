@@ -1,3 +1,26 @@
+import {
+    connect as reduxConnect,
+    MapDispatchToPropsParam,
+    MapStateToPropsParam,
+    useDispatch,
+    useSelector,
+} from 'react-redux';
+
+import { State, Dispatch } from 'app/types';
+
+export const connect = <TStateProps = {}, TDispatchProps = {}, TOwnProps = {}>(
+    mapStateToProps?: MapStateToPropsParam<TStateProps, TOwnProps, State> | null | undefined,
+    dispatchProps?: MapDispatchToPropsParam<TDispatchProps, TOwnProps> | null | undefined,
+    // mergeProps,
+    // options,
+) => reduxConnect(mapStateToProps, dispatchProps /*, mergeProps, options*/);
+
+export const useReduxDispatch = () => useDispatch<Dispatch>();
+export const useReduxSelector = <TSelected>(
+    selector: (state: State) => TSelected,
+    equalityFn?: (left: TSelected, right: TSelected) => boolean,
+): TSelected => useSelector<State, TSelected>(selector, equalityFn);
+
 let lastId = 0;
 export function uniqueId(prefix: string = 'id'): string {
     return `${prefix}${++lastId}`;

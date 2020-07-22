@@ -1,14 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
+
+import { connect } from 'app/functions';
 import * as loader from 'app/services/loader';
 import { SKIN_DARK, COLOR_WHITE, Skin } from 'app/components/ui';
 import { Button } from 'app/components/ui/form';
 import { authenticate, revoke } from 'app/components/accounts/actions';
 import { getActiveAccount, Account } from 'app/components/accounts/reducer';
-import { RootState } from 'app/reducers';
+import { State as AccountState } from 'app/components/accounts/reducer';
 
 import styles from './accountSwitcher.scss';
 
@@ -19,7 +20,7 @@ interface Props {
     onAfterAction: () => void;
     // called after switching an account. The active account will be passed as arg
     onSwitch: (account: Account) => void;
-    accounts: RootState['accounts'];
+    accounts: AccountState;
     skin: Skin;
     // whether active account should be expanded and shown on the top
     highlightActiveAccount: boolean;
@@ -166,7 +167,7 @@ export class AccountSwitcher extends React.Component<Props> {
 }
 
 export default connect(
-    ({ accounts }: RootState) => ({
+    ({ accounts }) => ({
         accounts,
     }),
     {

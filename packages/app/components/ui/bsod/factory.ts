@@ -1,6 +1,6 @@
 import request from 'app/services/request';
 import logger from 'app/services/logger';
-import { Store } from 'app/reducers';
+import { Store } from 'app/types';
 import { History } from 'history';
 
 import dispatchBsod, { inject } from './dispatchBsod';

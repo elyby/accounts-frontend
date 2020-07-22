@@ -1,7 +1,8 @@
 import React, { ComponentType, MouseEventHandler, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
+
+import { useReduxDispatch } from 'app/functions';
 import LanguageSwitcher from 'app/components/languageSwitcher';
 import SourceCode from 'app/components/sourceCode';
 import { create as createPopup } from 'app/components/ui/popup/actions';
@@ -10,7 +11,7 @@ import { ContactLink } from 'app/components/contact';
 import styles from './footerMenu.scss';
 
 const FooterMenu: ComponentType = () => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
 
     const createPopupHandler = useCallback(
         (popup: ComponentType): MouseEventHandler<HTMLAnchorElement> => (event) => {

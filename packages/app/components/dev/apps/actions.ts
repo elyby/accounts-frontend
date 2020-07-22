@@ -1,10 +1,11 @@
 import { Dispatch, Action as ReduxAction } from 'redux';
+
 import { OauthAppResponse } from 'app/services/api/oauth';
 import oauth from 'app/services/api/oauth';
 import { User } from 'app/components/user';
-import { ThunkAction } from 'app/reducers';
+import { Action as AppAction } from 'app/types';
 
-import { Apps } from './reducer';
+import { State } from './reducer';
 
 interface SetAvailableAction extends ReduxAction {
     type: 'apps:setAvailable';
@@ -18,11 +19,11 @@ export function setAppsList(apps: Array<OauthAppResponse>): SetAvailableAction {
     };
 }
 
-export function getApp(state: { apps: Apps }, clientId: string): OauthAppResponse | null {
+export function getApp(state: { apps: State }, clientId: string): OauthAppResponse | null {
     return state.apps.available.find((app) => app.clientId === clientId) || null;
 }
 
-export function fetchApp(clientId: string): ThunkAction<Promise<void>> {
+export function fetchApp(clientId: string): AppAction<Promise<void>> {
     return async (dispatch) => {
         const app = await oauth.getApp(clientId);
 
@@ -78,7 +79,7 @@ function createDeleteAppAction(clientId: string): DeleteAppAction {
     };
 }
 
-export function resetApp(clientId: string, resetSecret: boolean): ThunkAction<Promise<void>> {
+export function resetApp(clientId: string, resetSecret: boolean): AppAction<Promise<void>> {
     return async (dispatch) => {
         const { data: app } = await oauth.reset(clientId, resetSecret);
 

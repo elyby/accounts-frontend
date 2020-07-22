@@ -1,22 +1,22 @@
 import React, { ComponentType, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+
+import { useReduxDispatch, useReduxSelector } from 'app/functions';
 import { getLocaleIconUrl } from 'app/components/i18n';
 import LANGS from 'app/i18n';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import LanguageSwitcher from 'app/components/languageSwitcher';
-import { RootState } from 'app/reducers';
 
 import styles from './link.scss';
 
 const LanguageLink: ComponentType = () => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const showLanguageSwitcherPopup = useCallback(() => {
         dispatch(createPopup({ Popup: LanguageSwitcher }));
     }, [dispatch]);
 
-    const userLang = useSelector((state: RootState) => state.user.lang);
-    const interfaceLocale = useSelector((state: RootState) => state.i18n.locale);
+    const userLang = useReduxSelector((state) => state.user.lang);
+    const interfaceLocale = useReduxSelector((state) => state.i18n.locale);
 
     const localeDefinition = LANGS[userLang] || LANGS[interfaceLocale];
 

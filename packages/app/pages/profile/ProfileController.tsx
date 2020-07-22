@@ -1,7 +1,8 @@
 import React, { ComponentType, useCallback } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
 
+import { connect } from 'app/functions';
+import { Dispatch } from 'app/types';
 import { refreshUserData } from 'app/components/accounts/actions';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import PasswordRequestForm from 'app/components/profile/passwordRequestForm';
@@ -9,7 +10,6 @@ import logger from 'app/services/logger';
 import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
 import { FormModel } from 'app/components/ui/form';
-import { Dispatch, RootState } from 'app/reducers';
 import { Provider } from 'app/components/profile/Context';
 import { ComponentLoader } from 'app/components/ui/loader';
 
@@ -65,7 +65,7 @@ const ProfileController: ComponentType<Props> = ({ userId, onSubmit, refreshUser
 };
 
 export default connect(
-    (state: RootState) => ({
+    (state) => ({
         userId: state.user.id!,
     }),
     {

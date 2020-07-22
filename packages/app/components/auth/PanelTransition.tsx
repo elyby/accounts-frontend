@@ -1,7 +1,8 @@
 import React, { CSSProperties, MouseEventHandler, ReactElement, ReactNode } from 'react';
+
 import { AccountsState } from 'app/components/accounts';
 import { User } from 'app/components/user';
-import { connect } from 'react-redux';
+import { connect } from 'app/functions';
 import { TransitionMotion, spring, PlainStyle, Style, TransitionStyle, TransitionPlainStyle } from 'react-motion';
 import { Panel, PanelBody, PanelFooter, PanelHeader } from 'app/components/ui/Panel';
 import { Form } from 'app/components/ui/form';
@@ -9,7 +10,6 @@ import MeasureHeight from 'app/components/MeasureHeight';
 import panelStyles from 'app/components/ui/panel.scss';
 import icons from 'app/components/ui/icons.scss';
 import authFlow from 'app/services/authFlow';
-import { RootState } from 'app/reducers';
 
 import { Provider as AuthContextProvider } from './Context';
 import { getLogin, State as AuthState } from './reducer';
@@ -546,7 +546,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
 }
 
 export default connect(
-    (state: RootState) => {
+    (state) => {
         const login = getLogin(state);
         let user = {
             ...state.user,

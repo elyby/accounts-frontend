@@ -1,7 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import logger from 'app/services/logger';
 import { RouteComponentProps } from 'react-router';
+
+import logger from 'app/services/logger';
+import { connect } from 'app/functions';
 import { FormModel } from 'app/components/ui/form';
 import { browserHistory } from 'app/services/history';
 import oauth from 'app/services/api/oauth';
@@ -10,7 +11,6 @@ import PageNotFound from 'app/pages/404/PageNotFound';
 import { getApp, fetchApp as fetchAppAction } from 'app/components/dev/apps/actions';
 import ApplicationForm from 'app/components/dev/apps/applicationForm/ApplicationForm';
 import { OauthAppResponse } from 'app/services/api/oauth';
-import { RootState } from 'app/reducers';
 
 type OwnProps = RouteComponentProps<{
     clientId: string;
@@ -100,7 +100,7 @@ class UpdateApplicationPage extends React.Component<
 }
 
 export default connect(
-    (state: RootState, props: OwnProps) => ({
+    (state, props: OwnProps) => ({
         app: getApp(state, props.match.params.clientId),
     }),
     {

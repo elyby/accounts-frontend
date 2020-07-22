@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import expect from 'app/test/unexpected';
-import { RootState } from 'app/reducers';
+import { State as RootState } from 'app/types';
 
 import bearerHeaderMiddleware from 'app/components/user/middlewares/bearerHeaderMiddleware';
 import { MiddlewareRequestOptions } from '../../../services/request/PromiseMiddlewareLayer';

@@ -8,7 +8,7 @@ import { authenticate, revoke, logoutAll, logoutStrangers } from 'app/components
 import { add, activate, remove, reset } from 'app/components/accounts/actions/pure-actions';
 import { updateUser, setUser } from 'app/components/user/actions';
 import { setLogin, setAccountSwitcher } from 'app/components/auth/actions';
-import { Dispatch, RootState } from 'app/reducers';
+import { Dispatch, State as RootState } from 'app/types';
 
 import { Account } from './reducer';
 

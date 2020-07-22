@@ -1,10 +1,10 @@
 import React, { MouseEventHandler } from 'react';
-import { connect } from 'react-redux';
 import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
+
+import { connect } from 'app/functions';
 import { Button } from 'app/components/ui/form';
 import copy from 'app/services/copy';
-import { RootState } from 'app/reducers';
 
 import styles from './finish.scss';
 
@@ -104,7 +104,7 @@ class Finish extends React.Component<Props> {
     };
 }
 
-export default connect(({ auth }: RootState) => {
+export default connect(({ auth }) => {
     if (!auth || !auth.client || !auth.oauth) {
         throw new Error('Can not connect Finish component. No auth data in state');
     }

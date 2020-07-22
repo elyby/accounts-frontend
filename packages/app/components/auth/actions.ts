@@ -23,7 +23,7 @@ import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact';
 import { Account } from 'app/components/accounts/reducer';
-import { ThunkAction, Dispatch } from 'app/reducers';
+import { Action as AppAction, Dispatch } from 'app/types';
 import { Resp } from 'app/services/request';
 
 import { Credentials, Client, OAuthState, getCredentials } from './reducer';
@@ -189,7 +189,7 @@ export function register({
     );
 }
 
-export function activate({ key = '' }: { key: string }): ThunkAction<Promise<Account>> {
+export function activate({ key = '' }: { key: string }): AppAction<Promise<Account>> {
     return wrapInLoader((dispatch) =>
         activateEndpoint(key)
             .then(authHandler(dispatch))
@@ -239,7 +239,7 @@ export function setLogin(login: string | null): SetCredentialsAction {
     return setCredentials(login ? { login } : null);
 }
 
-export function relogin(login: string | null): ThunkAction {
+export function relogin(login: string | null): AppAction {
     return (dispatch, getState) => {
         const credentials = getCredentials(getState());
         const returnUrl = credentials.returnUrl || location.pathname + location.search;
@@ -266,7 +266,7 @@ function requestTotp({
     login: string;
     password: string;
     rememberMe: boolean;
-}): ThunkAction {
+}): AppAction {
     return (dispatch, getState) => {
         // merging with current credentials to propogate returnUrl
         const credentials = getCredentials(getState());
@@ -521,7 +521,7 @@ export function setOAuthCode(payload: { success: boolean; code: string; displayC
     };
 }
 
-export function resetOAuth(): ThunkAction {
+export function resetOAuth(): AppAction {
     return (dispatch): void => {
         localStorage.removeItem('oauthData');
         dispatch(setOAuthRequest({}));
@@ -531,7 +531,7 @@ export function resetOAuth(): ThunkAction {
 /**
  * Resets all temporary state related to auth
  */
-export function resetAuth(): ThunkAction {
+export function resetAuth(): AppAction {
     return (dispatch, getSate): Promise<void> => {
         dispatch(setLogin(null));
         dispatch(resetOAuth());
@@ -588,7 +588,7 @@ export function setLoadingState(isLoading: boolean): SetLoadingAction {
     };
 }
 
-function wrapInLoader<T>(fn: ThunkAction<Promise<T>>): ThunkAction<Promise<T>> {
+function wrapInLoader<T>(fn: AppAction<Promise<T>>): AppAction<Promise<T>> {
     return (dispatch, getState) => {
         dispatch(setLoadingState(true));
         const endLoading = () => dispatch(setLoadingState(false));
@@ -671,3 +671,12 @@ function validationErrorsHandler(
         return Promise.reject(resp);
     };
 }
+
+export type Action =
+    | ErrorAction
+    | CredentialsAction
+    | AccountSwitcherAction
+    | LoadingAction
+    | ClientAction
+    | OAuthAction
+    | ScopesAction;

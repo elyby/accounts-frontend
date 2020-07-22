@@ -6,7 +6,8 @@ import { createStore, applyMiddleware, compose, StoreEnhancer } from 'redux';
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 
-import reducers, { Store } from 'app/reducers';
+import reducers from 'app/reducers';
+import { Store } from 'app/types';
 
 export default function storeFactory(preloadedState = {}): Store {
     const middlewares = applyMiddleware(thunk);

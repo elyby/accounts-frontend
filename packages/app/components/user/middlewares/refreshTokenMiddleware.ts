@@ -1,6 +1,6 @@
 import { ensureToken, recoverFromTokenError } from 'app/components/accounts/actions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
-import { Store } from 'app/reducers';
+import { Store } from 'app/types';
 import { Middleware } from 'app/services/request';
 
 /**

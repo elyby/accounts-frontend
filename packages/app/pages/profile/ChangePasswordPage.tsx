@@ -1,5 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from 'app/functions';
 import { changePassword } from 'app/services/api/accounts';
 import { FormModel } from 'app/components/ui/form';
 import ChangePassword from 'app/components/profile/changePassword/ChangePassword';

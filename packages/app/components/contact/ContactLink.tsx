@@ -1,5 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from 'app/functions';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact';
 

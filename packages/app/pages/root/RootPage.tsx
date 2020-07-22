@@ -1,11 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { resetAuth } from 'app/components/auth/actions';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import { Route, Link, Switch } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import clsx from 'clsx';
+
+import { connect } from 'app/functions';
+import { resetAuth } from 'app/components/auth/actions';
 import { ScrollIntoView } from 'app/components/ui/scroll';
 import PrivateRoute from 'app/containers/PrivateRoute';
 import AuthFlowRoute from 'app/containers/AuthFlowRoute';
@@ -15,7 +16,6 @@ import * as loader from 'app/services/loader';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import { User } from 'app/components/user';
 import { Account } from 'app/components/accounts/reducer';
-import { RootState } from 'app/reducers';
 import { ComponentLoader } from 'app/components/ui/loader';
 
 import styles from './root.scss';
@@ -113,7 +113,7 @@ class RootPage extends React.PureComponent<{
 
 export default withRouter(
     connect(
-        (state: RootState) => ({
+        (state) => ({
             user: state.user,
             account: getActiveAccount(state),
             isPopupActive: state.popup.popups.length > 0,

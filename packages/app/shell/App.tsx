@@ -2,7 +2,7 @@ import { hot } from 'react-hot-loader/root';
 import React, { ComponentType } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { Store } from 'app/reducers';
+import { Store } from 'app/types';
 import AuthFlowRoute from 'app/containers/AuthFlowRoute';
 import RootPage from 'app/pages/root/RootPage';
 import { ComponentLoader } from 'app/components/ui/loader';
