@@ -2,8 +2,10 @@ import React, { ComponentType, useCallback, useRef } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+
 import { ChangeLanguageLink } from 'app/components/languageSwitcher';
 import { RelativeTime } from 'app/components/ui';
+import { Button } from 'app/components/ui/form';
 import { User } from 'app/components/user';
 import RulesPage from 'app/pages/rules/RulesPage';
 
@@ -61,7 +63,7 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
                 </div>
 
                 <div className={styles.formColumn}>
-                    <div className={profileForm.form}>
+                    <div className={styles.profilePanel}>
                         <div className={styles.item}>
                             <h3 className={profileForm.title}>
                                 <Message key="personalData" defaultMessage="Personal data" />
@@ -109,20 +111,6 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
                         />
 
                         <ProfileField
-                            link="/profile/change-password"
-                            label={<Message key="password" defaultMessage="Password:" />}
-                            value={
-                                <Message
-                                    key="changedAt"
-                                    defaultMessage="Changed {at}"
-                                    values={{
-                                        at: <RelativeTime timestamp={user.passwordChangedAt * 1000} />,
-                                    }}
-                                />
-                            }
-                        />
-
-                        <ProfileField
                             label={<Message key="siteLanguage" defaultMessage="Site language:" />}
                             value={<ChangeLanguageLink />}
                             warningMessage={
@@ -151,6 +139,47 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
                         />
 
                         <ProfileField
+                            label={<Message key="uuid" defaultMessage="UUID:" />}
+                            value={
+                                <span
+                                    className={styles.uuid}
+                                    ref={(ref) => (uuidRef.current = ref!)}
+                                    onMouseOver={onUuidMouseOver}
+                                >
+                                    {user.uuid}
+                                </span>
+                            }
+                        />
+                    </div>
+
+                    <div className={styles.profilePanel}>
+                        <div className={styles.item}>
+                            <h3 className={profileForm.title}>
+                                <Message key="accountManagement" defaultMessage="Account management" />
+                            </h3>
+                            <p className={profileForm.description}>
+                                <Message
+                                    key="accountManagementDescription"
+                                    defaultMessage="In this area you can manage the security settings of your account. Some operations may cause logout on other devices."
+                                />
+                            </p>
+                        </div>
+
+                        <ProfileField
+                            link="/profile/change-password"
+                            label={<Message key="password" defaultMessage="Password:" />}
+                            value={
+                                <Message
+                                    key="changedAt"
+                                    defaultMessage="Changed {at}"
+                                    values={{
+                                        at: <RelativeTime timestamp={user.passwordChangedAt * 1000} />,
+                                    }}
+                                />
+                            }
+                        />
+
+                        <ProfileField
                             link="/profile/mfa"
                             label={<Message key="twoFactorAuth" defaultMessage="Two‑factor auth:" />}
                             value={
@@ -163,15 +192,11 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
                         />
 
                         <ProfileField
-                            label={<Message key="uuid" defaultMessage="UUID:" />}
                             value={
-                                <span
-                                    className={styles.uuid}
-                                    ref={(ref) => (uuidRef.current = ref!)}
-                                    onMouseOver={onUuidMouseOver}
-                                >
-                                    {user.uuid}
-                                </span>
+                                // @ts-ignore
+                                <Button component={Link} to="/profile/delete" small color="black">
+                                    <Message key="accountDeletion" defaultMessage="Account deletion" />
+                                </Button>
                             }
                         />
                     </div>

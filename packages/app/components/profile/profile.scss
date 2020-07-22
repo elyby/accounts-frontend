@@ -10,7 +10,6 @@ $formColumnWidth: 416px;
 .formColumn {
     width: $formColumnWidth;
     min-width: $formColumnWidth; // Чтобы flex не ужимал блок, несмотря на фикс ширину выше
-    border-bottom: 10px solid #ddd8ce;
 }
 
 .descriptionColumn {
@@ -28,6 +27,13 @@ $formColumnWidth: 416px;
     font-size: 14px;
     line-height: 1.4;
     color: #9a9a9a;
+}
+
+.profilePanel {
+    composes: form from '~app/components/profile/profileForm.scss';
+
+    margin-bottom: 30px;
+    border-bottom: 10px solid #ddd8ce;
 }
 
 .item {
