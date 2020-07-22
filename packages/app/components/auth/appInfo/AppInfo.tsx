@@ -1,14 +1,10 @@
 import React from 'react';
-import { defineMessages, FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message } from 'react-intl';
 import { Button } from 'app/components/ui/form';
 import { FooterMenu } from 'app/components/footerMenu';
 
 import appName from './appName.intl';
 import styles from './appInfo.scss';
-
-const messages = defineMessages({
-    goToAuth: 'Go to auth',
-});
 
 export default class AppInfo extends React.Component<{
     name?: string;
@@ -51,7 +47,9 @@ export default class AppInfo extends React.Component<{
                     )}
                 </div>
                 <div className={styles.goToAuth}>
-                    <Button onClick={onGoToAuth} label={messages.goToAuth} />
+                    <Button onClick={onGoToAuth}>
+                        <Message key="goToAuth" defaultMessage="Go to auth" />
+                    </Button>
                 </div>
 
                 <div className={styles.footer}>

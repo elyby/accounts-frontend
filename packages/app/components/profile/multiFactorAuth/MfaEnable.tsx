@@ -1,4 +1,6 @@
 import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import { Button, FormModel } from 'app/components/ui/form';
 import styles from 'app/components/profile/profileForm.scss';
 import Stepper from 'app/components/ui/stepper';
@@ -7,7 +9,6 @@ import { ScrollIntoView } from 'app/components/ui/scroll';
 import logger from 'app/services/logger';
 import { getSecret, enable as enableMFA } from 'app/services/api/mfa';
 import { Form } from 'app/components/ui/form';
-import { defineMessages } from 'react-intl';
 
 import Context from '../Context';
 import Instructions from './instructions';
@@ -105,7 +106,9 @@ export default class MfaEnable extends React.PureComponent<Props, State> {
 
                     {this.renderStepForms()}
 
-                    <Button color="green" onClick={buttonAction} loading={isLoading} block label={buttonLabel} />
+                    <Button color="green" onClick={buttonAction} loading={isLoading} block>
+                        <Message {...buttonLabel} />
+                    </Button>
                 </div>
             </div>
         );

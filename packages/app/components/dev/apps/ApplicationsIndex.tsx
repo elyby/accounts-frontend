@@ -15,7 +15,6 @@ import ApplicationsList from './list';
 
 const labels = defineMessages({
     addNew: 'Add new',
-    authorization: 'Authorization',
 });
 
 type Props = {
@@ -123,10 +122,11 @@ function Loader({ noApps }: { noApps: boolean }) {
                 <LinkButton
                     to="/dev/applications/new"
                     data-e2e="newApp"
-                    label={labels.addNew}
                     color={COLOR_GREEN}
                     className={styles.emptyStateActionButton}
-                />
+                >
+                    <Message {...labels.addNew} />
+                </LinkButton>
             </div>
         </div>
     );
@@ -145,12 +145,9 @@ function Guest() {
                 </div>
             </div>
 
-            <LinkButton
-                to="/login"
-                label={labels.authorization}
-                color={COLOR_BLUE}
-                className={styles.emptyStateActionButton}
-            />
+            <LinkButton to="/login" color={COLOR_BLUE} className={styles.emptyStateActionButton}>
+                <Message key="authorization" defaultMessage="Authorization" />
+            </LinkButton>
         </div>
     );
 }

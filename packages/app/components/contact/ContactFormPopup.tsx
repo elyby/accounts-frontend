@@ -120,7 +120,9 @@ const ContactFormPopup: ComponentType<Props> = ({ initEmail = '', onSubmit, onCl
                     />
                 </div>
 
-                <Button label={<Message key="send" defaultMessage="Send" />} block type="submit" disabled={isLoading} />
+                <Button block type="submit" disabled={isLoading}>
+                    <Message key="send" defaultMessage="Send" />
+                </Button>
             </Form>
         </Popup>
     );

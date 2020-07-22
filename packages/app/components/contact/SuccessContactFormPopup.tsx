@@ -30,7 +30,9 @@ const SuccessContactFormPopup: ComponentType<Props> = ({ email, onClose }) => (
         </div>
 
         <div className={styles.footer}>
-            <Button label={<Message key="close" defaultMessage="Close" />} block onClick={onClose} />
+            <Button block onClick={onClose}>
+                <Message key="close" defaultMessage="Close" />
+            </Button>
         </div>
     </Popup>
 );

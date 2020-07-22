@@ -1,14 +1,10 @@
 import React from 'react';
-import { defineMessages, FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { Input, Button, Form, FormModel } from 'app/components/ui/form';
 import { BackButton } from 'app/components/profile/ProfileForm';
 
 import styles from '../profileForm.scss';
-
-const labels = defineMessages({
-    changeUsernameButton: 'Change nickname',
-});
 
 interface Props {
     username: string;
@@ -72,7 +68,9 @@ export default class ChangeUsername extends React.Component<Props> {
                             </div>
                         </div>
 
-                        <Button color="green" block label={labels.changeUsernameButton} type="submit" />
+                        <Button color="green" block type="submit">
+                            <Message key="changeUsernameButton" defaultMessage="Change nickname" />
+                        </Button>
                     </div>
                 </div>
             </Form>

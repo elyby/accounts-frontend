@@ -7,7 +7,6 @@ import mfaStyles from './mfa.scss';
 
 const messages = defineMessages({
     codePlaceholder: 'Enter the code here',
-    disable: 'Disable',
 });
 
 export default class MfaDisableForm extends React.Component<{
@@ -49,7 +48,9 @@ export default class MfaDisableForm extends React.Component<{
                     </div>
                 </div>
 
-                <Button type="submit" color="green" block label={messages.disable} />
+                <Button type="submit" color="green" block>
+                    <Message key="disable" defaultMessage="Disable" />
+                </Button>
             </Form>
         );
     }

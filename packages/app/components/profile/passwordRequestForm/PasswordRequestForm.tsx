@@ -37,7 +37,9 @@ const PasswordRequestForm: ComponentType<Props> = ({ form, onSubmit }) => (
                 />
             </div>
 
-            <Button type="submit" color="green" label={<Message key="continue" defaultMessage="Continue" />} block />
+            <Button type="submit" color="green" block>
+                <Message key="continue" defaultMessage="Continue" />
+            </Button>
         </Form>
     </Popup>
 );

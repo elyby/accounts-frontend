@@ -7,7 +7,6 @@ import { BackButton } from '../ProfileForm';
 import styles from '../profileForm.scss';
 
 const labels = defineMessages({
-    changePasswordButton: 'Change password',
     newPasswordLabel: 'New password:',
     repeatNewPasswordLabel: 'Repeat the password:',
     logoutOnAllDevices: 'Logout on all devices',
@@ -99,7 +98,9 @@ export default class ChangePassword extends React.Component<Props> {
                             </div>
                         </div>
 
-                        <Button color="green" block label={labels.changePasswordButton} type="submit" />
+                        <Button color="green" block type="submit">
+                            <Message key="changePasswordButton" defaultMessage="Change password" />
+                        </Button>
                     </div>
                 </div>
             </Form>

@@ -120,23 +120,12 @@ export class AccountSwitcher extends React.Component<Props> {
                 ))}
                 {allowAdd ? (
                     <Link to="/login" onClick={this.props.onAfterAction}>
-                        <Button
-                            color={COLOR_WHITE}
-                            data-testid="add-account"
-                            block
-                            small
-                            className={styles.addAccount}
-                            label={
-                                <Message key="addAccount" defaultMessage="Add account">
-                                    {(message) => (
-                                        <span>
-                                            <div className={styles.addIcon} />
-                                            {message}
-                                        </span>
-                                    )}
-                                </Message>
-                            }
-                        />
+                        <Button color={COLOR_WHITE} data-testid="add-account" block small className={styles.addAccount}>
+                            <span>
+                                <div className={styles.addIcon} />
+                                <Message key="addAccount" defaultMessage="Add account" />
+                            </span>
+                        </Button>
                     </Link>
                 ) : null}
             </div>

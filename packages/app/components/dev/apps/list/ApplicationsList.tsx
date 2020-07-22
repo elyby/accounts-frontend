@@ -49,10 +49,11 @@ export default class ApplicationsList extends React.Component<Props, State> {
                     <LinkButton
                         to="/dev/applications/new"
                         data-e2e="newApp"
-                        label={messages.addNew}
                         color={COLOR_GREEN}
                         className={styles.appsListAddNewAppBtn}
-                    />
+                    >
+                        <Message {...messages.addNew} />
+                    </LinkButton>
                 </div>
                 <div className={styles.appsListContainer}>
                     {applications.map((app) => (

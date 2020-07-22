@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
+
 import { SlideMotion } from 'app/components/ui/motion';
 import { ScrollIntoView } from 'app/components/ui/scroll';
 import { Input, Button, Form, FormModel, FormError } from 'app/components/ui/form';
@@ -39,8 +40,6 @@ interface FormStepParams {
 }
 
 const labels = defineMessages({
-    changeEmailButton: 'Change E‑mail',
-    sendEmailButton: 'Send E‑mail',
     codePlaceholder: 'Paste the code here',
     newEmailPlaceholder: 'Enter new E‑mail',
 });
@@ -107,12 +106,13 @@ export default class ChangeEmail extends React.Component<Props, State> {
 
                         {this.renderStepForms()}
 
-                        <Button
-                            color="violet"
-                            type="submit"
-                            block
-                            label={this.isLastStep() ? labels.changeEmailButton : labels.sendEmailButton}
-                        />
+                        <Button color="violet" type="submit" block>
+                            {this.isLastStep() ? (
+                                <Message key="changeEmailButton" defaultMessage="Change E‑mail" />
+                            ) : (
+                                <Message key="sendEmailButton" defaultMessage="Send E‑mail" />
+                            )}
+                        </Button>
                     </div>
 
                     <div className={helpLinks.helpLinks}>

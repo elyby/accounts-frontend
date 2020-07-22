@@ -20,10 +20,7 @@ const messages = defineMessages({
     minecraftServer: 'Minecraft server',
 
     creatingApplication: 'Creating an application',
-    createApplication: 'Create application',
-
     updatingApplication: 'Updating an application',
-    updateApplication: 'Update application',
 });
 
 type TypeToForm = Record<
@@ -115,12 +112,13 @@ export default class ApplicationForm extends React.Component<{
                     </div>
 
                     {!!FormComponent && (
-                        <Button
-                            color={COLOR_GREEN}
-                            block
-                            label={isUpdate ? messages.updateApplication : messages.createApplication}
-                            type="submit"
-                        />
+                        <Button color={COLOR_GREEN} block type="submit">
+                            {isUpdate ? (
+                                <Message key="updateApplication" defaultMessage="Update application" />
+                            ) : (
+                                <Message key="createApplication" defaultMessage="Create application" />
+                            )}
+                        </Button>
                     )}
                 </div>
             </Form>

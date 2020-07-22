@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from 'react';
-import { defineMessages, FormattedMessage as Message } from 'react-intl';
+import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 
 import { connect } from 'app/functions';
@@ -7,10 +7,6 @@ import { Button } from 'app/components/ui/form';
 import copy from 'app/services/copy';
 
 import styles from './finish.scss';
-
-const messages = defineMessages({
-    copy: 'Copy',
-});
 
 interface Props {
     appName: string;
@@ -58,7 +54,9 @@ class Finish extends React.Component<Props> {
                                 <div className={styles.codeContainer}>
                                     <div className={styles.code}>{code}</div>
                                 </div>
-                                <Button color="green" small label={messages.copy} onClick={this.onCopyClick} />
+                                <Button color="green" small onClick={this.onCopyClick}>
+                                    <Message key="copy" defaultMessage="Copy" />
+                                </Button>
                             </div>
                         ) : (
                             <div className={styles.description}>

@@ -16,15 +16,15 @@ const ACTION_DELETE = 'delete';
 const actionButtons = [
     {
         type: ACTION_REVOKE_TOKENS,
-        label: messages.revokeAllTokens,
+        label: <Message {...messages.revokeAllTokens} />,
     },
     {
         type: ACTION_RESET_SECRET,
-        label: messages.resetClientSecret,
+        label: <Message {...messages.resetClientSecret} />,
     },
     {
         type: ACTION_DELETE,
-        label: messages.delete,
+        label: <Message {...messages.delete} />,
     },
 ];
 
@@ -122,13 +122,14 @@ export default class ApplicationItem extends React.Component<
                             {actionButtons.map(({ type, label }) => (
                                 <Button
                                     key={type}
-                                    label={label}
                                     color={COLOR_BLACK}
                                     className={styles.appActionButton}
                                     disabled={!!selectedAction && selectedAction !== type}
                                     onClick={this.onActionButtonClick(type)}
                                     small
-                                />
+                                >
+                                    {label}
+                                </Button>
                             ))}
                         </div>
 
@@ -160,12 +161,13 @@ export default class ApplicationItem extends React.Component<
                         </div>
                         <div className={styles.appActionsButtons}>
                             <Button
-                                label={messages.cancel}
                                 color={COLOR_BLACK}
                                 className={styles.appActionButton}
                                 onClick={this.onActionButtonClick(null)}
                                 small
-                            />
+                            >
+                                <Message {...messages.cancel} />
+                            </Button>
                             <div className={styles.continueActionButtonWrapper}>
                                 {isActionPerforming ? (
                                     <div className={styles.performingAction}>
@@ -193,12 +195,13 @@ export default class ApplicationItem extends React.Component<
                         </div>
                         <div className={styles.appActionsButtons}>
                             <Button
-                                label={messages.cancel}
                                 color={COLOR_BLACK}
                                 className={styles.appActionButton}
                                 onClick={this.onActionButtonClick(null)}
                                 small
-                            />
+                            >
+                                <Message {...messages.cancel} />
+                            </Button>
                             <div className={styles.continueActionButtonWrapper}>
                                 {isActionPerforming ? (
                                     <div className={styles.performingAction}>
@@ -206,13 +209,14 @@ export default class ApplicationItem extends React.Component<
                                     </div>
                                 ) : (
                                     <Button
-                                        label={messages.delete}
                                         color={COLOR_RED}
                                         className={styles.appActionButton}
                                         onClick={this.onSubmitDelete}
                                         data-testid="delete-app"
                                         small
-                                    />
+                                    >
+                                        <Message {...messages.delete} />
+                                    </Button>
                                 )}
                             </div>
                         </div>
