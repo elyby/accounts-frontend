@@ -4,6 +4,7 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import util from 'util';
 
 import axios from 'axios';
 import JSON5 from 'json5';
@@ -13,7 +14,7 @@ import ch from 'chalk';
 import iso639 from 'iso-639-1';
 import { prompt, DistinctQuestion } from 'inquirer';
 
-import getRepoInfo from 'git-repo-info';
+import git from 'git-rev-sync';
 
 import { crowdin as config } from './../../config';
 
@@ -183,8 +184,22 @@ async function ensureDirectory(dirPath: string, branchId?: number): Promise<numb
     }, Promise.resolve<number>(null));
 }
 
+function getGitBranch(): string {
+    if (process.env.CI_COMMIT_BRANCH) {
+        return process.env.CI_COMMIT_BRANCH;
+    }
+
+    const branch = git.branch();
+
+    if (branch.startsWith('Detached')) {
+        throw new Error(`Cannot automatically detect git branch. Received "${branch}"`);
+    }
+
+    return branch;
+}
+
 async function pull(): Promise<void> {
-    const { branch: branchName } = getRepoInfo();
+    const branchName = getGitBranch();
     const isMasterBranch = branchName === 'master';
     let branchId: number | undefined;
 
@@ -299,7 +314,7 @@ async function push(): Promise<void> {
         },
     ];
 
-    const { branch: branchName } = getRepoInfo();
+    const branchName = getGitBranch();
     const isMasterBranch = branchName === 'master';
 
     if (!isMasterBranch) {
@@ -307,12 +322,12 @@ async function push(): Promise<void> {
             name: 'publishInBranch',
             type: 'confirm',
             default: true,
-            message: `Should be strings published in its own branch [${chalk.green(getRepoInfo().branch)}]?`,
+            message: `Should be strings published in its own branch [${chalk.green(branchName)}]?`,
         });
     }
 
     let disapproveTranslates = true;
-    let publishInBranch = isMasterBranch;
+    let publishInBranch = !isMasterBranch;
     try {
         const answers = await prompt(questions);
         disapproveTranslates = answers[0]; // eslint-disable-line prefer-destructuring
@@ -400,6 +415,7 @@ async function push(): Promise<void> {
                 console.error(`Unknown action ${action}`);
         }
     } catch (exception) {
-        console.error(exception);
+        console.error(util.inspect(exception, { depth: null }));
+        process.exit(1);
     }
 })();

@@ -7,6 +7,8 @@ variables:
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
 
+  GIT_DEPTH: 10
+
 stages:
   - prepare
   - test
