@@ -47,7 +47,7 @@ const webpackConfig = {
     output: {
         path: outputPath,
         publicPath: '/',
-        filename: '[name].js?[chunkhash]',
+        filename: `[name].js?[${isProduction ? 'chunkhash' : 'hash'}]`,
     },
 
     resolve: {
