@@ -26,12 +26,10 @@ const LOCALE_PATH = new Map<string, ImportFunction>([
             m === 'pluralrules'
                 ? import(
                       /* webpackChunkName: intl-pluralrules-eo-js */
-                      // @ts-ignore these doesn't have a value to type
                       '@kotwys/formatjs-esperanto/dist/pluralrules.js'
                   )
                 : import(
                       /* webpackChunkName: intl-relativetimeformat-eo-js */
-                      // @ts-ignore
                       '@kotwys/formatjs-esperanto/dist/relativetimeformat.js'
                   ),
     ],

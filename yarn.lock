@@ -2754,10 +2754,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@kotwys/formatjs-esperanto@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@kotwys/formatjs-esperanto/-/formatjs-esperanto-0.2.0.tgz#fabbc1ad73639e3955eff04478118bbf50fe3bf7"
-  integrity sha512-TT0BKLLFWIoASDxgg35LZPffXpdZ+cdcPKSZOUGna9KTbt+sYGLz6TLR6GBfaL+sRDsDXu0FG2XBAsWs+qPSng==
+"@kotwys/formatjs-esperanto@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@kotwys/formatjs-esperanto/-/formatjs-esperanto-0.2.1.tgz#586ad1cb6712ca1992e1e9fdd4392c1b4407ccea"
+  integrity sha512-6YQ95DeJ/ey8Ix7ZijnrjdPt32GpXRXMLbjIgbvrto7czg3yZt+l3+05aEmXwIZAf0waSHDTUYjVnHAZ6ksZzw==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
