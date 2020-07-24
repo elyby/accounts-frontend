@@ -18,7 +18,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const config = require('./config');
 const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n').default);
 const { getCountriesList } = require('app/components/i18n/localeFlags');
-const LOCALE_OVERRIDES = require('app/services/i18n/overrides')(__dirname);
 const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'build');
 
@@ -107,7 +106,6 @@ const webpackConfig = {
                 changeFreq: 'weekly',
             },
         ),
-        ...LOCALE_OVERRIDES.map((args) => new webpack.NormalModuleReplacementPlugin(...args)),
         // restrict webpack import context, to create chunks only for supported locales
         // @see services/i18n/intlPolyfill.js
         new webpack.ContextReplacementPlugin(/locale-data/, new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js$`)),
@@ -201,6 +199,19 @@ const webpackConfig = {
                 test: /\.font\.(js|json)$/,
                 type: 'javascript/auto',
                 use: ['fontgen-loader'],
+            },
+            {
+                // Replace some locales provided by FormatJS with local ones
+                test: /@formatjs\/intl-\w+\/dist\/locale-data/,
+                loader: 'file-replace-loader',
+                options: {
+                    condition: 'if-replacement-exists',
+                    replacement: (resource) =>
+                        resource.replace(
+                            /node_modules\/@formatjs\/intl-(\w+)\/dist\/locale-data\/(\w+)\.js/,
+                            'packages/app/services/i18n/overrides/$1/$2.js',
+                        ),
+                },
             },
         ],
     },

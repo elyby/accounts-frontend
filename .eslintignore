@@ -3,3 +3,4 @@ dll
 storybook-static
 node_modules
 cache
+packages/app/services/i18n/overrides

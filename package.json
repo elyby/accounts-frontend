@@ -132,6 +132,7 @@
         "exports-loader": "^0.7.0",
         "extract-react-intl-messages": "^4.1.1",
         "file-loader": "^6.0.0",
+        "file-replace-loader": "^1.2.0",
         "html-loader": "^1.1.0",
         "html-webpack-plugin": "^4.3.0",
         "identity-obj-proxy": "^3.0.0",

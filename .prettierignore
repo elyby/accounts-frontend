@@ -9,3 +9,4 @@ cache
 *.svg
 *.hbs
 .gitlab-ci.yml
+packages/app/services/i18n/overrides
