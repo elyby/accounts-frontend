@@ -21,5 +21,6 @@
         "jsx": "preserve",
         "strict": true
     },
-    "include": ["@types", "packages", "config", ".storybook"]
+    "include": ["@types", "packages", "config", ".storybook"],
+    "exclude": ["packages/app/services/i18n/overrides"]
 }
