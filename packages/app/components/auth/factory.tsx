@@ -1,9 +1,10 @@
 import React, { ComponentProps, ComponentType } from 'react';
+import { MessageDescriptor } from 'react-intl';
+
 import { Button } from 'app/components/ui/form';
 import RejectionLink from 'app/components/auth/RejectionLink';
 import AuthTitle from 'app/components/auth/AuthTitle';
-import { MessageDescriptor } from 'react-intl';
-import { Color } from 'app/components/ui';
+
 import BaseAuthBody from './BaseAuthBody';
 
 export type Factory = () => {
@@ -17,11 +18,7 @@ type RejectionLinkProps = ComponentProps<typeof RejectionLink>;
 interface FactoryParams {
     title: MessageDescriptor;
     body: typeof BaseAuthBody;
-    footer: {
-        color?: Color;
-        label: string | MessageDescriptor;
-        autoFocus?: boolean;
-    };
+    footer: Omit<ComponentProps<typeof Button>, 'type'>;
     links?: RejectionLinkProps | Array<RejectionLinkProps>;
 }
 

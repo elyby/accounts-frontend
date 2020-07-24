@@ -1,10 +1,11 @@
-import { defineMessages } from 'react-intl';
+import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import factory from '../factory';
 import Body from './ForgotPasswordBody';
 
 const messages = defineMessages({
     title: 'Forgot password',
-    sendMail: 'Send mail',
     alreadyHaveCode: 'Already have a code',
 });
 
@@ -14,7 +15,7 @@ export default factory({
     footer: {
         color: 'lightViolet',
         autoFocus: true,
-        label: messages.sendMail,
+        children: <Message key="sendMail" defaultMessage="Send mail" />,
     },
     links: {
         label: messages.alreadyHaveCode,

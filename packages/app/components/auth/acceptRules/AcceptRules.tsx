@@ -1,10 +1,11 @@
-import { defineMessages } from 'react-intl';
+import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import factory from '../factory';
 import Body from './AcceptRulesBody';
 
 const messages = defineMessages({
     title: 'User Agreement',
-    accept: 'Accept',
     declineAndLogout: 'Decline and logout',
 });
 
@@ -14,7 +15,7 @@ export default factory({
     footer: {
         color: 'darkBlue',
         autoFocus: true,
-        label: messages.accept,
+        children: <Message key="accept" defaultMessage="Accept" />,
     },
     links: {
         label: messages.declineAndLogout,

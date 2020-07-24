@@ -1,11 +1,12 @@
-import { defineMessages } from 'react-intl';
+import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import factory from '../factory';
 import Body from './PermissionsBody';
 
 const messages = defineMessages({
     permissionsTitle: 'Application permissions',
     decline: 'Decline',
-    approve: 'Approve',
 });
 
 export default factory({
@@ -14,7 +15,7 @@ export default factory({
     footer: {
         color: 'orange',
         autoFocus: true,
-        label: messages.approve,
+        children: <Message key="approve" defaultMessage="Approve" />,
     },
     links: {
         label: messages.decline,

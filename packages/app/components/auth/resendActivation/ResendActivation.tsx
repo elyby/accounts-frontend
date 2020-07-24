@@ -1,10 +1,11 @@
-import { defineMessages } from 'react-intl';
+import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import factory from '../factory';
 import Body from './ResendActivationBody';
 
 const messages = defineMessages({
     title: 'Did not received an E‑mail',
-    sendNewEmail: 'Send new E‑mail',
     alreadyHaveCode: 'Already have a code',
 });
 
@@ -13,7 +14,7 @@ export default factory({
     body: Body,
     footer: {
         color: 'blue',
-        label: messages.sendNewEmail,
+        children: <Message key="sendNewEmail" defaultMessage="Send new E‑mail" />,
     },
     links: {
         label: messages.alreadyHaveCode,

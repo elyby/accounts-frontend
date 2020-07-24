@@ -1,11 +1,12 @@
-import { defineMessages } from 'react-intl';
+import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import factory from '../factory';
 import Body from './RecoverPasswordBody';
 
 const messages = defineMessages({
     title: 'Restore password',
     contactSupport: 'Contact support',
-    change: 'Change password',
 });
 
 export default factory({
@@ -13,7 +14,7 @@ export default factory({
     body: Body,
     footer: {
         color: 'lightViolet',
-        label: messages.change,
+        children: <Message key="change" defaultMessage="Change password" />,
     },
     links: {
         label: messages.contactSupport,

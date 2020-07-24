@@ -1,10 +1,11 @@
-import { defineMessages } from 'react-intl';
+import React from 'react';
+import { FormattedMessage as Message, defineMessages } from 'react-intl';
+
 import factory from '../factory';
 import Body from './PasswordBody';
 
 const messages = defineMessages({
     passwordTitle: 'Enter password',
-    signInButton: 'Sign in',
     forgotPassword: 'Forgot password',
 });
 
@@ -13,7 +14,7 @@ export default factory({
     body: Body,
     footer: {
         color: 'green',
-        label: messages.signInButton,
+        children: <Message key="signInButton" defaultMessage="Sign in" />,
     },
     links: {
         label: messages.forgotPassword,
