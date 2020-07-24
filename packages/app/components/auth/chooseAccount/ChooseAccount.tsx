@@ -1,3 +1,4 @@
+import React from 'react';
 import { FormattedMessage as Message, defineMessages } from 'react-intl';
 
 import factory from '../factory';
