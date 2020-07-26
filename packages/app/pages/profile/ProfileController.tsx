@@ -20,6 +20,7 @@ import ChangePasswordPage from 'app/pages/profile/ChangePasswordPage';
 import ChangeUsernamePage from 'app/pages/profile/ChangeUsernamePage';
 import ChangeEmailPage from 'app/pages/profile/ChangeEmailPage';
 import MultiFactorAuthPage from 'app/pages/profile/MultiFactorAuthPage';
+import DeleteAccountPage from 'app/pages/profile/DeleteAccountPage';
 
 interface Props {
     userId: number;
@@ -50,6 +51,7 @@ const ProfileController: ComponentType<Props> = ({ userId, onSubmit, refreshUser
                         <Route path="/profile/change-password" exact component={ChangePasswordPage} />
                         <Route path="/profile/change-username" exact component={ChangeUsernamePage} />
                         <Route path="/profile/change-email/:step?/:code?" component={ChangeEmailPage} />
+                        <Route path="/profile/delete" component={DeleteAccountPage} />
                         <Route path="/profile" exact component={Profile} />
                         <Route path="/" exact component={Profile} />
                         <Redirect to="/404" />

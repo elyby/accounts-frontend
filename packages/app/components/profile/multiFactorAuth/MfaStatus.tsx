@@ -18,7 +18,7 @@ const MfaStatus: ComponentType<Props> = ({ onProceed }) => (
             <div className={mfaStyles.bigIcon}>
                 <span className={icons.lock} />
             </div>
-            <p className={`${styles.description} ${mfaStyles.mfaTitle}`}>
+            <p className={mfaStyles.mfaTitle}>
                 <Message
                     key="mfaEnabledForYourAcc"
                     defaultMessage="Two‑factor authentication for your account is active now"
