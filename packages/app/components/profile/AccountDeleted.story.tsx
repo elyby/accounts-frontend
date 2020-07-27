@@ -8,6 +8,13 @@ import AccountDeleted from './AccountDeleted';
 
 storiesOf('Components/Profile', module).add('AccountDeleted', () => (
     <ProfileLayout>
-        <AccountDeleted onRestore={action('onRestore')} />
+        <AccountDeleted
+            onRestore={() =>
+                new Promise((resolve) => {
+                    action('onRestore')();
+                    setTimeout(resolve, 500);
+                })
+            }
+        />
     </ProfileLayout>
 ));

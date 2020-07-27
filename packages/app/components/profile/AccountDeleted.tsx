@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, useCallback, useState } from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 
@@ -7,10 +7,20 @@ import { Button } from 'app/components/ui/form';
 import styles from './accountDeleted.scss';
 
 interface Props {
-    onRestore?: () => void;
+    onRestore?: () => Promise<void>;
 }
 
 const AccountDeleted: ComponentType<Props> = ({ onRestore }) => {
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+    const onRestoreClick = useCallback(() => {
+        if (!onRestore) {
+            return;
+        }
+
+        setIsSubmitted(true);
+        onRestore().finally(() => setIsSubmitted(false));
+    }, [onRestore]);
+
     return (
         <div className={styles.wrapper}>
             <Message key="accountDeleted" defaultMessage="Account is deleted">
@@ -36,7 +46,7 @@ const AccountDeleted: ComponentType<Props> = ({ onRestore }) => {
                 />
             </div>
 
-            <Button onClick={onRestore} color="black" small>
+            <Button onClick={onRestoreClick} color="black" small loading={isSubmitted}>
                 <Message key="restoreAccount" defaultMessage="Restore account" />
             </Button>
         </div>
