@@ -13,7 +13,7 @@ interface Props {
 const AccountDeleted: ComponentType<Props> = ({ onRestore }) => {
     return (
         <div className={styles.wrapper}>
-            <Message key="accountDeleted" defaultMessage="Account deleted">
+            <Message key="accountDeleted" defaultMessage="Account is deleted">
                 {(pageTitle: string) => (
                     <h2 className={styles.title}>
                         <Helmet title={pageTitle} />
@@ -25,15 +25,13 @@ const AccountDeleted: ComponentType<Props> = ({ onRestore }) => {
             <div className={styles.description}>
                 <Message
                     key="accountDeletedDescription"
-                    // TODO: verify translation
-                    defaultMessage="The account has been marked for deletion and will be permanently removed within a week. Until then, all activity on the account has been suspended."
+                    defaultMessage="The account has been marked for deletion and will be permanently removed within a week. Until then, all account activities have been suspended."
                 />
             </div>
 
             <div className={styles.description}>
                 <Message
                     key="ifYouWantToRestoreAccount"
-                    // TODO: verify translation
                     defaultMessage="If you want to restore your account, click on the button below."
                 />
             </div>
