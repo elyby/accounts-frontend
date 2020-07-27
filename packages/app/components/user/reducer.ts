@@ -10,6 +10,7 @@ export interface User {
     lang: string;
     isGuest: boolean;
     isActive: boolean;
+    isDeleted: boolean;
     isOtpEnabled: boolean;
     passwordChangedAt: number;
     hasMojangUsernameCollision: boolean;
@@ -31,6 +32,7 @@ const defaults: State = {
     avatar: '',
     lang: '',
     isActive: false,
+    isDeleted: false,
     isOtpEnabled: false,
     shouldAcceptRules: false, // whether user need to review updated rules
     passwordChangedAt: 0,

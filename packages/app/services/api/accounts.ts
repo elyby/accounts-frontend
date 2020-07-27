@@ -86,3 +86,13 @@ export function confirmNewEmail(id: number, key: string): Promise<{ success: boo
         key,
     });
 }
+
+export function deleteAccount(id: number, { password }: { password?: string }): Promise<{ success: boolean }> {
+    return request.delete(`/api/v1/accounts/${id}`, {
+        password,
+    });
+}
+
+export function restoreAccount(id: number): Promise<{ success: boolean }> {
+    return request.post(`/api/v1/accounts/${id}/restore`);
+}

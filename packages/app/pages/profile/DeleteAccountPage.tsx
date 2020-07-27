@@ -1,7 +1,7 @@
 import React, { ComponentType, useCallback, useContext, useRef } from 'react';
 
 import { useReduxDispatch } from 'app/functions';
-import { changePassword } from 'app/services/api/accounts';
+import { deleteAccount } from 'app/services/api/accounts';
 import { FormModel } from 'app/components/ui/form';
 import DeleteAccount from 'app/components/profile/deleteAccount';
 import { updateUser } from 'app/components/user/actions';
@@ -16,13 +16,12 @@ const DeleteAccountPage: ComponentType = () => {
             context
                 .onSubmit({
                     form,
-                    // TODO: rework
-                    sendData: () => changePassword(context.userId, form.serialize()),
+                    sendData: () => deleteAccount(context.userId, form.serialize()),
                 })
                 .then(() => {
                     dispatch(
                         updateUser({
-                            passwordChangedAt: Date.now() / 1000,
+                            isDeleted: true,
                         }),
                     );
                     context.goToProfile();

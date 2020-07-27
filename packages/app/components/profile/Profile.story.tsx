@@ -22,6 +22,7 @@ storiesOf('Components/Profile', module).add('Profile', () => (
                 hasMojangUsernameCollision: true,
                 isActive: true,
                 isGuest: false,
+                isDeleted: false,
                 isOtpEnabled: true,
                 lang: 'unknown',
                 passwordChangedAt: 1595328712,

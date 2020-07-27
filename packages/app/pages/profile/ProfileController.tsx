@@ -11,7 +11,7 @@ import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
 import { FormModel } from 'app/components/ui/form';
 import { Provider } from 'app/components/profile/Context';
-import { ComponentLoader } from 'app/components/ui/loader';
+import { User } from 'app/components/user';
 
 import styles from './profile.scss';
 
@@ -21,14 +21,15 @@ import ChangeUsernamePage from 'app/pages/profile/ChangeUsernamePage';
 import ChangeEmailPage from 'app/pages/profile/ChangeEmailPage';
 import MultiFactorAuthPage from 'app/pages/profile/MultiFactorAuthPage';
 import DeleteAccountPage from 'app/pages/profile/DeleteAccountPage';
+import AccountDeletedPage from 'app/pages/profile/AccountDeletedPage';
 
 interface Props {
-    userId: number;
+    user: User;
     onSubmit: (options: { form: FormModel; sendData: () => Promise<any> }) => Promise<void>;
     refreshUserData: () => Promise<any>;
 }
 
-const ProfileController: ComponentType<Props> = ({ userId, onSubmit, refreshUserData }) => {
+const ProfileController: ComponentType<Props> = ({ user, onSubmit, refreshUserData }) => {
     const goToProfile = useCallback(async () => {
         await refreshUserData();
 
@@ -39,12 +40,14 @@ const ProfileController: ComponentType<Props> = ({ userId, onSubmit, refreshUser
         <div className={styles.container}>
             <Provider
                 value={{
-                    userId,
+                    userId: user.id!,
                     onSubmit,
                     goToProfile,
                 }}
             >
-                <React.Suspense fallback={<ComponentLoader />}>
+                {user.isDeleted ? (
+                    <AccountDeletedPage />
+                ) : (
                     <Switch>
                         <Route path="/profile/mfa/step:step([1-3])" component={MultiFactorAuthPage} />
                         <Route path="/profile/mfa" exact component={MultiFactorAuthPage} />
@@ -56,7 +59,7 @@ const ProfileController: ComponentType<Props> = ({ userId, onSubmit, refreshUser
                         <Route path="/" exact component={Profile} />
                         <Redirect to="/404" />
                     </Switch>
-                </React.Suspense>
+                )}
 
                 <div className={styles.footer}>
                     <FooterMenu />
@@ -68,7 +71,7 @@ const ProfileController: ComponentType<Props> = ({ userId, onSubmit, refreshUser
 
 export default connect(
     (state) => ({
-        userId: state.user.id!,
+        user: state.user,
     }),
     {
         refreshUserData,
