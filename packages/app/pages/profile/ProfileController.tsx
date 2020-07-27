@@ -46,7 +46,10 @@ const ProfileController: ComponentType<Props> = ({ user, onSubmit, refreshUserDa
                 }}
             >
                 {user.isDeleted ? (
-                    <AccountDeletedPage />
+                    <Switch>
+                        <Route path="/" exact component={AccountDeletedPage} />
+                        <Redirect to="/" />
+                    </Switch>
                 ) : (
                     <Switch>
                         <Route path="/profile/mfa/step:step([1-3])" component={MultiFactorAuthPage} />
