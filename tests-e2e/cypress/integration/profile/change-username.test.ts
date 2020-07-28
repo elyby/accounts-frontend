@@ -1,3 +1,5 @@
+import { UserResponse } from 'app/services/api/accounts';
+
 import { openSectionByName, confirmWithPassword } from './utils';
 
 describe('Profile — Change Username', () => {
@@ -18,10 +20,11 @@ describe('Profile — Change Username', () => {
                     elyProfileLink: 'http://ely.by/u7',
                     email: 'danilenkos@auroraglobal.com',
                     isActive: true,
+                    isDeleted: false,
                     passwordChangedAt: 1476075696,
                     hasMojangUsernameCollision: true,
                     shouldAcceptRules: false,
-                },
+                } as UserResponse,
             });
 
             cy.route({

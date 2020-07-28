@@ -1,3 +1,5 @@
+import { UserResponse } from 'app/services/api/accounts';
+
 import { openSectionByName, getSectionByName, confirmWithPassword } from './utils';
 
 describe('Profile — mfa', () => {
@@ -63,10 +65,11 @@ describe('Profile — mfa', () => {
                     elyProfileLink: 'http://ely.by/u7',
                     email: 'danilenkos@auroraglobal.com',
                     isActive: true,
+                    isDeleted: false,
                     passwordChangedAt: 1476075696,
                     hasMojangUsernameCollision: true,
                     shouldAcceptRules: false,
-                },
+                } as UserResponse,
             });
 
             confirmWithPassword(account.password);
@@ -104,10 +107,11 @@ describe('Profile — mfa', () => {
                     elyProfileLink: 'http://ely.by/u7',
                     email: 'danilenkos@auroraglobal.com',
                     isActive: true,
+                    isDeleted: false,
                     passwordChangedAt: 1476075696,
                     hasMojangUsernameCollision: true,
                     shouldAcceptRules: false,
-                },
+                } as UserResponse,
             });
             cy.route({
                 method: 'DELETE',

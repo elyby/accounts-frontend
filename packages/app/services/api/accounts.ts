@@ -7,6 +7,7 @@ export interface UserResponse {
     id: number;
     isActive: boolean;
     isOtpEnabled: boolean;
+    isDeleted: boolean;
     lang: string;
     passwordChangedAt: number; // timestamp
     registeredAt: number; // timestamp
@@ -16,13 +17,7 @@ export interface UserResponse {
 }
 
 export function getInfo(id: number, token?: string): Promise<UserResponse> {
-    return request.get(
-        `/api/v1/accounts/${id}`,
-        {},
-        {
-            token,
-        },
-    );
+    return request.get(`/api/v1/accounts/${id}`, {}, { token });
 }
 
 export function changePassword(

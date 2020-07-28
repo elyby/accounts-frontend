@@ -193,8 +193,14 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
 
                         <ProfileField
                             value={
-                                // @ts-ignore
-                                <Button component={Link} to="/profile/delete" small color="black">
+                                <Button
+                                    component={Link}
+                                    // @ts-ignore
+                                    to="/profile/delete"
+                                    small
+                                    color="black"
+                                    data-testid="profile-action"
+                                >
                                     <Message key="accountDeletion" defaultMessage="Account deletion" />
                                 </Button>
                             }

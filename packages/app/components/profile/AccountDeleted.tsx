@@ -22,7 +22,7 @@ const AccountDeleted: ComponentType<Props> = ({ onRestore }) => {
     }, [onRestore]);
 
     return (
-        <div className={styles.wrapper}>
+        <div className={styles.wrapper} data-testid="deletedAccount">
             <Message key="accountDeleted" defaultMessage="Account is deleted">
                 {(pageTitle: string) => (
                     <h2 className={styles.title}>
