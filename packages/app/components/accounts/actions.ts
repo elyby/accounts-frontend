@@ -78,7 +78,7 @@ export function authenticate(
                 sessionStorage.setItem(`stranger${newAccount.id}`, '1');
             }
 
-            if (auth && auth.oauth && auth.oauth.clientId) {
+            if (auth?.oauth?.clientId) {
                 // if we authenticating during oauth, we disable account chooser
                 // because user probably has made his choise now
                 // this may happen, when user registers, logs in or uses account

@@ -83,7 +83,13 @@ describe('AcceptRulesState', () => {
         it('should logout', () => {
             expectRun(mock, 'logout');
 
-            state.reject(context);
+            state.reject(context, {});
+        });
+
+        it('should navigate to the account deletion page', () => {
+            expectNavigate(mock, '/profile/delete');
+
+            state.reject(context, { deleteAccount: true });
         });
     });
 });
