@@ -1,4 +1,5 @@
 import { account1 } from '../../fixtures/accounts.json';
+import { UserResponse } from 'app/services/api/accounts';
 
 const defaults = {
     client_id: 'ely',
@@ -14,6 +15,36 @@ describe('OAuth', () => {
         cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
         cy.url().should('equal', 'https://dev.ely.by/');
+    });
+
+    it('should not complete oauth if account is deleted', () => {
+        cy.login({ accounts: ['default'] });
+
+        cy.server();
+        cy.route({
+            method: 'GET',
+            url: `/api/v1/accounts/${account1.id}`,
+            response: {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: 'SleepWalker',
+                isOtpEnabled: false,
+                registeredAt: 1475568334,
+                lang: 'en',
+                elyProfileLink: 'http://ely.by/u7',
+                email: 'danilenkos@auroraglobal.com',
+                isActive: true,
+                isDeleted: true, // force user into the deleted state
+                passwordChangedAt: 1476075696,
+                hasMojangUsernameCollision: true,
+                shouldAcceptRules: false,
+            } as UserResponse,
+        });
+
+        cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+        cy.location('pathname').should('eq', '/');
+        cy.findByTestId('deletedAccount').should('contain', 'Account is deleted');
     });
 
     it('should restore previous oauthData if any', () => {
@@ -103,6 +134,42 @@ describe('OAuth', () => {
         cy.get('[name=password]').type(`${account1.password}{enter}`);
 
         cy.url().should('equal', 'https://dev.ely.by/');
+    });
+
+    it('should allow sign in during oauth and not finish process if the account is deleted', () => {
+        cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+        cy.url().should('include', '/login');
+
+        cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+        cy.url().should('include', '/password');
+
+        cy.server();
+        cy.route({
+            method: 'GET',
+            url: `/api/v1/accounts/${account1.id}`,
+            response: {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: 'SleepWalker',
+                isOtpEnabled: false,
+                registeredAt: 1475568334,
+                lang: 'en',
+                elyProfileLink: 'http://ely.by/u7',
+                email: 'danilenkos@auroraglobal.com',
+                isActive: true,
+                isDeleted: true, // force user into the deleted state
+                passwordChangedAt: 1476075696,
+                hasMojangUsernameCollision: true,
+                shouldAcceptRules: false,
+            } as UserResponse,
+        });
+
+        cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+        cy.location('pathname').should('eq', '/');
+        cy.findByTestId('deletedAccount').should('contain', 'Account is deleted');
     });
 
     // TODO: enable, when backend api will return correct response on auth decline

@@ -71,6 +71,22 @@ describe('CompleteState', () => {
             state.enter(context);
         });
 
+        it('should navigate to the / if account is deleted', () => {
+            context.getState.returns({
+                user: {
+                    isGuest: false,
+                    isActive: true,
+                    shouldAcceptRules: true,
+                    isDeleted: true,
+                },
+                auth: {},
+            });
+
+            expectNavigate(mock, '/');
+
+            state.enter(context);
+        });
+
         it('should transition to accept-rules if shouldAcceptRules', () => {
             context.getState.returns({
                 user: {

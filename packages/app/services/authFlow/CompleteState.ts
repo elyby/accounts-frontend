@@ -34,6 +34,8 @@ export default class CompleteState extends AbstractState {
             context.setState(new LoginState());
         } else if (!user.isActive) {
             context.setState(new ActivationState());
+        } else if (user.isDeleted) {
+            context.navigate('/');
         } else if (user.shouldAcceptRules) {
             context.setState(new AcceptRulesState());
         } else if (oauth && oauth.clientId) {

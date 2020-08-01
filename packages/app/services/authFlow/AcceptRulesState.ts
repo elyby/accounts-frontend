@@ -8,7 +8,7 @@ export default class AcceptRulesState extends AbstractState {
     enter(context: AuthContext): Promise<void> | void {
         const { user } = context.getState();
 
-        if (user.shouldAcceptRules) {
+        if (!user.isDeleted && user.shouldAcceptRules) {
             context.navigate('/accept-rules');
         } else {
             context.setState(new CompleteState());
