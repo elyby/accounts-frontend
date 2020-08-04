@@ -5,6 +5,7 @@ import { action } from '@storybook/addon-actions';
 import ApplicationsIndex from './ApplicationsIndex';
 import { TYPE_APPLICATION } from 'app/components/dev/apps';
 
+import { OauthAppResponse } from 'app/services/api/oauth';
 import rootStyles from 'app/pages/root/root.scss';
 import devStyles from 'app/pages/dev/dev.scss';
 
@@ -14,7 +15,7 @@ export const DevLayout: ComponentType = ({ children }) => (
     </div>
 );
 
-export const sampleApp = {
+export const sampleApp: OauthAppResponse = {
     clientId: 'my-application',
     clientSecret: 'cL1eNtS3cRE7xNJqfWQdqrMRKURfW1ssP4kiX6JDW0_szM-n-q',
     type: TYPE_APPLICATION,
@@ -27,7 +28,7 @@ export const sampleApp = {
 const commonProps: Omit<ComponentProps<typeof ApplicationsIndex>, 'isLoading' | 'displayForGuest' | 'applications'> = {
     clientId: null,
     resetClientId: action('resetClientId'),
-    resetApp: async (...args) => action('resetApp')(args),
+    resetApp: async (...args) => action('resetApp')(...args),
     deleteApp: async (clientId) => action('deleteApp')(clientId),
 };
 
