@@ -1,9 +1,9 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, ComponentProps } from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import ApplicationsIndex from './ApplicationsIndex';
-import { TYPE_APPLICATION } from '.';
+import { TYPE_APPLICATION } from 'app/components/dev/apps';
 
 import rootStyles from 'app/pages/root/root.scss';
 import devStyles from 'app/pages/dev/dev.scss';
@@ -24,19 +24,11 @@ export const sampleApp = {
     countUsers: 0,
 };
 
-const commonProps = {
+const commonProps: Omit<ComponentProps<typeof ApplicationsIndex>, 'isLoading' | 'displayForGuest' | 'applications'> = {
     clientId: null,
     resetClientId: action('resetClientId'),
-    resetApp(...args: [string, boolean]) {
-        action('resetApp')(...args);
-
-        return Promise.resolve();
-    },
-    deleteApp(clientId: string) {
-        action('deleteApp')(clientId);
-
-        return Promise.resolve();
-    },
+    resetApp: async (...args) => action('resetApp')(args),
+    deleteApp: async (clientId) => action('deleteApp')(clientId),
 };
 
 storiesOf('Components/Dev/Apps/ApplicationsIndex', module)

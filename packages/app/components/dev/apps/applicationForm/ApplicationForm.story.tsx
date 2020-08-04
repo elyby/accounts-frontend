@@ -4,11 +4,11 @@ import { action } from '@storybook/addon-actions';
 
 import { OauthAppResponse } from 'app/services/api/oauth';
 import { FormModel } from 'app/components/ui/form';
-import { ApplicationType, TYPE_APPLICATION, TYPE_MINECRAFT_SERVER } from '..';
+import { ApplicationType, TYPE_APPLICATION, TYPE_MINECRAFT_SERVER } from 'app/components/dev/apps';
 import ApplicationForm from './ApplicationForm';
 import { DevLayout } from '../ApplicationsIndex.story';
 
-export const sampleApp: OauthAppResponse = {
+const blankApp: OauthAppResponse = {
     clientId: '',
     clientSecret: '',
     type: TYPE_APPLICATION,
@@ -21,11 +21,7 @@ export const sampleApp: OauthAppResponse = {
     minecraftServerIp: '',
 };
 
-const onSubmit = (form: FormModel) => {
-    action('onSubmit')(form);
-
-    return Promise.resolve();
-};
+const onSubmit = async (form: FormModel) => action('onSubmit')(form);
 
 storiesOf('Components/Dev/Apps/ApplicationForm', module)
     .addDecorator((storyFn) => <DevLayout>{storyFn()}</DevLayout>)
@@ -42,13 +38,7 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
                     action('setType')(type);
                     setType(type);
                 }}
-                app={{
-                    ...sampleApp,
-                    countUsers: 0,
-                    description: '',
-                    redirectUri: '',
-                    minecraftServerIp: '',
-                }}
+                app={blankApp}
             />
         );
     })
@@ -59,9 +49,7 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
             displayTypeSwitcher
             type={TYPE_APPLICATION}
             setType={action('setType')}
-            app={{
-                ...sampleApp,
-            }}
+            app={blankApp}
         />
     ))
     .add('Create Minecraft server', () => (
@@ -72,7 +60,7 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
             type={TYPE_MINECRAFT_SERVER}
             setType={action('setType')}
             app={{
-                ...sampleApp,
+                ...blankApp,
                 type: TYPE_MINECRAFT_SERVER,
             }}
         />
@@ -83,7 +71,7 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
             onSubmit={onSubmit}
             type={TYPE_APPLICATION}
             app={{
-                ...sampleApp,
+                ...blankApp,
                 clientId: 'already-registered',
             }}
         />
@@ -94,7 +82,7 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
             onSubmit={onSubmit}
             type={TYPE_MINECRAFT_SERVER}
             app={{
-                ...sampleApp,
+                ...blankApp,
                 type: TYPE_MINECRAFT_SERVER,
                 clientId: 'already-registered',
             }}
