@@ -9,10 +9,8 @@ import DeleteAccount from './DeleteAccount';
 storiesOf('Components/Profile', module).add('DeleteAccount', () => (
     <ProfileLayout>
         <DeleteAccount
-            onSubmit={() => {
+            onSubmit={async () => {
                 action('onSubmit')();
-
-                return Promise.resolve();
             }}
         />
     </ProfileLayout>

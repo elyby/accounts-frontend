@@ -11,23 +11,18 @@ const DeleteAccountPage: ComponentType = () => {
     const context = useContext(ProfileContext);
     const dispatch = useReduxDispatch();
     const { current: form } = useRef(new FormModel());
-    const onSubmit = useCallback(
-        () =>
-            context
-                .onSubmit({
-                    form,
-                    sendData: () => deleteAccount(context.userId, form.serialize()),
-                })
-                .then(() => {
-                    dispatch(
-                        updateUser({
-                            isDeleted: true,
-                        }),
-                    );
-                    context.goToProfile();
-                }),
-        [context],
-    );
+    const onSubmit = useCallback(async () => {
+        await context.onSubmit({
+            form,
+            sendData: () => deleteAccount(context.userId, form.serialize()),
+        });
+        dispatch(
+            updateUser({
+                isDeleted: true,
+            }),
+        );
+        context.goToProfile();
+    }, [context]);
 
     return <DeleteAccount onSubmit={onSubmit} />;
 };

@@ -125,7 +125,7 @@ describe('OAuth', () => {
     it('should allow sign in during oauth (guest oauth)', () => {
         cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-        cy.url().should('include', '/login');
+        cy.location('pathname').should('eq', '/login');
 
         cy.get('[name=login]').type(`${account1.login}{enter}`);
 
@@ -139,7 +139,7 @@ describe('OAuth', () => {
     it('should allow sign in during oauth and not finish process if the account is deleted', () => {
         cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-        cy.url().should('include', '/login');
+        cy.location('pathname').should('eq', '/login');
 
         cy.get('[name=login]').type(`${account1.login}{enter}`);
 
@@ -296,7 +296,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('another account').click();
 
-            cy.url().should('include', '/login');
+            cy.location('pathname').should('eq', '/login');
 
             cy.get('[name=login]').type(`${account1.login}{enter}`);
 
@@ -381,7 +381,7 @@ describe('OAuth', () => {
                 })}`,
             );
 
-            cy.url().should('include', '/login');
+            cy.location('pathname').should('eq', '/login');
 
             cy.get('[name=login]').type(`${account1.login}{enter}`);
 

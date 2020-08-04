@@ -214,7 +214,7 @@ describe('Sign in / Log out', () => {
 
         cy.location('pathname').should('eq', '/accept-rules');
 
-        cy.findByTestId('auth-controls-secondary').contains('Decline and logout').click();
+        cy.findByText('Decline and logout').click();
 
         cy.location('pathname').should('eq', '/login');
         cy.findByTestId('toolbar').should('contain', 'Join');
@@ -255,7 +255,7 @@ describe('Sign in / Log out', () => {
 
         cy.location('pathname').should('eq', '/accept-rules');
 
-        cy.findByTestId('auth-controls-secondary').contains('Delete account').click();
+        cy.findByText('Delete account').click();
 
         cy.location('pathname').should('eq', '/profile/delete');
 
