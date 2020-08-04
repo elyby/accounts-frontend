@@ -74,7 +74,6 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
             app={{
                 ...sampleApp,
                 type: TYPE_MINECRAFT_SERVER,
-                clientId: 'already-registered',
             }}
         />
     ))
