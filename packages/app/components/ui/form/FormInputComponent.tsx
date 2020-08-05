@@ -15,18 +15,8 @@ export default class FormInputComponent<P, S = {}> extends FormComponent<
         error?: Error;
     }
 > {
-    componentDidUpdate() {
-        if (this.state && this.state.error) {
-            this.setState({
-                error: undefined,
-            });
-        }
-    }
-
     renderError() {
-        const error = (this.state && this.state.error) || this.props.error;
-
-        return <FormError error={error} />;
+        return <FormError error={this.state?.error || this.props.error} />;
     }
 
     setError(error: Error) {
