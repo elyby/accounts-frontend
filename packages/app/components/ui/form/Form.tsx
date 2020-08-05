@@ -180,12 +180,12 @@ export default class Form extends React.Component<Props, State> {
         }
     }
 
-    setErrors(errors: { [key: string]: string }, becameInvalid = true) {
+    setErrors(errors: { [key: string]: string }) {
         if (hasForm(this.props)) {
             this.props.form.setErrors(errors);
         }
 
-        becameInvalid && this.props.onInvalid(errors);
+        this.props.onInvalid(errors);
     }
 
     onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
