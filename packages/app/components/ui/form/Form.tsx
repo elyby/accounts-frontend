@@ -131,6 +131,7 @@ export default class Form extends React.Component<Props, State> {
         }
 
         if (form.checkValidity()) {
+            this.setErrors({}, false);
             let result: Promise<void> | void;
 
             if (hasForm(this.props)) {
@@ -179,12 +180,12 @@ export default class Form extends React.Component<Props, State> {
         }
     }
 
-    setErrors(errors: { [key: string]: string }) {
+    setErrors(errors: { [key: string]: string }, becameInvalid = true) {
         if (hasForm(this.props)) {
             this.props.form.setErrors(errors);
         }
 
-        this.props.onInvalid(errors);
+        becameInvalid && this.props.onInvalid(errors);
     }
 
     onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
