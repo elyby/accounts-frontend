@@ -131,10 +131,10 @@ export default class Form extends React.Component<Props, State> {
         }
 
         if (form.checkValidity()) {
-            this.setErrors({}, false);
             let result: Promise<void> | void;
 
             if (hasForm(this.props)) {
+                this.props.form.clearErrors();
                 // @ts-ignore this prop has default value
                 result = this.props.onSubmit(this.props.form);
             } else {
