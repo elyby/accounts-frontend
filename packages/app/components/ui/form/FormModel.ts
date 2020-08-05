@@ -139,6 +139,14 @@ export default class FormModel {
         });
     }
 
+    /**
+     * Clear errors in form fields
+     */
+    clearErrors(): void {
+        this.errors = {};
+        Object.values(this.fields).forEach((field) => field.setError(null));
+    }
+
     getFirstError(): ValidationError | null {
         const [error] = Object.values(this.errors);
 

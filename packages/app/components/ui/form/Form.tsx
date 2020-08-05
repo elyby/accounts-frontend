@@ -131,6 +131,7 @@ export default class Form extends React.Component<Props, State> {
         }
 
         if (form.checkValidity()) {
+            this.clearErrors();
             let result: Promise<void> | void;
 
             if (hasForm(this.props)) {
@@ -186,6 +187,8 @@ export default class Form extends React.Component<Props, State> {
 
         this.props.onInvalid(errors);
     }
+
+    clearErrors = () => hasForm(this.props) && this.props.form.clearErrors();
 
     onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
