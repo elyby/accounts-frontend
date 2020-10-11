@@ -22,8 +22,7 @@ describe('CompleteState', () => {
         state = new CompleteState();
 
         const data = bootstrap();
-        context = data.context;
-        mock = data.mock;
+        ({ context, mock } = data);
     });
 
     afterEach(() => {
@@ -116,157 +115,188 @@ describe('CompleteState', () => {
             state.enter(context);
         });
 
-        it('should transition to finish state if code is present', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                auth: {
-                    oauth: {
-                        clientId: 'ely.by',
-                        code: 'XXX',
+        describe('oauth', () => {
+            it('should transition to finish state if code is present', () => {
+                context.getState.returns({
+                    user: {
+                        isActive: true,
+                        isGuest: false,
                     },
-                },
+                    auth: {
+                        oauth: {
+                            clientId: 'ely.by',
+                            code: 'XXX',
+                        },
+                    },
+                });
+
+                expectState(mock, FinishState);
+
+                state.enter(context);
             });
 
-            expectState(mock, FinishState);
+            describe('permissions', () => {
+                it('should transition to permissions state if acceptRequired', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isGuest: false,
+                        },
+                        auth: {
+                            oauth: {
+                                clientId: 'ely.by',
+                                acceptRequired: true,
+                            },
+                        },
+                    });
 
-            state.enter(context);
-        });
+                    expectState(mock, PermissionsState);
 
-        it('should transition to permissions state if acceptRequired', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                auth: {
-                    oauth: {
-                        clientId: 'ely.by',
-                        acceptRequired: true,
-                    },
-                },
+                    state.enter(context);
+                });
+
+                it('should transition to permissions state if prompt=consent', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isGuest: false,
+                        },
+                        auth: {
+                            oauth: {
+                                clientId: 'ely.by',
+                                prompt: ['consent'],
+                            },
+                        },
+                    });
+
+                    expectState(mock, PermissionsState);
+
+                    state.enter(context);
+                });
             });
 
-            expectState(mock, PermissionsState);
+            describe('account switcher', () => {
+                it('should transition to ChooseAccountState if user has multiple accs and switcher enabled', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }, { id: 2 }],
+                            active: 1,
+                        },
+                        auth: {
+                            isSwitcherEnabled: true,
+                            oauth: {
+                                clientId: 'ely.by',
+                                prompt: [],
+                            },
+                        },
+                    });
 
-            state.enter(context);
-        });
+                    expectState(mock, ChooseAccountState);
 
-        it('should transition to permissions state if prompt=consent', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                auth: {
-                    oauth: {
-                        clientId: 'ely.by',
-                        prompt: ['consent'],
-                    },
-                },
+                    state.enter(context);
+                });
+
+                it('should transition to ChooseAccountState if user isDeleted', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isDeleted: true,
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }],
+                            active: 1,
+                        },
+                        auth: {
+                            isSwitcherEnabled: true,
+                            oauth: {
+                                clientId: 'ely.by',
+                                prompt: [],
+                            },
+                        },
+                    });
+
+                    expectState(mock, ChooseAccountState);
+
+                    state.enter(context);
+                });
+
+                it('should NOT transition to ChooseAccountState if user has multiple accs and switcher disabled', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }, { id: 2 }],
+                            active: 1,
+                        },
+                        auth: {
+                            isSwitcherEnabled: false,
+                            oauth: {
+                                clientId: 'ely.by',
+                                prompt: [],
+                            },
+                        },
+                    });
+
+                    expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
+
+                    state.enter(context);
+                });
+
+                it('should transition to ChooseAccountState if prompt=select_account and switcher enabled', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }],
+                            active: 1,
+                        },
+                        auth: {
+                            isSwitcherEnabled: true,
+                            oauth: {
+                                clientId: 'ely.by',
+                                prompt: ['select_account'],
+                            },
+                        },
+                    });
+
+                    expectState(mock, ChooseAccountState);
+
+                    state.enter(context);
+                });
+
+                it('should NOT transition to ChooseAccountState if prompt=select_account and switcher disabled', () => {
+                    context.getState.returns({
+                        user: {
+                            isActive: true,
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }],
+                            active: 1,
+                        },
+                        auth: {
+                            isSwitcherEnabled: false,
+                            oauth: {
+                                clientId: 'ely.by',
+                                prompt: ['select_account'],
+                            },
+                        },
+                    });
+
+                    expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
+
+                    state.enter(context);
+                });
             });
-
-            expectState(mock, PermissionsState);
-
-            state.enter(context);
-        });
-
-        it('should transition to ChooseAccountState if user has multiple accs and switcher enabled', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                accounts: {
-                    available: [{ id: 1 }, { id: 2 }],
-                    active: 1,
-                },
-                auth: {
-                    isSwitcherEnabled: true,
-                    oauth: {
-                        clientId: 'ely.by',
-                        prompt: [],
-                    },
-                },
-            });
-
-            expectState(mock, ChooseAccountState);
-
-            state.enter(context);
-        });
-
-        it('should NOT transition to ChooseAccountState if user has multiple accs and switcher disabled', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                accounts: {
-                    available: [{ id: 1 }, { id: 2 }],
-                    active: 1,
-                },
-                auth: {
-                    isSwitcherEnabled: false,
-                    oauth: {
-                        clientId: 'ely.by',
-                        prompt: [],
-                    },
-                },
-            });
-
-            expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
-
-            state.enter(context);
-        });
-
-        it('should transition to ChooseAccountState if prompt=select_account and switcher enabled', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                accounts: {
-                    available: [{ id: 1 }],
-                    active: 1,
-                },
-                auth: {
-                    isSwitcherEnabled: true,
-                    oauth: {
-                        clientId: 'ely.by',
-                        prompt: ['select_account'],
-                    },
-                },
-            });
-
-            expectState(mock, ChooseAccountState);
-
-            state.enter(context);
-        });
-
-        it('should NOT transition to ChooseAccountState if prompt=select_account and switcher disabled', () => {
-            context.getState.returns({
-                user: {
-                    isActive: true,
-                    isGuest: false,
-                },
-                accounts: {
-                    available: [{ id: 1 }],
-                    active: 1,
-                },
-                auth: {
-                    isSwitcherEnabled: false,
-                    oauth: {
-                        clientId: 'ely.by',
-                        prompt: ['select_account'],
-                    },
-                },
-            });
-
-            expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
-
-            state.enter(context);
         });
     });
 
