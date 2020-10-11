@@ -30,13 +30,14 @@ const isCI = !!process.env.CI;
 const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
 const isCspEnabled = false;
 const enableDll = !isProduction && !isStorybook;
+const webpackEnv = isProduction ? 'production' : 'development';
 
-process.env.NODE_ENV = isProduction ? 'production' : 'development';
+process.env.NODE_ENV = webpackEnv;
 
 const smp = new SpeedMeasurePlugin();
 
 const webpackConfig = {
-    mode: isProduction ? 'production' : 'development',
+    mode: webpackEnv,
 
     cache: true,
 
@@ -169,7 +170,7 @@ const webpackConfig = {
                     {
                         loader: 'babel-loader',
                         options: {
-                            envName: 'webpack',
+                            envName: `browser-${webpackEnv}`,
                             cacheDirectory: true,
                         },
                     },

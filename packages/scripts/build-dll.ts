@@ -2,7 +2,8 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import fs, { Stats } from 'fs';
+import type { Stats } from 'fs';
+import fs from 'fs';
 import webpack, { MultiCompiler } from 'webpack';
 import chalk from 'chalk';
 

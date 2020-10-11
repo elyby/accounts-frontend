@@ -14,7 +14,7 @@ interface Props {
 
 class ChangePasswordPage extends React.Component<Props> {
     static contextType = Context;
-    /* TODO: use declare */ context: React.ContextType<typeof Context>;
+    declare context: React.ContextType<typeof Context>;
 
     form = new FormModel();
 
