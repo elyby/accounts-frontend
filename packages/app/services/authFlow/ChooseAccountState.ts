@@ -1,3 +1,5 @@
+import type { Account } from 'app/components/accounts/reducer';
+
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
 import LoginState from './LoginState';
@@ -14,10 +16,12 @@ export default class ChooseAccountState extends AbstractState {
         }
     }
 
-    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+    resolve(context: AuthContext, payload: Account | Record<string, any>): Promise<void> | void {
         if (payload.id) {
+            // payload is Account
             context.setState(new CompleteState());
         } else {
+            // log in to another account
             context.navigate('/login');
             context.run('setLogin', null);
             context.setState(new LoginState());
