@@ -41,5 +41,6 @@ export function getLocaleIconUrl(locale: string): string {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require('./flags/unknown.svg').default;
 }

@@ -49,7 +49,7 @@ storiesOf('Components/Profile/MultiFactorAuth', module)
     ))
     .add('Enabled', () => (
         <MultiFactorAuth
-            isMfaEnabled={true}
+            isMfaEnabled
             step={0}
             onSubmit={(form, sendData) => {
                 action('onSubmit')(form, sendData);

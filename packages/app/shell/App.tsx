@@ -11,8 +11,8 @@ import ContextProvider from './ContextProvider';
 
 import type { History } from 'history';
 
-const SuccessOauthPage = React.lazy(() =>
-    import(/* webpackChunkName: "page-oauth-success" */ 'app/pages/auth/SuccessOauthPage'),
+const SuccessOauthPage = React.lazy(
+    () => import(/* webpackChunkName: "page-oauth-success" */ 'app/pages/auth/SuccessOauthPage'),
 );
 
 interface Props {
