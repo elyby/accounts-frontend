@@ -16,7 +16,7 @@ interface Props
 
 class MultiFactorAuthPage extends React.Component<Props> {
     static contextType = Context;
-    /* TODO: use declare */ context: React.ContextType<typeof Context>;
+    declare context: React.ContextType<typeof Context>;
 
     render() {
         const {
