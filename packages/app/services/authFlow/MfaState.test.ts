@@ -74,6 +74,7 @@ describe('MfaState', () => {
                 },
             });
 
+            expectRun(mock, 'setAccountSwitcher', false);
             expectRun(
                 mock,
                 'login',

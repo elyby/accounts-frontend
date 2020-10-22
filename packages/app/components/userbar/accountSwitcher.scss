@@ -1,0 +1,126 @@
+@import '~app/components/ui/colors.scss';
+@import '~app/components/ui/fonts.scss';
+
+// TODO: эту константу можно заимпортить из panel.scss, но это приводит к странным ошибкам
+//@import '~app/components/ui/panel.scss';
+$bodyLeftRightPadding: 20px;
+
+$lightBorderColor: #eee;
+
+.accountSwitcher {
+    text-align: left;
+
+    background: #fff;
+    color: #444;
+    min-width: 205px;
+
+    $border: 1px solid $lightBorderColor;
+    border-left: $border;
+    border-right: $border;
+    border-bottom: 7px solid darker($green);
+}
+
+.accountInfo {
+}
+
+.accountUsername,
+.accountEmail {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item {
+    padding: 15px;
+    border-bottom: 1px solid $lightBorderColor;
+}
+
+.accountSwitchItem {
+    cursor: pointer;
+    transition: 0.25s;
+
+    &:hover {
+        background-color: $whiteButtonLight;
+    }
+
+    &:active {
+        background-color: $whiteButtonDark;
+    }
+}
+
+.accountIcon {
+    font-size: 27px;
+    width: 20px;
+    text-align: center;
+    float: left;
+}
+
+.activeAccountIcon {
+    composes: accountIcon;
+
+    font-size: 40px;
+}
+
+.activeAccountInfo {
+    margin-left: 29px;
+}
+
+.activeAccountUsername {
+    font-family: $font-family-title;
+    font-size: 20px;
+    color: $green;
+}
+
+.activeAccountEmail {
+}
+
+.links {
+    margin-top: 6px;
+}
+
+.link {
+    font-size: 12px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+.accountInfo {
+    margin-left: 29px;
+    margin-right: 25px;
+}
+
+.accountUsername {
+    font-family: $font-family-title;
+    font-size: 14px;
+    color: #666;
+}
+
+.accountEmail {
+    font-size: 10px;
+    color: #999;
+}
+
+.addIcon {
+    composes: plus from '~app/components/ui/icons.scss';
+
+    color: $green;
+    position: relative;
+    bottom: 1px;
+    margin-right: 3px;
+}
+
+.logoutIcon {
+    composes: exit from '~app/components/ui/icons.scss';
+
+    color: #cdcdcd;
+    float: right;
+    line-height: 27px;
+    transition: 0.25s;
+
+    &:hover {
+        color: #777;
+    }
+}

@@ -18,6 +18,7 @@
         "raf": "^3.4.1",
         "raven-js": "^3.27.0",
         "react": "^16.13.1",
+        "react-click-away-listener": "^1.4.3",
         "react-dom": "^16.13.1",
         "react-helmet-async": "^1.0.6",
         "react-intl": "^4.5.7",

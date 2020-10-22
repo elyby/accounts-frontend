@@ -13317,6 +13317,11 @@ raw-loader@^4.0.1:
     loader-utils "^2.0.0"
     schema-utils "^2.6.5"
 
+react-click-away-listener@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-click-away-listener/-/react-click-away-listener-1.4.3.tgz#a323c9f37784e133b31b2a242367be5675267186"
+  integrity sha512-c7d6mfZuHu/rIdnEHnovX/QsScQXlqtdAynSnZUyyH+6kPOAyB40k2c5br56c/qp4KBkHD0JQV4C7rVuAmroMw==
+
 react-clientside-effect@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/react-clientside-effect/-/react-clientside-effect-1.2.2.tgz#6212fb0e07b204e714581dd51992603d1accc837"

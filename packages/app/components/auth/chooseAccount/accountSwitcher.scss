@@ -1,0 +1,87 @@
+@import '~app/components/ui/colors.scss';
+@import '~app/components/ui/fonts.scss';
+
+.accountSwitcher {
+    background: $black;
+    text-align: left;
+}
+
+$border: 1px solid lighter($black);
+
+.item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid lighter($black);
+    transition: background-color 0.25s, filter 0.5s cubic-bezier(0, 0.55, 0.45, 1);
+    cursor: pointer;
+
+    &:hover {
+        background-color: lighter($black);
+    }
+
+    &:active {
+        background-color: darker($black);
+    }
+
+    &:last-of-type {
+        border-bottom: $border;
+    }
+}
+
+.inactiveItem {
+    filter: grayscale(100%);
+    pointer-events: none;
+}
+
+.accountIcon {
+    font-size: 35px;
+    margin-right: 15px;
+}
+
+.accountInfo {
+    flex-grow: 1;
+    margin-right: 15px;
+    min-width: 0; // Fix for text-overflow. See https://stackoverflow.com/a/40612184
+}
+
+%overflowText {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.accountUsername {
+    @extend %overflowText;
+    font-family: $font-family-title;
+    color: #fff;
+}
+
+.accountEmail {
+    @extend %overflowText;
+    color: #666;
+    font-size: 12px;
+}
+
+.nextIcon {
+    composes: arrowRight from '~app/components/ui/icons.scss';
+
+    position: relative;
+    left: 0;
+
+    font-size: 24px;
+    color: #4e4e4e;
+    line-height: 35px;
+
+    transition: color 0.25s, left 0.5s;
+
+    .item:hover & {
+        color: #aaa;
+        left: 5px;
+    }
+}
+
+.accountLoader {
+    font-size: 10px;
+}

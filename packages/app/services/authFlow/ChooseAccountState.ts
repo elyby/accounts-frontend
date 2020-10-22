@@ -19,13 +19,16 @@ export default class ChooseAccountState extends AbstractState {
     resolve(context: AuthContext, payload: Account | Record<string, any>): Promise<void> | void {
         if (payload.id) {
             // payload is Account
-            context.setState(new CompleteState());
-        } else {
-            // log in to another account
-            context.navigate('/login');
-            context.run('setLogin', null);
-            context.setState(new LoginState());
+            return context
+                .run('authenticate', payload)
+                .then(() => context.run('setAccountSwitcher', false))
+                .then(() => context.setState(new CompleteState()));
         }
+
+        // log in to another account
+        context.navigate('/login');
+        context.run('setLogin', null);
+        context.setState(new LoginState());
     }
 
     reject(context: AuthContext): void {

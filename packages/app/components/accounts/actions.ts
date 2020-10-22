@@ -1,7 +1,7 @@
 import { getJwtPayloads } from 'app/functions';
 import { sessionStorage } from 'app/services/localStorage';
 import { validateToken, requestToken, logout } from 'app/services/api/authentication';
-import { relogin as navigateToLogin, setAccountSwitcher } from 'app/components/auth/actions';
+import { relogin as navigateToLogin } from 'app/components/auth/actions';
 import { updateUser, setGuest } from 'app/components/user/actions';
 import { setLocale } from 'app/components/i18n/actions';
 import logger from 'app/services/logger';
@@ -53,7 +53,6 @@ export function authenticate(
                 token,
                 refreshToken,
             );
-            const { auth } = getState();
             const newAccount: Account = {
                 id: user.id,
                 username: user.username,
@@ -76,14 +75,6 @@ export function authenticate(
             if (!newRefreshToken) {
                 // mark user as stranger (user does not want us to remember his account)
                 sessionStorage.setItem(`stranger${newAccount.id}`, '1');
-            }
-
-            if (auth?.oauth?.clientId) {
-                // if we authenticating during oauth, we disable account chooser
-                // because user probably has made his choise now
-                // this may happen, when user registers, logs in or uses account
-                // chooser panel during oauth
-                dispatch(setAccountSwitcher(false));
             }
 
             await dispatch(setLocale(user.lang));

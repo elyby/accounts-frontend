@@ -1,7 +1,9 @@
+import expect from 'app/test/unexpected';
+import sinon, { SinonMock } from 'sinon';
+
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 import LoginState from 'app/services/authFlow/LoginState';
-import { SinonMock } from 'sinon';
 
 import { bootstrap, expectState, expectNavigate, expectRun, MockedAuthContext } from './helpers';
 
@@ -49,10 +51,18 @@ describe('ChooseAccountState', () => {
     });
 
     describe('#resolve', () => {
-        it('should transition to complete if existed account was choosen', () => {
+        it('should transition to complete if an existing account was chosen', () => {
+            expectRun(
+                mock,
+                'authenticate',
+                sinon.match({
+                    id: 123,
+                }),
+            ).returns(Promise.resolve());
+            expectRun(mock, 'setAccountSwitcher', false);
             expectState(mock, CompleteState);
 
-            state.resolve(context, { id: 123 });
+            return expect(state.resolve(context, { id: 123 }), 'to be fulfilled');
         });
 
         it('should transition to login if user wants to add new account', () => {
@@ -60,7 +70,8 @@ describe('ChooseAccountState', () => {
             expectRun(mock, 'setLogin', null);
             expectState(mock, LoginState);
 
-            state.resolve(context, {});
+            // Assert nothing returned
+            return expect(state.resolve(context, {}), 'to be undefined');
         });
     });
 

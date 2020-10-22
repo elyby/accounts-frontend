@@ -1,120 +1,64 @@
-import React, { MouseEventHandler } from 'react';
+import React, { ComponentType, useCallback, useState } from 'react';
 import clsx from 'clsx';
-import { AccountSwitcher } from 'app/components/accounts';
+import ClickAwayListener from 'react-click-away-listener';
+
+import { Account } from 'app/components/accounts';
+
+import AccountSwitcher from './AccountSwitcher';
 
 import styles from './loggedInPanel.scss';
 
-export default class LoggedInPanel extends React.Component<
-    {
-        username: string;
-    },
-    {
-        isAccountSwitcherActive: boolean;
-    }
-> {
-    state = {
-        isAccountSwitcherActive: false,
-    };
+interface Props {
+    activeAccount: Account;
+    accounts: ReadonlyArray<Account>;
+    onSwitchAccount?: (account: Account) => Promise<any>;
+    onRemoveAccount?: (account: Account) => Promise<any>;
+}
 
-    _isMounted: boolean = false;
-    el: HTMLElement | null;
+const LoggedInPanel: ComponentType<Props> = ({ activeAccount, accounts, onSwitchAccount, onRemoveAccount }) => {
+    const [isAccountSwitcherActive, setAccountSwitcherState] = useState(false);
+    const hideAccountSwitcher = useCallback(() => setAccountSwitcherState(false), []);
+    const onAccountClick = useCallback(
+        async (account: Account) => {
+            if (onSwitchAccount) {
+                await onSwitchAccount(account);
+            }
 
-    componentDidMount() {
-        if (window.document) {
-            // @ts-ignore
-            window.document.addEventListener('click', this.onBodyClick);
-        }
+            setAccountSwitcherState(false);
+        },
+        [onSwitchAccount],
+    );
 
-        this._isMounted = true;
-    }
-
-    componentWillUnmount() {
-        if (window.document) {
-            // @ts-ignore
-            window.document.removeEventListener('click', this.onBodyClick);
-        }
-
-        this._isMounted = false;
-    }
-
-    render() {
-        const { username } = this.props;
-        const { isAccountSwitcherActive } = this.state;
-
-        return (
-            <div ref={(el) => (this.el = el)} className={clsx(styles.loggedInPanel)}>
-                <div
-                    className={clsx(styles.activeAccount, {
-                        [styles.activeAccountExpanded]: isAccountSwitcherActive,
-                    })}
-                >
-                    <button className={styles.activeAccountButton} onClick={this.onExpandAccountSwitcher}>
+    return (
+        <div className={styles.loggedInPanel}>
+            <div
+                className={clsx(styles.activeAccount, {
+                    [styles.activeAccountExpanded]: isAccountSwitcherActive,
+                })}
+            >
+                <ClickAwayListener onClickAway={hideAccountSwitcher}>
+                    <button
+                        className={styles.activeAccountButton}
+                        onClick={setAccountSwitcherState.bind(null, !isAccountSwitcherActive)}
+                    >
                         <span className={styles.userIcon} />
-                        <span className={styles.userName}>{username}</span>
+                        <span className={styles.userName}>{activeAccount.username}</span>
                         <span className={styles.expandIcon} />
                     </button>
 
-                    <div className={clsx(styles.accountSwitcherContainer)}>
-                        <AccountSwitcher skin="light" onAfterAction={this.onToggleAccountSwitcher} />
+                    <div className={styles.accountSwitcherContainer}>
+                        <AccountSwitcher
+                            activeAccount={activeAccount}
+                            accounts={accounts}
+                            onAccountClick={onAccountClick}
+                            onRemoveClick={onRemoveAccount}
+                            onLoginClick={hideAccountSwitcher}
+                        />
                     </div>
-                </div>
+                </ClickAwayListener>
             </div>
-        );
-    }
-
-    toggleAccountSwitcher = () =>
-        this._isMounted &&
-        this.setState({
-            isAccountSwitcherActive: !this.state.isAccountSwitcherActive,
-        });
-
-    onToggleAccountSwitcher = () => {
-        this.toggleAccountSwitcher();
-    };
-
-    onExpandAccountSwitcher = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-
-        this.toggleAccountSwitcher();
-    };
-
-    onBodyClick = createOnOutsideComponentClickHandler(
-        () => this.el,
-        () => this.state.isAccountSwitcherActive && this._isMounted,
-        () => this.toggleAccountSwitcher(),
+        </div>
     );
-}
+};
 
-/**
- * Creates an event handling function to handle clicks outside the component
- *
- * The handler will check if current click was outside container el and if so
- * and component isActive, it will call the callback
- *
- * @param  {Function} getEl - the function, that returns reference to container el
- * @param  {Function} isActive - whether the component is active and callback may be called
- * @param  {Function} callback - the callback to call, when there was a click outside el
- *
- * @returns {Function}
- */
-function createOnOutsideComponentClickHandler(
-    getEl: () => HTMLElement | null,
-    isActive: () => boolean,
-    callback: () => void,
-): MouseEventHandler {
-    // TODO: we have the same logic in LangMenu
-    // Probably we should decouple this into some helper function
-    // TODO: the name of function may be better...
-    return (event) => {
-        const el = getEl();
-
-        if (isActive() && el) {
-            if (!el.contains(event.target as HTMLElement) && el !== event.target) {
-                event.preventDefault();
-
-                // add a small delay for the case someone have alredy called toggle
-                setTimeout(() => isActive() && callback(), 0);
-            }
-        }
-    };
-}
+export default LoggedInPanel;

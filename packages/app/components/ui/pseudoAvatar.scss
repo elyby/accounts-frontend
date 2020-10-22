@@ -1,0 +1,33 @@
+@import '~app/components/ui/colors.scss';
+
+.pseudoAvatar {
+    composes: minecraft-character from '~app/components/ui/icons.scss';
+
+    &0 {
+        color: $green;
+    }
+
+    &1 {
+        color: $blue;
+    }
+
+    &2 {
+        color: $violet;
+    }
+
+    &3 {
+        color: $orange;
+    }
+
+    &4 {
+        color: $dark_blue;
+    }
+
+    &5 {
+        color: $light_violet;
+    }
+
+    &6 {
+        color: $red;
+    }
+}

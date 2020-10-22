@@ -1,7 +1,8 @@
 import React, { InputHTMLAttributes, MouseEventHandler } from 'react';
-import ReactDOM from 'react-dom';
 import { MessageDescriptor } from 'react-intl';
+import ClickAwayListener from 'react-click-away-listener';
 import clsx from 'clsx';
+
 import { COLOR_GREEN, Color } from 'app/components/ui';
 
 import styles from './dropdown.scss';
@@ -12,7 +13,7 @@ type ItemLabel = I18nString | React.ReactElement;
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
     label: I18nString;
-    items: { [value: string]: ItemLabel };
+    items: Record<string, ItemLabel>;
     block?: boolean;
     color: Color;
 }
@@ -37,18 +38,6 @@ export default class Dropdown extends FormInputComponent<Props, State> {
         activeItem: null,
     };
 
-    componentDidMount() {
-        // listen to capturing phase to ensure, that our event handler will be
-        // called before all other
-        // @ts-ignore
-        document.addEventListener('click', this.onBodyClick, true);
-    }
-
-    componentWillUnmount() {
-        // @ts-ignore
-        document.removeEventListener('click', this.onBodyClick);
-    }
-
     render() {
         const { color, block, items, ...restProps } = this.props;
         const { isActive } = this.state;
@@ -59,7 +48,7 @@ export default class Dropdown extends FormInputComponent<Props, State> {
         const label = React.isValidElement(activeItem.label) ? activeItem.label : this.formatMessage(activeItem.label);
 
         return (
-            <div>
+            <ClickAwayListener onClickAway={this.onCloseClick}>
                 <div
                     className={clsx(styles[color], {
                         [styles.block]: block,
@@ -84,7 +73,7 @@ export default class Dropdown extends FormInputComponent<Props, State> {
                 </div>
 
                 {this.renderError()}
-            </div>
+            </ClickAwayListener>
         );
     }
 
@@ -137,17 +126,9 @@ export default class Dropdown extends FormInputComponent<Props, State> {
         this.toggle();
     };
 
-    onBodyClick: MouseEventHandler = (event) => {
+    onCloseClick = () => {
         if (this.state.isActive) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const el = ReactDOM.findDOMNode(this)!;
-
-            if (!el.contains(event.target as HTMLElement) && el !== event.target) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                this.toggle();
-            }
+            this.toggle();
         }
     };
 }
