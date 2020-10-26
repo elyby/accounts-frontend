@@ -3,6 +3,7 @@ import React, { ComponentType, useCallback, useContext } from 'react';
 import { useReduxDispatch } from 'app/functions';
 import { restoreAccount } from 'app/services/api/accounts';
 import { updateUser } from 'app/components/user/actions';
+import { markAsDeleted } from 'app/components/accounts/actions/pure-actions';
 import ProfileContext from 'app/components/profile/Context';
 
 import AccountDeleted from 'app/components/profile/AccountDeleted';
@@ -17,6 +18,7 @@ const AccountDeletedPage: ComponentType = () => {
                 isDeleted: false,
             }),
         );
+        dispatch(markAsDeleted(false));
         context.goToProfile();
     }, [dispatch, context]);
 

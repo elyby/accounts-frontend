@@ -12,13 +12,6 @@ import { add, remove, activate, reset, updateToken } from './actions/pure-action
 
 export { updateToken, activate, remove };
 
-/**
- * @param {Account|object} account
- * @param {string} account.token
- * @param {string} account.refreshToken
- *
- * @returns {Function}
- */
 export function authenticate(
     account:
         | Account
@@ -59,6 +52,7 @@ export function authenticate(
                 email: user.email,
                 token: newToken,
                 refreshToken: newRefreshToken,
+                isDeleted: user.isDeleted,
             };
             dispatch(add(newAccount));
             dispatch(activate(newAccount));

@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { useReduxDispatch, useReduxSelector } from 'app/functions';
 import { authenticate, revoke } from 'app/components/accounts/actions';
-import { Account } from 'app/components/accounts/reducer';
+import { Account, getSortedAccounts } from 'app/components/accounts/reducer';
 import buttons from 'app/components/ui/buttons.scss';
 import LoggedInPanel from 'app/components/userbar/LoggedInPanel';
 import * as loader from 'app/services/loader';
@@ -20,7 +20,7 @@ interface Props {
 const Toolbar: ComponentType<Props> = ({ onLogoClick, account }) => {
     const dispatch = useReduxDispatch();
     const location = useLocation();
-    const availableAccounts = useReduxSelector((state) => state.accounts.available);
+    const availableAccounts = useReduxSelector(getSortedAccounts);
     const switchAccount = useCallback((account: Account) => {
         loader.show();
 

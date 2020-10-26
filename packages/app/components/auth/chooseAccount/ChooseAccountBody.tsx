@@ -4,6 +4,7 @@ import { FormattedMessage as Message } from 'react-intl';
 
 import { connect } from 'app/functions';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
+import { getSortedAccounts } from 'app/components/accounts/reducer';
 import type { Account } from 'app/components/accounts';
 
 import AccountSwitcher from './AccountSwitcher';
@@ -15,7 +16,7 @@ import styles from './chooseAccount.scss';
 // So to provide accounts list to the component, I'll create connected version of
 // the composes with already provided accounts list
 const ConnectedAccountSwitcher = connect((state) => ({
-    accounts: state.accounts.available,
+    accounts: getSortedAccounts(state),
 }))(AccountSwitcher);
 
 export default class ChooseAccountBody extends BaseAuthBody {

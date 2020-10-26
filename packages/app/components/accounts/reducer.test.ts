@@ -1,7 +1,7 @@
 import expect from 'app/test/unexpected';
 
 import { updateToken } from './actions';
-import { add, remove, activate, reset } from './actions/pure-actions';
+import { add, remove, activate, reset, markAsDeleted } from './actions/pure-actions';
 import { AccountsState } from './index';
 import accounts, { Account } from './reducer';
 
@@ -10,7 +10,9 @@ const account: Account = {
     username: 'username',
     email: 'email@test.com',
     token: 'foo',
-} as Account;
+    refreshToken: '',
+    isDeleted: false,
+};
 
 describe('Accounts reducer', () => {
     let initial: AccountsState;
@@ -119,6 +121,22 @@ describe('Accounts reducer', () => {
                     {
                         ...account,
                         token: newToken,
+                    },
+                ],
+            });
+        });
+    });
+
+    describe('accounts:markAsDeleted', () => {
+        it('should mark account as deleted', () => {
+            const isDeleted = true;
+
+            expect(accounts({ active: account.id, available: [account] }, markAsDeleted(isDeleted)), 'to satisfy', {
+                active: account.id,
+                available: [
+                    {
+                        ...account,
+                        isDeleted,
                     },
                 ],
             });

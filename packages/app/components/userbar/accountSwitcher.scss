@@ -96,11 +96,19 @@ $lightBorderColor: #eee;
     font-family: $font-family-title;
     font-size: 14px;
     color: #666;
+
+    .deletedAccountItem & {
+        color: #999;
+    }
 }
 
 .accountEmail {
     font-size: 10px;
     color: #999;
+
+    .deletedAccountItem & {
+        color: #a9a9a9;
+    }
 }
 
 .addIcon {

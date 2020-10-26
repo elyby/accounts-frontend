@@ -5,6 +5,7 @@ import { deleteAccount } from 'app/services/api/accounts';
 import { FormModel } from 'app/components/ui/form';
 import DeleteAccount from 'app/components/profile/deleteAccount';
 import { updateUser } from 'app/components/user/actions';
+import { markAsDeleted } from 'app/components/accounts/actions/pure-actions';
 import ProfileContext from 'app/components/profile/Context';
 
 const DeleteAccountPage: ComponentType = () => {
@@ -21,6 +22,7 @@ const DeleteAccountPage: ComponentType = () => {
                 isDeleted: true,
             }),
         );
+        dispatch(markAsDeleted(true));
         context.goToProfile();
     }, [context]);
 

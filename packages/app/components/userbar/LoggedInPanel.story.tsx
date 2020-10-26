@@ -10,6 +10,7 @@ const activeAccount = {
     email: 'mock@ely.by',
     refreshToken: '',
     token: '',
+    isDeleted: false,
 };
 
 storiesOf('Components/Userbar', module)
@@ -27,6 +28,15 @@ storiesOf('Components/Userbar', module)
                     email: 'mock-user2@ely.by',
                     token: '',
                     refreshToken: '',
+                    isDeleted: false,
+                },
+                {
+                    id: 3,
+                    username: 'DeletedUser',
+                    email: 'i-am-deleted@ely.by',
+                    token: '',
+                    refreshToken: '',
+                    isDeleted: true,
                 },
             ]}
             onSwitchAccount={async (account) => action('onSwitchAccount')(account)}

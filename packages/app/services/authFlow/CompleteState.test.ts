@@ -420,6 +420,7 @@ describe('CompleteState', () => {
                     username: 'thatUsername',
                     token: '',
                     refreshToken: '',
+                    isDeleted: false,
                 };
 
                 context.getState.returns({

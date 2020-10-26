@@ -36,12 +36,13 @@ const AccountSwitcher: ComponentType<Props> = ({ accounts, onAccountClick }) => 
                 <div
                     className={clsx(styles.item, {
                         [styles.inactiveItem]: selectedAccount && selectedAccount !== account.id,
+                        [styles.deletedAccount]: account.isDeleted,
                     })}
                     key={account.id}
                     data-e2e-account-id={account.id}
                     onClick={onAccountClickCallback(account)}
                 >
-                    <PseudoAvatar index={index} className={styles.accountIcon} />
+                    <PseudoAvatar index={index} deleted={account.isDeleted} className={styles.accountAvatar} />
                     <div className={styles.accountInfo}>
                         <div className={styles.accountUsername}>{account.username}</div>
                         <div className={styles.accountEmail}>{account.email}</div>

@@ -6,6 +6,7 @@ export type Account = {
     email: string;
     token: string;
     refreshToken: string | null;
+    isDeleted: boolean;
 };
 
 export type State = {
@@ -21,6 +22,23 @@ export function getActiveAccount(state: { accounts: State }): Account | null {
 
 export function getAvailableAccounts(state: { accounts: State }): Array<Account> {
     return state.accounts.available;
+}
+
+/**
+ * Move deleted accounts to the end of the accounts list.
+ */
+export function getSortedAccounts(state: { accounts: State }): ReadonlyArray<Account> {
+    return state.accounts.available.sort((acc1, acc2) => {
+        if (acc1.isDeleted && !acc2.isDeleted) {
+            return 1;
+        }
+
+        if (!acc1.isDeleted && acc2.isDeleted) {
+            return -1;
+        }
+
+        return 0;
+    });
 }
 
 export default function accounts(
@@ -90,27 +108,33 @@ export default function accounts(
         }
 
         case 'accounts:updateToken': {
-            if (typeof action.payload !== 'string') {
-                throw new Error('payload must be a jwt token');
-            }
+            return partiallyUpdateActiveAccount(state, {
+                token: action.payload,
+            });
+        }
 
-            const { payload } = action;
-
-            return {
-                ...state,
-                available: state.available.map((account) => {
-                    if (account.id === state.active) {
-                        return {
-                            ...account,
-                            token: payload,
-                        };
-                    }
-
-                    return { ...account };
-                }),
-            };
+        case 'accounts:markAsDeleted': {
+            return partiallyUpdateActiveAccount(state, {
+                isDeleted: action.payload,
+            });
         }
     }
 
     return state;
+}
+
+function partiallyUpdateActiveAccount(state: State, payload: Partial<Account>): State {
+    return {
+        ...state,
+        available: state.available.map((account) => {
+            if (account.id === state.active) {
+                return {
+                    ...account,
+                    ...payload,
+                };
+            }
+
+            return { ...account };
+        }),
+    };
 }
