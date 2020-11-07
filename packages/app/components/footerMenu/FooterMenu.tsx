@@ -28,7 +28,7 @@ const FooterMenu: ComponentType = () => {
                     <Message key="rules" defaultMessage="Rules" />
                 </Link>
 
-                {'ꞏ'}
+                {'•'}
 
                 <ContactLink className={styles.footerItem}>
                     <Message key="contactUs" defaultMessage="Contact Us" />
@@ -40,7 +40,7 @@ const FooterMenu: ComponentType = () => {
                     <Message key="forDevelopers" defaultMessage="For developers" />
                 </Link>
 
-                {'ꞏ'}
+                {'•'}
 
                 <a href="#" className={styles.footerItem} onClick={createPopupHandler(SourceCode)}>
                     <Message key="sourceCode" defaultMessage="Source code" />
