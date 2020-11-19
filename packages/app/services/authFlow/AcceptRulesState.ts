@@ -8,7 +8,7 @@ export default class AcceptRulesState extends AbstractState {
     enter(context: AuthContext): Promise<void> | void {
         const { user } = context.getState();
 
-        if (user.shouldAcceptRules) {
+        if (!user.isDeleted && user.shouldAcceptRules) {
             context.navigate('/accept-rules');
         } else {
             context.setState(new CompleteState());
@@ -22,7 +22,13 @@ export default class AcceptRulesState extends AbstractState {
             .catch((err = {}) => err.errors || logger.warn('Error accepting rules', err));
     }
 
-    reject(context: AuthContext): void {
+    reject(context: AuthContext, payload: Record<string, any>): void {
+        if (payload.deleteAccount) {
+            context.navigate('/profile/delete');
+
+            return;
+        }
+
         context.run('logout');
     }
 }

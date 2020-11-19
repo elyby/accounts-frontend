@@ -1,4 +1,5 @@
 import { account1 } from '../../fixtures/accounts.json';
+import { UserResponse } from 'app/services/api/accounts';
 
 const defaults = {
     client_id: 'ely',
@@ -39,108 +40,186 @@ describe('OAuth', () => {
         cy.url().should('equal', 'https://dev.ely.by/');
     });
 
-    it('should ask to choose an account if user has multiple', () => {
-        cy.login({ accounts: ['default', 'default2'] }).then(({ accounts: [account] }) => {
+    describe('AccountSwitcher', () => {
+        it('should ask to choose an account if user has multiple', () => {
+            cy.login({ accounts: ['default', 'default2'] }).then(({ accounts: [account] }) => {
+                cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+                cy.url().should('include', '/oauth/choose-account');
+
+                cy.findByTestId('auth-header').should('contain', 'Choose an account');
+
+                cy.findByTestId('auth-body').contains(account.email).click();
+
+                cy.url().should('equal', 'https://dev.ely.by/');
+            });
+        });
+    });
+
+    describe('Permissions prompt', () => {
+        // TODO: remove api mocks, when we will be able to revoke permissions
+        it('should prompt for permissions', () => {
+            cy.server();
+
+            cy.route({
+                method: 'POST',
+                // NOTE: can not use cypress glob syntax, because it will break due to
+                // '%2F%2F' (//) in redirect_uri
+                // url: '/api/oauth2/v1/complete/*',
+                url: new RegExp('/api/oauth2/v1/complete'),
+                response: {
+                    statusCode: 401,
+                    error: 'accept_required',
+                },
+                status: 401,
+            }).as('complete');
+
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(
+                `/oauth2/v1/ely?${new URLSearchParams({
+                    ...defaults,
+                    client_id: 'tlauncher',
+                    redirect_uri: 'http://localhost:8080',
+                })}`,
+            );
+
+            cy.wait('@complete');
+
+            assertPermissions();
+
+            cy.server({ enable: false });
+
+            cy.findByTestId('auth-controls').contains('Approve').click();
+
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+        });
+
+        // TODO: enable, when backend api will return correct response on auth decline
+        xit('should redirect to error page, when permission request declined', () => {
+            cy.server();
+
+            cy.route({
+                method: 'POST',
+                // NOTE: can not use cypress glob syntax, because it will break due to
+                // '%2F%2F' (//) in redirect_uri
+                // url: '/api/oauth2/v1/complete/*',
+                url: new RegExp('/api/oauth2/v1/complete'),
+                response: {
+                    statusCode: 401,
+                    error: 'accept_required',
+                },
+                status: 401,
+            }).as('complete');
+
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(
+                `/oauth2/v1/ely?${new URLSearchParams({
+                    ...defaults,
+                    client_id: 'tlauncher',
+                    redirect_uri: 'http://localhost:8080',
+                })}`,
+            );
+
+            cy.wait('@complete');
+
+            assertPermissions();
+
+            cy.server({ enable: false });
+
+            cy.findByTestId('auth-controls-secondary').contains('Decline').click();
+
+            cy.url().should('include', 'error=access_denied');
+        });
+    });
+
+    describe('Sign-in during oauth', () => {
+        it('should allow sign in during oauth (guest oauth)', () => {
             cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-            cy.url().should('include', '/oauth/choose-account');
+            cy.location('pathname').should('eq', '/login');
 
-            cy.findByTestId('auth-header').should('contain', 'Choose an account');
+            cy.get('[name=login]').type(`${account1.login}{enter}`);
 
-            cy.findByTestId('auth-body').contains(account.email).click();
+            cy.url().should('include', '/password');
+
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
 
             cy.url().should('equal', 'https://dev.ely.by/');
         });
     });
 
-    // TODO: remove api mocks, when we will be able to revoke permissions
-    it('should prompt for permissions', () => {
-        cy.server();
+    describe('Deleted account', () => {
+        it('should show account switcher and then abort oauth and redirect to profile', () => {
+            cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
+                cy.server();
+                cy.route({
+                    method: 'GET',
+                    url: `/api/v1/accounts/${account1.id}`,
+                    response: {
+                        id: account.id,
+                        uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                        username: account.username,
+                        isOtpEnabled: false,
+                        registeredAt: 1475568334,
+                        lang: 'en',
+                        elyProfileLink: 'http://ely.by/u7',
+                        email: account.email,
+                        isActive: true,
+                        isDeleted: true, // force user into the deleted state
+                        passwordChangedAt: 1476075696,
+                        hasMojangUsernameCollision: true,
+                        shouldAcceptRules: false,
+                    } as UserResponse,
+                });
 
-        cy.route({
-            method: 'POST',
-            // NOTE: can not use cypress glob syntax, because it will break due to
-            // '%2F%2F' (//) in redirect_uri
-            // url: '/api/oauth2/v1/complete/*',
-            url: new RegExp('/api/oauth2/v1/complete'),
-            response: {
-                statusCode: 401,
-                error: 'accept_required',
-            },
-            status: 401,
-        }).as('complete');
+                cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-        cy.login({ accounts: ['default'] });
+                cy.findByTestId('auth-header').should('contain', 'Choose an account');
 
-        cy.visit(
-            `/oauth2/v1/ely?${new URLSearchParams({
-                ...defaults,
-                client_id: 'tlauncher',
-                redirect_uri: 'http://localhost:8080',
-            })}`,
-        );
+                cy.findByTestId('auth-body').contains(account.email).click();
 
-        cy.wait('@complete');
+                cy.location('pathname').should('eq', '/');
+                cy.findByTestId('deletedAccount').should('contain', 'Account is deleted');
+            });
+        });
 
-        assertPermissions();
+        it('should allow sign and then abort oauth and redirect to profile', () => {
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-        cy.server({ enable: false });
+            cy.location('pathname').should('eq', '/login');
 
-        cy.findByTestId('auth-controls').contains('Approve').click();
+            cy.get('[name=login]').type(`${account1.login}{enter}`);
 
-        cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
-    });
+            cy.url().should('include', '/password');
 
-    it('should allow sign in during oauth (guest oauth)', () => {
-        cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+            cy.server();
+            cy.route({
+                method: 'GET',
+                url: `/api/v1/accounts/${account1.id}`,
+                response: {
+                    id: 7,
+                    uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                    username: 'SleepWalker',
+                    isOtpEnabled: false,
+                    registeredAt: 1475568334,
+                    lang: 'en',
+                    elyProfileLink: 'http://ely.by/u7',
+                    email: 'danilenkos@auroraglobal.com',
+                    isActive: true,
+                    isDeleted: true, // force user into the deleted state
+                    passwordChangedAt: 1476075696,
+                    hasMojangUsernameCollision: true,
+                    shouldAcceptRules: false,
+                } as UserResponse,
+            });
 
-        cy.url().should('include', '/login');
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
 
-        cy.get('[name=login]').type(`${account1.login}{enter}`);
-
-        cy.url().should('include', '/password');
-
-        cy.get('[name=password]').type(`${account1.password}{enter}`);
-
-        cy.url().should('equal', 'https://dev.ely.by/');
-    });
-
-    // TODO: enable, when backend api will return correct response on auth decline
-    xit('should redirect to error page, when permission request declined', () => {
-        cy.server();
-
-        cy.route({
-            method: 'POST',
-            // NOTE: can not use cypress glob syntax, because it will break due to
-            // '%2F%2F' (//) in redirect_uri
-            // url: '/api/oauth2/v1/complete/*',
-            url: new RegExp('/api/oauth2/v1/complete'),
-            response: {
-                statusCode: 401,
-                error: 'accept_required',
-            },
-            status: 401,
-        }).as('complete');
-
-        cy.login({ accounts: ['default'] });
-
-        cy.visit(
-            `/oauth2/v1/ely?${new URLSearchParams({
-                ...defaults,
-                client_id: 'tlauncher',
-                redirect_uri: 'http://localhost:8080',
-            })}`,
-        );
-
-        cy.wait('@complete');
-
-        assertPermissions();
-
-        cy.server({ enable: false });
-
-        cy.findByTestId('auth-controls-secondary').contains('Decline').click();
-
-        cy.url().should('include', 'error=access_denied');
+            cy.location('pathname').should('eq', '/');
+            cy.findByTestId('deletedAccount').should('contain', 'Account is deleted');
+        });
     });
 
     describe('login_hint', () => {
@@ -229,7 +308,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('another account').click();
 
-            cy.url().should('include', '/login');
+            cy.location('pathname').should('eq', '/login');
 
             cy.get('[name=login]').type(`${account1.login}{enter}`);
 
@@ -314,7 +393,7 @@ describe('OAuth', () => {
                 })}`,
             );
 
-            cy.url().should('include', '/login');
+            cy.location('pathname').should('eq', '/login');
 
             cy.get('[name=login]').type(`${account1.login}{enter}`);
 

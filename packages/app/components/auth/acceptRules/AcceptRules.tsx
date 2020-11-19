@@ -7,6 +7,7 @@ import Body from './AcceptRulesBody';
 const messages = defineMessages({
     title: 'User Agreement',
     declineAndLogout: 'Decline and logout',
+    deleteAccount: 'Delete account',
 });
 
 export default factory({
@@ -17,7 +18,13 @@ export default factory({
         autoFocus: true,
         children: <Message key="accept" defaultMessage="Accept" />,
     },
-    links: {
-        label: messages.declineAndLogout,
-    },
+    links: [
+        {
+            label: messages.declineAndLogout,
+        },
+        {
+            label: messages.deleteAccount,
+            payload: { deleteAccount: true },
+        },
+    ],
 });

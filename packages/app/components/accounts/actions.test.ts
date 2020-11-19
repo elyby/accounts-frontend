@@ -7,10 +7,11 @@ import * as authentication from 'app/services/api/authentication';
 import { authenticate, revoke, logoutAll, logoutStrangers } from 'app/components/accounts/actions';
 import { add, activate, remove, reset } from 'app/components/accounts/actions/pure-actions';
 import { updateUser, setUser } from 'app/components/user/actions';
-import { setLogin, setAccountSwitcher } from 'app/components/auth/actions';
+import { setLogin } from 'app/components/auth/actions';
 import { Dispatch, State as RootState } from 'app/types';
 
 import { Account } from './reducer';
+import { User } from 'app/components/user';
 
 jest.mock('app/i18n', () => ({
     en: {
@@ -32,19 +33,21 @@ jest.mock('app/i18n', () => ({
 const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbHl8MSJ9.pRJ7vakt2eIscjqwG__KhSxKb3qwGsdBBeDbBffJs_I';
 const legacyToken = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOjF9.cRF-sQNrwWQ94xCb3vWioVdjxAZeefEE7GMGwh7708o';
 
-const account = {
+const account: Account = {
     id: 1,
     username: 'username',
     email: 'email@test.com',
     token,
     refreshToken: 'bar',
+    isDeleted: false,
 };
 
-const user = {
+const user: Partial<User> = {
     id: 1,
     username: 'username',
     email: 'email@test.com',
     lang: 'be',
+    isDeleted: false,
 };
 
 describe('components/accounts/actions', () => {
@@ -182,11 +185,6 @@ describe('components/accounts/actions', () => {
                     },
                 });
             });
-
-            it('should dispatch setAccountSwitcher', () =>
-                authenticate(account)(dispatch, getState, undefined).then(() =>
-                    expect(dispatch, 'to have a call satisfying', [setAccountSwitcher(false)]),
-                ));
         });
 
         describe('when one account available', () => {

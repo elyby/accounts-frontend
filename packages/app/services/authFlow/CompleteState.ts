@@ -34,7 +34,7 @@ export default class CompleteState extends AbstractState {
             context.setState(new LoginState());
         } else if (!user.isActive) {
             context.setState(new ActivationState());
-        } else if (user.shouldAcceptRules) {
+        } else if (user.shouldAcceptRules && !user.isDeleted) {
             context.setState(new AcceptRulesState());
         } else if (oauth && oauth.clientId) {
             return this.processOAuth(context);
@@ -44,7 +44,7 @@ export default class CompleteState extends AbstractState {
     }
 
     processOAuth(context: AuthContext): Promise<void> | void {
-        const { auth, accounts } = context.getState();
+        const { auth, accounts, user } = context.getState();
 
         let { isSwitcherEnabled } = auth;
         const { oauth } = auth;
@@ -73,8 +73,22 @@ export default class CompleteState extends AbstractState {
             }
         }
 
-        if (isSwitcherEnabled && (accounts.available.length > 1 || oauth.prompt.includes(PROMPT_ACCOUNT_CHOOSE))) {
+        if (
+            isSwitcherEnabled &&
+            (accounts.available.length > 1 ||
+                // we are always showing account switcher for deleted users
+                // so that they can see, that their account was deleted
+                // (this info is displayed on switcher)
+                user.isDeleted ||
+                oauth.prompt.includes(PROMPT_ACCOUNT_CHOOSE))
+        ) {
             context.setState(new ChooseAccountState());
+        } else if (user.isDeleted) {
+            // you shall not pass
+            // if we are here, this means that user have already seen account
+            // switcher and now we should redirect him to his profile,
+            // because oauth is not available for deleted accounts
+            context.navigate('/');
         } else if (oauth.code) {
             context.setState(new FinishState());
         } else {

@@ -47,6 +47,20 @@ describe('AcceptRulesState', () => {
 
             state.enter(context);
         });
+
+        it('should transition to complete state if account is deleted even if user should accept rules', () => {
+            context.getState.returns({
+                user: {
+                    shouldAcceptRules: true,
+                    isGuest: false,
+                    isDeleted: true,
+                },
+            });
+
+            expectState(mock, CompleteState);
+
+            state.enter(context);
+        });
     });
 
     describe('#resolve', () => {
@@ -83,7 +97,13 @@ describe('AcceptRulesState', () => {
         it('should logout', () => {
             expectRun(mock, 'logout');
 
-            state.reject(context);
+            state.reject(context, {});
+        });
+
+        it('should navigate to the account deletion page', () => {
+            expectNavigate(mock, '/profile/delete');
+
+            state.reject(context, { deleteAccount: true });
         });
     });
 });

@@ -15,7 +15,7 @@ class BaseAuthBody extends React.Component<
     RouteComponentProps<Record<string, any>>
 > {
     static contextType = Context;
-    /* TODO: use declare */ context: React.ContextType<typeof Context>;
+    declare context: React.ContextType<typeof Context>;
     prevErrors: AuthContext['auth']['error'];
 
     autoFocusField: string | null = '';

@@ -1,0 +1,35 @@
+@import '~app/components/ui/fonts.scss';
+
+.removableDataRow {
+    composes: formRow from '~app/components/profile/profileForm.scss';
+
+    display: flex;
+}
+
+.serviceName {
+    font-family: $font-family-title;
+    width: 50%;
+    color: #444;
+}
+
+.serviceContents {
+    width: 50%;
+    font-size: 12px;
+    color: #666;
+
+    li {
+        position: relative;
+        padding-left: 11px;
+
+        &:before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        span {
+            line-height: 16px;
+        }
+    }
+}

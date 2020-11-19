@@ -1,3 +1,5 @@
+import type { Account } from 'app/components/accounts/reducer';
+
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
 import LoginState from './LoginState';
@@ -14,14 +16,19 @@ export default class ChooseAccountState extends AbstractState {
         }
     }
 
-    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+    resolve(context: AuthContext, payload: Account | Record<string, any>): Promise<void> | void {
         if (payload.id) {
-            context.setState(new CompleteState());
-        } else {
-            context.navigate('/login');
-            context.run('setLogin', null);
-            context.setState(new LoginState());
+            // payload is Account
+            return context
+                .run('authenticate', payload)
+                .then(() => context.run('setAccountSwitcher', false))
+                .then(() => context.setState(new CompleteState()));
         }
+
+        // log in to another account
+        context.navigate('/login');
+        context.run('setLogin', null);
+        context.setState(new LoginState());
     }
 
     reject(context: AuthContext): void {

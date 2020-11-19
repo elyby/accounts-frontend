@@ -8,8 +8,8 @@ export interface AuthContext {
     user: User;
     requestRedraw: () => Promise<void>;
     clearErrors: () => void;
-    resolve: (payload: { [key: string]: any } | undefined) => void;
-    reject: (payload: { [key: string]: any } | undefined) => void;
+    resolve: (payload: Record<string, any> | undefined) => Promise<any> | void;
+    reject: (payload: Record<string, any> | undefined) => Promise<any> | void;
 }
 
 const Context = React.createContext<AuthContext>({

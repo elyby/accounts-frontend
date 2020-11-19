@@ -59,4 +59,16 @@ export function updateToken(token: string): UpdateTokenAction {
     };
 }
 
-export type Action = AddAction | RemoveAction | ActivateAction | ResetAction | UpdateTokenAction;
+interface MarkAsDeletedAction extends ReduxAction {
+    type: 'accounts:markAsDeleted';
+    payload: boolean;
+}
+
+export function markAsDeleted(isDeleted: boolean): MarkAsDeletedAction {
+    return {
+        type: 'accounts:markAsDeleted',
+        payload: isDeleted,
+    };
+}
+
+export type Action = AddAction | RemoveAction | ActivateAction | ResetAction | UpdateTokenAction | MarkAsDeletedAction;

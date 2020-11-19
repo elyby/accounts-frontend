@@ -84,6 +84,20 @@
     margin-top: 25px;
 }
 
+.sectionTitle {
+    font-family: $font-family-title;
+    font-size: 18px;
+    line-height: 1.2;
+    color: #444;
+    margin-top: 25px;
+}
+
+.delimiter {
+    background: #eee;
+    height: 1px;
+    margin: 25px -30px;
+}
+
 .stepper {
     width: 35%;
     margin: 0 auto;

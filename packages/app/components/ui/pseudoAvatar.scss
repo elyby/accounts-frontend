@@ -1,0 +1,53 @@
+@import '~app/components/ui/colors.scss';
+
+.pseudoAvatarWrapper {
+    position: relative;
+    display: inline-flex; // Needed to get right position of the cross icon
+}
+
+.pseudoAvatar {
+    composes: minecraft-character from '~app/components/ui/icons.scss';
+    font-size: 1em;
+
+    &0 {
+        color: $green;
+    }
+
+    &1 {
+        color: $blue;
+    }
+
+    &2 {
+        color: $violet;
+    }
+
+    &3 {
+        color: $orange;
+    }
+
+    &4 {
+        color: $dark_blue;
+    }
+
+    &5 {
+        color: $light_violet;
+    }
+
+    &6 {
+        color: $red;
+    }
+
+    .deletedPseudoAvatar & {
+        color: #ccc;
+    }
+}
+
+.deletedIcon {
+    composes: close from '~app/components/ui/icons.scss';
+
+    position: absolute;
+    top: 0.16em;
+    left: -0.145em;
+    font-size: 0.7em;
+    color: rgba($red, 0.75);
+}

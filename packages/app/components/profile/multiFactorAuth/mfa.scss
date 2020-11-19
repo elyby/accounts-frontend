@@ -2,9 +2,8 @@
 @import '~app/components/ui/fonts.scss';
 
 .mfaTitle {
-    font-size: 18px;
-    font-family: $font-family-title;
-    line-height: 1.2;
+    composes: sectionTitle from '~app/components/profile/profileForm.scss';
+
     text-align: center;
 
     margin-left: 17%;

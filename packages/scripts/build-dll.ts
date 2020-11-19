@@ -2,7 +2,8 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import fs, { Stats } from 'fs';
+import type { Stats } from 'fs';
+import fs from 'fs';
 import webpack, { MultiCompiler } from 'webpack';
 import chalk from 'chalk';
 
@@ -37,7 +38,11 @@ Promise.all([stat(`${__dirname}/../../yarn.lock`), stat(`${__dirname}/../../dll/
                     return reject(err);
                 }
 
-                logResult(chalk.green('Dll was successfully build in %s ms'), stats.endTime! - stats.startTime!);
+                logResult(
+                    chalk.green('Dll was successfully build in %s ms'),
+                    // @ts-expect-error - something wrong with webpack types
+                    stats.endTime - stats.startTime,
+                );
 
                 resolve();
             });

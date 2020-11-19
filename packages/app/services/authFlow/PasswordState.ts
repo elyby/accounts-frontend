@@ -33,7 +33,7 @@ export default class PasswordState extends AbstractState {
             rememberMe: boolean;
         },
     ): Promise<void> | void {
-        const { login, returnUrl } = getCredentials(context.getState());
+        const { login, returnUrl, isRelogin } = getCredentials(context.getState());
 
         return context
             .run('login', {
@@ -46,6 +46,10 @@ export default class PasswordState extends AbstractState {
 
                 if (isTotpRequired) {
                     return context.setState(new MfaState());
+                }
+
+                if (!isRelogin) {
+                    context.run('setAccountSwitcher', false);
                 }
 
                 if (returnUrl) {

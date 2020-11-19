@@ -1,7 +1,7 @@
 @import '~app/components/ui/colors.scss';
 @import '~app/components/ui/fonts.scss';
 
-$userBarHeight: 50px;
+$toolbarHeight: 50px;
 
 .root {
     height: 100%;
@@ -9,11 +9,11 @@ $userBarHeight: 50px;
 
 .viewPort {
     height: 100%;
+    transition: filter 0.4s 0.1s ease;
 }
 
 .isPopupActive {
     filter: blur(5px);
-    transition: filter 0.4s 0.1s ease;
 }
 
 .wrapper {
@@ -21,21 +21,21 @@ $userBarHeight: 50px;
     margin: 0 auto;
 }
 
-.header {
+.toolbar {
     position: fixed;
     top: 0;
     z-index: 100;
-    height: $userBarHeight;
+    height: $toolbarHeight;
     width: 100%;
     background: $green;
 }
 
-.headerContent {
+.toolbarContent {
     composes: wrapper;
     position: relative;
 }
 
-.logo {
+.siteName {
     line-height: 50px;
     padding: 0 20px;
     display: inline-block;
@@ -44,7 +44,15 @@ $userBarHeight: 50px;
 
     font-family: $font-family-title;
     font-size: 33px;
-    color: #fff !important;
+    color: #fff!important; // TODO: why?
+}
+
+.userBar {
+    position: absolute;
+    right: 0;
+    left: 115px;
+    top: 0;
+    text-align: right;
 }
 
 .body {
@@ -55,12 +63,5 @@ $userBarHeight: 50px;
     min-height: 100%;
     box-sizing: border-box;
 
-    padding-top: $userBarHeight; // place for header
-}
-
-.userbar {
-    position: absolute;
-    right: 0;
-    left: 115px;
-    top: 0;
+    padding-top: $toolbarHeight; // space for the toolbar
 }

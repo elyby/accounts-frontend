@@ -18,7 +18,7 @@ interface Props extends RouteComponentProps<RouteParams> {
 
 class ChangeEmailPage extends React.Component<Props> {
     static contextType = Context;
-    /* TODO: use declare */ context: React.ContextType<typeof Context>;
+    declare context: React.ContextType<typeof Context>;
 
     render() {
         const { step = 'step1', code } = this.props.match.params;

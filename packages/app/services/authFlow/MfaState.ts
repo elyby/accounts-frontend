@@ -19,15 +19,16 @@ export default class MfaState extends AbstractState {
     }
 
     resolve(context: AuthContext, { totp }: { totp: string }): Promise<void> | void {
-        const { login, password, rememberMe } = getCredentials(context.getState());
+        const { login, password, rememberMe, isRelogin } = getCredentials(context.getState());
 
         return context
             .run('login', {
-                totp,
-                password,
-                rememberMe,
                 login,
+                password,
+                totp,
+                rememberMe,
             })
+            .then(() => !isRelogin && context.run('setAccountSwitcher', false))
             .then(() => context.setState(new CompleteState()))
             .catch((err = {}) => err.errors || logger.warn('Error logging in', err));
     }

@@ -10,7 +10,7 @@ function ProfileField({
     link,
     onChange,
 }: {
-    label: React.ReactNode;
+    label?: React.ReactNode;
     link?: string;
     onChange?: () => void;
     value: React.ReactNode;
@@ -29,7 +29,7 @@ function ProfileField({
     return (
         <div className={styles.paramItem} data-testid="profile-item">
             <div className={styles.paramRow}>
-                <div className={styles.paramName}>{label}</div>
+                {label ? <div className={styles.paramName}>{label}</div> : ''}
                 <div className={styles.paramValue}>{value}</div>
 
                 {Action && (

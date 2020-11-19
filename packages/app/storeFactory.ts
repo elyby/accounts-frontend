@@ -28,7 +28,12 @@ export default function storeFactory(preloadedState = {}): Store {
 
     // Hot reload reducers
     if (module.hot && typeof module.hot.accept === 'function') {
-        module.hot.accept('app/reducers', () => store.replaceReducer(require('app/reducers').default));
+        module.hot.accept('app/reducers', () =>
+            store.replaceReducer(
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                require('app/reducers').default,
+            ),
+        );
     }
 
     return store;

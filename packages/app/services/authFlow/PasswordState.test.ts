@@ -69,6 +69,7 @@ describe('PasswordState', () => {
                 },
             });
 
+            expectRun(mock, 'setAccountSwitcher', false);
             expectRun(
                 mock,
                 'login',
@@ -101,6 +102,8 @@ describe('PasswordState', () => {
                     },
                 },
             });
+
+            // Should not run "setAccountSwitcher"
 
             expectRun(
                 mock,
@@ -136,6 +139,7 @@ describe('PasswordState', () => {
                 },
             });
 
+            expectRun(mock, 'setAccountSwitcher', false);
             expectRun(
                 mock,
                 'login',
@@ -194,6 +198,7 @@ describe('PasswordState', () => {
                 },
             });
 
+            // Should not run "setAccountSwitcher"
             expectRun(mock, 'activateAccount', { id: 2 });
             expectRun(mock, 'removeAccount', { id: 1 });
             expectState(mock, ChooseAccountState);

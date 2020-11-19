@@ -1,0 +1,24 @@
+.wrapper {
+    text-align: center;
+
+    @media (min-height: 600px) {
+        margin-top: 140px;
+    }
+}
+
+.title {
+    composes: indexTitle from '~app/components/profile/profile.scss';
+
+    margin-bottom: 25px;
+}
+
+.description {
+    composes: indexDescription from '~app/components/profile/profile.scss';
+
+    margin: 0 auto 20px auto;
+    max-width: 330px;
+
+    &:last-of-type {
+        margin-bottom: 25px;
+    }
+}

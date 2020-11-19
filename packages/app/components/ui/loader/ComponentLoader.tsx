@@ -9,10 +9,11 @@ import styles from './componentLoader.scss';
 
 interface Props {
     skin?: Skin;
+    className?: string;
 }
 
-const ComponentLoader: ComponentType<Props> = ({ skin = 'dark' }) => (
-    <div className={clsx(styles.componentLoader, styles[`${skin}ComponentLoader`])}>
+const ComponentLoader: ComponentType<Props> = ({ skin = 'dark', className }) => (
+    <div className={clsx(styles.componentLoader, styles[`${skin}ComponentLoader`], className)}>
         <div className={styles.spins}>
             {new Array(5).fill(0).map((_, index) => (
                 <div className={clsx(styles.spin, styles[`spin${index}`])} key={index} />

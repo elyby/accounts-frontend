@@ -191,7 +191,7 @@ Storybook:
     - sentry-cli releases deploys $VERSION new -e $CI_ENVIRONMENT_NAME
     - sentry-cli releases finalize $VERSION
 
-Deploy dev:
+Dev:
   extends:
     - .deployJob
   environment:
@@ -199,11 +199,15 @@ Deploy dev:
   variables:
     VM_HOST_NAME: playground.ely.local
     VM_DEPLOY_PATH: /srv/dev.account.ely.by/frontend
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: on_success
+    - if: '$CI_COMMIT_MESSAGE =~ /\[deploy dev\]/'
+      when: on_success
+      # Default:
+    - when: never
 
-Deploy prod:
+Prod:
   extends:
     - .deployJob
   stage: deploy
@@ -217,4 +221,5 @@ Deploy prod:
       when: never
     - if: '$CI_COMMIT_MESSAGE =~ /\[deploy\]/'
       when: on_success
+      # Default:
     - when: manual

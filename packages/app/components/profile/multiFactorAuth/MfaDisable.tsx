@@ -17,7 +17,7 @@ export default class MfaDisable extends React.Component<
     }
 > {
     static contextType = Context;
-    /* TODO: use declare */ context: React.ContextType<typeof Context>;
+    declare context: React.ContextType<typeof Context>;
 
     state = {
         showForm: false,

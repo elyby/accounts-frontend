@@ -41,7 +41,7 @@ interface State {
 
 export default class MfaEnable extends React.PureComponent<Props, State> {
     static contextType = Context;
-    /* TODO: use declare */ context: React.ContextType<typeof Context>;
+    declare context: React.ContextType<typeof Context>;
 
     static defaultProps = {
         confirmationForm: new FormModel(),
