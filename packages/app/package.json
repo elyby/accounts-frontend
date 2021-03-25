@@ -30,6 +30,7 @@
         "redux": "^4.0.5",
         "redux-localstorage": "^0.4.1",
         "redux-thunk": "^2.0.0",
+        "rtl-detect": "^1.0.2",
         "url-search-params-polyfill": "^8.1.0",
         "webfontloader": "^1.6.26",
         "whatwg-fetch": "^3.0.0"
@@ -45,6 +46,7 @@
         "@types/react-helmet": "^6.0.0",
         "@types/react-motion": "^0.0.29",
         "@types/react-transition-group": "^4.2.4",
+        "@types/rtl-detect": "^1.0.0",
         "@types/webfontloader": "^1.6.30",
         "@types/webpack-env": "^1.15.2",
         "utility-types": "^3.10.0"
