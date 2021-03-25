@@ -10,6 +10,8 @@ const localeToCountryCode: Record<string, string> = {
     sr: 'rs',
     zh: 'cn',
     cs: 'cz',
+    fil: 'ph',
+    he: 'il',
 };
 const SUPPORTED_LANGUAGES: ReadonlyArray<string> = Object.keys(supportedLocales);
 
