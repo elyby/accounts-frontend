@@ -77,9 +77,8 @@ class SlideMotion extends React.PureComponent<Props, State> {
                         <div
                             className={styles.container}
                             style={{
-                                // TODO: inverse for RTL language
-                                WebkitTransform: `translateX(-${interpolatingStyle.transform}%)`,
-                                transform: `translateX(-${interpolatingStyle.transform}%)`,
+                                // @ts-ignore see https://stackoverflow.com/a/52013197/5184751
+                                '--transition-progress': `${interpolatingStyle.transform}%`,
                             }}
                         >
                             {React.Children.map(children, (child, index) => (
