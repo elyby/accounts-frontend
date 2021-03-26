@@ -59,7 +59,7 @@ $popupMargin: 20px; // Outer popup margins
 
 .popup {
     white-space: normal;
-    text-align: left;
+    text-align: start;
 
     background: #fff;
     box-shadow: 0 0 10px rgba(#000, 0.2);
@@ -95,7 +95,7 @@ $popupMargin: 20px; // Outer popup margins
     composes: close from '~app/components/ui/icons.scss';
 
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     top: 0;
     padding: 15px;
     cursor: pointer;
@@ -122,6 +122,10 @@ $popupMargin: 20px; // Outer popup margins
         opacity: 0;
         transform: translate(100%);
         transition: 0s;
+
+        html[dir='rtl'] & {
+            transform: translate(-100%);
+        }
     }
 }
 

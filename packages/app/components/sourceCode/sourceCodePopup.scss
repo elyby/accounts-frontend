@@ -29,7 +29,8 @@
 }
 
 .iconWrapper {
-    margin: 4px 12px 0 0;
+    margin-top: 4px;
+    margin-inline-end: 12px;
 }
 
 .dbIcon {
@@ -68,14 +69,15 @@
     font-family: $font-family-title;
     font-size: 14px;
     color: #9a9a9a;
-    margin: 0 0 5px 1px; // Add 1px from the left to make icon look visually aligned with texts
+    margin-bottom: 5px;
+    margin-inline-start: 1px; // Add 1px from the left to make icon look visually aligned with texts
 }
 
 .githubIcon {
     composes: github from '~app/components/ui/icons.scss';
 
     font-size: 12px;
-    margin-right: 2px;
+    margin-inline-end: 2px;
     position: relative;
     bottom: 1px;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import clsx from 'clsx';
 import { uniqueId, omit } from 'app/functions';
@@ -17,7 +17,7 @@ export default class Input extends FormInputComponent<
         color: Color;
         center: boolean;
         disabled: boolean;
-        label?: string | MessageDescriptor;
+        label?: ReactNode | MessageDescriptor;
         placeholder?: string | MessageDescriptor;
         icon?: string;
         copy?: boolean;

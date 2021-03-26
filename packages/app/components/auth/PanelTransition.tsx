@@ -119,6 +119,7 @@ interface State {
     formsHeights: Record<PanelId, number>;
 }
 
+// TODO: completely broken for RTL languages
 class PanelTransition extends React.PureComponent<Props, State> {
     state: State = {
         contextHeight: 0,

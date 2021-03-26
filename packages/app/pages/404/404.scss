@@ -26,7 +26,11 @@
     width: 50px;
     height: 50px;
     background: white;
-    animation: cubeRotate 1s ease-out infinite;
+    animation: cubeRotateLTR 1s ease-out infinite;
+
+    html[dir='rtl'] & {
+        animation-name: cubeRotateRTL;
+    }
 }
 
 .road {
@@ -34,12 +38,12 @@
     width: 100%;
     height: 1px;
     background: white;
-    left: 0;
+    inset-inline-start: 0;
     bottom: 0;
     animation: roadStab 1s ease-out infinite;
 }
 
-@keyframes cubeRotate {
+@keyframes cubeRotateLTR {
     0% {
         transform: rotate(0deg) translate3D(0, 0, 0);
     }
@@ -51,6 +55,21 @@
     }
     100% {
         transform: rotate(90deg) translate3D(0, 0, 0);
+    }
+}
+
+@keyframes cubeRotateRTL {
+    0% {
+        transform: rotate(0deg) translate3D(0, 0, 0);
+    }
+    65% {
+        transform: rotate(-45deg) translate3D(0, -13px, 0);
+    }
+    90% {
+        transform: rotate(-70deg) translate3D(0, -8px, 0);
+    }
+    100% {
+        transform: rotate(-90deg) translate3D(0, 0, 0);
     }
 }
 
@@ -91,7 +110,7 @@
     height: 100%;
     position: absolute;
     bottom: -50px;
-    left: 0;
+    inset-inline-start: 0;
     overflow: hidden;
     animation: roadStab 1s ease-out infinite;
 }
@@ -103,7 +122,7 @@
         border-right: 2px solid transparent;
         border-bottom: 4px solid white;
         bottom: $bottom;
-        right: -2%;
+        inset-inline-end: -2%;
         animation: rockTravelling 10s $delay ease-out infinite;
     }
 }
@@ -116,37 +135,37 @@
 
 @keyframes rockTravelling {
     0% {
-        right: -2%;
+        inset-inline-end: -2%;
     }
     10% {
-        right: 8%;
+        inset-inline-end: 8%;
     }
     20% {
-        right: 18%;
+        inset-inline-end: 18%;
     }
     30% {
-        right: 29%;
+        inset-inline-end: 29%;
     }
     40% {
-        right: 40%;
+        inset-inline-end: 40%;
     }
     50% {
-        right: 51%;
+        inset-inline-end: 51%;
     }
     60% {
-        right: 62%;
+        inset-inline-end: 62%;
     }
     70% {
-        right: 72%;
+        inset-inline-end: 72%;
     }
     80% {
-        right: 82%;
+        inset-inline-end: 82%;
     }
     90% {
-        right: 92%;
+        inset-inline-end: 92%;
     }
     100% {
-        right: 102%;
+        inset-inline-end: 102%;
     }
 }
 
@@ -158,7 +177,7 @@
     animation: roadStab 1s ease-out infinite, cloudStab 1s ease-out infinite;
     position: absolute;
     bottom: -50px;
-    left: -50%;
+    inset-inline-start: -50%;
     overflow: hidden;
 }
 
@@ -183,7 +202,7 @@
     composes: cloud;
 
     top: 65px;
-    right: -30%;
+    inset-inline-end: -30%;
     width: 50px;
     height: 16px;
     animation: cloudTravelling 21s 5s linear infinite;
@@ -193,7 +212,7 @@
     composes: cloud;
 
     top: 40px;
-    right: -30%;
+    inset-inline-end: -30%;
     width: 70px;
     height: 22px;
     animation: cloudTravelling 26s 11s linear infinite;
@@ -201,10 +220,10 @@
 
 @keyframes cloudTravelling {
     0% {
-        right: -30%;
+        inset-inline-end: -30%;
     }
     100% {
-        right: 110%;
+        inset-inline-end: 110%;
     }
 }
 

@@ -16,8 +16,8 @@ $maxQrCodeSize: 242px;
 }
 
 .or {
-    position: absolute;
-    left: 0;
+    position: absolute; // Use absolute positioning to put an element between margin
+    inset-inline-start: 0; // TODO: doesn't have any effect. Probably can be removed
     width: 100%;
     margin-top: -18px;
 

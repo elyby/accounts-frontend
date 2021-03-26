@@ -34,12 +34,10 @@ $sidebar-width: 320px;
 @media (min-width: 720px) {
     .content {
         padding: 55px 50px;
-        margin-left: $sidebar-width;
+        margin-inline-start: $sidebar-width;
     }
 
     .sidebar {
-        right: auto;
-
         width: $sidebar-width;
     }
 

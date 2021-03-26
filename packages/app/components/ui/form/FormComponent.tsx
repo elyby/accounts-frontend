@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { MessageDescriptor } from 'react-intl';
+
 import i18n from 'app/services/i18n';
+
+function isMessageDescriptor(value: any): value is MessageDescriptor {
+    return typeof value === 'object' && value.id;
+}
 
 export default class FormComponent<P, S = {}> extends React.Component<P, S> {
     /**
@@ -8,22 +13,17 @@ export default class FormComponent<P, S = {}> extends React.Component<P, S> {
      *
      * @param {string|object} message - message string, or intl message descriptor with an `id` field
      *
+     * @deprecated
      * @returns {string}
      */
-    formatMessage(message: string | MessageDescriptor): string {
-        if (!message) {
-            throw new Error('A message is required');
+    formatMessage<T extends ReactNode | MessageDescriptor>(message: T): T extends MessageDescriptor ? string : T {
+        if (isMessageDescriptor(message)) {
+            // @ts-ignore
+            return i18n.getIntl().formatMessage(message);
         }
 
-        if (typeof message === 'string') {
-            return message;
-        }
-
-        if (!message.id) {
-            throw new Error(`Invalid message format: ${JSON.stringify(message)}`);
-        }
-
-        return i18n.getIntl().formatMessage(message);
+        // @ts-ignore
+        return message;
     }
 
     /**

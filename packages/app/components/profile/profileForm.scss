@@ -9,7 +9,7 @@
 
 .backButton {
     position: absolute;
-    left: -60px;
+    inset-inline-start: -60px;
     top: 15px;
     width: 25px;
     height: 25px;
@@ -60,7 +60,6 @@
         display: block;
 
         position: absolute;
-        left: 0;
         bottom: 0;
         height: 3px;
         width: 86px;
@@ -110,7 +109,7 @@
 
     .backButton {
         top: 29px;
-        left: 27px;
+        inset-inline-start: 27px;
         padding: 0;
         margin: 0;
         width: auto;

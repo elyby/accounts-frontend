@@ -37,7 +37,7 @@
     width: 50%;
 
     &:first-of-type {
-        margin-right: $popupPadding;
+        margin-inline-end: $popupPadding;
     }
 }
 

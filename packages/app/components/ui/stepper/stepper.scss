@@ -8,7 +8,7 @@
 
 .step {
     position: relative;
-    text-align: right;
+    text-align: end;
     width: 100%;
 
     height: 4px;
@@ -24,8 +24,8 @@
 
         position: absolute;
         height: 4px;
-        left: 0;
-        right: 100%;
+        inset-inline-start: 0;
+        inset-inline-end: 100%;
         top: 50%;
         margin-top: -2px;
 
@@ -53,7 +53,7 @@
 
 .activeStep {
     &:before {
-        right: 0;
+        inset-inline-end: 0;
         transition-delay: unset;
     }
 

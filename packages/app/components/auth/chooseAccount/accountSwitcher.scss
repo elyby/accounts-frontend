@@ -3,7 +3,7 @@
 
 .accountSwitcher {
     background: $black;
-    text-align: left;
+    text-align: start;
 }
 
 $border: 1px solid lighter($black);
@@ -37,12 +37,12 @@ $border: 1px solid lighter($black);
 
 .accountAvatar {
     font-size: 35px;
-    margin-right: 15px;
+    margin-inline-end: 15px;
 }
 
 .accountInfo {
     flex-grow: 1;
-    margin-right: 15px;
+    margin-inline-end: 15px;
     min-width: 0; // Fix for text-overflow. See https://stackoverflow.com/a/40612184
 }
 
@@ -76,17 +76,25 @@ $border: 1px solid lighter($black);
     composes: arrowRight from '~app/components/ui/icons.scss';
 
     position: relative;
-    left: 0;
+    inset-inline-start: 0;
 
     font-size: 24px;
     color: #4e4e4e;
     line-height: 35px;
 
+    transition: color 0.25s, inset-inline-start 0.5s;
+    // TODO: right now transition property doesn't support the bidirectional value.
+    //       See https://github.com/gasolin/postcss-bidirection/issues/25.
+    // noinspection CssOverwrittenProperties Graceful degradation
     transition: color 0.25s, left 0.5s;
+
+    html[dir='rtl'] & {
+        transition: color 0.25s, right 0.5s;
+    }
 
     .item:hover & {
         color: #aaa;
-        left: 5px;
+        inset-inline-start: 5px;
     }
 }
 

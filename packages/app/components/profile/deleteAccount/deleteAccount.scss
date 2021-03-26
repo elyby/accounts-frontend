@@ -19,12 +19,12 @@
 
     li {
         position: relative;
-        padding-left: 11px;
+        padding-inline-start: 11px;
 
         &:before {
             content: '—';
             position: absolute;
-            left: 0;
+            inset-inline-start: 0;
             top: 2px;
         }
 

@@ -47,7 +47,7 @@ const AccountSwitcher: ComponentType<Props> = ({
         <div className={clsx(styles.accountSwitcher)} data-testid="account-switcher">
             <div className={styles.item} data-testid="active-account">
                 <PseudoAvatar className={styles.activeAccountIcon} />
-                <div className={styles.activeAccountInfo}>
+                <div>
                     <div className={styles.activeAccountUsername}>{activeAccount.username}</div>
                     <div className={clsx(styles.accountEmail, styles.activeAccountEmail)}>{activeAccount.email}</div>
                     <div className={styles.links}>
@@ -81,16 +81,16 @@ const AccountSwitcher: ComponentType<Props> = ({
                 >
                     <PseudoAvatar index={index + 1} deleted={account.isDeleted} className={styles.accountIcon} />
 
+                    <div className={styles.accountInfo}>
+                        <div className={styles.accountUsername}>{account.username}</div>
+                        <div className={styles.accountEmail}>{account.email}</div>
+                    </div>
+
                     <div
                         className={styles.logoutIcon}
                         data-testid="logout-account"
                         onClick={onAccountRemoveCallback(account)}
                     />
-
-                    <div className={styles.accountInfo}>
-                        <div className={styles.accountUsername}>{account.username}</div>
-                        <div className={styles.accountEmail}>{account.email}</div>
-                    </div>
                 </div>
             ))}
             <Link to="/login" onClick={onLoginClick}>
