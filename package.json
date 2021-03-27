@@ -45,7 +45,8 @@
         "build:dll": "babel-node --extensions '.ts,.d.ts' ./packages/scripts/build-dll.ts",
         "build:serve": "http-server --proxy https://dev.account.ely.by ./build",
         "sb": "APP_ENV=storybook start-storybook -p 9009 --ci",
-        "sb:build": "APP_ENV=storybook build-storybook"
+        "sb:build": "APP_ENV=storybook build-storybook",
+        "postinstall": "node -e \"try{require('./postinstall.js')}catch(e){}\""
     },
     "lint-staged": {
         "*.{json,scss,css,md}": [
