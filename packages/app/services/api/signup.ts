@@ -20,7 +20,7 @@ export function register({
     rulesAgreement = false,
     lang = '',
     captcha = '',
-}: RegisterParams): Promise<Resp<void>> {
+}: RegisterParams): Promise<Resp<{ success: boolean }>> {
     return request.post(
         '/api/signup',
         { email, username, password, rePassword, rulesAgreement, lang, captcha },

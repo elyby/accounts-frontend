@@ -20,7 +20,6 @@ storiesOf('Components/Profile', module).add('Profile', () => (
                 username: 'ErickSkrauch',
                 email: 'erickskrauch@ely.by',
                 hasMojangUsernameCollision: true,
-                isActive: true,
                 isGuest: false,
                 isDeleted: false,
                 isOtpEnabled: true,

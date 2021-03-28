@@ -26,14 +26,14 @@ export default class CompleteState extends AbstractState {
 
     enter(context: AuthContext): Promise<void> | void {
         const {
-            auth: { oauth },
+            auth: { credentials, oauth },
             user,
         } = context.getState();
 
-        if (user.isGuest) {
-            context.setState(new LoginState());
-        } else if (!user.isActive) {
+        if (credentials.isActivationRequired) {
             context.setState(new ActivationState());
+        } else if (user.isGuest) {
+            context.setState(new LoginState());
         } else if (user.shouldAcceptRules && !user.isDeleted) {
             context.setState(new AcceptRulesState());
         } else if (oauth && oauth.clientId) {

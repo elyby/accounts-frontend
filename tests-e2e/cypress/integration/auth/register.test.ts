@@ -70,6 +70,55 @@ describe('Register', () => {
         cy.location('pathname').should('eq', '/');
     });
 
+    it('should allow return to login page from activation', () => {
+        const username = `test${Date.now()}`;
+        const email = `${Date.now()}@gmail.com`;
+        const password = String(Date.now());
+        const captchaCode = 'captchaCode';
+
+        cy.server();
+        cy.route({
+            method: 'POST',
+            url: '/api/signup',
+            response: {
+                success: true,
+            },
+        }).as('signup');
+        cy.login({
+            accounts: ['default'],
+            updateState: false,
+            rawApiResp: true,
+        });
+        cy.visit('/');
+
+        cy.findByTestId('toolbar').contains('Join').click();
+
+        cy.location('pathname').should('eq', '/register');
+
+        cy.get('[name=username]').type(username);
+        cy.get('[name=email]').type(email);
+        cy.get('[name=password]').type(password);
+        cy.get('[name=rePassword]').type(password);
+        cy.get('[name=rulesAgreement]').should('not.be.checked');
+        cy.get('[name=rulesAgreement]').parent().click();
+        cy.get('[name=rulesAgreement]').should('be.checked');
+        cy.window().should('have.property', 'e2eCaptchaSetCode');
+        cy.window().then((win) => {
+            // fake captcha response
+            // @ts-ignore
+            win.e2eCaptchaSetCode(captchaCode);
+        });
+        cy.get('[type=submit]').click();
+
+        cy.wait('@signup');
+
+        cy.location('pathname').should('eq', '/activation');
+
+        cy.findByTestId('home-page').click();
+
+        cy.location('pathname').should('eq', '/login');
+    });
+
     it('should allow activation', () => {
         const activationKey = 'activationKey';
 

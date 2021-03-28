@@ -9,7 +9,6 @@ export interface User {
     avatar: string;
     lang: string;
     isGuest: boolean;
-    isActive: boolean;
     isDeleted: boolean;
     isOtpEnabled: boolean;
     passwordChangedAt: number;
@@ -31,7 +30,6 @@ const defaults: State = {
     maskedEmail: '',
     avatar: '',
     lang: '',
-    isActive: false,
     isDeleted: false,
     isOtpEnabled: false,
     shouldAcceptRules: false, // whether user need to review updated rules
