@@ -33,10 +33,11 @@ describe('CompleteState', () => {
         it('should navigate to / for authenticated', () => {
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
-                auth: {},
+                auth: {
+                    credentials: {},
+                },
             });
 
             expectNavigate(mock, '/');
@@ -49,7 +50,9 @@ describe('CompleteState', () => {
                 user: {
                     isGuest: true,
                 },
-                auth: {},
+                auth: {
+                    credentials: {},
+                },
             });
 
             expectState(mock, LoginState);
@@ -62,7 +65,11 @@ describe('CompleteState', () => {
                 user: {
                     isGuest: false,
                 },
-                auth: {},
+                auth: {
+                    credentials: {
+                        isActivationRequired: true,
+                    },
+                },
             });
 
             expectState(mock, ActivationState);
@@ -74,11 +81,12 @@ describe('CompleteState', () => {
             context.getState.returns({
                 user: {
                     isGuest: false,
-                    isActive: true,
                     shouldAcceptRules: true,
                     isDeleted: true,
                 },
-                auth: {},
+                auth: {
+                    credentials: {},
+                },
             });
 
             expectNavigate(mock, '/');
@@ -90,10 +98,11 @@ describe('CompleteState', () => {
             context.getState.returns({
                 user: {
                     shouldAcceptRules: true,
-                    isActive: true,
                     isGuest: false,
                 },
-                auth: {},
+                auth: {
+                    credentials: {},
+                },
             });
 
             expectState(mock, AcceptRulesState);
@@ -107,7 +116,11 @@ describe('CompleteState', () => {
                     shouldAcceptRules: true,
                     isGuest: false,
                 },
-                auth: {},
+                auth: {
+                    credentials: {
+                        isActivationRequired: true,
+                    },
+                },
             });
 
             expectState(mock, ActivationState);
@@ -119,10 +132,10 @@ describe('CompleteState', () => {
             it('should transition to finish state if code is present', () => {
                 context.getState.returns({
                     user: {
-                        isActive: true,
                         isGuest: false,
                     },
                     auth: {
+                        credentials: {},
                         oauth: {
                             clientId: 'ely.by',
                             code: 'XXX',
@@ -139,10 +152,10 @@ describe('CompleteState', () => {
                 it('should transition to permissions state if acceptRequired', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isGuest: false,
                         },
                         auth: {
+                            credentials: {},
                             oauth: {
                                 clientId: 'ely.by',
                                 acceptRequired: true,
@@ -158,10 +171,10 @@ describe('CompleteState', () => {
                 it('should transition to permissions state if prompt=consent', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isGuest: false,
                         },
                         auth: {
+                            credentials: {},
                             oauth: {
                                 clientId: 'ely.by',
                                 prompt: ['consent'],
@@ -179,7 +192,6 @@ describe('CompleteState', () => {
                 it('should transition to ChooseAccountState if user has multiple accs and switcher enabled', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isGuest: false,
                         },
                         accounts: {
@@ -187,6 +199,7 @@ describe('CompleteState', () => {
                             active: 1,
                         },
                         auth: {
+                            credentials: {},
                             isSwitcherEnabled: true,
                             oauth: {
                                 clientId: 'ely.by',
@@ -203,7 +216,6 @@ describe('CompleteState', () => {
                 it('should transition to ChooseAccountState if user isDeleted', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isDeleted: true,
                             isGuest: false,
                         },
@@ -213,6 +225,7 @@ describe('CompleteState', () => {
                         },
                         auth: {
                             isSwitcherEnabled: true,
+                            credentials: {},
                             oauth: {
                                 clientId: 'ely.by',
                                 prompt: [],
@@ -228,7 +241,6 @@ describe('CompleteState', () => {
                 it('should NOT transition to ChooseAccountState if user has multiple accs and switcher disabled', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isGuest: false,
                         },
                         accounts: {
@@ -237,6 +249,7 @@ describe('CompleteState', () => {
                         },
                         auth: {
                             isSwitcherEnabled: false,
+                            credentials: {},
                             oauth: {
                                 clientId: 'ely.by',
                                 prompt: [],
@@ -252,7 +265,6 @@ describe('CompleteState', () => {
                 it('should transition to ChooseAccountState if prompt=select_account and switcher enabled', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isGuest: false,
                         },
                         accounts: {
@@ -261,6 +273,7 @@ describe('CompleteState', () => {
                         },
                         auth: {
                             isSwitcherEnabled: true,
+                            credentials: {},
                             oauth: {
                                 clientId: 'ely.by',
                                 prompt: ['select_account'],
@@ -276,7 +289,6 @@ describe('CompleteState', () => {
                 it('should NOT transition to ChooseAccountState if prompt=select_account and switcher disabled', () => {
                     context.getState.returns({
                         user: {
-                            isActive: true,
                             isGuest: false,
                         },
                         accounts: {
@@ -285,6 +297,7 @@ describe('CompleteState', () => {
                         },
                         auth: {
                             isSwitcherEnabled: false,
+                            credentials: {},
                             oauth: {
                                 clientId: 'ely.by',
                                 prompt: ['select_account'],
@@ -304,10 +317,10 @@ describe('CompleteState', () => {
         it('should run oAuthComplete', () => {
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -325,10 +338,10 @@ describe('CompleteState', () => {
         it('should listen for auth success/failure', () => {
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -352,10 +365,10 @@ describe('CompleteState', () => {
 
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -381,10 +394,10 @@ describe('CompleteState', () => {
 
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -425,7 +438,6 @@ describe('CompleteState', () => {
 
                 context.getState.returns({
                     user: {
-                        isActive: true,
                         isGuest: false,
                     },
                     accounts: {
@@ -433,6 +445,7 @@ describe('CompleteState', () => {
                         active: 100,
                     },
                     auth: {
+                        credentials: {},
                         oauth: {
                             clientId: 'ely.by',
                             loginHint: account[field],
@@ -463,7 +476,6 @@ describe('CompleteState', () => {
 
                 context.getState.returns({
                     user: {
-                        isActive: true,
                         isGuest: false,
                     },
                     accounts: {
@@ -471,6 +483,7 @@ describe('CompleteState', () => {
                         active: account.id,
                     },
                     auth: {
+                        credentials: {},
                         oauth: {
                             clientId: 'ely.by',
                             loginHint: account.id,
@@ -496,7 +509,6 @@ describe('CompleteState', () => {
 
                 context.getState.returns({
                     user: {
-                        isActive: true,
                         isGuest: false,
                     },
                     accounts: {
@@ -504,6 +516,7 @@ describe('CompleteState', () => {
                         active: 1,
                     },
                     auth: {
+                        credentials: {},
                         oauth: {
                             clientId: 'ely.by',
                             loginHint: account.id,
@@ -542,10 +555,10 @@ describe('CompleteState', () => {
             state = new CompleteState(expected);
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -567,10 +580,10 @@ describe('CompleteState', () => {
             state = new CompleteState(expected);
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -593,10 +606,10 @@ describe('CompleteState', () => {
             state = new CompleteState(expected);
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],
@@ -620,10 +633,10 @@ describe('CompleteState', () => {
             state = new CompleteState(expected);
             context.getState.returns({
                 user: {
-                    isActive: true,
                     isGuest: false,
                 },
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 'ely.by',
                         prompt: [],

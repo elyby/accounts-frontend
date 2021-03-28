@@ -92,7 +92,7 @@ export function login({
                     if (resp.errors.password === PASSWORD_REQUIRED) {
                         return dispatch(setLogin(login));
                     } else if (resp.errors.login === ACTIVATION_REQUIRED) {
-                        return dispatch(needActivation());
+                        return dispatch(needActivation({ login }));
                     } else if (resp.errors.totp === TOTP_REQUIRED) {
                         return dispatch(
                             requestTotp({
@@ -174,14 +174,7 @@ export function register({
             captcha,
         })
             .then(() => {
-                dispatch(
-                    updateUser({
-                        username,
-                        email,
-                    }),
-                );
-
-                dispatch(needActivation());
+                dispatch(needActivation({ login: email || username }));
 
                 browserHistory.push('/activation');
             })
@@ -232,8 +225,6 @@ function setCredentials(payload: Credentials | null): SetCredentialsAction {
 /**
  * Sets login in credentials state
  * Resets the state, when `null` is passed
- *
- * @param login
  */
 export function setLogin(login: string | null): SetCredentialsAction {
     return setCredentials(login ? { login } : null);
@@ -532,11 +523,11 @@ export function resetOAuth(): AppAction {
  * Resets all temporary state related to auth
  */
 export function resetAuth(): AppAction {
-    return (dispatch, getSate): Promise<void> => {
+    return (dispatch, getState): Promise<void> => {
         dispatch(setLogin(null));
         dispatch(resetOAuth());
         // ensure current account is valid
-        const activeAccount = getActiveAccount(getSate());
+        const activeAccount = getActiveAccount(getState());
 
         if (activeAccount) {
             return Promise.resolve(dispatch(authenticate(activeAccount)))
@@ -610,10 +601,10 @@ function wrapInLoader<T>(fn: AppAction<Promise<T>>): AppAction<Promise<T>> {
 
 export type LoadingAction = SetLoadingAction;
 
-function needActivation() {
-    return updateUser({
-        isActive: false,
-        isGuest: false,
+function needActivation({ login }: { login: string }) {
+    return setCredentials({
+        login,
+        isActivationRequired: true,
     });
 }
 

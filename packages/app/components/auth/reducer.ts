@@ -20,6 +20,7 @@ export interface Credentials {
     returnUrl?: string;
     isRelogin?: boolean;
     isTotpRequired?: boolean;
+    isActivationRequired?: boolean;
 }
 
 type Error = Record<

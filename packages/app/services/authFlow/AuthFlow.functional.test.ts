@@ -95,10 +95,10 @@ describe('AuthFlow.functional', () => {
             Object.assign(state, {
                 user: {
                     isGuest: false,
-                    isActive: true,
                 },
 
                 auth: {
+                    credentials: {},
                     oauth: {
                         clientId: 123,
                         prompt: [],
