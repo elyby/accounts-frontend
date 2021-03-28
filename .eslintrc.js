@@ -106,6 +106,7 @@ module.exports = {
             },
         ],
 
+        'jsdoc/require-param': 'off',
         'jsdoc/require-param-description': 'off',
         'jsdoc/require-returns-description': 'off',
         'jsdoc/require-jsdoc': 'off',
