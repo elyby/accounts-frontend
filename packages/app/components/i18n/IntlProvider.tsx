@@ -1,5 +1,8 @@
 import React, { useState, useEffect, ComponentType } from 'react';
 import { RawIntlProvider, IntlShape } from 'react-intl';
+import { Helmet } from 'react-helmet-async';
+
+import { getLangDir } from 'rtl-detect';
 
 import i18n from 'app/services/i18n';
 import { useReduxSelector } from 'app/functions';
@@ -26,7 +29,12 @@ const IntlProvider: ComponentType = ({ children }) => {
         return null;
     }
 
-    return <RawIntlProvider value={intl}>{children}</RawIntlProvider>;
+    return (
+        <RawIntlProvider value={intl}>
+            <Helmet htmlAttributes={{ lang: locale, dir: getLangDir(locale) }} />
+            {children}
+        </RawIntlProvider>
+    );
 };
 
 export default IntlProvider;

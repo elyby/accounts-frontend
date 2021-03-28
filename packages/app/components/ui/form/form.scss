@@ -36,7 +36,7 @@
     composes: formRow;
 
     .textField {
-        padding-left: 60px;
+        padding-inline-start: 60px;
     }
 }
 
@@ -80,7 +80,7 @@
 .textFieldIcon {
     box-sizing: border-box;
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     top: 0;
     height: 50px;
     width: 50px;
@@ -95,7 +95,7 @@
 
 .copyIcon {
     position: absolute;
-    right: 5px;
+    inset-inline-end: 5px;
     top: 10px;
 
     padding: 5px;
@@ -175,6 +175,7 @@
     font-family: $font-family-title;
     color: #666;
     font-size: 18px;
+    text-align: start;
 }
 
 .fieldError {
@@ -248,7 +249,7 @@
 .markableContainer {
     display: inline-block;
     position: relative;
-    padding-left: 27px;
+    padding-inline-start: 27px;
 
     font-family: $font-family-title;
     font-size: 16px;
@@ -260,7 +261,7 @@
 .markPosition {
     position: absolute;
     box-sizing: border-box;
-    left: 0;
+    inset-inline-start: 0;
     top: 0;
     margin: 0;
 

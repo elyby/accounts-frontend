@@ -4,18 +4,18 @@
 .authInfo {
     // Отступы сверху и снизу разные т.к. мы ужимаем высоту линии строки с логином на 2 пикселя и из-за этого теряем отступ снизу
     padding: 5px 20px 7px;
-    text-align: left;
+    text-align: start;
 }
 
 .authInfoAvatar {
     $size: 30px;
 
-    float: left;
+    float: start;
     height: $size;
     width: $size;
     font-size: $size;
     line-height: 1;
-    margin-right: 10px;
+    margin-inline-end: 10px;
     margin-top: 2px;
     color: #aaa;
 
@@ -38,7 +38,7 @@
 
 .permissionsContainer {
     padding: 15px 12px;
-    text-align: left;
+    text-align: start;
 }
 
 .permissionsTitle {
@@ -57,7 +57,7 @@
         font-size: 14px;
         line-height: 1.4;
         padding-bottom: 4px;
-        padding-left: 17px;
+        padding-inline-start: 17px;
         position: relative;
 
         &:last-of-type {
@@ -71,7 +71,7 @@
             line-height: 9px;
             position: absolute;
             top: 6px;
-            left: -4px;
+            inset-inline-start: -4px;
         }
     }
 }

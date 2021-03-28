@@ -22,7 +22,7 @@
 
 .otherApps {
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     bottom: 5px;
     font-size: 10px;
 
@@ -96,7 +96,7 @@
 
         .androidActive & {
             transform: translateX(0);
-            left: 0;
+            inset-inline-start: 0;
         }
 
         .appleActive &,
@@ -111,21 +111,33 @@
         $translateX: -51%;
 
         transform: translateX($translateX) scale(1);
-        left: 49%;
+        inset-inline-start: 49%;
+
+        html[dir='rtl'] & {
+            transform: translateX(-$translateX) scale(1);
+        }
 
         &:hover {
             transform: translateX($translateX) scale(1.1);
+
+            html[dir='rtl'] & {
+                transform: translateX(-$translateX) scale(1.1);
+            }
         }
 
         .appleActive & {
-            transform: translateX(0);
-            left: 0;
+            transform: translateX(0)!important; // override dir='rtl'
+            inset-inline-start: 0;
         }
 
         .androidActive &,
         .windowsActive & {
             transform: translateX($translateX) scale(0);
             opacity: 0;
+
+            html[dir='rtl'] & {
+                transform: translateX(-$translateX) scale(0);
+            }
         }
     }
 
@@ -134,21 +146,33 @@
         $translateX: -100%;
 
         transform: translateX($translateX) scale(1);
-        left: 100%;
+        inset-inline-start: 100%;
+
+        html[dir='rtl'] & {
+            transform: translateX(-$translateX) scale(1);
+        }
 
         &:hover {
             transform: translateX($translateX) scale(1.1);
+
+            html[dir='rtl'] & {
+                transform: translateX(-$translateX) scale(1.1);
+            }
         }
 
         .windowsActive & {
-            transform: translateX(0);
-            left: 0;
+            transform: translateX(0)!important; // override dir='rtl'
+            inset-inline-start: 0;
         }
 
         .appleActive &,
         .androidActive & {
             transform: translateX($translateX) scale(0);
             opacity: 0;
+
+            html[dir='rtl'] & {
+                transform: translateX(-$translateX) scale(0);
+            }
         }
     }
 
@@ -166,8 +190,8 @@
         position: relative;
         z-index: 1;
         margin: 15px;
-        margin-left: 30%;
-        padding-left: 15px;
+        margin-inline-start: 30%;
+        padding-inline-start: 15px;
         padding-bottom: 15px;
         min-height: $boxHeight;
     }
@@ -212,7 +236,7 @@
     .osName {
         font-family: $font-family-title;
         font-size: 16px;
-        margin-left: 10px;
+        margin-inline-start: 10px;
     }
 
     @mixin commonNonActiveTile() {

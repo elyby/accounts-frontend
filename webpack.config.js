@@ -201,19 +201,6 @@ const webpackConfig = {
                 type: 'javascript/auto',
                 use: ['fontgen-loader'],
             },
-            {
-                // Replace some locales provided by FormatJS with local ones
-                test: /@formatjs\/intl-\w+\/dist\/locale-data/,
-                loader: 'file-replace-loader',
-                options: {
-                    condition: 'if-replacement-exists',
-                    replacement: (resource) =>
-                        resource.replace(
-                            /node_modules\/@formatjs\/intl-(\w+)\/dist\/locale-data\/(\w+)\.js/,
-                            'packages/app/services/i18n/overrides/$1/$2.js',
-                        ),
-                },
-            },
         ],
     },
 

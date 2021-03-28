@@ -13,7 +13,8 @@ $formColumnWidth: 416px;
 }
 
 .descriptionColumn {
-    padding: 12px 20px 0 0;
+    padding-top: 12px;
+    padding-inline-end: 20px;
     box-sizing: border-box;
 }
 
@@ -97,7 +98,8 @@ $formColumnWidth: 416px;
 }
 
 .paramMessage {
-    padding: 10px 40px 0 0;
+    padding-top: 10px;
+    padding-inline-end: 40px;
 
     color: $red;
     font-size: 11px;
@@ -168,7 +170,7 @@ $formColumnWidth: 416px;
     }
 
     .paramEditIcon {
-        margin-left: 5px;
+        margin-inline-start: 5px;
         vertical-align: top;
     }
 

@@ -25,8 +25,9 @@ $dropdownPadding: 15px;
     display: inline-block;
     box-sizing: border-box;
     height: 50px;
+    padding-inline-start: $dropdownPadding;
     // 28px - ширина иконки при заданном размере шрифта
-    padding: 0 ($dropdownPadding * 2 + 28px) 0 $dropdownPadding;
+    padding-inline-end: $dropdownPadding * 2 + 28px;
     position: relative;
 
     font-family: $font-family-title;
@@ -48,6 +49,7 @@ $dropdownPadding: 15px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    text-align: start;
 }
 
 .opened {
@@ -57,18 +59,26 @@ $dropdownPadding: 15px;
     composes: selecter from '~app/components/ui/icons.scss';
 
     position: absolute;
-    right: $dropdownPadding;
+    inset-inline-end: $dropdownPadding;
     top: 16px;
     font-size: 17px;
-    transition: right 0.3s cubic-bezier(0.23, 1, 0.32, 1); // easeOutQuint
+    transition: inset-inline-end 0.3s cubic-bezier(0.23, 1, 0.32, 1); // easeOutQuint
+    // TODO: right now transition property doesn't support the bidirectional value.
+    //       See https://github.com/gasolin/postcss-bidirection/issues/25.
+    // noinspection CssOverwrittenProperties Graceful degradation
+    transition: right 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+
+    html[dir='rtl'] & {
+        transition: left 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
 
     .dropdown:hover & {
-        right: $dropdownPadding - 5px;
+        inset-inline-end: $dropdownPadding - 5px;
     }
 
     .dropdown:active &,
     .dropdown.opened & {
-        right: $dropdownPadding + 5px;
+        inset-inline-end: $dropdownPadding + 5px;
     }
 }
 
@@ -84,7 +94,7 @@ $dropdownPadding: 15px;
 .menu {
     position: absolute;
     top: 60px;
-    left: 0;
+    inset-inline-start: 0;
     z-index: 10;
 
     width: 120%;

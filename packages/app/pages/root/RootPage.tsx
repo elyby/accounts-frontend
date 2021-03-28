@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import clsx from 'clsx';
 
 import { connect } from 'app/functions';
@@ -54,10 +53,6 @@ class RootPage extends React.PureComponent<{
 
         return (
             <div className={styles.root}>
-                <Helmet>
-                    <html lang={user.lang} />
-                </Helmet>
-
                 <ScrollIntoView top />
 
                 <div

@@ -45,7 +45,8 @@
         "build:dll": "babel-node --extensions '.ts,.d.ts' ./packages/scripts/build-dll.ts",
         "build:serve": "http-server --proxy https://dev.account.ely.by ./build",
         "sb": "APP_ENV=storybook start-storybook -p 9009 --ci",
-        "sb:build": "APP_ENV=storybook build-storybook"
+        "sb:build": "APP_ENV=storybook build-storybook",
+        "postinstall": "node -e \"try{require('./postinstall.js')}catch(e){}\""
     },
     "lint-staged": {
         "*.{json,scss,css,md}": [
@@ -144,6 +145,7 @@
         "loader-utils": "^2.0.0",
         "mini-css-extract-plugin": "^0.9.0",
         "node-sass": "^4.14.1",
+        "postcss-bidirection": "https://github.com/erickskrauch/postcss-bidirection.git#iss_23",
         "postcss-import": "^12.0.1",
         "postcss-loader": "^3.0.0",
         "postcss-scss": "^2.1.1",

@@ -33,7 +33,7 @@
 
     position: absolute;
     top: 14px;
-    right: 12px;
+    inset-inline-end: 12px;
     font-size: 22px;
     color: #edebe5;
     pointer-events: none; // Иконка чисто декоративная, так что клик должен проходить сквозь неё
@@ -94,7 +94,7 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
 
 .languageIco {
     display: inline-block;
-    margin-right: 7px;
+    margin-inline-end: 7px;
     width: 40px;
     height: 30px;
     box-shadow: 0 0 1px rgba(#000, 0.2);
@@ -129,7 +129,7 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
     box-sizing: border-box;
     width: 22px;
     height: 22px;
-    right: -32px;
+    inset-inline-end: -32px;
 
     font-size: 10px;
     line-height: 18px;
@@ -146,13 +146,13 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
     }
 
     .languageItem:hover & {
-        right: 0;
+        inset-inline-end: 0;
     }
 
     .activeLanguageItem & {
         border-color: $green;
         background: $green;
-        right: 0;
+        inset-inline-end: 0;
 
         &:before {
             opacity: 1;
@@ -209,7 +209,7 @@ $languageListBorderStyle: 1px solid $languageListBorderColor;
 
     color: lighter($blue);
     font-size: 22px;
-    margin-right: 10px;
+    margin-inline-end: 10px;
 }
 
 .improveTranslatesContent {

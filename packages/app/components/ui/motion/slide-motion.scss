@@ -1,5 +1,11 @@
 .container {
     white-space: nowrap;
+    transform: translate(var(--transition-progress));
+
+    html[dir='ltr'] & {
+        // noinspection CssInvalidFunction works fine in a browser (:
+        transform: translate(calc(var(--transition-progress) * -1));
+    }
 }
 
 .item {

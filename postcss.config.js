@@ -47,6 +47,7 @@ module.exports = ({ webpack: loader }) => ({
                 return defaultLoad(filename, importOptions);
             })(require('postcss-import/lib/load-content')),
         },
+        'postcss-bidirection': {},
         // TODO: for some reason cssnano strips out @mixin declarations
         // cssnano: {
         //     /**

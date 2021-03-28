@@ -27,6 +27,10 @@
 
     .expandIcon {
         transform: rotate(-180deg);
+
+        html[dir='rtl'] & {
+            transform: rotate(180deg); // Fix spin direction
+        }
     }
 }
 
@@ -36,13 +40,13 @@
     position: relative;
     bottom: 2px;
 
-    padding-right: 5px;
+    padding-inline-end: 5px;
 }
 
 .expandIcon {
     composes: caret from '~app/components/ui/icons.scss';
 
-    margin-left: 4px;
+    margin-inline-start: 4px;
     font-size: 6px;
     color: #ccc;
     transition: 0.2s;
@@ -54,7 +58,7 @@
 .accountSwitcherContainer {
     position: absolute;
     top: 100%;
-    right: -2px;
+    inset-inline-end: -2px;
     cursor: auto;
 
     display: none;

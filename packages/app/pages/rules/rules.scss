@@ -50,7 +50,7 @@
 .rulesList {
     padding: 0;
     margin: 0;
-    padding-left: 20px;
+    padding-inline-start: 20px;
 }
 
 .rulesItem {
@@ -71,7 +71,7 @@
             content: '';
             position: absolute;
             top: -10px;
-            left: -40px;
+            inset-inline-start: -40px;
             width: calc(100% + 60px);
             height: calc(100% + 20px);
             background: $white;

@@ -28,7 +28,7 @@ const CROWDIN_FILE_PATH = config.filePath;
 const SOURCE_LANG = config.sourceLang;
 const LANG_DIR = config.basePath;
 const INDEX_FILE_NAME = 'index.js';
-const MIN_RELEASE_PROGRESS = config.minApproved;
+const MIN_RELEASE_PROGRESS = config.minTranslated;
 
 const crowdin = new Crowdin({
     token: config.apiKey,
@@ -43,6 +43,7 @@ const releasedLocales: ReadonlyArray<string> = ['be', 'fr', 'id', 'pt', 'ru', 'u
  * Map Crowdin locales into our internal locales representation
  */
 const LOCALES_MAP: Record<string, string> = {
+    'es-ES': 'es',
     'pt-BR': 'pt',
     'zh-CN': 'zh',
 };
@@ -54,6 +55,7 @@ const LOCALES_MAP: Record<string, string> = {
 const NATIVE_NAMES_MAP: Record<string, string> = {
     be: 'Беларуская',
     cs: 'Čeština',
+    fil: 'Wikang Filipino',
     id: 'Bahasa Indonesia',
     lt: 'Lietuvių',
     pl: 'Polski',
@@ -67,6 +69,7 @@ const NATIVE_NAMES_MAP: Record<string, string> = {
  * This arrays allows us to override Crowdin English languages names
  */
 const ENGLISH_NAMES_MAP: Record<string, string> = {
+    fil: 'Filipino',
     pt: 'Portuguese, Brazilian',
     sr: 'Serbian',
     zh: 'Simplified Chinese',
@@ -225,7 +228,7 @@ async function pull(): Promise<void> {
     }
 
     console.log('Pulling translation progress...');
-    const { data: translationProgress } = await crowdin.translationStatusApi.getFileProgress(PROJECT_ID, fileId, 100);
+    const { data: fileProgress } = await crowdin.translationStatusApi.getFileProgress(PROJECT_ID, fileId, 100);
 
     const localesToPull: Array<string> = [];
     const indexFileEntries: Record<string, IndexFileEntry> = {
@@ -238,16 +241,16 @@ async function pull(): Promise<void> {
         },
     };
 
-    translationProgress.forEach(({ data: { languageId, approvalProgress } }) => {
+    fileProgress.forEach(({ data: { languageId, translationProgress } }) => {
         const locale = toInternalLocale(languageId);
 
-        if (releasedLocales.includes(locale) || approvalProgress >= MIN_RELEASE_PROGRESS) {
+        if (releasedLocales.includes(locale) || translationProgress >= MIN_RELEASE_PROGRESS) {
             localesToPull.push(languageId);
             indexFileEntries[locale] = {
                 code: locale,
                 name: NATIVE_NAMES_MAP[locale] || iso639.getNativeName(locale),
                 englishName: ENGLISH_NAMES_MAP[locale] || iso639.getName(locale),
-                progress: approvalProgress,
+                progress: translationProgress,
                 isReleased: releasedLocales.includes(locale),
             };
         }
@@ -268,7 +271,6 @@ async function pull(): Promise<void> {
                 data: { url },
             } = await crowdin.translationsApi.buildProjectFileTranslation(PROJECT_ID, fileId, {
                 targetLanguageId: languageId,
-                exportApprovedOnly: true,
             });
 
             const { data: fileContents } = await axios.get(url, {

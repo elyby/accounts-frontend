@@ -3439,6 +3439,11 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/rtl-detect@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/rtl-detect/-/rtl-detect-1.0.0.tgz#5791e18a111f2b8b5b328160af97f3991a5697a5"
+  integrity sha512-lyYh44YgrejEK9/5rhASghvRUOxrSJyyyQmqK7L6F/V5qs6PY1RfCi1VbjSkY6kuDt7lzQyhd006slhda4Oypg==
+
 "@types/sax@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@types/sax/-/sax-1.2.1.tgz#e0248be936ece791a82db1a57f3fb5f7c87e8172"
@@ -12535,6 +12540,12 @@ posix-character-classes@^0.1.0:
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
 
+"postcss-bidirection@https://github.com/erickskrauch/postcss-bidirection.git#iss_23":
+  version "2.7.2"
+  resolved "https://github.com/erickskrauch/postcss-bidirection.git#feabf42c8ab5cf6b0e22f78de04984e22cf42ba4"
+  dependencies:
+    postcss "^7.0.13"
+
 postcss-calc@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-7.0.1.tgz#36d77bab023b0ecbb9789d84dcb23c4941145436"
@@ -12912,6 +12923,15 @@ postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.16, postcss@^7.0.2
   version "7.0.25"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.25.tgz#dd2a2a753d50b13bed7a2009b4a18ac14d9db21e"
   integrity sha512-NXXVvWq9icrm/TgQC0O6YVFi4StfJz46M1iNd/h6B26Nvh/HKI+q4YZtFN/EjcInZliEscO/WL10BXnc1E5nwg==
+  dependencies:
+    chalk "^2.4.2"
+    source-map "^0.6.1"
+    supports-color "^6.1.0"
+
+postcss@^7.0.13:
+  version "7.0.35"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.35.tgz#d2be00b998f7f211d8a276974079f2e92b970e24"
+  integrity sha512-3QT8bBJeX/S5zKTTjTCIjRF3If4avAT6kqxcASlTWEtAFCb9NH0OUxNDfgZSWdP5fJnBYCMEWkIFfWeugjzYMg==
   dependencies:
     chalk "^2.4.2"
     source-map "^0.6.1"
@@ -14245,6 +14265,11 @@ rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"
   integrity sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==
+
+rtl-detect@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/rtl-detect/-/rtl-detect-1.0.2.tgz#8eca316f5c6563d54df4e406171dd7819adda67f"
+  integrity sha512-5X1422hvphzg2a/bo4tIDbjFjbJUOaPZwqE6dnyyxqwFqfR+tBcvfqapJr0o0VygATVCGKiODEewhZtKF+90AA==
 
 run-async@^2.2.0, run-async@^2.4.0:
   version "2.4.1"
