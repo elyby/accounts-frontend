@@ -95,8 +95,7 @@ describe('OAuth', () => {
             cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
         });
 
-        // TODO: enable, when backend api will return correct response on auth decline
-        xit('should redirect to error page, when permission request declined', () => {
+        it('should redirect to error page, when permission request declined', () => {
             cy.server();
 
             cy.route({
@@ -338,8 +337,7 @@ describe('OAuth', () => {
             cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
         });
 
-        // TODO: enable, when backend api will return correct response on auth decline
-        xit('should redirect to error page, when permission request declined', () => {
+        it('should redirect to error page, when permission request declined', () => {
             cy.login({ accounts: ['default'] });
 
             cy.visit(
