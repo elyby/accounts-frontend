@@ -62,6 +62,7 @@ const NATIVE_NAMES_MAP: Record<string, string> = {
     pt: 'Português do Brasil',
     sr: 'Српски',
     ro: 'Română',
+    udm: 'Удмурт',
     zh: '简体中文',
 };
 
@@ -72,6 +73,7 @@ const ENGLISH_NAMES_MAP: Record<string, string> = {
     fil: 'Filipino',
     pt: 'Portuguese, Brazilian',
     sr: 'Serbian',
+    udm: 'Udmurt',
     zh: 'Simplified Chinese',
 };
 
