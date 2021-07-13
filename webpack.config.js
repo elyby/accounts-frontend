@@ -156,9 +156,7 @@ const webpackConfig = {
                     {
                         loader: 'postcss-loader',
                         options: {
-                            ident: 'postcss',
                             sourceMap: !isProduction,
-                            config: { path: __dirname },
                         },
                     },
                 ],

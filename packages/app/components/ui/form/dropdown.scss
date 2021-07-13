@@ -63,14 +63,6 @@ $dropdownPadding: 15px;
     top: 16px;
     font-size: 17px;
     transition: inset-inline-end 0.3s cubic-bezier(0.23, 1, 0.32, 1); // easeOutQuint
-    // TODO: right now transition property doesn't support the bidirectional value.
-    //       See https://github.com/gasolin/postcss-bidirection/issues/25.
-    // noinspection CssOverwrittenProperties Graceful degradation
-    transition: right 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-
-    html[dir='rtl'] & {
-        transition: left 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-    }
 
     .dropdown:hover & {
         inset-inline-end: $dropdownPadding - 5px;

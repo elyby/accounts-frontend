@@ -6,7 +6,7 @@ const fileCache = {};
 const isProduction = process.argv.some((arg) => arg === '-p');
 const rootPath = path.resolve('./src');
 
-module.exports = ({ webpack: loader }) => ({
+module.exports = ({ webpackLoaderContext: loader }) => ({
     syntax: 'postcss-scss',
     plugins: {
         'postcss-import': {
@@ -47,7 +47,7 @@ module.exports = ({ webpack: loader }) => ({
                 return defaultLoad(filename, importOptions);
             })(require('postcss-import/lib/load-content')),
         },
-        'postcss-bidirection': {},
+        'postcss-logical-properties-polyfill': {},
         // TODO: for some reason cssnano strips out @mixin declarations
         // cssnano: {
         //     /**

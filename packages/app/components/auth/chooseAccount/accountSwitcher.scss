@@ -83,14 +83,6 @@ $border: 1px solid lighter($black);
     line-height: 35px;
 
     transition: color 0.25s, inset-inline-start 0.5s;
-    // TODO: right now transition property doesn't support the bidirectional value.
-    //       See https://github.com/gasolin/postcss-bidirection/issues/25.
-    // noinspection CssOverwrittenProperties Graceful degradation
-    transition: color 0.25s, left 0.5s;
-
-    html[dir='rtl'] & {
-        transition: color 0.25s, right 0.5s;
-    }
 
     .item:hover & {
         color: #aaa;

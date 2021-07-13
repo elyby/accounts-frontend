@@ -1,6 +1,6 @@
 variables:
-  NODE_IMAGE: node:12-alpine
-  NODE_E2E_IMAGE: circleci/node:12-buster-browsers
+  NODE_IMAGE: node:14-alpine
+  NODE_E2E_IMAGE: circleci/node:14-buster-browsers
   DEPLOY_IMAGE: docksal/ssh-agent:1.3
   # To cache both npm modules and Cypress binary we use environment variables
   # to point at the folders we can list as paths in "cache" job settings
