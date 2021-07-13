@@ -12,13 +12,15 @@ module.exports = ({ webpackLoaderContext: loader }) => ({
         'postcss-import': {
             addModulesDirectories: ['./src'],
 
-            resolve: ((defaultResolve) => (url, basedir, importOptions) =>
-                defaultResolve(
-                    // mainly to remove '~' from request
-                    loaderUtils.urlToRequest(url),
-                    basedir,
-                    importOptions,
-                ))(require('postcss-import/lib/resolve-id')),
+            resolve: (
+                (defaultResolve) => (url, basedir, importOptions) =>
+                    defaultResolve(
+                        // mainly to remove '~' from request
+                        loaderUtils.urlToRequest(url),
+                        basedir,
+                        importOptions,
+                    )
+            )(require('postcss-import/lib/resolve-id')),
 
             load: ((defaultLoad) => (filename, importOptions) => {
                 if (/\.font.(js|json)$/.test(filename)) {

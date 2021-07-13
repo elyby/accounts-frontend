@@ -6,7 +6,7 @@ describe('Applications', () => {
 
                 // remove all previously added apps
                 cy.window().then(async (win) => {
-                    const { oauthApi } = (win as any) as {
+                    const { oauthApi } = win as any as {
                         oauthApi: typeof import('app/services/api/oauth').default;
                     };
                     const apps = await oauthApi.getAppsByUser(user.id);

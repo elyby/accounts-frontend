@@ -11,7 +11,7 @@ import FormInputComponent from './FormInputComponent';
 type I18nString = string | MessageDescriptor;
 type ItemLabel = I18nString | React.ReactElement;
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLDivElement> {
     label: I18nString;
     items: Record<string, ItemLabel>;
     block?: boolean;

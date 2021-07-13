@@ -405,7 +405,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
     getHeader({ key, style, data }: TransitionPlainStyle): ReactElement {
         const { Title } = data as AnimationData;
-        const { transformSpring } = (style as unknown) as AnimationStyle;
+        const { transformSpring } = style as unknown as AnimationStyle;
 
         let { hasBackButton } = data;
 
@@ -414,7 +414,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
         }
 
         const transitionStyle = {
-            ...this.getDefaultTransitionStyles(key, (style as unknown) as AnimationStyle),
+            ...this.getDefaultTransitionStyles(key, style as unknown as AnimationStyle),
             opacity: 1, // reset default
         };
 
@@ -448,7 +448,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
     getBody({ key, style, data }: TransitionPlainStyle): ReactElement {
         const { Body } = data as AnimationData;
-        const { transformSpring } = (style as unknown) as AnimationStyle;
+        const { transformSpring } = style as unknown as AnimationStyle;
         const { direction } = this.state;
 
         let transform = this.translate(transformSpring, direction);
@@ -460,7 +460,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
         }
 
         const transitionStyle: CSSProperties = {
-            ...this.getDefaultTransitionStyles(key, (style as unknown) as AnimationStyle),
+            ...this.getDefaultTransitionStyles(key, style as unknown as AnimationStyle),
             top: 'auto', // reset default
             [verticalOrigin]: 0,
             ...transform,
@@ -486,7 +486,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
     getFooter({ key, style, data }: TransitionPlainStyle): ReactElement {
         const { Footer } = data as AnimationData;
 
-        const transitionStyle = this.getDefaultTransitionStyles(key, (style as unknown) as AnimationStyle);
+        const transitionStyle = this.getDefaultTransitionStyles(key, style as unknown as AnimationStyle);
 
         return (
             <div key={`footer/${key}`} style={transitionStyle}>
@@ -498,7 +498,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
     getLinks({ key, style, data }: TransitionPlainStyle): ReactElement {
         const { Links } = data as AnimationData;
 
-        const transitionStyle = this.getDefaultTransitionStyles(key, (style as unknown) as AnimationStyle);
+        const transitionStyle = this.getDefaultTransitionStyles(key, style as unknown as AnimationStyle);
 
         return (
             <div key={`links/${key}`} style={transitionStyle}>

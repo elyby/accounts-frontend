@@ -14,10 +14,11 @@ const FooterMenu: ComponentType = () => {
     const dispatch = useReduxDispatch();
 
     const createPopupHandler = useCallback(
-        (popup: ComponentType): MouseEventHandler<HTMLAnchorElement> => (event) => {
-            event.preventDefault();
-            dispatch(createPopup({ Popup: popup }));
-        },
+        (popup: ComponentType): MouseEventHandler<HTMLAnchorElement> =>
+            (event) => {
+                event.preventDefault();
+                dispatch(createPopup({ Popup: popup }));
+            },
         [dispatch],
     );
 

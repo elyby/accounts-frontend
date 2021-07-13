@@ -15,18 +15,19 @@ interface Props {
 const AccountSwitcher: ComponentType<Props> = ({ accounts, onAccountClick }) => {
     const [selectedAccount, setSelectedAccount] = useState<number>();
     const onAccountClickCallback = useCallback(
-        (account: Account): MouseEventHandler => async (event) => {
-            event.stopPropagation();
+        (account: Account): MouseEventHandler =>
+            async (event) => {
+                event.stopPropagation();
 
-            setSelectedAccount(account.id);
-            try {
-                if (onAccountClick) {
-                    await onAccountClick(account);
+                setSelectedAccount(account.id);
+                try {
+                    if (onAccountClick) {
+                        await onAccountClick(account);
+                    }
+                } finally {
+                    setSelectedAccount(undefined);
                 }
-            } finally {
-                setSelectedAccount(undefined);
-            }
-        },
+            },
         [onAccountClick],
     );
 

@@ -44,7 +44,7 @@ const typeToForm: TypeToForm = {
 
 type TypeToLabel = Record<ApplicationType, MessageDescriptor>;
 
-const typeToLabel: TypeToLabel = ((Object.keys(typeToForm) as unknown) as Array<ApplicationType>).reduce(
+const typeToLabel: TypeToLabel = (Object.keys(typeToForm) as unknown as Array<ApplicationType>).reduce(
     (result, key) => {
         result[key] = typeToForm[key].label;
 

@@ -41,11 +41,11 @@ export function authenticate(
         }
 
         try {
-            const { token: newToken, refreshToken: newRefreshToken, user } = await validateToken(
-                accountId,
-                token,
-                refreshToken,
-            );
+            const {
+                token: newToken,
+                refreshToken: newRefreshToken,
+                user,
+            } = await validateToken(accountId, token, refreshToken);
             const newAccount: Account = {
                 id: user.id,
                 username: user.username,

@@ -66,9 +66,7 @@ class I18N {
         await intlPolyfill('en');
     }
 
-    async require(
-        locale: string,
-    ): Promise<{
+    async require(locale: string): Promise<{
         locale: string;
         messages: Record<string, string>;
     }> {

@@ -39,9 +39,7 @@ export default class FormModel {
      *
      * @returns {object} - ref and name props for component
      */
-    bindField(
-        name: string,
-    ): {
+    bindField(name: string): {
         name: string;
         ref: (el: any) => void;
         error?: ValidationError;

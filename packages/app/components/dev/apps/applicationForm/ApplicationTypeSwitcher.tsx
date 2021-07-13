@@ -14,7 +14,7 @@ interface Props {
 
 const ApplicationTypeSwitcher: ComponentType<Props> = ({ appTypes, selectedType, setType }) => (
     <div>
-        {((Object.keys(appTypes) as unknown) as Array<ApplicationType>).map((type) => (
+        {(Object.keys(appTypes) as unknown as Array<ApplicationType>).map((type) => (
             <div className={styles.radioContainer} key={type}>
                 <Radio
                     onChange={() => setType(type)}

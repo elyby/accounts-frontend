@@ -27,19 +27,21 @@ const AccountSwitcher: ComponentType<Props> = ({
 }) => {
     const available = accounts.filter((account) => account.id !== activeAccount.id);
     const onAccountClickCallback = useCallback(
-        (account: Account): MouseEventHandler => (event) => {
-            event.preventDefault();
-            onAccountClick(account);
-        },
+        (account: Account): MouseEventHandler =>
+            (event) => {
+                event.preventDefault();
+                onAccountClick(account);
+            },
         [onAccountClick],
     );
     const onAccountRemoveCallback = useCallback(
-        (account: Account): MouseEventHandler => (event) => {
-            event.preventDefault();
-            event.stopPropagation();
+        (account: Account): MouseEventHandler =>
+            (event) => {
+                event.preventDefault();
+                event.stopPropagation();
 
-            onRemoveClick(account);
-        },
+                onRemoveClick(account);
+            },
         [onRemoveClick],
     );
 

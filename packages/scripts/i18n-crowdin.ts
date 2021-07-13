@@ -267,25 +267,23 @@ async function pull(): Promise<void> {
     });
     let downloadingReady = 0;
 
-    const promises = localesToPull.map(
-        async (languageId): Promise<void> => {
-            const {
-                data: { url },
-            } = await crowdin.translationsApi.buildProjectFileTranslation(PROJECT_ID, fileId, {
-                targetLanguageId: languageId,
-            });
+    const promises = localesToPull.map(async (languageId): Promise<void> => {
+        const {
+            data: { url },
+        } = await crowdin.translationsApi.buildProjectFileTranslation(PROJECT_ID, fileId, {
+            targetLanguageId: languageId,
+        });
 
-            const { data: fileContents } = await axios.get(url, {
-                // Disable response parsing
-                transformResponse: [],
-            });
-            fs.writeFileSync(getLocaleFilePath(languageId), fileContents);
+        const { data: fileContents } = await axios.get(url, {
+            // Disable response parsing
+            transformResponse: [],
+        });
+        fs.writeFileSync(getLocaleFilePath(languageId), fileContents);
 
-            downloadingProgressBar.update(++downloadingReady / localesToPull.length, {
-                cCurrent: downloadingReady,
-            });
-        },
-    );
+        downloadingProgressBar.update(++downloadingReady / localesToPull.length, {
+            cCurrent: downloadingReady,
+        });
+    });
 
     await Promise.all(promises);
 

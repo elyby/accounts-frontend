@@ -88,9 +88,7 @@ export { default as debounce } from 'debounce';
  *
  * @returns {object} - decoded jwt payload
  */
-export function getJwtPayloads(
-    jwt: string,
-): {
+export function getJwtPayloads(jwt: string): {
     sub: string;
     jti: number;
     exp: number;

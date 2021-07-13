@@ -1,8 +1,6 @@
 import request, { Resp } from 'app/services/request';
 
-export function getSecret(
-    id: number,
-): Promise<
+export function getSecret(id: number): Promise<
     Resp<{
         qr: string;
         secret: string;

@@ -32,11 +32,7 @@ declare namespace Cypress {
              */
             rawApiResp?: false;
         }): Promise<{ accounts: TAccount[] }>;
-        login(options: {
-            accounts: AccountAlias[];
-            updateState?: boolean;
-            rawApiResp: true;
-        }): Promise<{
+        login(options: { accounts: AccountAlias[]; updateState?: boolean; rawApiResp: true }): Promise<{
             accounts: {
                 success: true;
                 access_token: string;

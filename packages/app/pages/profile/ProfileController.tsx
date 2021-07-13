@@ -78,94 +78,96 @@ export default connect(
     }),
     {
         refreshUserData,
-        onSubmit: ({ form, sendData }: { form: FormModel; sendData: () => Promise<any> }) => (dispatch: Dispatch) => {
-            form.beginLoading();
+        onSubmit:
+            ({ form, sendData }: { form: FormModel; sendData: () => Promise<any> }) =>
+            (dispatch: Dispatch) => {
+                form.beginLoading();
 
-            return sendData()
-                .catch((resp) => {
-                    const requirePassword = resp.errors && !!resp.errors.password;
+                return sendData()
+                    .catch((resp) => {
+                        const requirePassword = resp.errors && !!resp.errors.password;
 
-                    // prevalidate user input, because requestPassword popup will block the
-                    // entire form from input, so it must be valid
-                    if (resp.errors) {
-                        delete resp.errors.password;
+                        // prevalidate user input, because requestPassword popup will block the
+                        // entire form from input, so it must be valid
+                        if (resp.errors) {
+                            delete resp.errors.password;
 
-                        if (resp.errors.email && resp.data && resp.data.canRepeatIn) {
-                            resp.errors.email = {
-                                type: resp.errors.email,
-                                payload: {
-                                    msLeft: resp.data.canRepeatIn * 1000,
-                                },
-                            };
+                            if (resp.errors.email && resp.data && resp.data.canRepeatIn) {
+                                resp.errors.email = {
+                                    type: resp.errors.email,
+                                    payload: {
+                                        msLeft: resp.data.canRepeatIn * 1000,
+                                    },
+                                };
+                            }
+
+                            if (Object.keys(resp.errors).length) {
+                                form.setErrors(resp.errors);
+
+                                return Promise.reject(resp);
+                            }
+
+                            if (requirePassword) {
+                                return requestPassword(form);
+                            }
                         }
 
-                        if (Object.keys(resp.errors).length) {
-                            form.setErrors(resp.errors);
-
+                        return Promise.reject(resp);
+                    })
+                    .catch((resp) => {
+                        if (!resp || !resp.errors) {
+                            logger.warn('Unexpected profile editing error', {
+                                resp,
+                            });
+                        } else {
                             return Promise.reject(resp);
                         }
+                    })
+                    .finally(() => form.endLoading());
 
-                        if (requirePassword) {
-                            return requestPassword(form);
-                        }
-                    }
+                function requestPassword(form: FormModel) {
+                    return new Promise((resolve, reject) => {
+                        dispatch(
+                            createPopup({
+                                Popup(props: { onClose: () => Promise<any> }) {
+                                    const onSubmit = () => {
+                                        form.beginLoading();
 
-                    return Promise.reject(resp);
-                })
-                .catch((resp) => {
-                    if (!resp || !resp.errors) {
-                        logger.warn('Unexpected profile editing error', {
-                            resp,
-                        });
-                    } else {
-                        return Promise.reject(resp);
-                    }
-                })
-                .finally(() => form.endLoading());
+                                        sendData()
+                                            .then(resolve)
+                                            .then(props.onClose)
+                                            .catch((resp) => {
+                                                if (resp.errors) {
+                                                    form.setErrors(resp.errors);
 
-            function requestPassword(form: FormModel) {
-                return new Promise((resolve, reject) => {
-                    dispatch(
-                        createPopup({
-                            Popup(props: { onClose: () => Promise<any> }) {
-                                const onSubmit = () => {
-                                    form.beginLoading();
+                                                    const parentFormHasErrors =
+                                                        Object.keys(resp.errors).filter((name) => name !== 'password')
+                                                            .length > 0;
 
-                                    sendData()
-                                        .then(resolve)
-                                        .then(props.onClose)
-                                        .catch((resp) => {
-                                            if (resp.errors) {
-                                                form.setErrors(resp.errors);
-
-                                                const parentFormHasErrors =
-                                                    Object.keys(resp.errors).filter((name) => name !== 'password')
-                                                        .length > 0;
-
-                                                if (parentFormHasErrors) {
-                                                    // something wrong with parent form, hiding popup and show that form
-                                                    props.onClose();
-                                                    reject(resp);
-                                                    logger.warn(
-                                                        'Profile: can not submit password popup due to errors in source form',
-                                                        { resp },
-                                                    );
+                                                    if (parentFormHasErrors) {
+                                                        // something wrong with parent form, hiding popup and show that form
+                                                        props.onClose();
+                                                        reject(resp);
+                                                        logger.warn(
+                                                            'Profile: can not submit password popup due to errors in source form',
+                                                            { resp },
+                                                        );
+                                                    }
+                                                } else {
+                                                    return Promise.reject(resp);
                                                 }
-                                            } else {
-                                                return Promise.reject(resp);
-                                            }
-                                        })
-                                        .finally(() => form.endLoading());
-                                };
+                                            })
+                                            .finally(() => form.endLoading());
+                                    };
 
-                                return <PasswordRequestForm form={form} onSubmit={onSubmit} />;
-                            },
-                            // TODO: this property should be automatically extracted from the popup's isClosable prop
-                            disableOverlayClose: true,
-                        }),
-                    );
-                });
-            }
-        },
+                                    return <PasswordRequestForm form={form} onSubmit={onSubmit} />;
+                                },
+                                // TODO: this property should be automatically extracted from the popup's isClosable prop
+                                disableOverlayClose: true,
+                            }),
+                        );
+                    });
+                }
+            },
     },
 )(ProfileController);
