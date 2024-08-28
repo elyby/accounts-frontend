@@ -13,7 +13,10 @@ export default class RecoverPasswordState extends AbstractState {
         context.navigate(url);
     }
 
-    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+    resolve(
+        context: AuthContext,
+        payload: { key: string; newPassword: string; newRePassword: string },
+    ): Promise<void> | void {
         context
             .run('recoverPassword', payload)
             .then(() => context.setState(new CompleteState()))

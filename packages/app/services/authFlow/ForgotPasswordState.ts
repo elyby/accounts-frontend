@@ -10,12 +10,7 @@ export default class ForgotPasswordState extends AbstractState {
         context.navigate('/forgot-password');
     }
 
-    resolve(
-        context: AuthContext,
-        payload: {
-            login?: string;
-        } = {},
-    ): Promise<void> | void {
+    resolve(context: AuthContext, payload: { login: string; captcha: string }): Promise<void> | void {
         context
             .run('forgotPassword', payload)
             .then(() => {

@@ -12,6 +12,15 @@ describe('RegisterState', () => {
     let context: MockedAuthContext;
     let mock: SinonMock;
 
+    const mockPayload = {
+        username: '',
+        email: '',
+        password: '',
+        rePassword: '',
+        rulesAgreement: true,
+        captcha: '',
+    };
+
     beforeEach(() => {
         state = new RegisterState();
 
@@ -38,21 +47,18 @@ describe('RegisterState', () => {
 
     describe('#resolve', () => {
         it('should register on resolve', () => {
-            const payload = {};
+            expectRun(mock, 'register', sinon.match.same(mockPayload)).returns(new Promise(() => {}));
 
-            expectRun(mock, 'register', sinon.match.same(payload)).returns(new Promise(() => {}));
-
-            state.resolve(context, payload);
+            state.resolve(context, mockPayload);
         });
 
         it('should transition to complete after register', () => {
-            const payload = {};
             const promise = Promise.resolve();
 
             mock.expects('run').returns(promise);
             expectState(mock, CompleteState);
 
-            state.resolve(context, payload);
+            state.resolve(context, mockPayload);
 
             return promise;
         });
@@ -63,7 +69,7 @@ describe('RegisterState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, {});
+            state.resolve(context, mockPayload);
 
             return promise.catch(mock.verify.bind(mock));
         });

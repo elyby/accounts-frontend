@@ -180,8 +180,6 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
         if (this.props.children) {
             return this.props.children;
-        } else if (!Title || !Body || !Footer || !Links) {
-            throw new Error('Title, Body, Footer and Links are required');
         }
 
         const {

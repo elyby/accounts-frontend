@@ -16,9 +16,11 @@ export default class ChooseAccountState extends AbstractState {
         }
     }
 
-    resolve(context: AuthContext, payload: Account | Record<string, any>): Promise<void> | void {
+    // This method might be called with an empty object to mention that user wants to login into a new account.
+    // Currently, I can't correctly provide typing since there is no type for an empty object.
+    // So if there is no `id` property, it's an empty object
+    resolve(context: AuthContext, payload: Account): Promise<void> | void {
         if (payload.id) {
-            // payload is Account
             return context
                 .run('authenticate', payload)
                 .then(() => context.run('setAccountSwitcher', false))

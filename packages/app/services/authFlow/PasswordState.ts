@@ -39,6 +39,7 @@ export default class PasswordState extends AbstractState {
             .run('login', {
                 password,
                 rememberMe,
+                // @ts-ignore there will be no null value
                 login,
             })
             .then(() => {

@@ -182,7 +182,7 @@ export function register({
     );
 }
 
-export function activate({ key = '' }: { key: string }): AppAction<Promise<Account>> {
+export function activate(key: string): AppAction<Promise<Account>> {
     return wrapInLoader((dispatch) =>
         activateEndpoint(key)
             .then(authHandler(dispatch))

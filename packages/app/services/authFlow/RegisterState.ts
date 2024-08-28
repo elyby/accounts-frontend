@@ -11,7 +11,17 @@ export default class RegisterState extends AbstractState {
         context.navigate('/register');
     }
 
-    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+    resolve(
+        context: AuthContext,
+        payload: {
+            email: string;
+            username: string;
+            password: string;
+            rePassword: string;
+            captcha: string;
+            rulesAgreement: boolean;
+        },
+    ): Promise<void> | void {
         context
             .run('register', payload)
             .then(() => context.setState(new CompleteState()))

@@ -48,7 +48,7 @@ describe('RecoverPasswordState', () => {
     describe('#resolve', () => {
         it('should call recoverPassword with provided payload', () => {
             const expectedPayload = {
-                key: 123,
+                key: '123',
                 newPassword: '123',
                 newRePassword: '123',
             };
@@ -64,7 +64,7 @@ describe('RecoverPasswordState', () => {
             mock.expects('run').returns(promise);
             expectState(mock, CompleteState);
 
-            state.resolve(context, {});
+            state.resolve(context, { key: '', newPassword: '', newRePassword: '' });
 
             return promise;
         });
@@ -75,7 +75,7 @@ describe('RecoverPasswordState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, {});
+            state.resolve(context, { key: '', newPassword: '', newRePassword: '' });
 
             return promise.catch(mock.verify.bind(mock));
         });

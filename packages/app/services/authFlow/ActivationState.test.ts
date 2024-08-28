@@ -57,9 +57,9 @@ describe('ActivationState', () => {
 
     describe('#resolve', () => {
         it('should call activate with payload', () => {
-            const payload = {};
+            const payload = { key: 'mock' };
 
-            expectRun(mock, 'activate', sinon.match.same(payload)).returns(new Promise(() => {}));
+            expectRun(mock, 'activate', sinon.match.same('mock')).returns(new Promise(() => {}));
 
             state.resolve(context, payload);
         });
@@ -70,7 +70,7 @@ describe('ActivationState', () => {
             mock.expects('run').returns(promise);
             expectState(mock, CompleteState);
 
-            state.resolve(context, {});
+            state.resolve(context, { key: 'mock' });
 
             return promise;
         });
@@ -81,7 +81,7 @@ describe('ActivationState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, {});
+            state.resolve(context, { key: 'mock' });
 
             return promise.catch(mock.verify.bind(mock));
         });

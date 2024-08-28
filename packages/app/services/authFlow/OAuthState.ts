@@ -9,13 +9,13 @@ export default class OAuthState extends AbstractState {
         return context
             .run('oAuthValidate', {
                 clientId: query.get('client_id') || params.clientId,
-                redirectUrl: query.get('redirect_uri'),
-                responseType: query.get('response_type'),
-                description: query.get('description'),
+                redirectUrl: query.get('redirect_uri')!,
+                responseType: query.get('response_type')!,
+                description: query.get('description')!,
                 scope: (query.get('scope') || '').replace(/,/g, ' '),
-                prompt: query.get('prompt'),
-                loginHint: query.get('login_hint'),
-                state: query.get('state'),
+                prompt: query.get('prompt')!,
+                loginHint: query.get('login_hint')!,
+                state: query.get('state')!,
             })
             .then(() => context.setState(new CompleteState()));
     }

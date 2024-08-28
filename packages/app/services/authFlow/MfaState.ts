@@ -23,6 +23,7 @@ export default class MfaState extends AbstractState {
 
         return context
             .run('login', {
+                // @ts-ignore there will be no invalid value
                 login,
                 password,
                 totp,

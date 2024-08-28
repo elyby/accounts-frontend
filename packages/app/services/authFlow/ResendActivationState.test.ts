@@ -11,6 +11,11 @@ describe('ResendActivationState', () => {
     let context: MockedAuthContext;
     let mock: SinonMock;
 
+    const mockPayload = {
+        email: 'foo@bar.com',
+        captcha: '',
+    };
+
     beforeEach(() => {
         state = new ResendActivationState();
 
@@ -52,11 +57,9 @@ describe('ResendActivationState', () => {
 
     describe('#resolve', () => {
         it('should call resendActivation with payload', () => {
-            const payload = { email: 'foo@bar.com' };
+            expectRun(mock, 'resendActivation', sinon.match.same(mockPayload)).returns(new Promise(() => {}));
 
-            expectRun(mock, 'resendActivation', sinon.match.same(payload)).returns(new Promise(() => {}));
-
-            state.resolve(context, payload);
+            state.resolve(context, mockPayload);
         });
 
         it('should transition to complete state on success', () => {
@@ -65,7 +68,7 @@ describe('ResendActivationState', () => {
             mock.expects('run').returns(promise);
             expectState(mock, ActivationState);
 
-            state.resolve(context, {});
+            state.resolve(context, mockPayload);
 
             return promise;
         });
@@ -76,7 +79,7 @@ describe('ResendActivationState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, {});
+            state.resolve(context, mockPayload);
 
             return promise.catch(mock.verify.bind(mock));
         });

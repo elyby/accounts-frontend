@@ -255,11 +255,6 @@ describe('AuthFlow', () => {
             // @ts-ignore
             return expect(flow.run('test'), 'to be fulfilled with', expected);
         });
-
-        it('throws when running unexisted action', () => {
-            // @ts-ignore
-            expect(() => flow.run('123'), 'to throw', 'Action 123 does not exists');
-        });
     });
 
     describe('#goBack', () => {

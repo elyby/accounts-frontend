@@ -11,9 +11,9 @@ export default class ActivationState extends AbstractState {
         context.navigate(url);
     }
 
-    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+    resolve(context: AuthContext, payload: { key: string }): Promise<void> | void {
         context
-            .run('activate', payload)
+            .run('activate', payload.key)
             .then(() => context.setState(new CompleteState()))
             .catch((err = {}) => err.errors || logger.warn('Error activating account', err));
     }

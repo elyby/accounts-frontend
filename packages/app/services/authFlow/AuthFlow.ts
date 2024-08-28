@@ -1,7 +1,15 @@
 import { browserHistory } from 'app/services/history';
 import logger from 'app/services/logger';
 import localStorage from 'app/services/localStorage';
-import { Store, State as RootState } from 'app/types';
+import { Store, State as RootState, Dispatch } from 'app/types';
+import {
+    activate as activateAccount,
+    authenticate,
+    logoutAll as logout,
+    remove as removeAccount,
+} from 'app/components/accounts/actions';
+import * as actions from 'app/components/auth/actions';
+import { updateUser } from 'app/components/user/actions';
 
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
@@ -12,7 +20,7 @@ import ActivationState from './ActivationState';
 import CompleteState from './CompleteState';
 import ChooseAccountState from './ChooseAccountState';
 import ResendActivationState from './ResendActivationState';
-import AbstractState from './AbstractState';
+import State from './State';
 
 type Request = {
     path: string;
@@ -20,53 +28,53 @@ type Request = {
     params: Record<string, any>;
 };
 
-// TODO: temporary added to improve typing without major refactoring
-type ActionId =
-    | 'updateUser'
-    | 'authenticate'
-    | 'activateAccount'
-    | 'removeAccount'
-    | 'logout'
-    | 'goBack'
-    | 'redirect'
-    | 'login'
-    | 'acceptRules'
-    | 'forgotPassword'
-    | 'recoverPassword'
-    | 'register'
-    | 'activate'
-    | 'resendActivation'
-    | 'contactUs'
-    | 'setLogin'
-    | 'setAccountSwitcher'
-    | 'setErrors'
-    | 'clearErrors'
-    | 'oAuthValidate'
-    | 'oAuthComplete'
-    | 'setClient'
-    | 'resetOAuth'
-    | 'resetAuth'
-    | 'setOAuthRequest'
-    | 'setOAuthCode'
-    | 'requirePermissionsAccept'
-    | 'setScopes'
-    | 'setLoadingState';
+export const availableActions = {
+    updateUser,
+    authenticate,
+    activateAccount,
+    removeAccount,
+    logout,
+    goBack: actions.goBack,
+    redirect: actions.redirect,
+    login: actions.login,
+    acceptRules: actions.acceptRules,
+    forgotPassword: actions.forgotPassword,
+    recoverPassword: actions.recoverPassword,
+    register: actions.register,
+    activate: actions.activate,
+    resendActivation: actions.resendActivation,
+    contactUs: actions.contactUs,
+    setLogin: actions.setLogin,
+    setAccountSwitcher: actions.setAccountSwitcher,
+    setErrors: actions.setErrors,
+    clearErrors: actions.clearErrors,
+    oAuthValidate: actions.oAuthValidate,
+    oAuthComplete: actions.oAuthComplete,
+    setClient: actions.setClient,
+    resetOAuth: actions.resetOAuth,
+    resetAuth: actions.resetAuth,
+    setOAuthRequest: actions.setOAuthRequest,
+    setOAuthCode: actions.setOAuthCode,
+    requirePermissionsAccept: actions.requirePermissionsAccept,
+    setScopes: actions.setScopes,
+    setLoadingState: actions.setLoadingState,
+};
+
+type ActionId = keyof typeof availableActions;
 
 export interface AuthContext {
-    run(actionId: ActionId, payload?: any): Promise<any>;
-    setState(newState: AbstractState): Promise<void> | void;
+    run<T extends ActionId>(actionId: T, payload?: Parameters<typeof availableActions[T]>[0]): Promise<any>; // TODO: can't find a way to explain to TS the returned type
+    setState(newState: State): Promise<void> | void; // TODO: always return promise
     getState(): RootState;
     navigate(route: string, options?: { replace?: boolean }): void;
     getRequest(): Request;
-    prevState: AbstractState;
+    prevState: State;
 }
 
-export type ActionsDict = Record<ActionId, (action: any) => Record<string, any>>;
-
 export default class AuthFlow implements AuthContext {
-    actions: Readonly<ActionsDict>;
-    state: AbstractState;
-    prevState: AbstractState;
+    actions: Readonly<typeof availableActions>;
+    state: State;
+    prevState: State;
     /**
      * A callback from router, that allows to replace (perform redirect) route
      * during route transition
@@ -76,10 +84,10 @@ export default class AuthFlow implements AuthContext {
     navigate: (route: string, options: { replace?: boolean }) => void;
     currentRequest: Partial<Request> = {};
     oAuthStateRestored = false;
-    dispatch: (action: Record<string, any>) => void;
+    dispatch: Dispatch;
     getState: () => RootState;
 
-    constructor(actions: ActionsDict) {
+    constructor(actions: typeof availableActions) {
         this.actions = Object.freeze(actions);
     }
 
@@ -106,11 +114,11 @@ export default class AuthFlow implements AuthContext {
         this.dispatch = store.dispatch.bind(store);
     }
 
-    resolve(payload: { [key: string]: any } = {}) {
+    resolve(payload: Record<string, any> = {}) {
         this.state.resolve(this, payload);
     }
 
-    reject(payload: { [key: string]: any } = {}) {
+    reject(payload: Record<string, any> = {}) {
         this.state.reject(this, payload);
     }
 
@@ -118,17 +126,12 @@ export default class AuthFlow implements AuthContext {
         this.state.goBack(this);
     }
 
-    run(actionId: ActionId, payload?: Record<string, any>): Promise<any> {
-        const action = this.actions[actionId];
-
-        if (!action) {
-            throw new Error(`Action ${actionId} does not exists`);
-        }
-
-        return Promise.resolve(this.dispatch(action(payload)));
+    run<T extends ActionId>(actionId: T, payload?: Parameters<typeof availableActions[T]>[0]): Promise<any> {
+        // @ts-ignore the extended version of redux with thunk will return the correct promise
+        return Promise.resolve(this.dispatch(this.actions[actionId](payload)));
     }
 
-    setState(state: AbstractState) {
+    setState(state: State) {
         if (!state) {
             throw new Error('State is required');
         }

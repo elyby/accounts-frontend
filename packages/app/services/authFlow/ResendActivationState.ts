@@ -10,7 +10,7 @@ export default class ResendActivationState extends AbstractState {
         context.navigate('/resend-activation');
     }
 
-    resolve(context: AuthContext, payload: Record<string, any>): Promise<void> | void {
+    resolve(context: AuthContext, payload: { email: string; captcha: string }): Promise<void> | void {
         context
             .run('resendActivation', payload)
             .then(() => context.setState(new ActivationState()))
