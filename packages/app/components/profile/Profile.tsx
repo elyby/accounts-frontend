@@ -125,7 +125,7 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
                                         values={{
                                             locale: user.lang,
                                             participateInTheTranslation: (
-                                                <a href="http://ely.by/translate" target="_blank">
+                                                <a href="https://crowdin.com/project/elyby" target="_blank">
                                                     <Message
                                                         key="participateInTheTranslation"
                                                         defaultMessage="participate in the translation"

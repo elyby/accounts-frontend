@@ -8,7 +8,7 @@ import Popup from 'app/components/ui/popup';
 import styles from './languageSwitcher.scss';
 import LanguagesList from './LanguagesList';
 
-const translateUrl = 'http://ely.by/translate';
+const translateUrl = 'https://crowdin.com/project/elyby';
 
 export interface LocaleData {
     code: string;
