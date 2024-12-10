@@ -1,4 +1,6 @@
+import { OAuthState } from 'app/components/auth/reducer';
 import { getActiveAccount } from 'app/components/accounts/reducer';
+
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
 import PermissionsState from './PermissionsState';
@@ -11,8 +13,16 @@ import { AuthContext } from './AuthFlow';
 const PROMPT_ACCOUNT_CHOOSE = 'select_account';
 const PROMPT_PERMISSIONS = 'consent';
 
+function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
+    if (Array.isArray(prompt)) {
+        return prompt.includes(needle);
+    }
+
+    return prompt === needle;
+}
+
 export default class CompleteState extends AbstractState {
-    isPermissionsAccepted: boolean | void;
+    private readonly isPermissionsAccepted?: boolean;
 
     constructor(
         options: {
@@ -36,7 +46,7 @@ export default class CompleteState extends AbstractState {
             context.setState(new LoginState());
         } else if (user.shouldAcceptRules && !user.isDeleted) {
             context.setState(new AcceptRulesState());
-        } else if (oauth && oauth.clientId) {
+        } else if (oauth?.params) {
             return this.processOAuth(context);
         } else {
             context.navigate('/');
@@ -44,6 +54,8 @@ export default class CompleteState extends AbstractState {
     }
 
     processOAuth(context: AuthContext): Promise<void> | void {
+        console.log('process oauth', this.isPermissionsAccepted);
+
         const { auth, accounts, user } = context.getState();
 
         let { isSwitcherEnabled } = auth;
@@ -80,7 +92,7 @@ export default class CompleteState extends AbstractState {
                 // so that they can see, that their account was deleted
                 // (this info is displayed on switcher)
                 user.isDeleted ||
-                oauth.prompt.includes(PROMPT_ACCOUNT_CHOOSE))
+                hasPrompt(oauth.prompt, PROMPT_ACCOUNT_CHOOSE))
         ) {
             context.setState(new ChooseAccountState());
         } else if (user.isDeleted) {
@@ -92,35 +104,35 @@ export default class CompleteState extends AbstractState {
         } else if (oauth.code) {
             context.setState(new FinishState());
         } else {
-            const data: { [key: string]: any } = {};
+            const data: Record<string, any> = {};
 
             if (typeof this.isPermissionsAccepted !== 'undefined') {
                 data.accept = this.isPermissionsAccepted;
-            } else if (oauth.acceptRequired || oauth.prompt.includes(PROMPT_PERMISSIONS)) {
+            } else if (oauth.acceptRequired || hasPrompt(oauth.prompt, PROMPT_PERMISSIONS)) {
                 context.setState(new PermissionsState());
 
                 return;
             }
 
             // TODO: it seems that oAuthComplete may be a separate state
-            return context.run('oAuthComplete', data).then(
-                (resp: { redirectUri: string }) => {
+            return context
+                .run('oAuthComplete', data)
+                .then((resp: { redirectUri?: string }) => {
                     // TODO: пусть в стейт попадает флаг или тип авторизации
                     //       вместо волшебства над редирект урлой
-                    if (resp.redirectUri.includes('static_page')) {
+                    if (!resp.redirectUri || resp.redirectUri.includes('static_page')) {
                         context.setState(new FinishState());
                     } else {
                         return context.run('redirect', resp.redirectUri);
                     }
-                },
-                (resp) => {
+                })
+                .catch((resp) => {
                     if (resp.unauthorized) {
                         context.setState(new LoginState());
                     } else if (resp.acceptRequired) {
                         context.setState(new PermissionsState());
                     }
-                },
-            );
+                });
         }
     }
 }

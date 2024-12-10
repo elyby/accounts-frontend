@@ -38,15 +38,34 @@ export interface Client {
     description: string;
 }
 
-export interface OAuthState {
+export interface OauthAuthCodeFlowParams {
     clientId: string;
     redirectUrl: string;
     responseType: string;
-    description?: string;
-    scope: string;
-    prompt: string;
-    loginHint: string;
     state: string;
+    scope: string;
+}
+
+export interface OauthDeviceCodeFlowParams {
+    userCode: string;
+}
+
+export interface OAuthState {
+    params: OauthAuthCodeFlowParams | OauthDeviceCodeFlowParams;
+    description?: string;
+    /**
+     * Possible values:
+     * - none - default behaviour
+     * - consent - forcibly prompt user for rules acceptance
+     * - select_account - force account choosage, even if user has only one
+     * comma separated list of 'none' | 'consent' | 'select_account';
+     */
+    prompt?: string | Array<string>;
+    /**
+     * Allows to choose the account, which will be used for auth
+     * The possible values: account id, email, username
+     */
+    loginHint?: string;
     success?: boolean;
     code?: string;
     displayCode?: boolean;

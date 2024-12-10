@@ -24,35 +24,27 @@ export interface OauthAppResponse {
     minecraftServerIp?: string;
 }
 
-interface OauthRequestData {
+interface AuthCodeFlowRequestData {
     client_id: string;
     redirect_uri: string;
     response_type: string;
-    description?: string;
     scope: string;
-    prompt: string;
-    login_hint?: string;
     state?: string;
 }
 
-export interface OauthData {
-    clientId: string;
-    redirectUrl: string;
-    responseType: string;
-    description?: string;
-    scope: string;
-    // TODO: why prompt is not nullable?
-    prompt: string; // comma separated list of 'none' | 'consent' | 'select_account';
-    loginHint?: string;
-    state?: string;
+interface DeviceCodeFlowRequestData {
+    user_code: string;
 }
+
+export type OauthRequestData = (AuthCodeFlowRequestData | DeviceCodeFlowRequestData) & {
+    description?: string;
+};
 
 export interface OAuthValidateResponse {
     session: {
         scopes: Scope[];
     };
     client: Client;
-    oAuth: {}; // TODO: improve typing
 }
 
 interface FormPayloads {
@@ -64,20 +56,20 @@ interface FormPayloads {
 }
 
 const api = {
-    validate(oauthData: OauthData) {
+    validate(oauthData: OauthRequestData) {
         return request
-            .get<OAuthValidateResponse>('/api/oauth2/v1/validate', getOAuthRequest(oauthData))
+            .get<OAuthValidateResponse>('/api/oauth2/v1/validate', oauthData)
             .catch(handleOauthParamsValidation);
     },
 
     complete(
-        oauthData: OauthData,
+        oauthData: OauthRequestData,
         params: { accept?: boolean } = {},
     ): Promise<{
         success: boolean;
-        redirectUri: string;
+        redirectUri?: string;
     }> {
-        const query = request.buildQuery(getOAuthRequest(oauthData));
+        const query = request.buildQuery(oauthData);
 
         return request
             .post<{
@@ -146,37 +138,18 @@ if ('Cypress' in window) {
 
 export default api;
 
-/**
- * @param {object} oauthData
- * @param {string} oauthData.clientId
- * @param {string} oauthData.redirectUrl
- * @param {string} oauthData.responseType
- * @param {string} oauthData.description
- * @param {string} oauthData.scope
- * @param {string} oauthData.state
- *
- * @returns {object}
- */
-function getOAuthRequest(oauthData: OauthData): OauthRequestData {
-    return {
-        client_id: oauthData.clientId,
-        redirect_uri: oauthData.redirectUrl,
-        response_type: oauthData.responseType,
-        description: oauthData.description,
-        scope: oauthData.scope,
-        prompt: oauthData.prompt,
-        login_hint: oauthData.loginHint,
-        state: oauthData.state,
-    };
-}
-
 function handleOauthParamsValidation(
     resp:
-        | { [key: string]: any }
+        | Record<string, any>
         | {
               statusCode: number;
               success: false;
-              error: 'invalid_request' | 'unsupported_response_type' | 'invalid_scope' | 'invalid_client';
+              error:
+                  | 'invalid_request'
+                  | 'unsupported_response_type'
+                  | 'invalid_scope'
+                  | 'invalid_client'
+                  | 'invalid_user_code';
               parameter: string;
           } = {},
 ) {

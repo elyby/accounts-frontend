@@ -4,7 +4,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import authFlow from 'app/services/authFlow';
 
 interface Props {
-    component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
+    component: React.ComponentType<RouteComponentProps> | React.ComponentType<any>;
     routerProps: RouteComponentProps;
 }
 
@@ -74,7 +74,7 @@ export default class AuthFlowRouteContents extends React.Component<Props, State>
         });
     }
 
-    onRouteAllowed(props: Props) {
+    onRouteAllowed(props: Props): void {
         if (!this.mounted) {
             return;
         }

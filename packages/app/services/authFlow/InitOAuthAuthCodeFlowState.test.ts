@@ -1,17 +1,17 @@
 import sinon, { SinonMock } from 'sinon';
 
-import OAuthState from 'app/services/authFlow/OAuthState';
+import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 
 import { bootstrap, expectState, expectRun, MockedAuthContext } from './helpers';
 
 describe('OAuthState', () => {
-    let state: OAuthState;
+    let state: InitOAuthAuthCodeFlowState;
     let context: MockedAuthContext;
     let mock: SinonMock;
 
     beforeEach(() => {
-        state = new OAuthState();
+        state = new InitOAuthAuthCodeFlowState();
 
         const data = bootstrap();
         context = data.context;

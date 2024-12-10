@@ -127,6 +127,8 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
 
     'error.redirectUri_required': () => <Message key="redirectUriRequired" defaultMessage="Redirect URI is required" />,
     'error.redirectUri_invalid': () => <Message key="redirectUriInvalid" defaultMessage="Redirect URI is invalid" />,
+
+    'invalid_user_code': () => <Message key="invalidUserCode" defaultMessage="Invalid Device Code" />,
 };
 
 interface ErrorLiteral {

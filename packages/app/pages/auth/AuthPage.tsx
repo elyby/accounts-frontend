@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactNode, useCallback, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
 
 import AppInfo from 'app/components/auth/appInfo/AppInfo';
@@ -7,6 +7,7 @@ import Register from 'app/components/auth/register/Register';
 import Login from 'app/components/auth/login/Login';
 import Permissions from 'app/components/auth/permissions/Permissions';
 import ChooseAccount from 'app/components/auth/chooseAccount/ChooseAccount';
+import DeviceCode from 'app/components/auth/deviceCode';
 import Activation from 'app/components/auth/activation/Activation';
 import ResendActivation from 'app/components/auth/resendActivation/ResendActivation';
 import Password from 'app/components/auth/password/Password';
@@ -14,7 +15,7 @@ import AcceptRules from 'app/components/auth/acceptRules/AcceptRules';
 import ForgotPassword from 'app/components/auth/forgotPassword/ForgotPassword';
 import RecoverPassword from 'app/components/auth/recoverPassword/RecoverPassword';
 import Mfa from 'app/components/auth/mfa/Mfa';
-import Finish from 'app/components/auth/finish/Finish';
+import Finish from 'app/components/auth/finish';
 
 import { useReduxSelector } from 'app/functions';
 import { Factory } from 'app/components/auth/factory';
@@ -27,7 +28,7 @@ import styles from './auth.scss';
 // so that it persist disregarding remounts
 let isSidebarHiddenCache = false;
 
-const AuthPage: ComponentType = () => {
+const AuthPage: FC = () => {
     const [isSidebarHidden, setIsSidebarHidden] = useState<boolean>(isSidebarHiddenCache);
     const client = useReduxSelector((state) => state.auth.client);
 
@@ -54,6 +55,7 @@ const AuthPage: ComponentType = () => {
                     <Route path="/choose-account" render={renderPanelTransition(ChooseAccount)} />
                     <Route path="/oauth/choose-account" render={renderPanelTransition(ChooseAccount)} />
                     <Route path="/oauth/finish" component={Finish} />
+                    <Route path="/code" component={renderPanelTransition(DeviceCode)} />
                     <Route path="/accept-rules" render={renderPanelTransition(AcceptRules)} />
                     <Route path="/forgot-password" render={renderPanelTransition(ForgotPassword)} />
                     <Route path="/recover-password/:key?" render={renderPanelTransition(RecoverPassword)} />
@@ -64,7 +66,7 @@ const AuthPage: ComponentType = () => {
     );
 };
 
-function renderPanelTransition(factory: Factory): (props: RouteComponentProps<any>) => ReactNode {
+function renderPanelTransition(factory: Factory): FC<RouteComponentProps> {
     const { Title, Body, Footer, Links } = factory();
 
     return (props) => (

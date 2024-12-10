@@ -5,7 +5,7 @@ import AuthFlow from 'app/services/authFlow/AuthFlow';
 import AbstractState from 'app/services/authFlow/AbstractState';
 import localStorage from 'app/services/localStorage';
 
-import OAuthState from 'app/services/authFlow/OAuthState';
+import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
 import RegisterState from 'app/services/authFlow/RegisterState';
 import RecoverPasswordState from 'app/services/authFlow/RecoverPasswordState';
 import ForgotPasswordState from 'app/services/authFlow/ForgotPasswordState';
@@ -314,9 +314,9 @@ describe('AuthFlow', () => {
             '/oauth/permissions': LoginState,
             '/oauth/choose-account': LoginState,
             '/oauth/finish': LoginState,
-            '/oauth2/v1/foo': OAuthState,
-            '/oauth2/v1': OAuthState,
-            '/oauth2': OAuthState,
+            '/oauth2/v1/foo': InitOAuthAuthCodeFlowState,
+            '/oauth2/v1': InitOAuthAuthCodeFlowState,
+            '/oauth2': InitOAuthAuthCodeFlowState,
             '/register': RegisterState,
             '/choose-account': ChooseAccountState,
             '/recover-password': RecoverPasswordState,
@@ -379,7 +379,7 @@ describe('AuthFlow', () => {
             flow.handleRequest({ path, query: new URLSearchParams({}), params: {} }, () => {}, callback);
 
             expect(flow.setState, 'was called once');
-            expect(flow.setState, 'to have a call satisfying', [expect.it('to be a', OAuthState)]);
+            expect(flow.setState, 'to have a call satisfying', [expect.it('to be a', InitOAuthAuthCodeFlowState)]);
             expect(callback, 'was called twice');
         });
 
