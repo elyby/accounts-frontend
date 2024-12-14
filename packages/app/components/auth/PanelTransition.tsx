@@ -94,7 +94,8 @@ interface OwnProps {
     Title: ReactElement;
     Body: ReactElement;
     Footer: ReactElement;
-    Links: ReactNode;
+    Links?: ReactNode;
+    className?: string;
 }
 
 interface Props extends OwnProps {
@@ -255,6 +256,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
                                 onSubmit={this.onFormSubmit}
                                 onInvalid={this.onFormInvalid}
                                 isLoading={this.props.auth.isLoading}
+                                className={this.props.className}
                             >
                                 <Panel>
                                     <PanelHeader>{panels.map((config) => this.getHeader(config))}</PanelHeader>
@@ -285,10 +287,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
     onFormSubmit = (): void => {
         this.props.clearErrors();
-
-        if (this.body) {
-            this.body.onFormSubmit();
-        }
+        this.body?.onFormSubmit();
     };
 
     onFormInvalid = (errors: Record<string, ValidationError>): void => this.props.setErrors(errors);
@@ -377,7 +376,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
         if (length === 1) {
             if (!this.wasAutoFocused) {
-                this.body.autoFocus();
+                this.body?.autoFocus();
             }
 
             this.wasAutoFocused = true;

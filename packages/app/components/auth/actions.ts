@@ -382,7 +382,12 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
                 localStorage.removeItem('oauthData');
 
                 if (!resp.redirectUri) {
-                    dispatch(setOAuthCode({ success: resp.success && params.accept }));
+                    dispatch(
+                        setOAuthCode({
+                            // if accept is undefined, then it was auto approved
+                            success: resp.success && (typeof params.accept === 'undefined' || params.accept),
+                        }),
+                    );
                 } else if (resp.redirectUri.startsWith('static_page')) {
                     const displayCode = resp.redirectUri.includes('static_page_with_code');
 

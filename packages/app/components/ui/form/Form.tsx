@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import logger from 'app/services/logger';
@@ -10,7 +10,8 @@ interface BaseProps {
     id: string;
     isLoading: boolean;
     onInvalid: (errors: Record<string, string>) => void;
-    children: React.ReactNode;
+    className?: string;
+    children?: ReactNode;
 }
 
 interface PropsWithoutForm extends BaseProps {
@@ -23,10 +24,6 @@ interface PropsWithForm extends BaseProps {
 }
 
 type Props = PropsWithoutForm | PropsWithForm;
-
-function hasForm(props: Props): props is PropsWithForm {
-    return 'form' in props;
-}
 
 interface State {
     id: string; // just to track value for derived updates
@@ -54,10 +51,7 @@ export default class Form extends React.Component<Props, State> {
     mounted = false;
 
     componentDidMount() {
-        if (hasForm(this.props)) {
-            this.props.form.addLoadingListener(this.onLoading);
-        }
-
+        (this.props as PropsWithForm).form?.addLoadingListener(this.onLoading);
         this.mounted = true;
     }
 
@@ -77,8 +71,8 @@ export default class Form extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        const nextForm = hasForm(this.props) ? this.props.form : undefined;
-        const prevForm = hasForm(prevProps) ? prevProps.form : undefined;
+        const nextForm = (this.props as PropsWithForm).form;
+        const prevForm = (prevProps as PropsWithForm).form;
 
         if (nextForm !== prevForm) {
             if (prevForm) {
@@ -92,10 +86,7 @@ export default class Form extends React.Component<Props, State> {
     }
 
     componentWillUnmount() {
-        if (hasForm(this.props)) {
-            this.props.form.removeLoadingListener(this.onLoading);
-        }
-
+        (this.props as PropsWithForm).form?.removeLoadingListener(this.onLoading);
         this.mounted = false;
     }
 
@@ -104,7 +95,7 @@ export default class Form extends React.Component<Props, State> {
 
         return (
             <form
-                className={clsx(styles.form, {
+                className={clsx(styles.form, this.props.className, {
                     [styles.isFormLoading]: isLoading,
                     [styles.formTouched]: this.state.isTouched,
                 })}
@@ -134,12 +125,10 @@ export default class Form extends React.Component<Props, State> {
             this.clearErrors();
             let result: Promise<void> | void;
 
-            if (hasForm(this.props)) {
-                // @ts-ignore this prop has default value
-                result = this.props.onSubmit(this.props.form);
+            if ((this.props as PropsWithForm).form) {
+                result = (this.props as PropsWithForm).onSubmit!((this.props as PropsWithForm).form);
             } else {
-                // @ts-ignore this prop has default value
-                result = this.props.onSubmit(new FormData(form));
+                result = (this.props as PropsWithoutForm).onSubmit!(new FormData(form));
             }
 
             if (result && result.then) {
@@ -181,14 +170,11 @@ export default class Form extends React.Component<Props, State> {
     }
 
     setErrors(errors: { [key: string]: string }) {
-        if (hasForm(this.props)) {
-            this.props.form.setErrors(errors);
-        }
-
+        (this.props as PropsWithForm).form?.setErrors(errors);
         this.props.onInvalid(errors);
     }
 
-    clearErrors = () => hasForm(this.props) && this.props.form.clearErrors();
+    clearErrors = () => (this.props as PropsWithForm).form?.clearErrors();
 
     onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

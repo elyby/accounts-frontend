@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage as Message, defineMessages } from 'react-intl';
 
-import factory from '../factory';
-import Body from './DeviceCodeBody';
+import { Button } from 'app/components/ui/form';
+import AuthTitle from 'app/components/auth/AuthTitle';
+import PanelTransition from 'app/components/auth/PanelTransition';
+
+import style from './deviceCode.scss';
+import DeviceCodeBody from './DeviceCodeBody';
 
 const messages = defineMessages({
-    deviceCodeTitle: 'Device code',
+    deviceCodeTitle: 'Device Code',
 });
 
-export default factory({
-    title: messages.deviceCodeTitle,
-    body: Body,
-    footer: {
-        color: 'green',
-        children: <Message key="continueButton" defaultMessage="Continue" />,
-    },
-});
+const DeviceCode: FC<RouteComponentProps> = (props) => {
+    return (
+        <PanelTransition
+            key="deviceCode"
+            className={style.form}
+            Title={<AuthTitle title={messages.deviceCodeTitle} />}
+            Body={<DeviceCodeBody {...props} />}
+            Footer={
+                <Button type="submit">
+                    <Message id="continue" defaultMessage="Cotinute" />
+                </Button>
+            }
+        />
+    );
+};
+
+export default DeviceCode;

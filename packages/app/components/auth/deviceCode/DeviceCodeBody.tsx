@@ -1,12 +1,8 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { FormattedMessage as Message } from 'react-intl';
 
 import { Input } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
-
-const messages = defineMessages({
-    deviceCode: 'Device code',
-});
 
 export default class DeviceCodeBody extends BaseAuthBody {
     static displayName = 'DeviceCodeBody';
@@ -16,16 +12,22 @@ export default class DeviceCodeBody extends BaseAuthBody {
 
     render() {
         return (
-            <div>
+            <>
                 {this.renderErrors()}
 
-                <Input
-                    {...this.bindField('user_code')}
-                    icon="key"
-                    required
-                    placeholder={messages.deviceCode}
-                />
-            </div>
+                <Message id="deviceCode" defaultMessage="Device Code">
+                    {(nodes) => (
+                        <Input
+                            {...this.bindField('user_code')}
+                            icon="key"
+                            name="user_cide"
+                            autoFocus
+                            required
+                            placeholder={nodes as string}
+                        />
+                    )}
+                </Message>
+            </>
         );
     }
 }

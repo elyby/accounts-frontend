@@ -22,7 +22,7 @@ function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
 }
 
 export default class CompleteState extends AbstractState {
-    private readonly isPermissionsAccepted?: boolean;
+    isPermissionsAccepted?: boolean;
 
     constructor(
         options: {
@@ -54,8 +54,6 @@ export default class CompleteState extends AbstractState {
     }
 
     processOAuth(context: AuthContext): Promise<void> | void {
-        console.log('process oauth', this.isPermissionsAccepted);
-
         const { auth, accounts, user } = context.getState();
 
         let { isSwitcherEnabled } = auth;

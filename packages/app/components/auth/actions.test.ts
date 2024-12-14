@@ -87,6 +87,9 @@ describe('components/auth/actions', () => {
                     [setClient(resp.client)],
                     [
                         setOAuthRequest({
+                            params: {
+                                userCode: '',
+                            },
                             prompt: 'none',
                             loginHint: undefined,
                         }),

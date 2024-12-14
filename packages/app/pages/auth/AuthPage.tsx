@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
+import clsx from 'clsx';
 
 import AppInfo from 'app/components/auth/appInfo/AppInfo';
 import PanelTransition from 'app/components/auth/PanelTransition';
@@ -7,7 +8,6 @@ import Register from 'app/components/auth/register/Register';
 import Login from 'app/components/auth/login/Login';
 import Permissions from 'app/components/auth/permissions/Permissions';
 import ChooseAccount from 'app/components/auth/chooseAccount/ChooseAccount';
-import DeviceCode from 'app/components/auth/deviceCode';
 import Activation from 'app/components/auth/activation/Activation';
 import ResendActivation from 'app/components/auth/resendActivation/ResendActivation';
 import Password from 'app/components/auth/password/Password';
@@ -38,8 +38,8 @@ const AuthPage: FC = () => {
     }, []);
 
     return (
-        <div>
-            <div className={isSidebarHidden ? styles.hiddenSidebar : styles.sidebar}>
+        <>
+            <div className={clsx(styles.sidebar, { [styles.hiddenSidebar]: isSidebarHidden })}>
                 <AppInfo {...client} onGoToAuth={goToAuth} />
             </div>
 
@@ -55,14 +55,13 @@ const AuthPage: FC = () => {
                     <Route path="/choose-account" render={renderPanelTransition(ChooseAccount)} />
                     <Route path="/oauth/choose-account" render={renderPanelTransition(ChooseAccount)} />
                     <Route path="/oauth/finish" component={Finish} />
-                    <Route path="/code" component={renderPanelTransition(DeviceCode)} />
                     <Route path="/accept-rules" render={renderPanelTransition(AcceptRules)} />
                     <Route path="/forgot-password" render={renderPanelTransition(ForgotPassword)} />
                     <Route path="/recover-password/:key?" render={renderPanelTransition(RecoverPassword)} />
                     <Redirect to="/404" />
                 </Switch>
             </div>
-        </div>
+        </>
     );
 };
 

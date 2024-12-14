@@ -43,7 +43,7 @@ describe('AuthFlowRouteContents', () => {
 
         (authFlow.handleRequest as any).callsArg(2);
 
-        render(<AuthFlowRouteContents routerProps={routerProps} component={Component} />);
+        render(<AuthFlowRouteContents component={Component} {...routerProps} />);
 
         const component = screen.getByTestId('test-component');
 
