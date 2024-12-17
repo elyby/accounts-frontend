@@ -20,7 +20,6 @@ export default class DeviceCodeBody extends BaseAuthBody {
                         <Input
                             {...this.bindField('user_code')}
                             icon="key"
-                            name="user_cide"
                             autoFocus
                             required
                             placeholder={nodes as string}

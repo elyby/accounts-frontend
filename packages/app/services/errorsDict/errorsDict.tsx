@@ -129,6 +129,13 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
     'error.redirectUri_invalid': () => <Message key="redirectUriInvalid" defaultMessage="Redirect URI is invalid" />,
 
     invalid_user_code: () => <Message key="invalidUserCode" defaultMessage="Invalid Device Code" />,
+    expired_token: () => (
+        <Message
+            key="expiredUserCode"
+            defaultMessage="The code has expired. Start the authorization flow in the application again."
+        />
+    ),
+    used_user_code: () => <Message key="usedUserCode" defaultMessage="This code has been already used" />,
 };
 
 interface ErrorLiteral {

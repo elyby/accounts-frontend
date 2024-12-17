@@ -30,7 +30,7 @@ export default class LoginState extends AbstractState {
             login: string;
         },
     ): Promise<void> | void {
-        context
+        return context
             .run('login', payload)
             .then(() => context.setState(new PasswordState()))
             .catch((err = {}) => err.errors || logger.warn('Error validating login', err));

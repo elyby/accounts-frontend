@@ -12,15 +12,15 @@ export default class PermissionsState extends AbstractState {
     }
 
     resolve(context: AuthContext): Promise<void> | void {
-        this.process(context, true);
+        return this.process(context, true);
     }
 
     reject(context: AuthContext): void {
         this.process(context, false);
     }
 
-    process(context: AuthContext, accept: boolean): void {
-        context.setState(
+    process(context: AuthContext, accept: boolean): Promise<void> | void {
+        return context.setState(
             new CompleteState({
                 accept,
             }),

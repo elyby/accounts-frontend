@@ -13,6 +13,10 @@ const AuthFlowRouteContents: FC<Props> = ({ component: WantedComponent, location
     const [component, setComponent] = useState<ReactElement | null>(null);
 
     useEffect(() => {
+        // Promise that will be resolved after handleRequest might contain already non-actual component to render,
+        // so set it to false in the effect's clear function to prevent unwanted UI state
+        let isActual = true;
+
         authFlow.handleRequest(
             {
                 path: location.pathname,
@@ -21,11 +25,15 @@ const AuthFlowRouteContents: FC<Props> = ({ component: WantedComponent, location
             },
             history.push,
             () => {
-                if (isMounted()) {
+                if (isActual && isMounted()) {
                     setComponent(<WantedComponent history={history} location={location} match={match} />);
                 }
             },
         );
+
+        return () => {
+            isActual = false;
+        };
     }, [location.pathname, location.search]);
 
     return component;

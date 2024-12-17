@@ -16,7 +16,8 @@ export default class InitOAuthDeviceCodeFlowState extends AbstractState {
                     description: query.get('description')!,
                     prompt: query.get('prompt')!,
                 });
-                await context.setState(new CompleteState());
+
+                return context.setState(new CompleteState());
             } catch {
                 // Ok, fallback to the default
             }

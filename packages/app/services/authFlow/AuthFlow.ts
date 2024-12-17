@@ -10,8 +10,9 @@ import {
 } from 'app/components/accounts/actions';
 import * as actions from 'app/components/auth/actions';
 import { updateUser } from 'app/components/user/actions';
-import FinishState from './FinishState';
+import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 
+import FinishState from './FinishState';
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
 import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
@@ -121,11 +122,23 @@ export default class AuthFlow implements AuthContext {
     }
 
     resolve(payload: Record<string, any> = {}) {
-        this.state.resolve(this, payload);
+        const maybePromise = this.state.resolve(this, payload);
+
+        if (maybePromise && maybePromise.catch) {
+            maybePromise.catch((err) => {
+                dispatchBsod();
+                throw err;
+            });
+        }
     }
 
     reject(payload: Record<string, any> = {}) {
-        this.state.reject(this, payload);
+        try {
+            this.state.reject(this, payload);
+        } catch (err) {
+            dispatchBsod();
+            throw err;
+        }
     }
 
     goBack() {
@@ -133,11 +146,11 @@ export default class AuthFlow implements AuthContext {
     }
 
     run<T extends ActionId>(actionId: T, payload?: Parameters<typeof availableActions[T]>[0]): Promise<any> {
-        // @ts-ignore the extended version of redux with thunk will return the correct promise
+        // @ts-expect-error the extended version of redux with thunk will return the correct promise
         return Promise.resolve(this.dispatch(this.actions[actionId](payload)));
     }
 
-    setState(state: State) {
+    setState(state: State): Promise<void> | void {
         this.state?.leave(this);
         this.prevState = this.state;
         this.state = state;
@@ -256,8 +269,6 @@ export default class AuthFlow implements AuthContext {
     /**
      * Tries to restore last oauth request, if it was stored in localStorage
      * in last 2 hours
-     *
-     * @returns {bool} - whether oauth state is being restored
      */
     private restoreOAuthState(): boolean {
         if (this.oAuthStateRestored) {

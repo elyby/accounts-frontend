@@ -57,7 +57,7 @@ interface PanelBodyHeaderProps extends PropsWithChildren<any> {
     onClose?: () => void;
 }
 
-export const PanelBodyHeader: FC<PanelBodyHeaderProps> = ({ type = 'default', onClose, children }) => {
+export const PanelBodyHeader: FC<PanelBodyHeaderProps> = ({ type = 'default', onClose, children, ...props }) => {
     const [isClosed, setIsClosed] = useState<boolean>(false);
     const handleCloseClick = useCallback(() => {
         setIsClosed(true);
@@ -71,6 +71,7 @@ export const PanelBodyHeader: FC<PanelBodyHeaderProps> = ({ type = 'default', on
                 [styles.errorBodyHeader]: type === 'error',
                 [styles.isClosed]: isClosed,
             })}
+            {...props}
         >
             {type === 'error' && <span className={styles.close} onClick={handleCloseClick} />}
             {children}

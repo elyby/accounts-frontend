@@ -19,7 +19,6 @@ import {
     activate as activateEndpoint,
     resendActivation as resendActivationEndpoint,
 } from 'app/services/api/signup';
-import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact';
 import { Account } from 'app/components/accounts/reducer';
@@ -455,11 +454,6 @@ function handleOauthParamsValidation(
         userMessage?: string;
     } = {},
 ) {
-    // TODO: it would be better to dispatch BSOD from the initial request performers
-    if (resp.error !== 'invalid_user_code') {
-        dispatchBsod();
-    }
-
     localStorage.removeItem('oauthData');
 
     // eslint-disable-next-line no-alert

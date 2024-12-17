@@ -92,45 +92,49 @@ export default class CompleteState extends AbstractState {
                 user.isDeleted ||
                 hasPrompt(oauth.prompt, PROMPT_ACCOUNT_CHOOSE))
         ) {
-            context.setState(new ChooseAccountState());
-        } else if (user.isDeleted) {
+            return context.setState(new ChooseAccountState());
+        }
+
+        if (user.isDeleted) {
             // you shall not pass
             // if we are here, this means that user have already seen account
             // switcher and now we should redirect him to his profile,
             // because oauth is not available for deleted accounts
-            context.navigate('/');
-        } else if (oauth.code) {
-            context.setState(new FinishState());
-        } else {
-            const data: Record<string, any> = {};
-
-            if (typeof this.isPermissionsAccepted !== 'undefined') {
-                data.accept = this.isPermissionsAccepted;
-            } else if (oauth.acceptRequired || hasPrompt(oauth.prompt, PROMPT_PERMISSIONS)) {
-                context.setState(new PermissionsState());
-
-                return;
-            }
-
-            // TODO: it seems that oAuthComplete may be a separate state
-            return context
-                .run('oAuthComplete', data)
-                .then((resp: { redirectUri?: string }) => {
-                    // TODO: пусть в стейт попадает флаг или тип авторизации
-                    //       вместо волшебства над редирект урлой
-                    if (!resp.redirectUri || resp.redirectUri.includes('static_page')) {
-                        context.setState(new FinishState());
-                    } else {
-                        return context.run('redirect', resp.redirectUri);
-                    }
-                })
-                .catch((resp) => {
-                    if (resp.unauthorized) {
-                        context.setState(new LoginState());
-                    } else if (resp.acceptRequired) {
-                        context.setState(new PermissionsState());
-                    }
-                });
+            return context.navigate('/');
         }
+
+        if (oauth.code) {
+            return context.setState(new FinishState());
+        }
+
+        const data: Record<string, any> = {};
+
+        if (typeof this.isPermissionsAccepted !== 'undefined') {
+            data.accept = this.isPermissionsAccepted;
+        } else if (oauth.acceptRequired || hasPrompt(oauth.prompt, PROMPT_PERMISSIONS)) {
+            context.setState(new PermissionsState());
+
+            return;
+        }
+
+        // TODO: it seems that oAuthComplete may be a separate state
+        return context
+            .run('oAuthComplete', data)
+            .then((resp: { redirectUri?: string }) => {
+                // TODO: пусть в стейт попадает флаг или тип авторизации
+                //       вместо волшебства над редирект урлой
+                if (!resp.redirectUri || resp.redirectUri.includes('static_page')) {
+                    context.setState(new FinishState());
+                } else {
+                    return context.run('redirect', resp.redirectUri);
+                }
+            })
+            .catch((resp) => {
+                if (resp.unauthorized) {
+                    context.setState(new LoginState());
+                } else if (resp.acceptRequired) {
+                    context.setState(new PermissionsState());
+                }
+            });
     }
 }

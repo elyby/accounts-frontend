@@ -6,7 +6,7 @@ export default class DeviceCodeState extends AbstractState {
     async resolve(context: AuthContext, payload: { user_code: string }): Promise<void> {
         const { query } = context.getRequest();
 
-        context
+        return context
             .run('oAuthValidate', {
                 params: {
                     userCode: payload.user_code,
@@ -16,7 +16,7 @@ export default class DeviceCodeState extends AbstractState {
             })
             .then(() => context.setState(new CompleteState()))
             .catch((err) => {
-                if (err.error === 'invalid_user_code') {
+                if (['invalid_user_code', 'expired_token', 'used_user_code'].includes(err.error)) {
                     return context.run('setErrors', { [err.parameter]: err.error });
                 }
 
