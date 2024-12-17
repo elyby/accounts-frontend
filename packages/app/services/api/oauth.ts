@@ -69,16 +69,17 @@ const api = {
         success: boolean;
         redirectUri?: string;
     }> {
-        const query = request.buildQuery(oauthData);
+        const data: Record<string, any> = {};
+
+        if (typeof params.accept !== 'undefined') {
+            data.accept = params.accept;
+        }
 
         return request
             .post<{
                 success: boolean;
                 redirectUri: string;
-            }>(
-                `/api/oauth2/v1/complete?${query}`,
-                typeof params.accept === 'undefined' ? {} : { accept: params.accept },
-            )
+            }>(`/api/oauth2/v1/complete?${request.buildQuery(oauthData)}`, data)
             .catch((resp = {}) => {
                 if (resp.statusCode === 401 && resp.error === 'access_denied') {
                     // user declined permissions

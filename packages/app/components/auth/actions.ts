@@ -391,7 +391,7 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
                 } else if (resp.redirectUri.startsWith('static_page')) {
                     const displayCode = resp.redirectUri.includes('static_page_with_code');
 
-                    const [, code] = resp.redirectUri.match(/code=(.+)&/) || [];
+                    const [, code] = resp.redirectUri.match(/code=([^&]+)/) || [];
                     [, resp.redirectUri] = resp.redirectUri.match(/^(.+)\?/) || [];
 
                     dispatch(

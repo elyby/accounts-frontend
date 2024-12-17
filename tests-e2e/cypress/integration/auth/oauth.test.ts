@@ -1,4 +1,5 @@
 import { account1 } from '../../fixtures/accounts.json';
+import { OAuthState } from 'app/components/auth/reducer';
 import { UserResponse } from 'app/services/api/accounts';
 
 const defaults = {
@@ -23,14 +24,14 @@ describe('OAuth', () => {
             JSON.stringify({
                 timestamp: Date.now() - 3600,
                 payload: {
-                    clientId: 'ely',
-                    redirectUrl: 'https://dev.ely.by/authorization/oauth',
-                    responseType: 'code',
-                    description: null,
-                    scope: 'account_info account_email',
-                    loginHint: null,
-                    state: null,
-                },
+                    params: {
+                        clientId: 'ely',
+                        redirectUrl: 'https://dev.ely.by/authorization/oauth',
+                        responseType: 'code',
+                        state: '',
+                        scope: 'account_info account_email',
+                    },
+                } as OAuthState,
             }),
         );
         cy.login({ accounts: ['default'] });
@@ -81,6 +82,7 @@ describe('OAuth', () => {
                     ...defaults,
                     client_id: 'tlauncher',
                     redirect_uri: 'http://localhost:8080',
+                    state: '123',
                 })}`,
             );
 
@@ -92,7 +94,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=123$/);
         });
 
         it('should redirect to error page, when permission request declined', () => {
@@ -334,7 +336,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
         });
 
         it('should redirect to error page, when permission request declined', () => {
@@ -377,7 +379,7 @@ describe('OAuth', () => {
 
                 cy.findByTestId('auth-controls').contains('Approve').click();
 
-                cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+                cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
             });
         });
 
@@ -403,7 +405,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
         });
     });
 
