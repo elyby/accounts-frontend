@@ -32,7 +32,7 @@ Promise.all([stat(`${__dirname}/../../yarn.lock`), stat(`${__dirname}/../../dll/
 
         console.log('Rebuilding dlls...');
 
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             compiler.run((err, stats) => {
                 if (err) {
                     return reject(err);

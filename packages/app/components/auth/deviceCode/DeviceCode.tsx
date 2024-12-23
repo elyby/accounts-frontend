@@ -22,7 +22,7 @@ const DeviceCode: FC<RouteComponentProps> = (props) => {
             Body={<DeviceCodeBody {...props} />}
             Footer={
                 <Button type="submit">
-                    <Message id="continue" defaultMessage="Cotinute" />
+                    <Message id="continue" defaultMessage="Continue" />
                 </Button>
             }
         />

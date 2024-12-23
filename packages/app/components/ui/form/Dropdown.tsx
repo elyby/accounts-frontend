@@ -39,10 +39,9 @@ export default class Dropdown extends FormInputComponent<Props, State> {
     };
 
     render() {
-        const { color, block, items, ...restProps } = this.props;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { color, block, items, label: unusedLabel, ...restProps } = this.props;
         const { isActive } = this.state;
-
-        delete restProps.label;
 
         const activeItem = this.getActiveItem();
         const label = React.isValidElement(activeItem.label) ? activeItem.label : this.formatMessage(activeItem.label);
