@@ -31,7 +31,7 @@ const AuthError: ComponentType<Props> = ({ error, onClose }) => {
     }, [error, onClose]);
 
     return (
-        <PanelBodyHeader type="error" onClose={onClose}>
+        <PanelBodyHeader type="error" onClose={onClose} data-testid="auth-error">
             {resolveError(error)}
         </PanelBodyHeader>
     );

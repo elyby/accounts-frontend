@@ -1,19 +1,17 @@
-import React from 'react';
-import { Route, RouteProps } from 'react-router-dom';
+import React, { FC, ComponentType } from 'react';
+import { Route, RouteProps, RouteComponentProps } from 'react-router-dom';
 
 import AuthFlowRouteContents from './AuthFlowRouteContents';
 
-export default function AuthFlowRoute(props: RouteProps) {
-    const { component: Component, ...routeProps } = props;
+// Make "component" prop required
+type Props = Omit<RouteProps, 'component'> & {
+    component: ComponentType<RouteComponentProps>;
+};
 
-    if (!Component) {
-        throw new Error('props.component required');
-    }
-
+const AuthFlowRoute: FC<Props> = ({ component: Component, ...props }) => {
     return (
-        <Route
-            {...routeProps}
-            render={(routerProps) => <AuthFlowRouteContents routerProps={routerProps} component={Component} />}
-        />
+        <Route {...props} render={(routerProps) => <AuthFlowRouteContents component={Component} {...routerProps} />} />
     );
-}
+};
+
+export default AuthFlowRoute;

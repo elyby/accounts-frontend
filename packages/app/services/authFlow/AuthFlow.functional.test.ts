@@ -1,5 +1,6 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
+import { SynchronousPromise } from 'synchronous-promise';
 
 import { Store } from 'redux';
 
@@ -100,21 +101,22 @@ describe('AuthFlow.functional', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 123,
+                        params: {
+                            clientId: 123,
+                        },
                         prompt: [],
                     },
                 },
             });
 
             // @ts-ignore
-            flow.run.onCall(0).returns({ then: (fn) => fn() });
+            flow.run.onCall(0).returns(SynchronousPromise.resolve());
             // @ts-ignore
-            flow.run.onCall(1).returns({
-                then: (fn: Function) =>
-                    fn({
-                        redirectUri: expectedRedirect,
-                    }),
-            });
+            flow.run.onCall(1).returns(
+                SynchronousPromise.resolve({
+                    redirectUri: expectedRedirect,
+                }),
+            );
 
             navigate('/oauth2');
 

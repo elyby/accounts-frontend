@@ -14,8 +14,6 @@ $sidebar-width: 320px;
 }
 
 .hiddenSidebar {
-    composes: sidebar;
-
     display: none;
 }
 

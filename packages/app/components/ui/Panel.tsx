@@ -1,121 +1,92 @@
-import React from 'react';
+import React, { FC, PropsWithChildren, useState, useCallback } from 'react';
 import clsx from 'clsx';
-import { omit } from 'app/functions';
 
 import styles from './panel.scss';
 import icons from './icons.scss';
 
-export function Panel(props: { title?: string; icon?: string; children: React.ReactNode }) {
-    const { title: titleText, icon: iconType } = props;
-    let icon: React.ReactElement | undefined;
-    let title: React.ReactElement | undefined;
+interface PanelProps extends PropsWithChildren<any> {
+    title?: string;
+    icon?: string;
+}
 
-    if (iconType) {
-        icon = (
-            <button className={styles.headerControl}>
-                <span className={icons[iconType]} />
-            </button>
-        );
-    }
-
-    if (titleText) {
-        title = (
-            <PanelHeader>
-                {icon}
-                {titleText}
-            </PanelHeader>
-        );
-    }
-
+export const Panel: FC<PanelProps> = ({ title, icon, children }) => {
     return (
         <div className={styles.panel}>
-            {title}
+            {title && (
+                <PanelHeader>
+                    {icon && (
+                        <button className={styles.headerControl}>
+                            <span className={icons[icon]} />
+                        </button>
+                    )}
+                    {title}
+                </PanelHeader>
+            )}
 
-            {props.children}
+            {children}
         </div>
     );
-}
+};
 
-export function PanelHeader(props: { children: React.ReactNode }) {
+export const PanelHeader: FC<PropsWithChildren<any>> = ({ children }) => {
     return (
-        <div className={styles.header} {...props} data-testid="auth-header">
-            {props.children}
+        <div className={styles.header} data-testid="auth-header">
+            {children}
         </div>
     );
-}
+};
 
-export function PanelBody(props: { children: React.ReactNode }) {
+export const PanelBody: FC<PropsWithChildren<any>> = ({ children }) => {
     return (
-        <div className={styles.body} {...props} data-testid="auth-body">
-            {props.children}
+        <div className={styles.body} data-testid="auth-body">
+            {children}
         </div>
     );
-}
+};
 
-export function PanelFooter(props: { children: React.ReactNode }) {
+export const PanelFooter: FC<PropsWithChildren<any>> = ({ children }) => {
     return (
-        <div className={styles.footer} {...props} data-testid="auth-controls">
-            {props.children}
+        <div className={styles.footer} data-testid="auth-controls">
+            {children}
         </div>
     );
+};
+
+interface PanelBodyHeaderProps extends PropsWithChildren<any> {
+    type?: 'default' | 'error';
+    onClose?: () => void;
 }
 
-export class PanelBodyHeader extends React.Component<
-    {
-        type?: 'default' | 'error';
-        onClose?: () => void;
-        children: React.ReactNode;
-    },
-    {
-        isClosed: boolean;
-    }
-> {
-    state: {
-        isClosed: boolean;
-    } = {
-        isClosed: false,
-    };
+export const PanelBodyHeader: FC<PanelBodyHeaderProps> = ({ type = 'default', onClose, children, ...props }) => {
+    const [isClosed, setIsClosed] = useState<boolean>(false);
+    const handleCloseClick = useCallback(() => {
+        setIsClosed(true);
+        onClose?.();
+    }, [onClose]);
 
-    render() {
-        const { type = 'default', children } = this.props;
+    return (
+        <div
+            className={clsx({
+                [styles.defaultBodyHeader]: type === 'default',
+                [styles.errorBodyHeader]: type === 'error',
+                [styles.isClosed]: isClosed,
+            })}
+            {...props}
+        >
+            {type === 'error' && <span className={styles.close} onClick={handleCloseClick} />}
+            {children}
+        </div>
+    );
+};
 
-        let close;
-
-        if (type === 'error') {
-            close = <span className={styles.close} onClick={this.onClose} />;
-        }
-
-        const className = clsx(styles[`${type}BodyHeader`], {
-            [styles.isClosed]: this.state.isClosed,
-        });
-
-        const extraProps = omit(this.props, ['type', 'onClose']);
-
-        return (
-            <div className={className} {...extraProps}>
-                {close}
-                {children}
-            </div>
-        );
-    }
-
-    onClose = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-
-        const { onClose } = this.props;
-
-        this.setState({ isClosed: true });
-
-        if (onClose) {
-            onClose();
-        }
-    };
+interface PanelIconProps {
+    icon: string;
 }
 
-export function PanelIcon({ icon }: { icon: string }) {
+export const PanelIcon: FC<PanelIconProps> = ({ icon }) => {
     return (
         <div className={styles.panelIcon}>
             <span className={icons[icon]} />
         </div>
     );
-}
+};

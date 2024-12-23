@@ -1,17 +1,17 @@
 import sinon, { SinonMock } from 'sinon';
 
-import OAuthState from 'app/services/authFlow/OAuthState';
+import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 
 import { bootstrap, expectState, expectRun, MockedAuthContext } from './helpers';
 
 describe('OAuthState', () => {
-    let state: OAuthState;
+    let state: InitOAuthAuthCodeFlowState;
     let context: MockedAuthContext;
     let mock: SinonMock;
 
     beforeEach(() => {
-        state = new OAuthState();
+        state = new InitOAuthAuthCodeFlowState();
 
         const data = bootstrap();
         context = data.context;
@@ -44,14 +44,16 @@ describe('OAuthState', () => {
                 mock,
                 'oAuthValidate',
                 sinon.match({
-                    clientId: query.client_id,
-                    redirectUrl: query.redirect_uri,
-                    responseType: query.response_type,
+                    params: {
+                        clientId: query.client_id,
+                        redirectUrl: query.redirect_uri,
+                        responseType: query.response_type,
+                        scope: query.scope,
+                        state: query.state,
+                    },
                     description: query.description,
-                    scope: query.scope,
                     prompt: query.prompt,
                     loginHint: query.login_hint,
-                    state: query.state,
                 }),
             ).returns({ then() {} });
 
@@ -76,11 +78,13 @@ describe('OAuthState', () => {
                 mock,
                 'oAuthValidate',
                 sinon.match({
-                    clientId,
-                    redirectUrl: query.redirect_uri,
-                    responseType: query.response_type,
-                    scope: query.scope,
-                    state: query.state,
+                    params: {
+                        clientId,
+                        redirectUrl: query.redirect_uri,
+                        responseType: query.response_type,
+                        scope: query.scope,
+                        state: query.state,
+                    },
                 }),
             ).returns({ then() {} });
 
@@ -106,11 +110,13 @@ describe('OAuthState', () => {
                 mock,
                 'oAuthValidate',
                 sinon.match({
-                    clientId: query.client_id,
-                    redirectUrl: query.redirect_uri,
-                    responseType: query.response_type,
-                    scope: query.scope,
-                    state: query.state,
+                    params: {
+                        clientId: query.client_id,
+                        redirectUrl: query.redirect_uri,
+                        responseType: query.response_type,
+                        scope: query.scope,
+                        state: query.state,
+                    },
                 }),
             ).returns({ then() {} });
 
@@ -134,11 +140,13 @@ describe('OAuthState', () => {
                 mock,
                 'oAuthValidate',
                 sinon.match({
-                    clientId: query.client_id,
-                    redirectUrl: query.redirect_uri,
-                    responseType: query.response_type,
-                    scope: 'scope1 scope2 scope3',
-                    state: query.state,
+                    params: {
+                        clientId: query.client_id,
+                        redirectUrl: query.redirect_uri,
+                        responseType: query.response_type,
+                        scope: 'scope1 scope2 scope3',
+                        state: query.state,
+                    },
                 }),
             ).returns({ then() {} });
 

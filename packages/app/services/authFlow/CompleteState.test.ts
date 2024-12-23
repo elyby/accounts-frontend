@@ -1,5 +1,6 @@
 import expect from 'app/test/unexpected';
 import sinon, { SinonMock } from 'sinon';
+import { SynchronousPromise } from 'synchronous-promise';
 
 import CompleteState from 'app/services/authFlow/CompleteState';
 import LoginState from 'app/services/authFlow/LoginState';
@@ -137,7 +138,9 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             code: 'XXX',
                         },
                     },
@@ -157,7 +160,9 @@ describe('CompleteState', () => {
                         auth: {
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 acceptRequired: true,
                             },
                         },
@@ -176,7 +181,9 @@ describe('CompleteState', () => {
                         auth: {
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: ['consent'],
                             },
                         },
@@ -202,7 +209,9 @@ describe('CompleteState', () => {
                             credentials: {},
                             isSwitcherEnabled: true,
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: [],
                             },
                         },
@@ -227,7 +236,9 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: true,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: [],
                             },
                         },
@@ -251,13 +262,15 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: false,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: [],
                             },
                         },
                     });
 
-                    expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
+                    expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
 
                     state.enter(context);
                 });
@@ -275,7 +288,9 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: true,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: ['select_account'],
                             },
                         },
@@ -299,13 +314,15 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: false,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: ['select_account'],
                             },
                         },
                     });
 
-                    expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
+                    expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
 
                     state.enter(context);
                 });
@@ -322,39 +339,15 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match.object).returns({
-                then() {},
-            });
-
-            state.enter(context);
-        });
-
-        it('should listen for auth success/failure', () => {
-            context.getState.returns({
-                user: {
-                    isGuest: false,
-                },
-                auth: {
-                    credentials: {},
-                    oauth: {
-                        clientId: 'ely.by',
-                        prompt: [],
-                    },
-                },
-            });
-
-            expectRun(mock, 'oAuthComplete', sinon.match.object).returns({
-                then(success: Function, fail: Function) {
-                    expect(success, 'to be a', 'function');
-                    expect(fail, 'to be a', 'function');
-                },
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match.object).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -370,7 +363,9 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
@@ -389,8 +384,7 @@ describe('CompleteState', () => {
             resp: Record<string, any>,
             expectedInstance: typeof AbstractState,
         ) => {
-            // @ts-ignore
-            const promise = Promise[type](resp);
+            const promise = SynchronousPromise[type](resp);
 
             context.getState.returns({
                 user: {
@@ -399,7 +393,9 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
@@ -447,7 +443,9 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             loginHint: account[field],
                             prompt: [],
                         },
@@ -485,7 +483,9 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             loginHint: account.id,
                             prompt: [],
                         },
@@ -493,9 +493,7 @@ describe('CompleteState', () => {
                 });
 
                 expectRun(mock, 'setAccountSwitcher', false);
-                expectRun(mock, 'oAuthComplete', {}).returns({
-                    then: () => Promise.resolve(),
-                });
+                expectRun(mock, 'oAuthComplete', {}).returns(SynchronousPromise.resolve());
 
                 return expect(state.enter(context), 'to be fulfilled');
             });
@@ -518,16 +516,16 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             loginHint: account.id,
                             prompt: [],
                         },
                     },
                 });
 
-                expectRun(mock, 'oAuthComplete', {}).returns({
-                    then: () => Promise.resolve(),
-                });
+                expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
 
                 return expect(state.enter(context), 'to be fulfilled');
             });
@@ -560,16 +558,15 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
             });
 
-            mock.expects('run')
-                .once()
-                .withExactArgs('oAuthComplete', sinon.match(expected))
-                .returns({ then() {} });
+            mock.expects('run').once().withExactArgs('oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -585,15 +582,15 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -611,16 +608,16 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                         acceptRequired: true,
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -638,16 +635,16 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                         acceptRequired: true,
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });

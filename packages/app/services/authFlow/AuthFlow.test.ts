@@ -5,7 +5,7 @@ import AuthFlow from 'app/services/authFlow/AuthFlow';
 import AbstractState from 'app/services/authFlow/AbstractState';
 import localStorage from 'app/services/localStorage';
 
-import OAuthState from 'app/services/authFlow/OAuthState';
+import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
 import RegisterState from 'app/services/authFlow/RegisterState';
 import RecoverPasswordState from 'app/services/authFlow/RecoverPasswordState';
 import ForgotPasswordState from 'app/services/authFlow/ForgotPasswordState';
@@ -14,6 +14,7 @@ import ResendActivationState from 'app/services/authFlow/ResendActivationState';
 import LoginState from 'app/services/authFlow/LoginState';
 import CompleteState from 'app/services/authFlow/CompleteState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
+import FinishState from 'app/services/authFlow/FinishState';
 import { Store } from 'redux';
 
 describe('AuthFlow', () => {
@@ -211,11 +212,6 @@ describe('AuthFlow', () => {
 
             expect(actual, 'to be', expected);
         });
-
-        it('should throw if no state', () => {
-            // @ts-ignore
-            expect(() => flow.setState(), 'to throw', 'State is required');
-        });
     });
 
     describe('#run', () => {
@@ -313,10 +309,10 @@ describe('AuthFlow', () => {
             '/accept-rules': LoginState,
             '/oauth/permissions': LoginState,
             '/oauth/choose-account': LoginState,
-            '/oauth/finish': LoginState,
-            '/oauth2/v1/foo': OAuthState,
-            '/oauth2/v1': OAuthState,
-            '/oauth2': OAuthState,
+            '/oauth/finish': FinishState,
+            '/oauth2/v1/foo': InitOAuthAuthCodeFlowState,
+            '/oauth2/v1': InitOAuthAuthCodeFlowState,
+            '/oauth2': InitOAuthAuthCodeFlowState,
             '/register': RegisterState,
             '/choose-account': ChooseAccountState,
             '/recover-password': RecoverPasswordState,
@@ -379,7 +375,7 @@ describe('AuthFlow', () => {
             flow.handleRequest({ path, query: new URLSearchParams({}), params: {} }, () => {}, callback);
 
             expect(flow.setState, 'was called once');
-            expect(flow.setState, 'to have a call satisfying', [expect.it('to be a', OAuthState)]);
+            expect(flow.setState, 'to have a call satisfying', [expect.it('to be a', InitOAuthAuthCodeFlowState)]);
             expect(callback, 'was called twice');
         });
 

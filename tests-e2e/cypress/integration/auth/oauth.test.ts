@@ -1,4 +1,5 @@
 import { account1 } from '../../fixtures/accounts.json';
+import { OAuthState } from 'app/components/auth/reducer';
 import { UserResponse } from 'app/services/api/accounts';
 
 const defaults = {
@@ -9,35 +10,175 @@ const defaults = {
 };
 
 describe('OAuth', () => {
-    it('should complete oauth', () => {
-        cy.login({ accounts: ['default'] });
+    describe('AuthCode grant flow', () => {
+        it('should complete oauth', () => {
+            cy.login({ accounts: ['default'] });
 
-        cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
-        cy.url().should('equal', 'https://dev.ely.by/');
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should restore previous oauthData if any', () => {
+            localStorage.setItem(
+                'oauthData',
+                JSON.stringify({
+                    timestamp: Date.now() - 3600,
+                    payload: {
+                        params: {
+                            clientId: 'ely',
+                            redirectUrl: 'https://dev.ely.by/authorization/oauth',
+                            responseType: 'code',
+                            state: '',
+                            scope: 'account_info account_email',
+                        },
+                    } as OAuthState,
+                }),
+            );
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/');
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        describe('static pages', () => {
+            it('should authenticate using static page', () => {
+                cy.server();
+                cy.route({
+                    method: 'POST',
+                    url: '/api/oauth2/v1/complete**',
+                }).as('complete');
+
+                cy.login({ accounts: ['default'] });
+
+                cy.visit(
+                    `/oauth2/v1/ely?${new URLSearchParams({
+                        ...defaults,
+                        client_id: 'tlauncher',
+                        redirect_uri: 'static_page',
+                    })}`,
+                );
+
+                cy.wait('@complete');
+
+                cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
+            });
+
+            it('should authenticate using static page with code', () => {
+                cy.server();
+                cy.route({
+                    method: 'POST',
+                    url: '/api/oauth2/v1/complete**',
+                }).as('complete');
+
+                cy.login({ accounts: ['default'] });
+
+                cy.visit(
+                    `/oauth2/v1/ely?${new URLSearchParams({
+                        ...defaults,
+                        client_id: 'tlauncher',
+                        redirect_uri: 'static_page_with_code',
+                    })}`,
+                );
+
+                cy.wait('@complete');
+
+                cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
+
+                cy.findByTestId('oauth-code-container').should('contain', 'provide the following code');
+
+                // just click on copy, but we won't assert if the string was copied
+                // because it is a little bit complicated
+                // https://github.com/cypress-io/cypress/issues/2752
+                cy.findByTestId('oauth-code-container').contains('Copy').click();
+            });
+        });
     });
 
-    it('should restore previous oauthData if any', () => {
-        localStorage.setItem(
-            'oauthData',
-            JSON.stringify({
-                timestamp: Date.now() - 3600,
-                payload: {
-                    clientId: 'ely',
-                    redirectUrl: 'https://dev.ely.by/authorization/oauth',
-                    responseType: 'code',
-                    description: null,
-                    scope: 'account_info account_email',
-                    loginHint: null,
-                    state: null,
-                },
-            }),
-        );
-        cy.login({ accounts: ['default'] });
+    describe('DeviceCode grant flow', () => {
+        it('should complete flow by complete uri', () => {
+            cy.login({ accounts: ['default'] });
 
-        cy.visit('/');
+            cy.visit('/code?user_code=E2E-APPROVED');
 
-        cy.url().should('equal', 'https://dev.ely.by/');
+            cy.location('pathname').should('eq', '/oauth/finish');
+            cy.get('[data-e2e-content]').contains('successfully completed');
+        });
+
+        it('should complete flow with manual approve', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code');
+
+            cy.get('[name=user_code]').type('E2E-UNAPPROVED{enter}');
+
+            cy.location('pathname').should('eq', '/oauth/permissions');
+
+            cy.findByTestId('auth-controls').contains('Approve').click();
+
+            cy.location('pathname').should('eq', '/oauth/finish');
+            cy.get('[data-e2e-content]').contains('successfully completed');
+        });
+
+        it('should complete flow with auto approve', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code');
+
+            cy.get('[name=user_code]').type('E2E-APPROVED{enter}');
+
+            cy.location('pathname').should('eq', '/oauth/finish');
+            cy.get('[data-e2e-content]').contains('successfully completed');
+        });
+
+        it('should complete flow by declining the code', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code');
+
+            cy.get('[name=user_code]').type('E2E-UNAPPROVED{enter}');
+
+            cy.location('pathname').should('eq', '/oauth/permissions');
+
+            cy.findByTestId('auth-controls-secondary').contains('Decline').click();
+
+            cy.location('pathname').should('eq', '/oauth/finish');
+            cy.get('[data-e2e-content]').contains('was failed');
+        });
+
+        it('should show an error for an unknown code', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code');
+
+            cy.get('[name=user_code]').type('UNKNOWN-CODE{enter}');
+
+            cy.location('pathname').should('eq', '/code');
+            cy.findByTestId('auth-error').contains('Invalid Device Code');
+        });
+
+        it('should show an error for an expired code', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code');
+
+            cy.get('[name=user_code]').type('E2E-EXPIRED{enter}');
+
+            cy.location('pathname').should('eq', '/code');
+            cy.findByTestId('auth-error').contains('The code has expired');
+        });
+
+        it('should show an error for an expired code', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code');
+
+            cy.get('[name=user_code]').type('E2E-COMPLETED{enter}');
+
+            cy.location('pathname').should('eq', '/code');
+            cy.findByTestId('auth-error').contains('This code has been already used');
+        });
     });
 
     describe('AccountSwitcher', () => {
@@ -81,6 +222,7 @@ describe('OAuth', () => {
                     ...defaults,
                     client_id: 'tlauncher',
                     redirect_uri: 'http://localhost:8080',
+                    state: '123',
                 })}`,
             );
 
@@ -92,7 +234,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=123$/);
         });
 
         it('should redirect to error page, when permission request declined', () => {
@@ -334,7 +476,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
         });
 
         it('should redirect to error page, when permission request declined', () => {
@@ -377,7 +519,7 @@ describe('OAuth', () => {
 
                 cy.findByTestId('auth-controls').contains('Approve').click();
 
-                cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
+                cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
             });
         });
 
@@ -403,60 +545,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=$/);
-        });
-    });
-
-    describe('static pages', () => {
-        it('should authenticate using static page', () => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: '/api/oauth2/v1/complete**',
-            }).as('complete');
-
-            cy.login({ accounts: ['default'] });
-
-            cy.visit(
-                `/oauth2/v1/ely?${new URLSearchParams({
-                    ...defaults,
-                    client_id: 'tlauncher',
-                    redirect_uri: 'static_page',
-                })}`,
-            );
-
-            cy.wait('@complete');
-
-            cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
-        });
-
-        it('should authenticate using static page with code', () => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: '/api/oauth2/v1/complete**',
-            }).as('complete');
-
-            cy.login({ accounts: ['default'] });
-
-            cy.visit(
-                `/oauth2/v1/ely?${new URLSearchParams({
-                    ...defaults,
-                    client_id: 'tlauncher',
-                    redirect_uri: 'static_page_with_code',
-                })}`,
-            );
-
-            cy.wait('@complete');
-
-            cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
-
-            cy.findByTestId('oauth-code-container').should('contain', 'provide the following code');
-
-            // just click on copy, but we won't assert if the string was copied
-            // because it is a little bit complicated
-            // https://github.com/cypress-io/cypress/issues/2752
-            cy.findByTestId('oauth-code-container').contains('Copy').click();
+            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
         });
     });
 });

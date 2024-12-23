@@ -10,10 +10,13 @@ import {
 } from 'app/components/accounts/actions';
 import * as actions from 'app/components/auth/actions';
 import { updateUser } from 'app/components/user/actions';
+import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 
+import FinishState from './FinishState';
 import RegisterState from './RegisterState';
 import LoginState from './LoginState';
-import OAuthState from './OAuthState';
+import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
+import InitOAuthDeviceCodeFlowState from './InitOAuthDeviceCodeFlowState';
 import ForgotPasswordState from './ForgotPasswordState';
 import RecoverPasswordState from './RecoverPasswordState';
 import ActivationState from './ActivationState';
@@ -22,11 +25,11 @@ import ChooseAccountState from './ChooseAccountState';
 import ResendActivationState from './ResendActivationState';
 import State from './State';
 
-type Request = {
+interface Request {
     path: string;
     query: URLSearchParams;
     params: Record<string, any>;
-};
+}
 
 export const availableActions = {
     updateUser,
@@ -104,7 +107,11 @@ export default class AuthFlow implements AuthContext {
                     this.replace(route);
                 }
 
-                browserHistory[options.replace ? 'replace' : 'push'](route);
+                if (options.replace) {
+                    browserHistory.replace(route);
+                } else {
+                    browserHistory.push(route);
+                }
             }
 
             this.replace = null;
@@ -115,11 +122,23 @@ export default class AuthFlow implements AuthContext {
     }
 
     resolve(payload: Record<string, any> = {}) {
-        this.state.resolve(this, payload);
+        const maybePromise = this.state.resolve(this, payload);
+
+        if (maybePromise && maybePromise.catch) {
+            maybePromise.catch((err) => {
+                dispatchBsod();
+                throw err;
+            });
+        }
     }
 
     reject(payload: Record<string, any> = {}) {
-        this.state.reject(this, payload);
+        try {
+            this.state.reject(this, payload);
+        } catch (err) {
+            dispatchBsod();
+            throw err;
+        }
     }
 
     goBack() {
@@ -127,16 +146,12 @@ export default class AuthFlow implements AuthContext {
     }
 
     run<T extends ActionId>(actionId: T, payload?: Parameters<typeof availableActions[T]>[0]): Promise<any> {
-        // @ts-ignore the extended version of redux with thunk will return the correct promise
+        // @ts-expect-error the extended version of redux with thunk will return the correct promise
         return Promise.resolve(this.dispatch(this.actions[actionId](payload)));
     }
 
-    setState(state: State) {
-        if (!state) {
-            throw new Error('State is required');
-        }
-
-        this.state && this.state.leave(this);
+    setState(state: State): Promise<void> | void {
+        this.state?.leave(this);
         this.prevState = this.state;
         this.state = state;
         const resp = this.state.enter(this);
@@ -170,16 +185,8 @@ export default class AuthFlow implements AuthContext {
 
     /**
      * This should be called from onEnter prop of react-router Route component
-     *
-     * @param {object} request
-     * @param {string} request.path
-     * @param {object} request.params
-     * @param {URLSearchParams} request.query
-     * @param {Function} replace
-     * @param {Function} [callback=function() {}] - an optional callback function to be called, when state will be stabilized
-     * (state's enter function's promise resolved)
      */
-    handleRequest(request: Request, replace: (path: string) => void, callback: () => void = () => {}) {
+    handleRequest(request: Request, replace: (path: string) => void, callback: () => void = () => {}): void {
         const { path } = request;
         this.replace = replace;
         this.onReady = callback;
@@ -218,13 +225,20 @@ export default class AuthFlow implements AuthContext {
                 this.setState(new ChooseAccountState());
                 break;
 
+            case '/code':
+                this.setState(new InitOAuthDeviceCodeFlowState());
+                break;
+
+            case '/oauth/finish':
+                this.setState(new FinishState());
+                break;
+
             case '/':
             case '/login':
             case '/password':
             case '/mfa':
             case '/accept-rules':
             case '/oauth/permissions':
-            case '/oauth/finish':
             case '/oauth/choose-account':
                 this.setState(new LoginState());
                 break;
@@ -234,7 +248,7 @@ export default class AuthFlow implements AuthContext {
                     path.replace(/(.)\/.+/, '$1') // use only first part of an url
                 ) {
                     case '/oauth2':
-                        this.setState(new OAuthState());
+                        this.setState(new InitOAuthAuthCodeFlowState());
                         break;
                     case '/activation':
                         this.setState(new ActivationState());
@@ -255,8 +269,6 @@ export default class AuthFlow implements AuthContext {
     /**
      * Tries to restore last oauth request, if it was stored in localStorage
      * in last 2 hours
-     *
-     * @returns {bool} - whether oauth state is being restored
      */
     private restoreOAuthState(): boolean {
         if (this.oAuthStateRestored) {

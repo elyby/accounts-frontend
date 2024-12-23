@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FormattedMessage as Message, MessageDescriptor } from 'react-intl';
 
-export default function AuthTitle({ title }: { title: MessageDescriptor }) {
+interface Props {
+    title: MessageDescriptor;
+}
+
+const AuthTitle: FC<Props> = ({ title }) => {
     return (
         <Message {...title}>
             {(msg) => (
@@ -13,4 +17,6 @@ export default function AuthTitle({ title }: { title: MessageDescriptor }) {
             )}
         </Message>
     );
-}
+};
+
+export default AuthTitle;

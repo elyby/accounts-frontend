@@ -1,5 +1,6 @@
-import React, { ComponentType, ReactNode, useCallback, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
+import clsx from 'clsx';
 
 import AppInfo from 'app/components/auth/appInfo/AppInfo';
 import PanelTransition from 'app/components/auth/PanelTransition';
@@ -14,7 +15,7 @@ import AcceptRules from 'app/components/auth/acceptRules/AcceptRules';
 import ForgotPassword from 'app/components/auth/forgotPassword/ForgotPassword';
 import RecoverPassword from 'app/components/auth/recoverPassword/RecoverPassword';
 import Mfa from 'app/components/auth/mfa/Mfa';
-import Finish from 'app/components/auth/finish/Finish';
+import Finish from 'app/components/auth/finish';
 
 import { useReduxSelector } from 'app/functions';
 import { Factory } from 'app/components/auth/factory';
@@ -27,7 +28,7 @@ import styles from './auth.scss';
 // so that it persist disregarding remounts
 let isSidebarHiddenCache = false;
 
-const AuthPage: ComponentType = () => {
+const AuthPage: FC = () => {
     const [isSidebarHidden, setIsSidebarHidden] = useState<boolean>(isSidebarHiddenCache);
     const client = useReduxSelector((state) => state.auth.client);
 
@@ -37,8 +38,8 @@ const AuthPage: ComponentType = () => {
     }, []);
 
     return (
-        <div>
-            <div className={isSidebarHidden ? styles.hiddenSidebar : styles.sidebar}>
+        <>
+            <div className={clsx(styles.sidebar, { [styles.hiddenSidebar]: isSidebarHidden })}>
                 <AppInfo {...client} onGoToAuth={goToAuth} />
             </div>
 
@@ -60,11 +61,11 @@ const AuthPage: ComponentType = () => {
                     <Redirect to="/404" />
                 </Switch>
             </div>
-        </div>
+        </>
     );
 };
 
-function renderPanelTransition(factory: Factory): (props: RouteComponentProps<any>) => ReactNode {
+function renderPanelTransition(factory: Factory): FC<RouteComponentProps> {
     const { Title, Body, Footer, Links } = factory();
 
     return (props) => (

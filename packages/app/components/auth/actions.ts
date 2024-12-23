@@ -13,13 +13,12 @@ import {
     recoverPassword as recoverPasswordEndpoint,
     OAuthResponse,
 } from 'app/services/api/authentication';
-import oauth, { OauthData, Scope } from 'app/services/api/oauth';
+import oauth, { OauthRequestData, Scope } from 'app/services/api/oauth';
 import {
     register as registerEndpoint,
     activate as activateEndpoint,
     resendActivation as resendActivationEndpoint,
 } from 'app/services/api/signup';
-import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact';
 import { Account } from 'app/components/accounts/reducer';
@@ -314,38 +313,17 @@ const KNOWN_SCOPES: ReadonlyArray<string> = [
     'account_info',
     'account_email',
 ];
-/**
- * @param {object} oauthData
- * @param {string} oauthData.clientId
- * @param {string} oauthData.redirectUrl
- * @param {string} oauthData.responseType
- * @param {string} oauthData.description
- * @param {string} oauthData.scope
- * @param {string} [oauthData.prompt='none'] - comma-separated list of values to adjust auth flow
- *                 Posible values:
- *                  * none - default behaviour
- *                  * consent - forcibly prompt user for rules acceptance
- *                  * select_account - force account choosage, even if user has only one
- * @param {string} oauthData.loginHint - allows to choose the account, which will be used for auth
- *                        The possible values: account id, email, username
- * @param {string} oauthData.state
- *
- * @returns {Promise}
- */
-export function oAuthValidate(oauthData: OauthData) {
+
+export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'description' | 'prompt' | 'loginHint'>) {
     // TODO: move to oAuth actions?
-    // test request: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
+    // auth code flow: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
+    // device code flow: /code?user_code=XOXOXOXO
     return wrapInLoader((dispatch) =>
         oauth
-            .validate(oauthData)
+            .validate(getOAuthRequest(oauthData))
             .then((resp) => {
                 const { scopes } = resp.session;
                 const invalidScopes = scopes.filter((scope) => !KNOWN_SCOPES.includes(scope));
-                let prompt = (oauthData.prompt || 'none').split(',').map((item) => item.trim());
-
-                if (prompt.includes('none')) {
-                    prompt = ['none'];
-                }
 
                 if (invalidScopes.length) {
                     logger.error('Got invalid scopes after oauth validation', {
@@ -353,12 +331,19 @@ export function oAuthValidate(oauthData: OauthData) {
                     });
                 }
 
+                let { prompt } = oauthData;
+
+                if (prompt && !Array.isArray(prompt)) {
+                    prompt = prompt.split(',').map((item) => item.trim());
+                }
+
                 dispatch(setClient(resp.client));
                 dispatch(
                     setOAuthRequest({
-                        ...resp.oAuth,
-                        prompt: oauthData.prompt || 'none',
+                        params: oauthData.params,
+                        description: oauthData.description,
                         loginHint: oauthData.loginHint,
+                        prompt,
                     }),
                 );
                 dispatch(setScopes(scopes));
@@ -375,12 +360,6 @@ export function oAuthValidate(oauthData: OauthData) {
     );
 }
 
-/**
- * @param {object} params
- * @param {bool} params.accept=false
- * @param params.accept
- * @returns {Promise}
- */
 export function oAuthComplete(params: { accept?: boolean } = {}) {
     return wrapInLoader(
         async (
@@ -388,7 +367,7 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
             getState,
         ): Promise<{
             success: boolean;
-            redirectUri: string;
+            redirectUri?: string;
         }> => {
             const oauthData = getState().auth.oauth;
 
@@ -397,13 +376,21 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
             }
 
             try {
-                const resp = await oauth.complete(oauthData, params);
+                const resp = await oauth.complete(getOAuthRequest(oauthData), params);
+
                 localStorage.removeItem('oauthData');
 
-                if (resp.redirectUri.startsWith('static_page')) {
-                    const displayCode = /static_page_with_code/.test(resp.redirectUri);
+                if (!resp.redirectUri) {
+                    dispatch(
+                        setOAuthCode({
+                            // if accept is undefined, then it was auto approved
+                            success: resp.success && (typeof params.accept === 'undefined' || params.accept),
+                        }),
+                    );
+                } else if (resp.redirectUri.startsWith('static_page')) {
+                    const displayCode = resp.redirectUri.includes('static_page_with_code');
 
-                    const [, code] = resp.redirectUri.match(/code=(.+)&/) || [];
+                    const [, code] = resp.redirectUri.match(/code=([^&]+)/) || [];
                     [, resp.redirectUri] = resp.redirectUri.match(/^(.+)\?/) || [];
 
                     dispatch(
@@ -437,13 +424,36 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
     );
 }
 
+function getOAuthRequest({ params, description }: OAuthState): OauthRequestData {
+    let data: OauthRequestData;
+
+    if ('userCode' in params) {
+        data = {
+            user_code: params.userCode,
+        };
+    } else {
+        data = {
+            client_id: params.clientId,
+            redirect_uri: params.redirectUrl,
+            response_type: params.responseType,
+            scope: params.scope,
+            state: params.state,
+        };
+    }
+
+    if (description) {
+        data.description = description;
+    }
+
+    return data;
+}
+
 function handleOauthParamsValidation(
     resp: {
         [key: string]: any;
         userMessage?: string;
     } = {},
 ) {
-    dispatchBsod();
     localStorage.removeItem('oauthData');
 
     // eslint-disable-next-line no-alert
@@ -468,33 +478,17 @@ export type ClientAction = SetClientAction;
 
 interface SetOauthAction extends ReduxAction {
     type: 'set_oauth';
-    payload: Pick<OAuthState, 'clientId' | 'redirectUrl' | 'responseType' | 'scope' | 'prompt' | 'loginHint' | 'state'>;
+    payload: OAuthState | null;
 }
+
+type SetOauthRequestPayload = Pick<OAuthState, 'params' | 'description' | 'loginHint' | 'prompt'>;
 
 // Input data is coming right from the query string, so the names
 // are the same, as used for initializing OAuth2 request
-export function setOAuthRequest(data: {
-    client_id?: string;
-    redirect_uri?: string;
-    response_type?: string;
-    scope?: string;
-    prompt?: string;
-    loginHint?: string;
-    state?: string;
-}): SetOauthAction {
+export function setOAuthRequest(payload: SetOauthRequestPayload | null): SetOauthAction {
     return {
         type: 'set_oauth',
-        payload: {
-            // TODO: there is too much default empty string. Maybe we can somehow validate it
-            //       on the level, where this action is called?
-            clientId: data.client_id || '',
-            redirectUrl: data.redirect_uri || '',
-            responseType: data.response_type || '',
-            scope: data.scope || '',
-            prompt: data.prompt || '',
-            loginHint: data.loginHint || '',
-            state: data.state || '',
-        },
+        payload,
     };
 }
 
@@ -503,9 +497,7 @@ interface SetOAuthResultAction extends ReduxAction {
     payload: Pick<OAuthState, 'success' | 'code' | 'displayCode'>;
 }
 
-export const SET_OAUTH_RESULT = 'set_oauth_result'; // TODO: remove
-
-export function setOAuthCode(payload: { success: boolean; code: string; displayCode: boolean }): SetOAuthResultAction {
+export function setOAuthCode(payload: Pick<OAuthState, 'success' | 'code' | 'displayCode'>): SetOAuthResultAction {
     return {
         type: 'set_oauth_result',
         payload,
@@ -515,7 +507,7 @@ export function setOAuthCode(payload: { success: boolean; code: string; displayC
 export function resetOAuth(): AppAction {
     return (dispatch): void => {
         localStorage.removeItem('oauthData');
-        dispatch(setOAuthRequest({}));
+        dispatch(setOAuthRequest(null));
     };
 }
 

@@ -16,14 +16,18 @@ import {
     login,
     setLogin,
 } from 'app/components/auth/actions';
-import { OauthData, OAuthValidateResponse } from '../../services/api/oauth';
+import { OAuthValidateResponse } from 'app/services/api/oauth';
 
-const oauthData: OauthData = {
-    clientId: '',
-    redirectUrl: '',
-    responseType: '',
-    scope: '',
-    state: '',
+import { OAuthState } from './reducer';
+
+const oauthData: OAuthState = {
+    params: {
+        clientId: '',
+        redirectUrl: '',
+        responseType: '',
+        scope: '',
+        state: '',
+    },
     prompt: 'none',
 };
 
@@ -64,9 +68,6 @@ describe('components/auth/actions', () => {
                     name: '',
                     description: '',
                 },
-                oAuth: {
-                    state: 123,
-                },
                 session: {
                     scopes: ['account_info'],
                 },
@@ -86,8 +87,14 @@ describe('components/auth/actions', () => {
                     [setClient(resp.client)],
                     [
                         setOAuthRequest({
-                            ...resp.oAuth,
-                            prompt: 'none',
+                            params: {
+                                clientId: '',
+                                redirectUrl: '',
+                                responseType: '',
+                                state: '',
+                                scope: '',
+                            },
+                            prompt: ['none'],
                             loginHint: undefined,
                         }),
                     ],
@@ -114,7 +121,7 @@ describe('components/auth/actions', () => {
 
             return callThunk(oAuthComplete).then(() => {
                 expect(request.post, 'to have a call satisfying', [
-                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&description=&scope=&prompt=none&login_hint=&state=',
+                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&scope=&state=',
                     {},
                 ]);
             });
