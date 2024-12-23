@@ -15,7 +15,7 @@ export default class DeviceCodeBody extends BaseAuthBody {
             <>
                 {this.renderErrors()}
 
-                <Message id="deviceCode" defaultMessage="Device Code">
+                <Message id="enterDeviceCode" defaultMessage="Enter Device Code">
                     {(nodes) => (
                         <Input
                             {...this.bindField('user_code')}

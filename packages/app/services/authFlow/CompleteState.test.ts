@@ -137,7 +137,9 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             code: 'XXX',
                         },
                     },
@@ -157,7 +159,9 @@ describe('CompleteState', () => {
                         auth: {
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 acceptRequired: true,
                             },
                         },
@@ -176,7 +180,9 @@ describe('CompleteState', () => {
                         auth: {
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: ['consent'],
                             },
                         },
@@ -202,7 +208,9 @@ describe('CompleteState', () => {
                             credentials: {},
                             isSwitcherEnabled: true,
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: [],
                             },
                         },
@@ -227,7 +235,9 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: true,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: [],
                             },
                         },
@@ -251,13 +261,15 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: false,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: [],
                             },
                         },
                     });
 
-                    expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
+                    expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
 
                     state.enter(context);
                 });
@@ -275,7 +287,9 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: true,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: ['select_account'],
                             },
                         },
@@ -299,13 +313,15 @@ describe('CompleteState', () => {
                             isSwitcherEnabled: false,
                             credentials: {},
                             oauth: {
-                                clientId: 'ely.by',
+                                params: {
+                                    clientId: 'ely.by',
+                                },
                                 prompt: ['select_account'],
                             },
                         },
                     });
 
-                    expectRun(mock, 'oAuthComplete', {}).returns({ then() {} });
+                    expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
 
                     state.enter(context);
                 });
@@ -322,15 +338,15 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match.object).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match.object).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -343,7 +359,9 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
@@ -370,7 +388,9 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
@@ -399,7 +419,9 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
@@ -447,7 +469,9 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             loginHint: account[field],
                             prompt: [],
                         },
@@ -485,7 +509,9 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             loginHint: account.id,
                             prompt: [],
                         },
@@ -518,16 +544,16 @@ describe('CompleteState', () => {
                     auth: {
                         credentials: {},
                         oauth: {
-                            clientId: 'ely.by',
+                            params: {
+                                clientId: 'ely.by',
+                            },
                             loginHint: account.id,
                             prompt: [],
                         },
                     },
                 });
 
-                expectRun(mock, 'oAuthComplete', {}).returns({
-                    then: () => Promise.resolve(),
-                });
+                expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
 
                 return expect(state.enter(context), 'to be fulfilled');
             });
@@ -560,16 +586,15 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
             });
 
-            mock.expects('run')
-                .once()
-                .withExactArgs('oAuthComplete', sinon.match(expected))
-                .returns({ then() {} });
+            mock.expects('run').once().withExactArgs('oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -585,15 +610,15 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -611,16 +636,16 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                         acceptRequired: true,
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });
@@ -638,16 +663,16 @@ describe('CompleteState', () => {
                 auth: {
                     credentials: {},
                     oauth: {
-                        clientId: 'ely.by',
+                        params: {
+                            clientId: 'ely.by',
+                        },
                         prompt: [],
                         acceptRequired: true,
                     },
                 },
             });
 
-            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns({
-                then() {},
-            });
+            expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
 
             state.enter(context);
         });

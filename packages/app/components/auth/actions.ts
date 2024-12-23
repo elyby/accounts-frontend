@@ -481,10 +481,11 @@ interface SetOauthAction extends ReduxAction {
     payload: OAuthState | null;
 }
 
+type SetOauthRequestPayload = Pick<OAuthState, 'params' | 'description' | 'loginHint' | 'prompt'>;
+
 // Input data is coming right from the query string, so the names
 // are the same, as used for initializing OAuth2 request
-// TODO: filter out allowed properties
-export function setOAuthRequest(payload: OAuthState | null): SetOauthAction {
+export function setOAuthRequest(payload: SetOauthRequestPayload | null): SetOauthAction {
     return {
         type: 'set_oauth',
         payload,
