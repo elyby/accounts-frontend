@@ -139,7 +139,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
         onFormSubmit: () => void;
     } | null = null;
 
-    timerIds: Array<ReturnType<typeof setTimeout>> = []; // this is a list of a probably running timeouts to clean on unmount
+    timerIds: Array<number> = []; // this is a list of a probably running timeouts to clean on unmount
 
     componentDidUpdate(prevProps: Props) {
         const nextPanel: PanelId = this.props.Body && (this.props.Body.type as any).panelId;
@@ -160,7 +160,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
 
             if (forceHeight) {
                 this.timerIds.push(
-                    setTimeout(() => {
+                    window.setTimeout(() => {
                         this.setState({ forceHeight: 0 });
                     }, 100),
                 );
@@ -537,7 +537,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
                 this.setState({ isHeightDirty: false });
 
                 // wait till transition end
-                this.timerIds.push(setTimeout(resolve, 200));
+                this.timerIds.push(window.setTimeout(() => resolve(), 200));
             }),
         );
 }
