@@ -1,4 +1,5 @@
 import { AuthContext } from 'app/services/authFlow';
+import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
 import CompleteState from './CompleteState';
@@ -11,7 +12,10 @@ export default class ActivationState extends AbstractState {
     }
 
     resolve(context: AuthContext, payload: { key: string }): Promise<void> | void {
-        return context.run('activate', payload.key).then(() => context.setState(new CompleteState()));
+        return context
+            .run('activate', payload.key)
+            .then(() => context.setState(new CompleteState()))
+            .catch((err = {}) => err.errors || logger.warn('Error activating account', err));
     }
 
     reject(context: AuthContext): void {

@@ -1,3 +1,5 @@
+import logger from 'app/services/logger';
+
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
 import CompleteState from './CompleteState';
@@ -20,7 +22,10 @@ export default class RegisterState extends AbstractState {
             rulesAgreement: boolean;
         },
     ): Promise<void> | void {
-        return context.run('register', payload).then(() => context.setState(new CompleteState()));
+        return context
+            .run('register', payload)
+            .then(() => context.setState(new CompleteState()))
+            .catch((err) => err.errors || logger.warn('Error registering', err));
     }
 
     reject(context: AuthContext, payload: Record<string, any>): void {

@@ -1,4 +1,5 @@
 import { AuthContext } from 'app/services/authFlow';
+import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
 import ActivationState from './ActivationState';
@@ -10,7 +11,10 @@ export default class ResendActivationState extends AbstractState {
     }
 
     resolve(context: AuthContext, payload: { email: string; captcha: string }): Promise<void> | void {
-        return context.run('resendActivation', payload).then(() => context.setState(new ActivationState()));
+        return context
+            .run('resendActivation', payload)
+            .then(() => context.setState(new ActivationState()))
+            .catch((err) => err.errors || logger.warn('Error resending activation', err));
     }
 
     reject(context: AuthContext): void {
