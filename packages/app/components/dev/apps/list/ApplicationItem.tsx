@@ -2,6 +2,7 @@ import React from 'react';
 import { FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
+
 import { SKIN_LIGHT, COLOR_BLACK, COLOR_RED } from 'app/components/ui';
 import { Input, Button } from 'app/components/ui/form';
 import { OauthAppResponse } from 'app/services/api/oauth';
@@ -13,20 +14,6 @@ import messages from '../list.intl';
 const ACTION_REVOKE_TOKENS = 'revoke-tokens';
 const ACTION_RESET_SECRET = 'reset-secret';
 const ACTION_DELETE = 'delete';
-const actionButtons = [
-    {
-        type: ACTION_REVOKE_TOKENS,
-        label: <Message {...messages.revokeAllTokens} />,
-    },
-    {
-        type: ACTION_RESET_SECRET,
-        label: <Message {...messages.resetClientSecret} />,
-    },
-    {
-        type: ACTION_DELETE,
-        label: <Message {...messages.delete} />,
-    },
-];
 
 interface State {
     selectedAction: string | null;
@@ -70,8 +57,9 @@ export default class ApplicationItem extends React.Component<
                     <div className={styles.appTileTitle}>
                         <div className={styles.appName}>{app.name}</div>
                         <div className={styles.appStats}>
+                            {/* TODO: it must change items order for RTL languages, try to use FormattedList */}
                             Client ID: {app.clientId}
-                            {typeof app.countUsers !== 'undefined' && (
+                            {'countUsers' in app && (
                                 <span>
                                     {' | '}
                                     <Message
@@ -103,34 +91,72 @@ export default class ApplicationItem extends React.Component<
                             <Input label="Client ID:" skin={SKIN_LIGHT} disabled value={app.clientId} copy />
                         </div>
 
-                        <div className={styles.appDetailsInfoField}>
-                            <Input
-                                label="Client Secret:"
-                                skin={SKIN_LIGHT}
-                                disabled
-                                value={app.clientSecret}
-                                data-testid="client-secret"
-                                copy
-                            />
-                        </div>
+                        {'clientSecret' in app ? (
+                            <>
+                                <div className={styles.appDetailsInfoField}>
+                                    <Input
+                                        label="Client Secret:"
+                                        skin={SKIN_LIGHT}
+                                        disabled
+                                        value={app.clientSecret}
+                                        data-testid="client-secret"
+                                        copy
+                                    />
+                                </div>
 
-                        <div className={styles.appDetailsDescription}>
-                            <Message {...messages.ifYouSuspectingThatSecretHasBeenCompromised} />
-                        </div>
+                                <div className={styles.appDetailsDescription}>
+                                    <Message {...messages.ifYouSuspectingThatSecretHasBeenCompromised} />
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.appDetailsDescription}>
+                                <Message
+                                    key="publickOauthApplicationDescription"
+                                    defaultMessage="This is a public client and it can't have any secrets by design. To secure authorization flow, use the PKCE challenge code. <link>Read more</link>."
+                                    values={{
+                                        // @ts-expect-error those typings seems to be invalid in the current version of react-intl, but might be fixed later
+                                        link: (nodes) => (
+                                            <a href="https://www.oauth.com/oauth2-servers/pkce/" target="_blank">
+                                                {nodes}
+                                            </a>
+                                        ),
+                                    }}
+                                />
+                            </div>
+                        )}
 
                         <div className={styles.appActionsButtons}>
-                            {actionButtons.map(({ type, label }) => (
+                            <Button
+                                color={COLOR_BLACK}
+                                className={styles.appActionButton}
+                                disabled={!!selectedAction && selectedAction !== ACTION_REVOKE_TOKENS}
+                                onClick={this.onActionButtonClick(ACTION_REVOKE_TOKENS)}
+                                small
+                            >
+                                <Message {...messages.revokeAllTokens} />
+                            </Button>
+
+                            {'clientSecret' in app && (
                                 <Button
-                                    key={type}
                                     color={COLOR_BLACK}
                                     className={styles.appActionButton}
-                                    disabled={!!selectedAction && selectedAction !== type}
-                                    onClick={this.onActionButtonClick(type)}
+                                    disabled={!!selectedAction && selectedAction !== ACTION_RESET_SECRET}
+                                    onClick={this.onActionButtonClick(ACTION_RESET_SECRET)}
                                     small
                                 >
-                                    {label}
+                                    <Message {...messages.resetClientSecret} />
                                 </Button>
-                            ))}
+                            )}
+
+                            <Button
+                                color={COLOR_BLACK}
+                                className={styles.appActionButton}
+                                disabled={!!selectedAction && selectedAction !== ACTION_DELETE}
+                                onClick={this.onActionButtonClick(ACTION_DELETE)}
+                                small
+                            >
+                                <Message {...messages.delete} />
+                            </Button>
                         </div>
 
                         <div

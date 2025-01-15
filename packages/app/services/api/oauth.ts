@@ -9,20 +9,31 @@ export interface Client {
     description: string;
 }
 
-export interface OauthAppResponse {
+interface OauthCommonResponse {
     clientId: string;
-    clientSecret: string;
     type: ApplicationType;
     name: string;
     websiteUrl: string;
     createdAt: number;
-    // fields for 'application' type
-    countUsers?: number;
-    description?: string;
-    redirectUri?: string;
-    // fields for 'minecraft-server' type
-    minecraftServerIp?: string;
 }
+
+export interface OauthWebAppResponse extends OauthCommonResponse {
+    clientSecret: string;
+    countUsers: number;
+    description: string;
+    redirectUri: string;
+}
+
+export interface OauthDesktopAppResponse extends OauthCommonResponse {
+    countUsers: number;
+    description: string;
+}
+
+export interface OauthMinecraftServerResponse extends OauthCommonResponse {
+    minecraftServerIp: string;
+}
+
+export type OauthAppResponse = OauthWebAppResponse | OauthDesktopAppResponse | OauthMinecraftServerResponse;
 
 interface AuthCodeFlowRequestData {
     client_id: string;

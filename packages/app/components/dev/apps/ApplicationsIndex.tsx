@@ -1,7 +1,8 @@
-import React from 'react';
-import clsx from 'clsx';
+import React, { FC, ReactElement } from 'react';
 import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
+import clsx from 'clsx';
+
 import { LinkButton } from 'app/components/ui/form';
 import { COLOR_GREEN, COLOR_BLUE } from 'app/components/ui';
 import { ContactLink } from 'app/components/contact';
@@ -27,77 +28,83 @@ type Props = {
     resetApp: (clientId: string, resetClientSecret: boolean) => Promise<any>;
 };
 
-export default class ApplicationsIndex extends React.Component<Props> {
-    render() {
-        return (
-            <div className={styles.container}>
-                <div className={styles.welcomeContainer}>
-                    <Message key="accountsForDevelopers" defaultMessage="Ely.by Accounts for developers">
-                        {(pageTitle: string) => (
-                            <h2 className={styles.welcomeTitle}>
-                                <Helmet title={pageTitle} />
-                                {pageTitle}
-                            </h2>
-                        )}
-                    </Message>
-                    <div className={styles.welcomeTitleDelimiter} />
-                    <div className={styles.welcomeParagraph}>
-                        <Message
-                            key="accountsAllowsYouYoUseOauth2"
-                            defaultMessage="Ely.by Accounts service provides users with a quick and easy-to-use way to login to your site, launcher or Minecraft server via OAuth2 authorization protocol. You can find more information about integration with Ely.by Accounts in {ourDocumentation}."
-                            values={{
-                                ourDocumentation: (
-                                    <a href="https://docs.ely.by/en/oauth.html" target="_blank">
-                                        <Message key="ourDocumentation" defaultMessage="our documentation" />
-                                    </a>
-                                ),
-                            }}
-                        />
-                    </div>
-                    <div className={styles.welcomeParagraph}>
-                        <Message
-                            key="ifYouHaveAnyTroubles"
-                            defaultMessage="If you are experiencing difficulties, you can always use {feedback}. We'll surely help you."
-                            values={{
-                                feedback: (
-                                    <ContactLink>
-                                        <Message key="feedback" defaultMessage="feedback" />
-                                    </ContactLink>
-                                ),
-                            }}
-                        />
-                    </div>
-                </div>
+const ApplicationsIndex: FC<Props> = ({
+    displayForGuest,
+    applications,
+    isLoading,
+    resetApp,
+    deleteApp,
+    clientId,
+    resetClientId,
+}) => {
+    let content: ReactElement;
 
-                {this.getContent()}
-            </div>
+    if (applications.length > 0) {
+        content = (
+            <ApplicationsList
+                applications={applications}
+                resetApp={resetApp}
+                deleteApp={deleteApp}
+                clientId={clientId}
+                resetClientId={resetClientId}
+            />
         );
+    } else if (displayForGuest) {
+        content = <Guest />;
+    } else {
+        content = <Loader noApps={!isLoading} />;
     }
 
-    getContent() {
-        const { displayForGuest, applications, isLoading, resetApp, deleteApp, clientId, resetClientId } = this.props;
+    return (
+        <div className={styles.container}>
+            <div className={styles.welcomeContainer}>
+                <Message key="accountsForDevelopers" defaultMessage="Ely.by Accounts for developers">
+                    {(pageTitle: string) => (
+                        <h2 className={styles.welcomeTitle}>
+                            <Helmet title={pageTitle} />
+                            {pageTitle}
+                        </h2>
+                    )}
+                </Message>
+                <div className={styles.welcomeTitleDelimiter} />
+                <div className={styles.welcomeParagraph}>
+                    <Message
+                        key="accountsAllowsYouYoUseOauth2"
+                        defaultMessage="Ely.by Accounts service provides users with a quick and easy-to-use way to login to your site, launcher or Minecraft server via OAuth2 authorization protocol. You can find more information about integration with Ely.by Accounts in {ourDocumentation}."
+                        values={{
+                            ourDocumentation: (
+                                <a href="https://docs.ely.by/en/oauth.html" target="_blank">
+                                    <Message key="ourDocumentation" defaultMessage="our documentation" />
+                                </a>
+                            ),
+                        }}
+                    />
+                </div>
+                <div className={styles.welcomeParagraph}>
+                    <Message
+                        key="ifYouHaveAnyTroubles"
+                        defaultMessage="If you are experiencing difficulties, you can always use {feedback}. We'll surely help you."
+                        values={{
+                            feedback: (
+                                <ContactLink>
+                                    <Message key="feedback" defaultMessage="feedback" />
+                                </ContactLink>
+                            ),
+                        }}
+                    />
+                </div>
+            </div>
 
-        if (applications.length > 0) {
-            return (
-                <ApplicationsList
-                    applications={applications}
-                    resetApp={resetApp}
-                    deleteApp={deleteApp}
-                    clientId={clientId}
-                    resetClientId={resetClientId}
-                />
-            );
-        }
+            {content}
+        </div>
+    );
+};
 
-        if (displayForGuest) {
-            return <Guest />;
-        }
-
-        return <Loader noApps={!isLoading} />;
-    }
+interface LoaderProps {
+    noApps: boolean;
 }
 
-function Loader({ noApps }: { noApps: boolean }) {
+const Loader: FC<LoaderProps> = ({ noApps }) => {
     return (
         <div className={styles.emptyState} data-e2e={noApps ? 'noApps' : 'loading'}>
             <img src={noApps ? cubeIcon : loadingCubeIcon} className={styles.emptyStateIcon} />
@@ -130,9 +137,9 @@ function Loader({ noApps }: { noApps: boolean }) {
             </div>
         </div>
     );
-}
+};
 
-function Guest() {
+const Guest: FC = () => {
     return (
         <div className={styles.emptyState}>
             <img src={toolsIcon} className={styles.emptyStateIcon} />
@@ -150,4 +157,6 @@ function Guest() {
             </LinkButton>
         </div>
     );
-}
+};
+
+export default ApplicationsIndex;

@@ -1,6 +1,7 @@
 import React from 'react';
-import { restoreScroll } from 'app/components/ui/scroll/scroll';
 import { FormattedMessage as Message } from 'react-intl';
+
+import { restoreScroll } from 'app/components/ui/scroll/scroll';
 import { LinkButton } from 'app/components/ui/form';
 import { COLOR_GREEN } from 'app/components/ui';
 import { OauthAppResponse } from 'app/services/api/oauth';
@@ -9,24 +10,24 @@ import messages from '../list.intl';
 import styles from '../applicationsIndex.scss';
 import ApplicationItem from './ApplicationItem';
 
-type Props = {
+interface Props {
     applications: OauthAppResponse[];
     deleteApp: (clientId: string) => Promise<any>;
     resetApp: (clientId: string, resetClientSecret: boolean) => Promise<any>;
     resetClientId: () => void;
     clientId: string | null;
-};
+}
 
-type State = {
+interface State {
     expandedApp: string | null;
-};
+}
 
 export default class ApplicationsList extends React.Component<Props, State> {
     state = {
         expandedApp: null,
     };
 
-    appsRefs: { [key: string]: HTMLDivElement | null } = {};
+    appsRefs: Record<string, HTMLDivElement | null> = {};
 
     componentDidMount() {
         this.checkForActiveApp();

@@ -1,24 +1,19 @@
-import React, { ComponentType } from 'react';
-import { defineMessages, FormattedMessage as Message } from 'react-intl';
+import React, { FC } from 'react';
+import { FormattedMessage as Message } from 'react-intl';
+
 import { Input, TextArea, FormModel } from 'app/components/ui/form';
-import { OauthWebAppResponse } from 'app/services/api/oauth';
+import { OauthDesktopAppResponse } from 'app/services/api/oauth';
 import { SKIN_LIGHT } from 'app/components/ui';
 import styles from 'app/components/profile/profileForm.scss';
 
 import commonMessages from './commonMessages';
 
-const messages = defineMessages({
-    redirectUriLimitsAllowableBaseAddress:
-        "Redirection URI (redirectUri) determines a base address, that user will be allowed to be redirected to after authorization. In order to improve security it's better to use the whole path instead of just a domain name. For example: https://example.com/oauth/ely.",
-    redirectUri: 'Redirect URI:',
-});
-
 interface Props {
     form: FormModel;
-    app: OauthWebAppResponse;
+    app: OauthDesktopAppResponse;
 }
 
-const WebsiteType: ComponentType<Props> = ({ form, app }) => (
+const DesktopApplicationType: FC<Props> = ({ form, app }) => (
     <div>
         <div className={styles.formRow}>
             <Input
@@ -58,22 +53,7 @@ const WebsiteType: ComponentType<Props> = ({ form, app }) => (
                 skin={SKIN_LIGHT}
             />
         </div>
-
-        <div className={styles.formRow}>
-            <p className={styles.description}>
-                <Message {...messages.redirectUriLimitsAllowableBaseAddress} />
-            </p>
-        </div>
-        <div className={styles.formRow}>
-            <Input
-                {...form.bindField('redirectUri')}
-                label={messages.redirectUri}
-                defaultValue={app.redirectUri}
-                required
-                skin={SKIN_LIGHT}
-            />
-        </div>
     </div>
 );
 
-export default WebsiteType;
+export default DesktopApplicationType;

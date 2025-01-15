@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import ApplicationsIndex from './ApplicationsIndex';
-import { TYPE_APPLICATION } from 'app/components/dev/apps';
+import { TYPE_WEB_APPLICATION } from 'app/components/dev/apps';
 
 import { OauthAppResponse } from 'app/services/api/oauth';
 import rootStyles from 'app/pages/root/root.scss';
@@ -18,8 +18,10 @@ export const DevLayout: ComponentType = ({ children }) => (
 export const sampleApp: OauthAppResponse = {
     clientId: 'my-application',
     clientSecret: 'cL1eNtS3cRE7xNJqfWQdqrMRKURfW1ssP4kiX6JDW0_szM-n-q',
-    type: TYPE_APPLICATION,
+    type: TYPE_WEB_APPLICATION,
     name: 'My Application',
+    description: '',
+    redirectUri: '',
     websiteUrl: '',
     createdAt: 0,
     countUsers: 0,

@@ -9,7 +9,7 @@ import styles from './applicationTypeSwitcher.scss';
 interface Props {
     appTypes: Record<ApplicationType, MessageDescriptor>;
     selectedType: ApplicationType | null;
-    setType: (type: ApplicationType) => void;
+    setType?: (type: ApplicationType) => void;
 }
 
 const ApplicationTypeSwitcher: ComponentType<Props> = ({ appTypes, selectedType, setType }) => (
@@ -17,7 +17,7 @@ const ApplicationTypeSwitcher: ComponentType<Props> = ({ appTypes, selectedType,
         {(Object.keys(appTypes) as unknown as Array<ApplicationType>).map((type) => (
             <div className={styles.radioContainer} key={type}>
                 <Radio
-                    onChange={() => setType(type)}
+                    onChange={() => setType?.(type)}
                     skin={SKIN_LIGHT}
                     label={appTypes[type]}
                     value={type}

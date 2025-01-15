@@ -4,14 +4,19 @@ import { action } from '@storybook/addon-actions';
 
 import { OauthAppResponse } from 'app/services/api/oauth';
 import { FormModel } from 'app/components/ui/form';
-import { ApplicationType, TYPE_APPLICATION, TYPE_MINECRAFT_SERVER } from 'app/components/dev/apps';
+import {
+    ApplicationType,
+    TYPE_WEB_APPLICATION,
+    TYPE_DESKTOP_APPLICATION,
+    TYPE_MINECRAFT_SERVER,
+} from 'app/components/dev/apps';
 import ApplicationForm from './ApplicationForm';
 import { DevLayout } from '../ApplicationsIndex.story';
 
 const blankApp: OauthAppResponse = {
     clientId: '',
     clientSecret: '',
-    type: TYPE_APPLICATION,
+    type: TYPE_WEB_APPLICATION,
     name: '',
     websiteUrl: '',
     createdAt: 0,
@@ -47,7 +52,17 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
             form={new FormModel()}
             onSubmit={onSubmit}
             displayTypeSwitcher
-            type={TYPE_APPLICATION}
+            type={TYPE_WEB_APPLICATION}
+            setType={action('setType')}
+            app={blankApp}
+        />
+    ))
+    .add('Create desktop application', () => (
+        <ApplicationForm
+            form={new FormModel()}
+            onSubmit={onSubmit}
+            displayTypeSwitcher
+            type={TYPE_DESKTOP_APPLICATION}
             setType={action('setType')}
             app={blankApp}
         />
@@ -69,7 +84,7 @@ storiesOf('Components/Dev/Apps/ApplicationForm', module)
         <ApplicationForm
             form={new FormModel()}
             onSubmit={onSubmit}
-            type={TYPE_APPLICATION}
+            type={TYPE_WEB_APPLICATION}
             app={{
                 ...blankApp,
                 clientId: 'already-registered',
