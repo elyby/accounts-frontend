@@ -14,6 +14,8 @@ export default class InitOAuthAuthCodeFlowState extends AbstractState {
                     responseType: query.get('response_type')!,
                     scope: (query.get('scope') || '').replace(/,/g, ' '),
                     state: query.get('state')!,
+                    code_challenge: query.get('code_challenge') || undefined,
+                    code_challenge_method: query.get('code_challenge_method') || undefined,
                 },
                 description: query.get('description')!,
                 prompt: query.get('prompt')!,
