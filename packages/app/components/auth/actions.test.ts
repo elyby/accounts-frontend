@@ -193,7 +193,7 @@ describe('components/auth/actions', () => {
             });
 
             it('should set login', () =>
-                callThunk(login, { login: 'foo', password: '' }).then(() => {
+                callThunk(login, { login: 'foo' }).then(() => {
                     expectDispatchCalls([[setLogin('foo')]]);
                 }));
         });
