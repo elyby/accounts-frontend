@@ -186,14 +186,14 @@ describe('components/auth/actions', () => {
                 (request.post as any).returns(
                     Promise.reject({
                         errors: {
-                            password: 'error.password_required',
+                            password: 'error.password_incorrect',
                         },
                     }),
                 );
             });
 
             it('should set login', () =>
-                callThunk(login, { login: 'foo' }).then(() => {
+                callThunk(login, { login: 'foo', password: '' }).then(() => {
                     expectDispatchCalls([[setLogin('foo')]]);
                 }));
         });

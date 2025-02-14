@@ -17,7 +17,7 @@ export function login({
     rememberMe = false,
 }: {
     login: string;
-    password?: string;
+    password: string;
     totp?: string;
     rememberMe: boolean;
 }): Promise<OAuthResponse> {

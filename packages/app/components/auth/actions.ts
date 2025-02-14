@@ -67,7 +67,7 @@ export function redirect(url: string): () => Promise<void> {
         });
 }
 
-const PASSWORD_REQUIRED = 'error.password_required';
+const INVALID_PASSWORD = 'error.password_incorrect';
 const LOGIN_REQUIRED = 'error.login_required';
 const ACTIVATION_REQUIRED = 'error.account_not_activated';
 const TOTP_REQUIRED = 'error.totp_required';
@@ -79,7 +79,7 @@ export function login({
     rememberMe = false,
 }: {
     login: string;
-    password?: string;
+    password: string;
     totp?: string;
     rememberMe?: boolean;
 }) {
@@ -88,7 +88,7 @@ export function login({
             .then(authHandler(dispatch))
             .catch((resp) => {
                 if (resp.errors) {
-                    if (resp.errors.password === PASSWORD_REQUIRED) {
+                    if (resp.errors.password === INVALID_PASSWORD && password === '') {
                         return dispatch(setLogin(login));
                     } else if (resp.errors.login === ACTIVATION_REQUIRED) {
                         return dispatch(needActivation({ login }));
