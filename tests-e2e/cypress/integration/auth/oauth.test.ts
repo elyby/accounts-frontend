@@ -275,7 +275,7 @@ describe('OAuth', () => {
         });
     });
 
-    describe('Sign-in during oauth', () => {
+    describe.only('Sign-in during oauth', () => {
         it('should allow sign in during oauth (guest oauth)', () => {
             cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
@@ -286,6 +286,83 @@ describe('OAuth', () => {
             cy.url().should('include', '/password');
 
             cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        const expiredTokenState = {
+            accounts: {
+                active: 7,
+                available: [
+                    {
+                        id: 7,
+                        username: account1.username,
+                        email: account1.email,
+                        token: 'expired access token',
+                        refreshToken: 'expired refresh token',
+                    },
+                ],
+            },
+            user: {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: account1.username,
+                token: '',
+                email: account1.email,
+                maskedEmail: '',
+                avatar: '',
+                lang: 'en',
+                isActive: true,
+                isOtpEnabled: false,
+                shouldAcceptRules: false,
+                passwordChangedAt: 1478961317,
+                hasMojangUsernameCollision: true,
+                isGuest: false,
+                registeredAt: 1478961317,
+                elyProfileLink: 'http://ely.by/u7',
+            },
+        };
+
+        it('should allow to relogin in during oauth (expired access and refresh tokens)', () => {
+            cy.visit('/').then(() => localStorage.setItem('redux-storage', JSON.stringify(expiredTokenState)));
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+            cy.url().should('include', '/password');
+
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should allow to relogin with MFA in during oauth (expired access and refresh tokens)', () => {
+            cy.visit('/').then(() => localStorage.setItem('redux-storage', JSON.stringify(expiredTokenState)));
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
+
+            cy.url().should('include', '/password');
+
+            cy.server();
+            cy.route({
+                method: 'POST',
+                url: '/api/authentication/login',
+                response: {
+                    success: false,
+                    errors: { totp: 'error.totp_required' },
+                },
+            });
+
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.url().should('include', '/mfa');
+
+            // Undo request response mock
+            cy.route({
+                method: 'POST',
+                url: '/api/authentication/login',
+            });
+
+            cy.get('[name=totp]').type('123456{enter}');
 
             cy.url().should('equal', 'https://dev.ely.by/');
         });

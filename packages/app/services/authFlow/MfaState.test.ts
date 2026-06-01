@@ -91,6 +91,43 @@ describe('MfaState', () => {
 
             return expect(state.resolve(context, payload), 'to be fulfilled');
         });
+
+        it('should navigate to returnUrl if any', () => {
+            const expectedLogin = 'foo';
+            const expectedPassword = 'bar';
+            const expectedTotp = '111222';
+            const expectedReturnUrl = '/returnUrl';
+            const expectedRememberMe = true;
+
+            context.getState.returns({
+                auth: {
+                    credentials: {
+                        login: expectedLogin,
+                        password: expectedPassword,
+                        rememberMe: expectedRememberMe,
+                        returnUrl: expectedReturnUrl,
+                        isRelogin: true,
+                    },
+                },
+            });
+
+            // Should not run "setAccountSwitcher" because of isRelogin
+            expectRun(
+                mock,
+                'login',
+                sinon.match({
+                    totp: expectedTotp,
+                    login: expectedLogin,
+                    password: expectedPassword,
+                    rememberMe: expectedRememberMe,
+                }),
+            ).returns(Promise.resolve());
+            expectNavigate(mock, expectedReturnUrl);
+
+            const payload = { totp: expectedTotp };
+
+            return expect(state.resolve(context, payload), 'to be fulfilled');
+        });
     });
 
     describe('#goBack', () => {
