@@ -275,7 +275,7 @@ describe('OAuth', () => {
         });
     });
 
-    describe.only('Sign-in during oauth', () => {
+    describe('Sign-in during oauth', () => {
         it('should allow sign in during oauth (guest oauth)', () => {
             cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
