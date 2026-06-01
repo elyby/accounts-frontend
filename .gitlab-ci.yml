@@ -22,6 +22,7 @@ stages:
 
 .installSentry: &installSentry |-
   apk add curl
+  export SENTRY_CLI_VERSION="3.4.3"
   curl -sL https://sentry.io/get-cli/ | bash
 
 .setupSSH: &setupSSH |-
@@ -185,7 +186,7 @@ Storybook:
     # Send release to the Sentry
     - sentry-cli releases new $VERSION
     - sentry-cli releases set-commits --commit "elyby/accounts-frontend@${CI_COMMIT_SHA}" $VERSION
-    - sentry-cli releases files $VERSION upload-sourcemaps source-maps
+    - sentry-cli sourcemaps upload --release=$VERSION source-maps
     - rsync -v -a -r --delete-after -e "ssh -J deploy@ely.by:4534 -p 722" build/ "root@${VM_HOST_NAME}:${VM_DEPLOY_PATH}"
     # Finalize Sentry's release
     - sentry-cli releases deploys $VERSION new -e $CI_ENVIRONMENT_NAME
