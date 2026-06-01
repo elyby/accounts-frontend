@@ -7,7 +7,7 @@ const { env } = process;
 
 module.exports = {
     version: env.VERSION || env.NODE_ENV,
-    apiHost: env.API_HOST || 'https://dev.account.ely.by',
+    apiHost: env.API_HOST || 'https://account.dev.ely.by',
     ga: env.GA_ID && { id: env.GA_ID },
     sentryDSN: env.SENTRY_DSN,
     crowdin: {

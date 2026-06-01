@@ -43,7 +43,7 @@
         "build:webpack": "NODE_ENV=production webpack --colors -p --bail",
         "build:quiet": "yarn run clean && yarn run build:webpack --quiet",
         "build:dll": "babel-node --extensions '.ts,.d.ts' ./packages/scripts/build-dll.ts",
-        "build:serve": "http-server --proxy https://dev.account.ely.by ./build",
+        "build:serve": "http-server --proxy https://account.dev.ely.by ./build",
         "sb": "APP_ENV=storybook start-storybook -p 9009 --ci",
         "sb:build": "APP_ENV=storybook build-storybook",
         "postinstall": "node -e \"try{require('./postinstall.js')}catch(e){}\""

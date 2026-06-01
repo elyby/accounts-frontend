@@ -4,6 +4,6 @@ CROWDIN_API_KEY=abc
 
 GA_ID=UA-XXXXX-Y
 
-API_HOST=https://dev.account.ely.by
+API_HOST=https://account.dev.ely.by
 
 VERSION=dev
