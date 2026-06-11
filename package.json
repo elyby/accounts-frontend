@@ -77,10 +77,16 @@
             "^.+\\.[tj]sx?$": "babel-jest"
         }
     },
+    "resolutions": {
+        "react": "^17",
+        "react-dom": "^17",
+        "@types/react": "17.0.14",
+        "@types/react-dom": "17.0.26"
+    },
     "dependencies": {
-        "react": "^16.13.1",
-        "react-dom": "^16.13.1",
-        "react-hot-loader": "^4.12.18",
+        "react": "^17",
+        "react-dom": "^17",
+        "react-hot-loader": "^4",
         "react-intl": "^4.5.7",
         "regenerator-runtime": "^0.13.3"
     },
