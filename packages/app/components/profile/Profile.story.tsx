@@ -1,8 +1,9 @@
-import React, { ComponentType } from 'react';
-import { storiesOf } from '@storybook/react';
+import React, { ComponentType, PropsWithChildren } from 'react';
 
 import rootStyles from 'app/pages/root/root.scss';
 import profileStyles from 'app/pages/profile/profile.scss';
+
+import Profile from './Profile';
 
 export const ProfileLayout: ComponentType = ({ children }) => (
     <div className={rootStyles.wrapper}>
@@ -10,9 +11,12 @@ export const ProfileLayout: ComponentType = ({ children }) => (
     </div>
 );
 
-import Profile from './Profile';
+export default {
+    title: 'Components/Profile',
+    excludeStories: /.*Layout$/,
+};
 
-storiesOf('Components/Profile', module).add('Profile', () => (
+export const ProfileStory = () => (
     <ProfileLayout>
         <Profile
             user={{
@@ -33,4 +37,5 @@ storiesOf('Components/Profile', module).add('Profile', () => (
             activeLocale={'en'}
         />
     </ProfileLayout>
-));
+);
+ProfileStory.storyName = 'Profile';

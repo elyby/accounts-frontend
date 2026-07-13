@@ -1,6 +1,8 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import BSoD from './BSoD';
 
-storiesOf('UI', module).add('BSoD', () => <BSoD />);
+export default { title: 'UI' };
+
+export const BSoDStory = () => <BSoD />;
+BSoDStory.storyName = 'BSoD';

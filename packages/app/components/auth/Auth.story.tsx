@@ -4,6 +4,11 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { Factory } from './factory';
 import PanelTransition from './PanelTransition';
 
+export default {
+    title: 'Components/Auth',
+    excludeStories: /.*Presenter$/,
+};
+
 interface AuthPresenterProps {
     factory: Factory;
 }

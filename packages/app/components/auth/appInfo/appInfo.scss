@@ -1,5 +1,6 @@
-@import '~app/components/ui/colors.scss';
-@import '~app/components/ui/fonts.scss';
+@use 'sass:color';
+@use '~app/components/ui/colors.scss' as *;
+@use '~app/components/ui/fonts.scss' as *;
 
 .appInfo {
     max-width: 270px;
@@ -43,7 +44,7 @@
     margin-top: 7px;
 
     a {
-        color: lighten($font-color, 10%);
+        color: color.adjust($font-color, $lightness: 10%, $space: hsl);
         border-bottom-color: #666;
 
         &:hover {

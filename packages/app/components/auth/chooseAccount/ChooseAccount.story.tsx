@@ -1,10 +1,12 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import { AuthPresenter } from 'app/components/auth/Auth.story';
 
 import ChooseAccount from './ChooseAccount';
 
+export default { title: 'Components/Auth' };
+
 // TODO: provide accounts list
 // TODO: provide application name
-storiesOf('Components/Auth', module).add('ChooseAccount', () => <AuthPresenter factory={ChooseAccount} />);
+export const ChooseAccountStory = () => <AuthPresenter factory={ChooseAccount} />;
+ChooseAccountStory.storyName = 'ChooseAccount';

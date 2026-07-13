@@ -1,4 +1,4 @@
-@import '~app/components/ui/fonts.scss';
+@use '~app/components/ui/fonts.scss' as *;
 
 .removableDataRow {
     composes: formRow from '~app/components/profile/profileForm.scss';

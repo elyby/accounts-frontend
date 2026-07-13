@@ -1,5 +1,4 @@
 import React, { ComponentType, CSSProperties } from 'react';
-import { storiesOf } from '@storybook/react';
 
 import FooterMenu from './FooterMenu';
 
@@ -7,7 +6,9 @@ const PreviewWrapper: ComponentType<{ style?: CSSProperties }> = ({ style, child
     <div style={{ padding: '25px', width: 320, boxSizing: 'border-box', ...style }}>{children}</div>
 );
 
-storiesOf('Components', module).add('FooterMenu', () => (
+export default { title: 'Components' };
+
+export const FooterMenuStory = () => (
     <div style={{ display: 'flex' }}>
         <PreviewWrapper>
             <FooterMenu />
@@ -16,4 +17,5 @@ storiesOf('Components', module).add('FooterMenu', () => (
             <FooterMenu />
         </PreviewWrapper>
     </div>
-));
+);
+FooterMenuStory.storyName = 'FooterMenu';

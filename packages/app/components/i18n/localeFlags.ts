@@ -22,18 +22,19 @@ export function getCountriesList(): string[] {
 /**
  * Возвращает для указанной локали её флаг с учётом всех нюансов загрузки флага
  * и подбора соответствующего локали флага.
- *
- * @param {string} locale
- *
- * @returns {string}
  */
 export function getLocaleIconUrl(locale: string): string {
     try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        return require(`flag-icon-css/flags/4x3/${localeToCountryCode[locale] || locale}.svg`).default;
+        return require(`./flags/${locale}.svg`);
     } catch (err) {
-        if (!err.message.startsWith('Cannot find module')) {
-            throw err;
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            return require(`flag-icons/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
+        } catch (err) {
+            if (!err.message.startsWith('Cannot find module')) {
+                throw err;
+            }
         }
     }
 

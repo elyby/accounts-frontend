@@ -1,9 +1,11 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import { AuthPresenter } from 'app/components/auth/Auth.story';
 
 import Activation from './Activation';
 
+export default { title: 'Components/Auth' };
+
 // TODO: add case with provided key
-storiesOf('Components/Auth', module).add('Activation', () => <AuthPresenter factory={Activation} />);
+export const ActivationStory = () => <AuthPresenter factory={Activation} />;
+ActivationStory.storyName = 'Activation';

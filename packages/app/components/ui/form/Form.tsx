@@ -131,7 +131,7 @@ export default class Form extends React.Component<Props, State> {
                 result = (this.props as PropsWithoutForm).onSubmit!(new FormData(form));
             }
 
-            if (result && result.then) {
+            if (result) {
                 this.setState({ isLoading: true });
 
                 result

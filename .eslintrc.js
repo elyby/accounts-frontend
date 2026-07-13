@@ -9,7 +9,6 @@ module.exports = {
         'eslint:recommended',
         'plugin:jsdoc/recommended',
         'plugin:@typescript-eslint/recommended',
-        'prettier/@typescript-eslint',
         'plugin:prettier/recommended',
     ],
 

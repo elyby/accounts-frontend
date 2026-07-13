@@ -169,24 +169,6 @@ describe('components/accounts/actions', () => {
             });
         });
 
-        describe('when user authenticated during oauth', () => {
-            beforeEach(() => {
-                (getState as any).returns({
-                    accounts: {
-                        available: [],
-                        active: null,
-                    },
-                    user: {},
-                    auth: {
-                        oauth: {
-                            clientId: 'ely.by',
-                            prompt: [],
-                        },
-                    },
-                });
-            });
-        });
-
         describe('when one account available', () => {
             beforeEach(() => {
                 (getState as any).returns({

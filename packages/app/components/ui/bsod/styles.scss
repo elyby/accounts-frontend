@@ -1,4 +1,4 @@
-@import '~app/components/ui/colors.scss';
+@use '~app/components/ui/colors.scss' as *;
 
 $font-family-monospaced: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 

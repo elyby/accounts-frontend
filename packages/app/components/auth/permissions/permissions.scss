@@ -1,5 +1,5 @@
-@import '~app/components/ui/colors.scss';
-@import '~app/components/ui/fonts.scss';
+@use '~app/components/ui/colors.scss' as *;
+@use '~app/components/ui/fonts.scss' as *;
 
 .authInfo {
     // Отступы сверху и снизу разные т.к. мы ужимаем высоту линии строки с логином на 2 пикселя и из-за этого теряем отступ снизу
@@ -10,7 +10,7 @@
 .authInfoAvatar {
     $size: 30px;
 
-    float: start;
+    float: inline-start;
     height: $size;
     width: $size;
     font-size: $size;

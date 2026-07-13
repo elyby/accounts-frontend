@@ -1,6 +1,6 @@
-@import '~app/components/ui/colors.scss';
-@import '~app/components/ui/fonts.scss';
-@import '~app/components/ui/popup/popup.scss';
+@use '~app/components/ui/colors.scss' as *;
+@use '~app/components/ui/fonts.scss' as *;
+@use '~app/components/ui/popup/popup.scss' as *;
 
 /* Form state */
 

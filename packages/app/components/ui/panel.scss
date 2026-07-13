@@ -1,5 +1,5 @@
-@import '~app/components/ui/colors.scss';
-@import '~app/components/ui/fonts.scss';
+@use '~app/components/ui/colors.scss' as *;
+@use '~app/components/ui/fonts.scss' as *;
 
 .panel {
     background: $black;
@@ -25,7 +25,7 @@ $headerHeight: 60px;
 .headerControl {
     composes: black from '~app/components/ui/buttons.scss';
 
-    float: start;
+    float: inline-start;
     overflow: hidden;
     height: $headerHeight - 1px;
     width: 49px;

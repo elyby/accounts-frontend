@@ -1,4 +1,4 @@
-@import '~app/components/ui/colors.scss';
+@use '~app/components/ui/colors.scss' as *;
 
 .componentLoader {
     text-align: center;

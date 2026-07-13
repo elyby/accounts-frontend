@@ -114,7 +114,6 @@ export default class ApplicationItem extends React.Component<
                                     key="publickOauthApplicationDescription"
                                     defaultMessage="This is a public client and it can't have any secrets by design. To secure authorization flow, use the PKCE challenge code. <link>Read more</link>."
                                     values={{
-                                        // @ts-expect-error those typings seems to be invalid in the current version of react-intl, but might be fixed later
                                         link: (nodes) => (
                                             <a href="https://www.oauth.com/oauth2-servers/pkce/" target="_blank">
                                                 {nodes}

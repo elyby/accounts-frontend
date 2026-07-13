@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import LanguageSwitcherPopup from './LanguageSwitcherPopup';
 
-storiesOf('Components/Popups', module).add('LanguageSwitcherPopup', () => {
+export default { title: 'Components/Popups' };
+
+export const LanguageSwitcherPopupStory = () => {
     const [activeLocale, setActiveLocale] = useState('en');
 
     return (
@@ -73,4 +74,5 @@ storiesOf('Components/Popups', module).add('LanguageSwitcherPopup', () => {
             onClose={action('onClose')}
         />
     );
-});
+};
+LanguageSwitcherPopupStory.storyName = 'LanguageSwitcherPopup';

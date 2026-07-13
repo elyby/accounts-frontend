@@ -1,10 +1,11 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import ContactFormPopup from './ContactFormPopup';
 
-storiesOf('Components/Popups', module).add('ContactFormPopup', () => (
+export default { title: 'Components/Popups' };
+
+export const ContactFormPopupStory = () => (
     <ContactFormPopup
         onSubmit={(params) => {
             action('onSubmit')(params);
@@ -13,4 +14,5 @@ storiesOf('Components/Popups', module).add('ContactFormPopup', () => (
         }}
         onClose={action('onClose')}
     />
-));
+);
+ContactFormPopupStory.storyName = 'ContactFormPopup';

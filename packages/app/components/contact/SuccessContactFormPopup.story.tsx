@@ -1,9 +1,11 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import SuccessContactFormPopup from './SuccessContactFormPopup';
 
-storiesOf('Components/Popups', module).add('SuccessContactFormPopup', () => (
+export default { title: 'Components/Popups' };
+
+export const SuccessContactFormPopupStory = () => (
     <SuccessContactFormPopup email="email@ely.by" onClose={action('onClose')} />
-));
+);
+SuccessContactFormPopupStory.storyName = 'SuccessContactFormPopup';

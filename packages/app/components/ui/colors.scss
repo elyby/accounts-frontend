@@ -1,3 +1,6 @@
+@use 'sass:color';
+@use 'sass:map';
+
 $green: #207e5c;
 $blue: #5b9aa9;
 $red: #e66c69;
@@ -25,10 +28,10 @@ $whiteButtonDark: #f5f5f5; // TODO: найти оптимальный цвет �
         $black: #1c1c1c,
     );
 
-    @if (map_has_key($elyColorsMap, $color)) {
-        @return map-get($elyColorsMap, $color);
+    @if (map.has-key($elyColorsMap, $color)) {
+        @return map.get($elyColorsMap, $color);
     } @else {
-        @return darken($color, 4%);
+        @return color.adjust($color, $lightness: -4%, $space: hsl);
     }
 }
 
@@ -44,9 +47,9 @@ $whiteButtonDark: #f5f5f5; // TODO: найти оптимальный цвет �
         $black: #2e2e2e,
     );
 
-    @if (map_has_key($elyColorsMap, $color)) {
-        @return map-get($elyColorsMap, $color);
+    @if (map.has-key($elyColorsMap, $color)) {
+        @return map.get($elyColorsMap, $color);
     } @else {
-        @return lighten($color, 3%);
+        @return color.adjust($color, $lightness: 3%, $space: hsl);
     }
 }

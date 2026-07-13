@@ -7,7 +7,7 @@
  * https://github.com/DragonsInn/fontgen-loader
  */
 
-const loaderUtils = require('loader-utils');
+const crypto = require('crypto');
 const fontgen = require('webfonts-generator');
 const path = require('path');
 const glob = require('glob');
@@ -69,12 +69,15 @@ function getFilesAndDeps(patterns, context) {
 
 module.exports = function (content) {
     this.cacheable();
-    const params = loaderUtils.getOptions(this) || {};
+    const params = this.getOptions({}) || {};
     let config;
     try {
         config = JSON.parse(content);
     } catch (ex) {
-        config = this.exec(content, this.resourcePath);
+        // eslint-disable-next-line no-new-func
+        const mod = { exports: {} };
+        new Function('module', 'exports', content)(mod, mod.exports);
+        config = mod.exports;
     }
 
     config.__dirname = path.dirname(this.resourcePath);
@@ -167,16 +170,13 @@ module.exports = function (content) {
             const format = formats[i];
 
             if (embed) {
-                urls[format] = `data:${mimeTypes[format]};charset=utf-8;base64,${new Buffer(res[format]).toString(
-                    'base64',
-                )}`;
+                urls[format] = `data:${mimeTypes[format]};charset=utf-8;base64,${Buffer.from(res[format]).toString('base64')}`;
             } else {
                 let filename = config.fileName || params.fileName || '[hash]-[fontname][ext]';
                 filename = filename.replace('[fontname]', fontconf.fontName).replace('[ext]', `.${format}`);
 
-                const url = loaderUtils.interpolateName(this.context, filename, {
-                    content: res[format],
-                });
+                const contentHash = crypto.createHash('sha1').update(res[format]).digest('hex').slice(0, 8);
+                const url = filename.replace('[hash]', contentHash);
 
                 urls[format] = path.join(pub, url).replace(/\\/g, '/');
                 this.emitFile(url, res[format]);

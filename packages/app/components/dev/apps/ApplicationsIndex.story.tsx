@@ -1,5 +1,4 @@
 import React, { ComponentType, ComponentProps } from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import ApplicationsIndex from './ApplicationsIndex';
@@ -15,7 +14,7 @@ export const DevLayout: ComponentType = ({ children }) => (
     </div>
 );
 
-export const sampleApp: OauthAppResponse = {
+const sampleApp: OauthAppResponse = {
     clientId: 'my-application',
     clientSecret: 'cL1eNtS3cRE7xNJqfWQdqrMRKURfW1ssP4kiX6JDW0_szM-n-q',
     type: TYPE_WEB_APPLICATION,
@@ -34,22 +33,32 @@ const commonProps: Omit<ComponentProps<typeof ApplicationsIndex>, 'isLoading' | 
     deleteApp: async (clientId) => action('deleteApp')(clientId),
 };
 
-storiesOf('Components/Dev/Apps/ApplicationsIndex', module)
-    .addDecorator((storyFn) => <DevLayout>{storyFn()}</DevLayout>)
-    .add('Guest', () => <ApplicationsIndex isLoading={false} displayForGuest applications={[]} {...commonProps} />)
-    .add('Loading', () => <ApplicationsIndex isLoading displayForGuest={false} applications={[]} {...commonProps} />)
-    .add('Empty', () => (
-        <ApplicationsIndex isLoading={false} displayForGuest={false} applications={[]} {...commonProps} />
-    ))
-    .add('With apps', () => (
-        <ApplicationsIndex
-            isLoading={false}
-            displayForGuest={false}
-            applications={[
-                sampleApp,
-                { ...sampleApp, clientId: 'my-application1', countUsers: 10 },
-                { ...sampleApp, clientId: 'my-application2', countUsers: 1 },
-            ]}
-            {...commonProps}
-        />
-    ));
+export default {
+    title: 'Components/Dev/Apps/ApplicationsIndex',
+    decorators: [(storyFn: () => React.ReactElement) => <DevLayout>{storyFn()}</DevLayout>],
+    excludeStories: /.*Layout$/,
+};
+
+export const Guest = () => <ApplicationsIndex isLoading={false} displayForGuest applications={[]} {...commonProps} />;
+
+export const Loading = () => (
+    <ApplicationsIndex isLoading displayForGuest={false} applications={[]} {...commonProps} />
+);
+
+export const Empty = () => (
+    <ApplicationsIndex isLoading={false} displayForGuest={false} applications={[]} {...commonProps} />
+);
+
+export const WithApps = () => (
+    <ApplicationsIndex
+        isLoading={false}
+        displayForGuest={false}
+        applications={[
+            sampleApp,
+            { ...sampleApp, clientId: 'my-application1', countUsers: 10 },
+            { ...sampleApp, clientId: 'my-application2', countUsers: 1 },
+        ]}
+        {...commonProps}
+    />
+);
+WithApps.storyName = 'With apps';

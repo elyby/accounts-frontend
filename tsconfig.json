@@ -18,7 +18,8 @@
         // *.intl.json overrides (@see `webpack-loaders.d.ts`)
         "resolveJsonModule": false,
         "jsx": "preserve",
-        "strict": true
+        "strict": true,
+        "useUnknownInCatchVariables": false
     },
     "include": ["@types", "packages", "config", ".storybook"],
     "exclude": ["packages/app/services/i18n/overrides"]

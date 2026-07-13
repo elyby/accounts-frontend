@@ -1,8 +1,8 @@
-@import '~app/components/ui/colors.scss';
-@import '~app/components/ui/fonts.scss';
+@use '~app/components/ui/colors.scss' as *;
+@use '~app/components/ui/fonts.scss' as *;
 
 // TODO: эту константу можно заимпортить из panel.scss, но это приводит к странным ошибкам
-//@import '~app/components/ui/panel.scss';
+//@use '~app/components/ui/panel.scss' as *;
 $bodyLeftRightPadding: 20px;
 
 $lightBorderColor: #eee;

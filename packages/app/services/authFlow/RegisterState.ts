@@ -25,7 +25,7 @@ export default class RegisterState extends AbstractState {
         return context
             .run('register', payload)
             .then(() => context.setState(new CompleteState()))
-            .catch((err) => err.errors || logger.warn('Error registering', err));
+            .catch((err) => err?.errors || logger.warn('Error registering', err));
     }
 
     reject(context: AuthContext, payload: Record<string, any>): void {

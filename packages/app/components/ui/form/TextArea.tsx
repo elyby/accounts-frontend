@@ -2,6 +2,7 @@ import React from 'react';
 import { MessageDescriptor } from 'react-intl';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import clsx from 'clsx';
+
 import { uniqueId, omit } from 'app/functions';
 import { SKIN_DARK, COLOR_GREEN, Skin, Color } from 'app/components/ui';
 
@@ -11,8 +12,8 @@ import FormInputComponent from './FormInputComponent';
 interface OwnProps {
     placeholder?: string | MessageDescriptor;
     label?: string | MessageDescriptor;
-    skin: Skin;
-    color: Color;
+    skin?: Skin;
+    color?: Color;
 }
 
 export default class TextArea extends FormInputComponent<OwnProps & Omit<TextareaAutosizeProps, keyof OwnProps>> {
@@ -57,7 +58,7 @@ export default class TextArea extends FormInputComponent<OwnProps & Omit<Textare
                 {label}
                 <div className={styles.textAreaContainer}>
                     <TextareaAutosize
-                        inputRef={this.elRef}
+                        ref={this.elRef}
                         className={clsx(styles.textArea, styles[`${skin}TextField`], styles[`${color}TextField`])}
                         placeholder={placeholder}
                         {...props}

@@ -1,35 +1,26 @@
 import logger from 'app/services/logger';
 
-const needs = {
-    intl: !window.Intl,
-    plural: !window?.Intl?.PluralRules,
-    // @ts-ignore ts has a little bit outdated definitions
-    relative: !window?.Intl?.RelativeTimeFormat,
-};
-
 /**
  * All modern browsers currently do support all required Intl APIs,
  * for the outdated browsers we will polyfill this api on demand
  */
-
 async function polyfill(locale: string): Promise<void> {
     const promises: Promise<void>[] = [];
 
-    if (!needs.intl && Intl.DateTimeFormat.supportedLocalesOf([locale]).length === 0) {
-        // fallback to polyfill in case, when browser does not support locale we need
-        needs.intl = true;
-        needs.plural = true;
-        needs.relative = true;
-    }
+    let intlSupported = !!window.Intl;
+    let pluralSupported = !!window.Intl?.PluralRules;
+    let relativeSupported = !!window.Intl?.RelativeTimeFormat;
+    let localeSupported = intlSupported && Intl.DateTimeFormat.supportedLocalesOf([locale]).length > 0;
 
-    if (needs.intl) {
+    // If locale isn't supported, then we need to fully replace native intl in order to introduce a new locale
+    if (!intlSupported || !localeSupported) {
         promises.push(polyfillIntl(locale));
     } else {
-        if (needs.plural) {
+        if (!pluralSupported) {
             promises.push(polyfillPlural(locale));
         }
 
-        if (needs.relative) {
+        if (!relativeSupported) {
             promises.push(polyfillRelative(locale));
         }
     }
@@ -62,14 +53,24 @@ async function polyfillIntl(locale: string): Promise<void> {
 
     // MUST be loaded in series with the main polyfill
     await Promise.all([
-        import(
-            // WARNING: .js extension is required for proper function of ContextReplacementPlugin
-            /* webpackChunkName: "intl-[request]" */
-            `intl/locale-data/jsonp/${locale}.js`
-        ),
+        polyfillLocale(locale),
         polyfillPlural(locale),
         polyfillRelative(locale),
     ]);
+}
+
+async function polyfillLocale(locale: string): Promise<void> {
+    try {
+        await import(
+            /* webpackChunkName: "intl-[request]" */
+            `./overrides/intl/${locale}.js`
+        );
+    } catch {
+        await import(
+            /* webpackChunkName: "intl-[request]" */
+            `intl/locale-data/jsonp/${locale}.js`
+        );
+    }
 }
 
 async function polyfillPlural(locale: string): Promise<void> {
@@ -79,11 +80,19 @@ async function polyfillPlural(locale: string): Promise<void> {
     );
 
     // MUST be loaded in series with the main polyfill
-    await import(
-        // WARNING: .js extension is required for proper function of ContextReplacementPlugin
-        /* webpackChunkName: "intl-pluralrules-[request]" */
-        `@formatjs/intl-pluralrules/dist/locale-data/${locale}.js`
-    );
+    try {
+        await import(
+            // WARNING: .js extension is required for proper function of ContextReplacementPlugin
+            /* webpackChunkName: "intl-pluralrules-[request]" */
+            `./overrides/pluralrules/${locale}.js`
+        );
+    } catch {
+        await import(
+            // WARNING: .js extension is required for proper function of ContextReplacementPlugin
+            /* webpackChunkName: "intl-pluralrules-[request]" */
+            `@formatjs/intl-pluralrules/dist/locale-data/${locale}.js`
+        );
+    }
 }
 
 async function polyfillRelative(locale: string): Promise<void> {
@@ -93,11 +102,17 @@ async function polyfillRelative(locale: string): Promise<void> {
     );
 
     // MUST be loaded in series with the main polyfill
-    await import(
-        // WARNING: .js extension is required for proper function of ContextReplacementPlugin
-        /* webpackChunkName: "intl-relativetimeformat-[request]" */
-        `@formatjs/intl-relativetimeformat/dist/locale-data/${locale}.js`
-    );
+    try {
+        await import(
+            /* webpackChunkName: "intl-relativetimeformat-[request]" */
+            `./overrides/relativetimeformat/${locale}.js`
+        );
+    } catch {
+        await import(
+            /* webpackChunkName: "intl-relativetimeformat-[request]" */
+            `@formatjs/intl-relativetimeformat/dist/locale-data/${locale}.js`
+        );
+    }
 }
 
 export default polyfill;

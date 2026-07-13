@@ -1,4 +1,4 @@
-@import '~app/components/ui/colors.scss';
+@use '~app/components/ui/colors.scss' as *;
 
 .languageLink {
     position: relative;
@@ -28,7 +28,7 @@
     display: inline-block;
     margin-inline-end: 4px;
     height: $height;
-    width: $height * 4 / 3;
+    width: calc($height * 4 / 3);
     box-shadow: 0 0 1px rgba(#000, 0.2);
 
     background-size: cover;

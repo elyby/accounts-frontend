@@ -1,12 +1,13 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { ProfileLayout } from 'app/components/profile/Profile.story';
 
 import AccountDeleted from './AccountDeleted';
 
-storiesOf('Components/Profile', module).add('AccountDeleted', () => (
+export default { title: 'Components/Profile' };
+
+export const AccountDeletedStory = () => (
     <ProfileLayout>
         <AccountDeleted
             onRestore={() =>
@@ -17,4 +18,5 @@ storiesOf('Components/Profile', module).add('AccountDeleted', () => (
             }
         />
     </ProfileLayout>
-));
+);
+AccountDeletedStory.storyName = 'AccountDeleted';

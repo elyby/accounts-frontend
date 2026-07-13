@@ -3,6 +3,7 @@
 module.exports = function (api) {
     const env = api.env();
     const isProduction = api.env((envName) => envName.includes('production'));
+    const { version: corejsVersion } = require('core-js/package.json');
 
     api.cache.using(() => env);
 
@@ -16,7 +17,7 @@ module.exports = function (api) {
                     ignoreBrowserslistConfig: false,
                     modules: false,
                     useBuiltIns: 'usage', // or "entry"
-                    corejs: 3,
+                    corejs: corejsVersion,
                     include: ['proposal-class-properties'],
                 },
             ],
@@ -52,9 +53,6 @@ module.exports = function (api) {
             ],
         ],
         plugins: [
-            '@babel/plugin-syntax-dynamic-import',
-            '@babel/plugin-proposal-function-bind',
-            '@babel/plugin-proposal-optional-chaining',
             '@babel/plugin-transform-runtime',
             [
                 'react-intl-auto',

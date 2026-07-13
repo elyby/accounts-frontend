@@ -1,12 +1,13 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { ProfileLayout } from 'app/components/profile/Profile.story';
 
 import DeleteAccount from './DeleteAccount';
 
-storiesOf('Components/Profile', module).add('DeleteAccount', () => (
+export default { title: 'Components/Profile' };
+
+export const DeleteAccountStory = () => (
     <ProfileLayout>
         <DeleteAccount
             onSubmit={async () => {
@@ -14,4 +15,5 @@ storiesOf('Components/Profile', module).add('DeleteAccount', () => (
             }}
         />
     </ProfileLayout>
-));
+);
+DeleteAccountStory.storyName = 'DeleteAccount';

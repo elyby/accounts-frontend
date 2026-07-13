@@ -1,5 +1,5 @@
-@import './colors.scss';
-@import './fonts.scss';
+@use './colors.scss' as *;
+@use './fonts.scss' as *;
 
 @mixin button-theme($themeName, $backgroundColor) {
     .#{$themeName} {

@@ -16,22 +16,25 @@ import { prompt, DistinctQuestion } from 'inquirer';
 
 import git from 'git-rev-sync';
 
-import { crowdin as config } from './../../config';
+import 'dotenv/config';
 
-if (!config.apiKey) {
+const CROWDIN_API_KEY = process.env.CROWDIN_API_KEY;
+
+if (!CROWDIN_API_KEY) {
     console.error(ch.red`crowdinApiKey is required`);
     process.exit(126);
 }
 
-const PROJECT_ID = config.projectId;
-const CROWDIN_FILE_PATH = config.filePath;
-const SOURCE_LANG = config.sourceLang;
-const LANG_DIR = config.basePath;
+// @ts-ignore
+const PROJECT_ID = parseInt(process.env.CROWDIN_PROJECT_ID || 350687);
+const CROWDIN_FILE_PATH = 'accounts/site.json';
+const SOURCE_LANG = 'en';
+const LANG_DIR = path.resolve(__dirname, '../app/i18n');
 const INDEX_FILE_NAME = 'index.js';
-const MIN_RELEASE_PROGRESS = config.minTranslated;
+const MIN_RELEASE_PROGRESS = 80; // Minimal ready percent before translation can be published
 
 const crowdin = new Crowdin({
-    token: config.apiKey,
+    token: CROWDIN_API_KEY,
 });
 
 /**
@@ -62,6 +65,7 @@ const NATIVE_NAMES_MAP: Record<string, string> = {
     pt: 'Português do Brasil',
     sr: 'Српски',
     ro: 'Română',
+    hu: 'Magyar',
     udm: 'Удмурт',
     zh: '简体中文',
 };

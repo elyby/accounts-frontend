@@ -1,13 +1,3 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import 'url-search-params-polyfill';
-import 'whatwg-fetch';
-import { shim as shimPromiseFinally } from 'promise.prototype.finally';
-import { polyfill as rafPolyfill } from 'raf';
-
-rafPolyfill();
-shimPromiseFinally();
-
 // allow :active styles in mobile Safary
 document.addEventListener('touchstart', () => {}, true);
 

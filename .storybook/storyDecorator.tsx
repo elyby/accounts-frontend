@@ -1,5 +1,6 @@
 import React from 'react';
-import addons, { DecoratorFunction } from '@storybook/addons';
+import type { Decorator } from '@storybook/react';
+
 import { ContextProvider } from 'app/shell';
 import { browserHistory } from 'app/services/history';
 import storeFactory from 'app/storeFactory';
@@ -9,12 +10,10 @@ import { IntlDecorator } from './decorators';
 
 const store = storeFactory();
 
-export default ((story) => {
-    const channel = addons.getChannel();
+const storyDecorator: Decorator = (story, context) => (
+    <ContextProvider store={store} history={browserHistory}>
+        <IntlDecorator locale={context.globals.locale}>{story()}</IntlDecorator>
+    </ContextProvider>
+);
 
-    return (
-        <ContextProvider store={store} history={browserHistory}>
-            <IntlDecorator channel={channel}>{story()}</IntlDecorator>
-        </ContextProvider>
-    );
-}) as DecoratorFunction<React.ReactElement>;
+export default storyDecorator;

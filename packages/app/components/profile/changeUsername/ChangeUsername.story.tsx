@@ -1,5 +1,4 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { FormModel } from 'app/components/ui/form';
@@ -7,7 +6,9 @@ import { ProfileLayout } from 'app/components/profile/Profile.story';
 
 import ChangeUsername from './ChangeUsername';
 
-storiesOf('Components/Profile', module).add('ChangeUsername', () => (
+export default { title: 'Components/Profile' };
+
+export const ChangeUsernameStory = () => (
     <ProfileLayout>
         <ChangeUsername
             form={new FormModel()}
@@ -20,4 +21,5 @@ storiesOf('Components/Profile', module).add('ChangeUsername', () => (
             }}
         />
     </ProfileLayout>
-));
+);
+ChangeUsernameStory.storyName = 'ChangeUsername';

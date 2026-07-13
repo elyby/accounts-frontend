@@ -1,5 +1,6 @@
 [production]
 > 0.25%
+not iOS < 14
 not dead
 
 [development]

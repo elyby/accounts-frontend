@@ -1,11 +1,9 @@
 variables:
-  NODE_IMAGE: node:14-alpine
-  NODE_E2E_IMAGE: circleci/node:14-buster-browsers
+  NODE_IMAGE: node:22-alpine
   DEPLOY_IMAGE: docksal/ssh-agent:1.3
-  # To cache both npm modules and Cypress binary we use environment variables
-  # to point at the folders we can list as paths in "cache" job settings
+  # To cache npm modules we use an environment variable
+  # to point at the folder we list as a path in "cache" job settings
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/yarn"
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/cypress"
 
   GIT_DEPTH: 10
 

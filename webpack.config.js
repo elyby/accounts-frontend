@@ -5,17 +5,15 @@ require('@babel/register')({
     extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx'],
 });
 
+require('dotenv').config();
+
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
-const CSPPlugin = require('csp-webpack-plugin');
-const WebpackBar = require('webpackbar');
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
-const EagerImportsPlugin = require('eager-imports-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const config = require('./config');
 const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n').default);
 const { getCountriesList } = require('app/components/i18n/localeFlags');
 const rootPath = path.resolve('./packages');
@@ -28,18 +26,19 @@ const isDockerized = !!process.env.DOCKERIZED;
 const isStorybook = process.env.APP_ENV === 'storybook';
 const isCI = !!process.env.CI;
 const isSilent = isCI || process.argv.some((arg) => /quiet/.test(arg));
-const isCspEnabled = false;
-const enableDll = !isProduction && !isStorybook;
 const webpackEnv = isProduction ? 'production' : 'development';
 
 process.env.NODE_ENV = webpackEnv;
 
-const smp = new SpeedMeasurePlugin();
+// Collect our custom language flags in order to exclude them from packaged
+const customFlags = fs
+    .readdirSync(path.resolve(rootPath, 'app/components/i18n/flags'))
+    .filter((file) => file.endsWith('.svg'))
+    .map((file) => path.basename(file, '.svg'));
+const flagIconCountries = getCountriesList().filter((country) => !customFlags.includes(country));
 
 const webpackConfig = {
     mode: webpackEnv,
-
-    cache: true,
 
     entry: {
         app: path.join(__dirname, 'packages/app'),
@@ -48,8 +47,17 @@ const webpackConfig = {
     output: {
         path: outputPath,
         publicPath: '/',
-        filename: `[name].js?[${isProduction ? 'chunkhash' : 'hash'}]`,
+        filename: `[name].js?[${isProduction ? 'contenthash' : 'fullhash'}]`,
+        clean: true,
     },
+
+    // intl-messageformat@8.4.1 incorrectly declares ^5 parser dependency but uses ^6 exports.
+    // These functions are never called since the app doesn't use skeleton date/number patterns.
+    // Will be resolve when we will migrate to the newer intl version
+    ignoreWarnings: [
+        /export 'parseDateTimeSkeleton'.*was not found in 'intl-messageformat-parser'/,
+        /export 'convertNumberSkeletonToNumberFormatOptions'.*was not found in 'intl-messageformat-parser'/,
+    ],
 
     resolve: {
         modules: [rootPath, 'node_modules'],
@@ -59,7 +67,7 @@ const webpackConfig = {
         },
     },
 
-    devtool: 'cheap-module-source-map',
+    devtool: isProduction ? 'hidden-source-map' : 'eval-source-map',
 
     stats: {
         hash: false,
@@ -78,47 +86,36 @@ const webpackConfig = {
     },
 
     plugins: [
-        new WebpackBar(),
         new webpack.DefinePlugin({
-            'window.SENTRY_DSN': config.sentryDSN ? JSON.stringify(config.sentryDSN) : undefined,
-            'window.GA_ID': config.ga && config.ga.id ? JSON.stringify(config.ga.id) : undefined,
+            'window.SENTRY_DSN': process.env.SENTRY_DSN ? JSON.stringify(process.env.SENTRY_DSN) : undefined,
+            'window.GA_ID': process.env.GA_ID ? JSON.stringify(process.env.GA_ID) : undefined,
         }),
         new webpack.EnvironmentPlugin({
             NODE_ENV: process.env.NODE_ENV,
-            __VERSION__: config.version || '',
+            __VERSION__: process.env.VERSION || process.env.NODE_ENV,
         }),
         new HtmlWebpackPlugin({
             template: 'packages/app/index.ejs',
             favicon: 'packages/app/favicon.ico',
-            scripts: enableDll ? ['/dll/vendor.dll.js'] : [],
             hash: false, // webpack does this for all our assets automagically
             filename: 'index.html',
             inject: false,
             minify: {
                 collapseWhitespace: isProduction,
             },
-            isCspEnabled,
         }),
-        new SitemapPlugin(
-            'https://account.ely.by',
-            ['/', '/register', '/resend-activation', '/activation', '/forgot-password', '/rules'],
-            {
-                lastMod: true,
-                changeFreq: 'weekly',
-            },
-        ),
         // restrict webpack import context, to create chunks only for supported locales
         // @see services/i18n/intlPolyfill.js
         new webpack.ContextReplacementPlugin(/locale-data/, new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.js$`)),
         // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
-            /flag-icon-css\/flags\/4x3/,
-            new RegExp(`/(${getCountriesList().join('|')})\\.svg`),
+            /flag-icons\/flags\/4x3/,
+            new RegExp(`/(${flagIconCountries.join('|')})\\.svg`),
         ),
         // @see components/i18n/localeFlags.js
         new webpack.ContextReplacementPlugin(
             /app\/components\/i18n\/flags/,
-            new RegExp(`/(${getCountriesList().join('|')})\\.svg`),
+            new RegExp(`/(${SUPPORTED_LANGUAGES.join('|')})\\.svg`),
         ),
     ],
 
@@ -129,28 +126,35 @@ const webpackConfig = {
                 use: [
                     {
                         loader: 'style-loader',
-                        options: {
-                            // style-loader@1.1.2 is still buggy. It breaks our icon styles
-                            // (vertical align is broken and styles applied multiple times)
-                            // so we can not use it and it's new `esModule` options
-                            // esModule: true,
-                        },
                     },
                     {
                         loader: 'css-loader',
                         options: {
                             modules: {
                                 localIdentName: isProduction ? '[hash:base64:5]' : '[path][name]-[local]',
+                                // css-loader v7 changed the default to 'camel-case-only', which broke
+                                // composes: some-dashed-class from '...', restore the v3 behaviour
+                                exportLocalsConvention: 'as-is',
                             },
-                            esModule: true,
+                            esModule: false,
                             importLoaders: 2,
                             sourceMap: !isProduction,
+                            // Skip resolving absolute URLs (e.g. /assets/fonts/... from fontgen-loader)
+                            url: {
+                                filter: (url) => !url.startsWith('/'),
+                            },
                         },
                     },
                     {
                         loader: 'sass-loader',
                         options: {
+                            api: 'modern',
                             sourceMap: !isProduction,
+                            sassOptions: {
+                                sourceMapIncludeSources: !isProduction,
+                                // icons.scss uses @import for fontgen-loader integration via postcss-import
+                                silenceDeprecations: ['import'],
+                            },
                         },
                     },
                     {
@@ -176,21 +180,25 @@ const webpackConfig = {
             },
             {
                 test: /\.(png|gif|jpg|svg)$/,
-                loader: 'file-loader',
-                query: {
-                    name: 'assets/[name].[ext]?[contenthash]',
+                type: 'asset/resource',
+                generator: {
+                    filename: 'assets/[name][ext]?[contenthash]',
                 },
             },
             {
                 test: /\.(woff|woff2|ttf)$/,
-                loader: 'file-loader',
-                query: {
-                    name: 'assets/fonts/[name].[ext]?[contenthash]',
+                type: 'asset/resource',
+                generator: {
+                    filename: 'assets/fonts/[name][ext]?[contenthash]',
                 },
             },
             {
                 test: /\.html$/,
                 loader: 'html-loader',
+                options: {
+                    // first-render.js uses require('...html') in a template literal — needs a plain string
+                    esModule: false,
+                },
             },
             {
                 // this is consumed by postcss-import
@@ -234,19 +242,36 @@ if (isProduction) {
                 filename: '[name].css?[contenthash]',
             }),
         );
+
+        webpackConfig.plugins.push(
+            new SitemapPlugin({
+                base: 'https://account.ely.by',
+                paths: [
+                    '/',
+                    '/register',
+                    '/resend-activation',
+                    '/activation',
+                    '/forgot-password',
+                    '/rules',
+                    '/dev/applications',
+                ],
+                options: {
+                    lastmod: true,
+                    changefreq: 'weekly',
+                },
+            }),
+        );
     }
 
-    webpackConfig.devtool = 'hidden-source-map';
-
     webpackConfig.optimization = {
-        moduleIds: 'hashed',
+        moduleIds: 'deterministic',
         runtimeChunk: 'single',
         splitChunks: {
             cacheGroups: {
                 vendor: {
                     name: 'vendors',
                     priority: 0,
-                    test: (m) => String(m.context).includes('node_modules'),
+                    test: /node_modules/,
                     chunks: 'all',
                 },
                 polyfills: {
@@ -256,12 +281,6 @@ if (isProduction) {
                     enforce: true,
                 },
                 ...SUPPORTED_LANGUAGES.reduce((acc, locale) => {
-                    const localePolyfills = [
-                        `intl-${locale}-js`,
-                        `intl-pluralrules-${locale}-js`,
-                        `intl-relativetimeformat-${locale}-js`,
-                    ];
-
                     acc[locale] = {
                         name: `locale-${locale}`,
                         priority: 1,
@@ -271,7 +290,15 @@ if (isProduction) {
                     acc[`${locale}Polyfill`] = {
                         name: `locale-${locale}-polyfill`,
                         priority: 2,
-                        chunks: ({ name }) => localePolyfills.includes(name),
+                        // Matches the upstream locale-data chunks (intl-<locale>-js,
+                        // intl-pluralrules-<locale>-js, intl-relativetimeformat-<locale>-js)
+                        // as well as our ./overrides chunks. The latter live under a
+                        // resolve.modules root, so their [request] chunk name expands to the
+                        // full module path — but it still starts with `intl` and ends with
+                        // `-<locale>-js`, so a prefix/suffix match folds every variant in here
+                        // (and keeps that long, structure-leaking name out of the emitted files).
+                        chunks: ({ name }) =>
+                            typeof name === 'string' && name.startsWith('intl') && name.endsWith(`-${locale}-js`),
                         enforce: true,
                     };
 
@@ -281,59 +308,20 @@ if (isProduction) {
         },
     };
 } else {
-    webpackConfig.plugins.push(
-        // force webpack to use mode: eager chunk imports in dev mode
-        // this will improve build performance
-        // this mode will be default for dev builds in webpack 5
-        new EagerImportsPlugin(),
-    );
-
-    if (enableDll) {
-        webpackConfig.plugins.push(
-            new webpack.DllReferencePlugin({
-                context: __dirname,
-                manifest: require('./dll/vendor.json'),
-            }),
-        );
-    }
-
     webpackConfig.devServer = {
         host: 'localhost',
         port: 8080,
-        proxy: config.apiHost && {
-            '/api': {
-                target: config.apiHost,
-                changeOrigin: true, // add host http-header, based on target
-                secure: false, // allow self-signed certs
+        proxy: [
+            {
+                context: ['/api'],
+                target: process.env.API_HOST || 'https://account.dev.ely.by',
+                changeOrigin: true,
+                secure: false,
             },
-        },
+        ],
         hot: true,
-        inline: true,
         historyApiFallback: true,
     };
-}
-
-if (isCspEnabled) {
-    webpackConfig.plugins.push(
-        new CSPPlugin({
-            'default-src': "'none'",
-            'style-src': ["'self'", "'unsafe-inline'"],
-            'script-src': [
-                "'self'",
-                "'nonce-edge-must-die'",
-                "'unsafe-inline'",
-                'https://www.google-analytics.com',
-                'https://recaptcha.net/recaptcha/',
-                'https://www.gstatic.com/recaptcha/',
-                'https://www.gstatic.cn/recaptcha/',
-            ],
-            'img-src': ["'self'", 'data:', 'www.google-analytics.com'],
-            'font-src': ["'self'", 'data:'],
-            'connect-src': ["'self'", 'https://sentry.ely.by'].concat(isProduction ? [] : ['ws://localhost:8080']),
-            'frame-src': ['https://www.google.com/recaptcha/', 'https://recaptcha.net/recaptcha/'],
-            'report-uri': 'https://sentry.ely.by/api/2/csp-report/?sentry_key=088e7718236a4f91937a81fb319a93f6',
-        }),
-    );
 }
 
 if (isDockerized) {
@@ -361,4 +349,4 @@ if (isSilent) {
     };
 }
 
-module.exports = smp.wrap(webpackConfig);
+module.exports = webpackConfig;

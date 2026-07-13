@@ -1,9 +1,10 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import Button from './Button';
 
-storiesOf('UI/Form', module).add('Button', () => (
+export default { title: 'UI/Form' };
+
+export const ButtonStory = () => (
     <>
         <div>
             <Button>Green Button</Button> <Button color="blue">Blue Button</Button>{' '}
@@ -79,4 +80,5 @@ storiesOf('UI/Form', module).add('Button', () => (
             </Button>
         </div>
     </>
-));
+);
+ButtonStory.storyName = 'Button';
