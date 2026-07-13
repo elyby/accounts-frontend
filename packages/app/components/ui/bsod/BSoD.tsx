@@ -7,10 +7,6 @@ import BoxesField from './BoxesField';
 
 import styles from './styles.scss';
 
-interface State {
-    lastEventId?: string | void;
-}
-
 interface Props {
     lastEventId?: string;
 }

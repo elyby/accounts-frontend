@@ -38,7 +38,7 @@ describe('services/request', () => {
         });
 
         it('should wrap aborted errors', () => {
-            const resp = new Response('{}', { status: 0 });
+            const resp = Response.error();
 
             (fetch as any).returns(Promise.resolve(resp));
 

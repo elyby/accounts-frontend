@@ -21,7 +21,7 @@ export default class SuccessOauthPage extends React.Component<{
                 // try to close window if possible
                 // @ts-ignore
                 window.open('', '_self').close();
-            } catch (err) {
+            } catch {
                 // don't care
             }
         }, 8000);

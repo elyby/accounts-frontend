@@ -145,7 +145,7 @@ export default class Input extends FormInputComponent<
 
             await copy(value);
             this.setState({ wasCopied: true });
-        } catch (err) {
+        } catch {
             // it's okay
         }
     };

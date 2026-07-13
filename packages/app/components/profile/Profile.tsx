@@ -36,7 +36,7 @@ const Profile: ComponentType<Props> = ({ user, activeLocale }) => {
             range.selectNodeContents(uuidRef.current);
             selection.removeAllRanges();
             selection.addRange(range);
-        } catch (err) {
+        } catch {
             // the browser does not support an API
         }
     }, []);

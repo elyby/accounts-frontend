@@ -101,7 +101,7 @@ export function getJwtPayloads(jwt: string): {
 
     try {
         return JSON.parse(atob(parts[1]));
-    } catch (err) {
+    } catch {
         throw new Error('Can not decode jwt token');
     }
 }

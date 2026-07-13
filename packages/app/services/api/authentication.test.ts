@@ -1,23 +1,11 @@
 import expect from 'app/test/unexpected';
-import sinon, { SinonFakeServer } from 'sinon';
+import sinon from 'sinon';
 
 import request from 'app/services/request';
 import * as authentication from 'app/services/api/authentication';
 import * as accounts from 'app/services/api/accounts';
 
 describe('authentication api', () => {
-    let server: SinonFakeServer;
-
-    beforeEach(() => {
-        server = sinon.fakeServer.create({
-            autoRespond: true,
-        });
-    });
-
-    afterEach(() => {
-        server.restore();
-    });
-
     describe('#login', () => {
         const params = {
             login: 'foo',
@@ -99,6 +87,7 @@ describe('authentication api', () => {
             const newToken = 'baz';
 
             beforeEach(() => {
+                sinon.stub(window, 'fetch').named('fetch');
                 sinon.stub(authentication, 'requestToken');
 
                 (accounts.getInfo as any).onCall(0).returns(Promise.reject(expiredResponse));
@@ -106,19 +95,23 @@ describe('authentication api', () => {
             });
 
             afterEach(() => {
+                (window.fetch as any).restore();
                 (authentication.requestToken as any).restore();
             });
 
             it('resolves with new token and user object', async () => {
-                server.respondWith(
-                    'POST',
-                    '/api/authentication/refresh-token',
-                    JSON.stringify({
-                        access_token: newToken,
-                        refresh_token: validRefreshToken,
-                        success: true,
-                        expires_in: 50000,
-                    }),
+                (fetch as any).returns(
+                    Promise.resolve(
+                        new Response(
+                            JSON.stringify({
+                                access_token: newToken,
+                                refresh_token: validRefreshToken,
+                                success: true,
+                                expires_in: 50000,
+                            }),
+                            { status: 200 },
+                        ),
+                    ),
                 );
 
                 await expect(authentication.validateToken(...validateTokenArgs), 'to be fulfilled with', {
@@ -127,12 +120,16 @@ describe('authentication api', () => {
                     user,
                 });
 
-                expect(server.requests[0].requestBody, 'to equal', `refresh_token=${validRefreshToken}`);
+                expect(fetch, 'to have a call satisfying', [
+                    '/api/authentication/refresh-token',
+                    { body: `refresh_token=${validRefreshToken}` },
+                ]);
             });
 
             it('rejects if token request failed', () => {
                 const error = { error: 'Unexpected error example' };
-                server.respondWith('POST', '/api/authentication/refresh-token', [500, [], JSON.stringify(error)]);
+
+                (fetch as any).returns(Promise.resolve(new Response(JSON.stringify(error), { status: 500 })));
 
                 return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
             });
@@ -149,19 +146,28 @@ describe('authentication api', () => {
             const newToken = 'baz';
 
             beforeEach(() => {
+                sinon.stub(window, 'fetch').named('fetch');
+
                 (accounts.getInfo as any).onCall(0).returns(Promise.reject(expiredResponse));
             });
 
+            afterEach(() => {
+                (window.fetch as any).restore();
+            });
+
             it('resolves with new token and user object', async () => {
-                server.respondWith(
-                    'POST',
-                    '/api/authentication/refresh-token',
-                    JSON.stringify({
-                        access_token: newToken,
-                        refresh_token: validRefreshToken,
-                        success: true,
-                        expires_in: 50000,
-                    }),
+                (fetch as any).returns(
+                    Promise.resolve(
+                        new Response(
+                            JSON.stringify({
+                                access_token: newToken,
+                                refresh_token: validRefreshToken,
+                                success: true,
+                                expires_in: 50000,
+                            }),
+                            { status: 200 },
+                        ),
+                    ),
                 );
 
                 await expect(authentication.validateToken(...validateTokenArgs), 'to be fulfilled with', {
@@ -170,12 +176,16 @@ describe('authentication api', () => {
                     user,
                 });
 
-                expect(server.requests[0].requestBody, 'to equal', `refresh_token=${validRefreshToken}`);
+                expect(fetch, 'to have a call satisfying', [
+                    '/api/authentication/refresh-token',
+                    { body: `refresh_token=${validRefreshToken}` },
+                ]);
             });
 
             it('rejects if token request failed', () => {
                 const error = { error: 'Unexpected error example' };
-                server.respondWith('POST', '/api/authentication/refresh-token', [500, [], JSON.stringify(error)]);
+
+                (fetch as any).returns(Promise.resolve(new Response(JSON.stringify(error), { status: 500 })));
 
                 return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
             });

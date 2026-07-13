@@ -5,12 +5,7 @@ module.exports = {
         sourceType: 'module',
     },
 
-    extends: [
-        'eslint:recommended',
-        'plugin:jsdoc/recommended',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:prettier/recommended',
-    ],
+    extends: ['eslint:recommended', 'plugin:jsdoc/recommended', 'plugin:@typescript-eslint/recommended'],
 
     plugins: ['react'],
 
@@ -22,9 +17,21 @@ module.exports = {
 
     overrides: [
         {
-            files: ['packages/webpack-utils/**', 'packages/scripts/**', 'jest/**'],
+            files: [
+                'packages/webpack-utils/**',
+                'packages/scripts/**',
+                'jest/**',
+                'webpack.config.js',
+                'postcss.config.js',
+                'babel.config.js',
+            ],
             env: {
                 node: true,
+            },
+            rules: {
+                // these are plain Node CommonJS entry points executed directly (not bundled),
+                // so they can't use ES imports
+                '@typescript-eslint/no-require-imports': 'off',
             },
         },
         {
@@ -44,6 +51,11 @@ module.exports = {
             },
             rules: {
                 'no-restricted-globals': 'off',
+                // Cypress plugins/index.js is a plain Node CommonJS file
+                '@typescript-eslint/no-require-imports': 'off',
+                // chai's `expect().to.be.true`-style assertions are bare member expressions
+                // (no call at the end), which this rule otherwise flags as a no-op
+                '@typescript-eslint/no-unused-expressions': 'off',
             },
         },
     ],
@@ -153,9 +165,12 @@ module.exports = {
         '@typescript-eslint/no-use-before-define': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
-        '@typescript-eslint/ban-types': 'off',
+        '@typescript-eslint/no-empty-object-type': 'off',
+        '@typescript-eslint/no-unsafe-function-type': 'off',
+        '@typescript-eslint/no-wrapper-object-types': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-inferrable-types': 'off',
+        '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
         '@typescript-eslint/no-unused-vars': [
             'error',
             {

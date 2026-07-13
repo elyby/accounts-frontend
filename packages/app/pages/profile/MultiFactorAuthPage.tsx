@@ -7,10 +7,9 @@ import { FormModel } from 'app/components/ui/form';
 import { User } from 'app/components/user';
 import Context from 'app/components/profile/Context';
 
-interface Props
-    extends RouteComponentProps<{
-        step?: '1' | '2' | '3';
-    }> {
+interface Props extends RouteComponentProps<{
+    step?: '1' | '2' | '3';
+}> {
     user: User;
 }
 

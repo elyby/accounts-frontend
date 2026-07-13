@@ -30,7 +30,7 @@ export default function storeFactory(preloadedState = {}): Store {
     if (module.hot && typeof module.hot.accept === 'function') {
         module.hot.accept('app/reducers', () =>
             store.replaceReducer(
-                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
                 require('app/reducers').default,
             ),
         );

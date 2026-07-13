@@ -1,4 +1,4 @@
-import React, { ComponentType, PropsWithChildren } from 'react';
+import React, { ComponentType } from 'react';
 
 import rootStyles from 'app/pages/root/root.scss';
 import profileStyles from 'app/pages/profile/profile.scss';

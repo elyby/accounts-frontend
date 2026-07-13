@@ -126,10 +126,13 @@ async function findDirectoryId(directoryPath: string, branchId?: number): Promis
     const { data: dirsResponse } = await crowdin.sourceFilesApi.listProjectDirectories(PROJECT_ID, branchId);
     const dirs = dirsResponse.map((dirData) => dirData.data);
 
-    const result = directoryPath.split('/').reduce((parentDir, dirName) => {
-        // directoryId is nullable when a directory has no parent
-        return dirs.find((dir) => dir.directoryId === parentDir && dir.name === dirName)?.id;
-    }, null as number | null | undefined);
+    const result = directoryPath.split('/').reduce(
+        (parentDir, dirName) => {
+            // directoryId is nullable when a directory has no parent
+            return dirs.find((dir) => dir.directoryId === parentDir && dir.name === dirName)?.id;
+        },
+        null as number | null | undefined,
+    );
 
     return result || undefined;
 }
@@ -383,9 +386,7 @@ async function push(): Promise<void> {
         console.log(`Applying the new revision...`);
         await crowdin.sourceFilesApi.updateOrRestoreFile(PROJECT_ID, fileId, {
             storageId: storageResponse.id,
-            updateOption: disapproveTranslates
-                ? SourceFilesModel.UpdateOption.CLEAR_TRANSLATIONS_AND_APPROVALS
-                : SourceFilesModel.UpdateOption.KEEP_TRANSLATIONS_AND_APPROVALS,
+            updateOption: disapproveTranslates ? 'clear_translations_and_approvals' : 'keep_translations_and_approvals',
         });
     } else {
         console.log(`Uploading the file...`);

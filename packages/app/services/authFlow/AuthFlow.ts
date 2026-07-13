@@ -294,7 +294,7 @@ export default class AuthFlow implements AuthContext {
 
                 return true;
             }
-        } catch (err) {
+        } catch {
             /* bad luck :( */
         }
 

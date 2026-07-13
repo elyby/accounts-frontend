@@ -30,8 +30,6 @@
         "test:watch": "yarn test --watch",
         "lint": "eslint --ext js,ts,tsx --fix .",
         "lint:check": "eslint --ext js,ts,tsx --quiet .",
-        "prettier": "prettier --write .",
-        "prettier:check": "prettier --check .",
         "ts:check": "tsc",
         "ci:check": "yarn lint:check && yarn ts:check && yarn test",
         "analyze": "yarn run clean && yarn run build:webpack --analyze",
@@ -47,9 +45,6 @@
         "sb:build": "APP_ENV=storybook storybook build"
     },
     "lint-staged": {
-        "*.{json,scss,css,md}": [
-            "prettier --write"
-        ],
         "*.{js,ts,tsx}": [
             "eslint --fix"
         ]
@@ -58,7 +53,7 @@
         "roots": [
             "<rootDir>/packages/app"
         ],
-        "testEnvironment": "jsdom",
+        "testEnvironment": "jest-fixed-jsdom",
         "setupFilesAfterEnv": [
             "<rootDir>/jest/setupAfterEnv.js"
         ],
@@ -115,9 +110,7 @@
         "cssnano": "^4.1.10",
         "dotenv": "^8.2.0",
         "eslint": "^8.57.0",
-        "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-jsdoc": "^46.10.1",
-        "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-react": "^7.20.0",
         "extract-react-intl-messages": "^4.1.1",
         "html-loader": "^5.1.0",
@@ -125,6 +118,7 @@
         "identity-obj-proxy": "^3.0.0",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
+        "jest-fixed-jsdom": "^0.0.11",
         "jest-watch-typeahead": "^2.2.2",
         "lint-staged": "^15.2.7",
         "mini-css-extract-plugin": "^2.9.0",
@@ -133,7 +127,6 @@
         "postcss-loader": "^8.1.1",
         "postcss-logical-properties-polyfill": "^0.1.0",
         "postcss-scss": "^4.0.9",
-        "prettier": "^3.3.3",
         "sass": "^1.77.8",
         "sass-loader": "^14.2.1",
         "sinon": "^9.0.2",

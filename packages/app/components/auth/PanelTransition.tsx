@@ -84,12 +84,6 @@ interface AnimationData {
     hasBackButton: boolean | ((props: Props) => boolean);
 }
 
-interface AnimationContext extends TransitionPlainStyle {
-    key: PanelId;
-    style: AnimationStyle;
-    data: AnimationData;
-}
-
 interface OwnProps {
     Title: ReactElement;
     Body: ReactElement;

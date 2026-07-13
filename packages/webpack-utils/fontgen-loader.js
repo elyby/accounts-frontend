@@ -73,7 +73,7 @@ module.exports = function (content) {
     let config;
     try {
         config = JSON.parse(content);
-    } catch (ex) {
+    } catch {
         // eslint-disable-next-line no-new-func
         const mod = { exports: {} };
         new Function('module', 'exports', content)(mod, mod.exports);

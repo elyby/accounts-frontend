@@ -138,7 +138,7 @@ export function ensureToken(): AppAction<Promise<void>> {
             if (exp - SAFETY_FACTOR < Date.now() / 1000) {
                 return dispatch(requestNewToken());
             }
-        } catch (err) {
+        } catch {
             logger.warn('Refresh token error: bad token', {
                 token,
             });

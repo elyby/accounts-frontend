@@ -25,11 +25,11 @@ export function getCountriesList(): string[] {
  */
 export function getLocaleIconUrl(locale: string): string {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         return require(`./flags/${locale}.svg`);
-    } catch (err) {
+    } catch {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             return require(`flag-icons/flags/4x3/${localeToCountryCode[locale] || locale}.svg`);
         } catch (err) {
             if (!err.message.startsWith('Cannot find module')) {
@@ -38,6 +38,6 @@ export function getLocaleIconUrl(locale: string): string {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     return require('./flags/unknown.svg').default;
 }

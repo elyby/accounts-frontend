@@ -7,10 +7,10 @@ import logger from 'app/services/logger';
 async function polyfill(locale: string): Promise<void> {
     const promises: Promise<void>[] = [];
 
-    let intlSupported = !!window.Intl;
-    let pluralSupported = !!window.Intl?.PluralRules;
-    let relativeSupported = !!window.Intl?.RelativeTimeFormat;
-    let localeSupported = intlSupported && Intl.DateTimeFormat.supportedLocalesOf([locale]).length > 0;
+    const intlSupported = !!window.Intl;
+    const pluralSupported = !!window.Intl?.PluralRules;
+    const relativeSupported = !!window.Intl?.RelativeTimeFormat;
+    const localeSupported = intlSupported && Intl.DateTimeFormat.supportedLocalesOf([locale]).length > 0;
 
     // If locale isn't supported, then we need to fully replace native intl in order to introduce a new locale
     if (!intlSupported || !localeSupported) {

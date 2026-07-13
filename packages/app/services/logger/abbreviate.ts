@@ -96,7 +96,7 @@ function abbreviateRecursive(key: string | undefined, obj: any, filter: Filter, 
             default:
                 return obj;
         }
-    } catch (err) {
+    } catch {
         /* fall back to inspect*/
     }
 
@@ -105,7 +105,7 @@ function abbreviateRecursive(key: string | undefined, obj: any, filter: Filter, 
         state.sizeLeft -= obj.length;
 
         return obj;
-    } catch (err) {
+    } catch {
         return '**non-serializable**';
     }
 }

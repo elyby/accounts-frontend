@@ -8,7 +8,7 @@ try {
     window.localStorage.removeItem(test);
 
     _hasStorage = true;
-} catch (err) {
+} catch {
     // bad luck, no storage available
     logger.info('No storage available'); // log for statistic purposes
 }
