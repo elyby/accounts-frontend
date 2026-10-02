@@ -6,24 +6,15 @@ describe('Register', () => {
         const captchaCode = 'captchaCode';
         const activationKey = 'activationKey';
 
-        cy.server();
-        cy.route({
-            method: 'POST',
-            url: '/api/signup',
-            response: {
-                success: true,
-            },
+        cy.intercept('POST', '/api/signup', {
+            success: true,
         }).as('signup');
         cy.login({
             accounts: ['default'],
             updateState: false,
             rawApiResp: true,
         }).then(({ accounts: [account] }) => {
-            cy.route({
-                method: 'POST',
-                url: '/api/signup/confirm',
-                response: account,
-            }).as('activate');
+            cy.intercept('POST', '/api/signup/confirm', account).as('activate');
         });
         cy.visit('/');
 
@@ -47,7 +38,7 @@ describe('Register', () => {
         cy.get('[type=submit]').click();
 
         cy.wait('@signup')
-            .its('requestBody')
+            .its('request.body')
             .should(
                 'eq',
                 new URLSearchParams({
@@ -65,7 +56,7 @@ describe('Register', () => {
 
         cy.get('[name=key]').type(`${activationKey}{enter}`);
 
-        cy.wait('@activate').its('requestBody').should('eq', `key=${activationKey}`);
+        cy.wait('@activate').its('request.body').should('eq', `key=${activationKey}`);
 
         cy.location('pathname').should('eq', '/');
     });
@@ -76,13 +67,8 @@ describe('Register', () => {
         const password = String(Date.now());
         const captchaCode = 'captchaCode';
 
-        cy.server();
-        cy.route({
-            method: 'POST',
-            url: '/api/signup',
-            response: {
-                success: true,
-            },
+        cy.intercept('POST', '/api/signup', {
+            success: true,
         }).as('signup');
         cy.login({
             accounts: ['default'],
@@ -122,17 +108,12 @@ describe('Register', () => {
     it('should allow activation', () => {
         const activationKey = 'activationKey';
 
-        cy.server();
         cy.login({
             accounts: ['default'],
             updateState: false,
             rawApiResp: true,
         }).then(({ accounts: [account] }) => {
-            cy.route({
-                method: 'POST',
-                url: '/api/signup/confirm',
-                response: account,
-            }).as('activate');
+            cy.intercept('POST', '/api/signup/confirm', account).as('activate');
         });
         cy.visit('/register');
 
@@ -142,7 +123,7 @@ describe('Register', () => {
 
         cy.get('[name=key]').type(`${activationKey}{enter}`);
 
-        cy.wait('@activate').its('requestBody').should('eq', `key=${activationKey}`);
+        cy.wait('@activate').its('request.body').should('eq', `key=${activationKey}`);
 
         cy.location('pathname').should('eq', '/');
     });
@@ -150,17 +131,12 @@ describe('Register', () => {
     it('should read activation key from url', () => {
         const activationKey = 'activationKey';
 
-        cy.server();
         cy.login({
             accounts: ['default'],
             updateState: false,
             rawApiResp: true,
         }).then(({ accounts: [account] }) => {
-            cy.route({
-                method: 'POST',
-                url: '/api/signup/confirm',
-                response: account,
-            }).as('activate');
+            cy.intercept('POST', '/api/signup/confirm', account).as('activate');
         });
         cy.visit(`/activation/${activationKey}`);
 
@@ -168,7 +144,7 @@ describe('Register', () => {
         cy.get('[name=key]').should('have.attr', 'readonly');
         cy.get('[type=submit]').click();
 
-        cy.wait('@activate').its('requestBody').should('eq', `key=${activationKey}`);
+        cy.wait('@activate').its('request.body').should('eq', `key=${activationKey}`);
 
         cy.location('pathname').should('eq', '/');
     });
@@ -177,12 +153,7 @@ describe('Register', () => {
         const email = `${Date.now()}@gmail.com`;
         const captchaCode = 'captchaCode';
 
-        cy.server();
-        cy.route({
-            method: 'POST',
-            url: '/api/signup/repeat-message',
-            response: { success: true },
-        }).as('resend');
+        cy.intercept('POST', '/api/signup/repeat-message', { success: true }).as('resend');
         cy.visit('/register');
 
         cy.findByTestId('auth-controls-secondary').contains('not received').click();
@@ -199,7 +170,7 @@ describe('Register', () => {
         cy.get('[type=submit]').click();
 
         cy.wait('@resend')
-            .its('requestBody')
+            .its('request.body')
             .should('eq', new URLSearchParams({ email, captcha: captchaCode }).toString());
 
         cy.location('pathname').should('eq', '/activation');

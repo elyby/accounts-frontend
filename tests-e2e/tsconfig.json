@@ -1,16 +1,14 @@
 {
+    "extends": "../tsconfig.json",
     "compilerOptions": {
-        "strict": true,
-        "baseUrl": "../node_modules",
-        "module": "esnext",
-        "target": "es5",
-        "esModuleInterop": true,
-        "noEmit": true,
-        "moduleResolution": "node",
-        "lib": ["es6", "dom"],
-        "types": ["cypress", "@types/testing-library__cypress"],
-        "resolveJsonModule": true,
-        "noImplicitAny": false
+        // cypress ships its own types (not under @types/), and root doesn't declare an
+        // explicit "types" array, so these need to be listed here to get `cy`/`Cypress`
+        // globals without an explicit reference/import in every spec file.
+        // "node" is for the Cypress config and the app's sources, reachable through the `app/...` type imports
+        "types": ["cypress", "@testing-library/cypress", "node"],
+        // fixtures are imported as `*.json`; root disables this because it conflicts with
+        // `*.intl.json` overrides in the app, which doesn't apply to the test suite
+        "resolveJsonModule": true
     },
-    "include": ["cypress/**/*"]
+    "include": ["../@types", "cypress/**/*", "cypress.config.ts"]
 }

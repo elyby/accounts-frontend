@@ -3,11 +3,7 @@ import { openSectionByName, confirmWithPassword } from './utils';
 describe('Profile — Change password', () => {
     it('should change password', () => {
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/password`,
-            }).as('password');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/password`).as('password');
             cy.visit('/');
 
             openSectionByName('Password');
@@ -20,7 +16,7 @@ describe('Profile — Change password', () => {
             cy.get('[type=submit]').click();
 
             cy.wait('@password')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -34,7 +30,7 @@ describe('Profile — Change password', () => {
             confirmWithPassword(account.password);
 
             cy.wait('@password')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -51,15 +47,10 @@ describe('Profile — Change password', () => {
 
     it('should close password popup if form has errors', () => {
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/password`,
-                response: {
-                    success: false,
-                    errors: {
-                        password: 'force popup to be shown',
-                    },
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/password`, {
+                success: false,
+                errors: {
+                    password: 'force popup to be shown',
                 },
             }).as('password');
             cy.visit('/');
@@ -75,10 +66,7 @@ describe('Profile — Change password', () => {
             cy.get('[type=submit]').click();
 
             // disable response mocks
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/password`,
-            }).as('password');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/password`, (req) => req.continue()).as('password');
 
             confirmWithPassword(account.password);
 

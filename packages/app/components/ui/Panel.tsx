@@ -30,7 +30,7 @@ export const Panel: FC<PanelProps> = ({ title, icon, children }) => {
 
 export const PanelHeader: FC<PropsWithChildren<any>> = ({ children }) => {
     return (
-        <div className={styles.header} data-testid="auth-header">
+        <div className={styles.header}>
             {children}
         </div>
     );
@@ -38,7 +38,7 @@ export const PanelHeader: FC<PropsWithChildren<any>> = ({ children }) => {
 
 export const PanelBody: FC<PropsWithChildren<any>> = ({ children }) => {
     return (
-        <div className={styles.body} data-testid="auth-body">
+        <div className={styles.body}>
             {children}
         </div>
     );
@@ -46,7 +46,7 @@ export const PanelBody: FC<PropsWithChildren<any>> = ({ children }) => {
 
 export const PanelFooter: FC<PropsWithChildren<any>> = ({ children }) => {
     return (
-        <div className={styles.footer} data-testid="auth-controls">
+        <div className={styles.footer}>
             {children}
         </div>
     );

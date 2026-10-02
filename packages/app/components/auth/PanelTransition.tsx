@@ -26,6 +26,8 @@ const changeContextSpringConfig = {
 
 const { helpLinks: helpLinksStyles } = helpLinks;
 
+const fieldsetStyles: CSSProperties = { border: 0, padding: 0, margin: 0, minWidth: 0 };
+
 type PanelId = string;
 
 /**
@@ -267,7 +269,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
                                         </MeasureHeight>
                                     </div>
                                 </Panel>
-                                <div className={helpLinksStyles} data-testid="auth-controls-secondary">
+                                <div className={helpLinksStyles}>
                                     {panels.map((config) => this.getLinks(config))}
                                 </div>
                             </Form>
@@ -368,7 +370,12 @@ class PanelTransition extends React.PureComponent<Props, State> {
         }
 
         if (length === 1) {
-            if (!this.wasAutoFocused) {
+            // Don't steal the focus from a field the user has already started typing into during the transition.
+            // The leaving panel's fields are disabled, so a focus that remained there doesn't count
+            const { activeElement } = document;
+            const isUserTyping = activeElement?.matches('input:enabled, textarea:enabled');
+
+            if (!this.wasAutoFocused && !isUserTyping) {
                 this.body?.autoFocus();
             }
 
@@ -429,7 +436,12 @@ class PanelTransition extends React.PureComponent<Props, State> {
         );
 
         return (
-            <div key={`header/${key}`} style={transitionStyle}>
+            <div
+                key={`header/${key}`}
+                style={transitionStyle}
+                data-testid="auth-header"
+                {...this.getActiveAttrs(key)}
+            >
                 {hasBackButton ? backButton : null}
                 <div style={scrollStyle}>{Title}</div>
             </div>
@@ -462,13 +474,22 @@ class PanelTransition extends React.PureComponent<Props, State> {
                 style={transitionStyle}
                 state={this.shouldMeasureHeight()}
                 onMeasure={(height) => this.onUpdateHeight(height, key)}
+                data-testid="auth-body"
+                {...this.getActiveAttrs(key)}
             >
-                {React.cloneElement(Body, {
-                    // @ts-ignore
-                    ref: (body) => {
-                        this.body = body;
-                    },
-                })}
+                {this.renderFieldset(
+                    key,
+                    React.cloneElement(Body, {
+                        // @ts-ignore
+                        ref: (body) => {
+                            // During the transition the leaving panel is still mounted and its ref may be called
+                            // after the active one's, so take only the active panel's body
+                            if (key === this.state.panelId) {
+                                this.body = body;
+                            }
+                        },
+                    }),
+                )}
             </MeasureHeight>
         );
     }
@@ -479,7 +500,12 @@ class PanelTransition extends React.PureComponent<Props, State> {
         const transitionStyle = this.getDefaultTransitionStyles(key, style as unknown as AnimationStyle);
 
         return (
-            <div key={`footer/${key}`} style={transitionStyle}>
+            <div
+                key={`footer/${key}`}
+                style={transitionStyle}
+                data-testid="auth-controls"
+                {...this.getActiveAttrs(key)}
+            >
                 {Footer}
             </div>
         );
@@ -491,7 +517,12 @@ class PanelTransition extends React.PureComponent<Props, State> {
         const transitionStyle = this.getDefaultTransitionStyles(key, style as unknown as AnimationStyle);
 
         return (
-            <div key={`links/${key}`} style={transitionStyle}>
+            <div
+                key={`links/${key}`}
+                style={transitionStyle}
+                data-testid="auth-controls-secondary"
+                {...this.getActiveAttrs(key)}
+            >
                 {Links}
             </div>
         );
@@ -515,6 +546,31 @@ class PanelTransition extends React.PureComponent<Props, State> {
             width: '100%',
             opacity: opacitySpring,
             pointerEvents: key === this.state.panelId ? 'auto' : 'none',
+        };
+    }
+
+    /**
+     * While a transition is running, the leaving panel is still mounted inside the same <form>. Disabling its
+     * fields excludes them from the form's validation and serialization, so a submit made during the transition
+     * isn't blocked by the required fields of the previous panel.
+     *
+     * This is not probably what happens in the real life, but E2E tests works too fast and constantly bugs with that
+     */
+    renderFieldset(key: PanelId, children: ReactNode): ReactElement {
+        return (
+            <fieldset disabled={key !== this.state.panelId} style={fieldsetStyles}>
+                {children}
+            </fieldset>
+        );
+    }
+
+    /**
+     * This helps E2E correctly select elements skipping those, that are still presented in the DOM during
+     * panel transition to the next one.
+     */
+    getActiveAttrs(key: PanelId): Record<string, string> {
+        return {
+            'data-e2e-panel-active': key === this.state.panelId ? 'true' : 'false',
         };
     }
 

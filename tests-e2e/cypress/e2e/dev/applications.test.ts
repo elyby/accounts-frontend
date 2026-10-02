@@ -17,19 +17,9 @@ describe('Applications', () => {
         });
 
         it('should add website app', () => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: '/api/v1/oauth2/*/reset',
-            }).as('revoke');
-            cy.route({
-                method: 'DELETE',
-                url: '/api/v1/oauth2/*',
-            }).as('delete');
-            cy.route({
-                method: 'POST',
-                url: '/api/v1/oauth2/*/reset?regenerateSecret',
-            }).as('revokeSecret');
+            cy.intercept('POST', '/api/v1/oauth2/*/reset').as('revoke');
+            cy.intercept('DELETE', '/api/v1/oauth2/*').as('delete');
+            cy.intercept('POST', '/api/v1/oauth2/*/reset?regenerateSecret').as('revokeSecret');
 
             cy.visit('/dev/applications');
 
@@ -66,7 +56,7 @@ describe('Applications', () => {
 
             // test reset client secret
             cy.findByTestId('client-secret').then(([el]) => {
-                const prevSecret = el.value;
+                const prevSecret = (el as HTMLInputElement).value;
 
                 cy.findByTestId('client-secret').should('have.value', prevSecret);
                 cy.contains('Reset Client Secret').click();

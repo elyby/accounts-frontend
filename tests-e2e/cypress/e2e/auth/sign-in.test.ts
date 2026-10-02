@@ -93,14 +93,9 @@ describe('Sign in / Log out', () => {
 
         cy.url().should('include', '/password');
 
-        cy.server();
-        cy.route({
-            method: 'POST',
-            url: '/api/authentication/login',
-            response: {
-                success: false,
-                errors: { totp: 'error.totp_required' },
-            },
+        cy.intercept('POST', '/api/authentication/login', {
+            success: false,
+            errors: { totp: 'error.totp_required' },
         });
 
         cy.get('[name=password]').type(account1.password);
@@ -108,14 +103,11 @@ describe('Sign in / Log out', () => {
 
         cy.url().should('include', '/mfa');
 
-        cy.route({
-            method: 'POST',
-            url: '/api/authentication/login',
-        }).as('login');
+        cy.intercept('POST', '/api/authentication/login', (req) => req.continue()).as('login');
 
         cy.get('[name=totp]').type('123{enter}');
 
-        cy.wait('@login').its('requestBody').should('include', 'totp=123');
+        cy.wait('@login').its('request.body').should('include', 'totp=123');
 
         cy.location('pathname').should('eq', '/');
     });
@@ -143,37 +135,29 @@ describe('Sign in / Log out', () => {
         cy.get('[name=password]').type(account1.password);
         cy.get('[name=rememberMe]').should('be.checked');
 
-        cy.server();
-        cy.route({
-            method: 'POST',
-            url: `/api/v1/accounts/${account1.id}/rules`,
-        }).as('rulesAgreement');
-        cy.route({
-            method: 'GET',
-            url: `/api/v1/accounts/${account1.id}`,
-            response: {
-                id: 7,
-                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                username: 'SleepWalker',
-                isOtpEnabled: false,
-                registeredAt: 1475568334,
-                lang: 'en',
-                elyProfileLink: 'http://ely.by/u7',
-                email: 'danilenkos@auroraglobal.com',
-                isActive: true,
-                isDeleted: false,
-                passwordChangedAt: 1476075696,
-                hasMojangUsernameCollision: true,
-                shouldAcceptRules: true, // force user to accept updated user agreement
-            } as UserResponse,
-        });
+        cy.intercept('POST', `/api/v1/accounts/${account1.id}/rules`).as('rulesAgreement');
+        cy.intercept('GET', `/api/v1/accounts/${account1.id}`, {
+            id: 7,
+            uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+            username: 'SleepWalker',
+            isOtpEnabled: false,
+            registeredAt: 1475568334,
+            lang: 'en',
+            elyProfileLink: 'http://ely.by/u7',
+            email: 'danilenkos@auroraglobal.com',
+            isActive: true,
+            isDeleted: false,
+            passwordChangedAt: 1476075696,
+            hasMojangUsernameCollision: true,
+            shouldAcceptRules: true, // force user to accept updated user agreement
+        } as UserResponse);
 
         cy.get('[type=submit]').click();
 
         cy.location('pathname').should('eq', '/accept-rules');
 
-        cy.get('[type=submit]').last().click(); // add .last() to match the new state during its transition
-        cy.wait('@rulesAgreement').its('requestBody').should('be.empty');
+        cy.get('[type=submit]').click();
+        cy.wait('@rulesAgreement').its('request.body').should('be.empty');
 
         cy.location('pathname').should('eq', '/');
         cy.findByTestId('profile-index').should('contain', account1.username);
@@ -189,26 +173,21 @@ describe('Sign in / Log out', () => {
         cy.get('[name=password]').type(account1.password);
         cy.get('[name=rememberMe]').should('be.checked');
 
-        cy.server();
-        cy.route({
-            method: 'GET',
-            url: `/api/v1/accounts/${account1.id}`,
-            response: {
-                id: 7,
-                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                username: 'SleepWalker',
-                isOtpEnabled: false,
-                registeredAt: 1475568334,
-                lang: 'en',
-                elyProfileLink: 'http://ely.by/u7',
-                email: 'danilenkos@auroraglobal.com',
-                isActive: true,
-                isDeleted: false,
-                passwordChangedAt: 1476075696,
-                hasMojangUsernameCollision: true,
-                shouldAcceptRules: true, // force user to accept updated user agreement
-            } as UserResponse,
-        });
+        cy.intercept('GET', `/api/v1/accounts/${account1.id}`, {
+            id: 7,
+            uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+            username: 'SleepWalker',
+            isOtpEnabled: false,
+            registeredAt: 1475568334,
+            lang: 'en',
+            elyProfileLink: 'http://ely.by/u7',
+            email: 'danilenkos@auroraglobal.com',
+            isActive: true,
+            isDeleted: false,
+            passwordChangedAt: 1476075696,
+            hasMojangUsernameCollision: true,
+            shouldAcceptRules: true, // force user to accept updated user agreement
+        } as UserResponse);
 
         cy.get('[type=submit]').click();
 
@@ -230,26 +209,21 @@ describe('Sign in / Log out', () => {
         cy.get('[name=password]').type(account1.password);
         cy.get('[name=rememberMe]').should('be.checked');
 
-        cy.server();
-        cy.route({
-            method: 'GET',
-            url: `/api/v1/accounts/${account1.id}`,
-            response: {
-                id: 7,
-                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                username: 'SleepWalker',
-                isOtpEnabled: false,
-                registeredAt: 1475568334,
-                lang: 'en',
-                elyProfileLink: 'http://ely.by/u7',
-                email: 'danilenkos@auroraglobal.com',
-                isActive: true,
-                isDeleted: false,
-                passwordChangedAt: 1476075696,
-                hasMojangUsernameCollision: true,
-                shouldAcceptRules: true, // force user to accept updated user agreement
-            } as UserResponse,
-        });
+        cy.intercept('GET', `/api/v1/accounts/${account1.id}`, {
+            id: 7,
+            uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+            username: 'SleepWalker',
+            isOtpEnabled: false,
+            registeredAt: 1475568334,
+            lang: 'en',
+            elyProfileLink: 'http://ely.by/u7',
+            email: 'danilenkos@auroraglobal.com',
+            isActive: true,
+            isDeleted: false,
+            passwordChangedAt: 1476075696,
+            hasMojangUsernameCollision: true,
+            shouldAcceptRules: true, // force user to accept updated user agreement
+        } as UserResponse);
 
         cy.get('[type=submit]').click();
 
@@ -259,34 +233,27 @@ describe('Sign in / Log out', () => {
 
         cy.location('pathname').should('eq', '/profile/delete');
 
-        cy.route({
-            method: 'DELETE',
-            url: `/api/v1/accounts/${account1.id}`,
-        }).as('deleteAccount');
-        cy.route({
-            method: 'GET',
-            url: `/api/v1/accounts/${account1.id}`,
-            response: {
-                id: 7,
-                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                username: 'SleepWalker',
-                isOtpEnabled: false,
-                registeredAt: 1475568334,
-                lang: 'en',
-                elyProfileLink: 'http://ely.by/u7',
-                email: 'danilenkos@auroraglobal.com',
-                isActive: true,
-                isDeleted: true, // mock deleted state since the delete will not perform the real request
-                passwordChangedAt: 1476075696,
-                hasMojangUsernameCollision: true,
-                shouldAcceptRules: true, // rules still aren't accepted
-            } as UserResponse,
-        });
+        cy.intercept('DELETE', `/api/v1/accounts/${account1.id}`).as('deleteAccount');
+        cy.intercept('GET', `/api/v1/accounts/${account1.id}`, {
+            id: 7,
+            uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+            username: 'SleepWalker',
+            isOtpEnabled: false,
+            registeredAt: 1475568334,
+            lang: 'en',
+            elyProfileLink: 'http://ely.by/u7',
+            email: 'danilenkos@auroraglobal.com',
+            isActive: true,
+            isDeleted: true, // mock deleted state since the delete will not perform the real request
+            passwordChangedAt: 1476075696,
+            hasMojangUsernameCollision: true,
+            shouldAcceptRules: true, // rules still aren't accepted
+        } as UserResponse);
 
         cy.get('[type=submit]').click();
 
         cy.wait('@deleteAccount')
-            .its('requestBody')
+            .its('request.body')
             .should(
                 'eq',
                 new URLSearchParams({
@@ -294,16 +261,12 @@ describe('Sign in / Log out', () => {
                 }).toString(),
             );
 
-        cy.route({
-            method: 'DELETE',
-            url: `/api/v1/accounts/${account1.id}`,
-            response: { success: true },
-        }).as('deleteAccount');
+        cy.intercept('DELETE', `/api/v1/accounts/${account1.id}`, { success: true }).as('deleteAccount');
 
         confirmWithPassword(account1.password);
 
         cy.wait('@deleteAccount')
-            .its('requestBody')
+            .its('request.body')
             .should(
                 'eq',
                 new URLSearchParams({

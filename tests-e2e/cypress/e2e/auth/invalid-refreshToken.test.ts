@@ -80,18 +80,12 @@ describe('User with invalid token and refreshToken', () => {
     });
 
     it('should allow logout', () => {
-        cy.server();
-        cy.route({
-            url: `/api/v1/accounts/${account2.id}`,
-        }).as('account');
-        cy.route({
-            method: 'POST',
-            url: '/api/authentication/logout',
-        }).as('logout');
+        cy.intercept(`/api/v1/accounts/${account2.id}`).as('account');
+        cy.intercept('POST', '/api/authentication/logout').as('logout');
 
         cy.visit('/');
 
-        cy.wait('@account').its('status').should('eq', 401);
+        cy.wait('@account').its('response.statusCode').should('eq', 401);
 
         cy.findByTestId('toolbar').contains(account2.username).click();
         cy.findByTestId('toolbar').contains('Log out').click();
@@ -102,20 +96,16 @@ describe('User with invalid token and refreshToken', () => {
     });
 
     it('should allow enter new login from choose account', () => {
-        cy.server();
-        cy.route({
-            url: `/api/v1/accounts/${account2.id}`,
-        }).as('account');
+        cy.intercept(`/api/v1/accounts/${account2.id}`).as('account');
 
         cy.visit('/');
 
-        cy.wait('@account').its('status').should('eq', 401);
+        cy.wait('@account').its('response.statusCode').should('eq', 401);
 
         cy.url().should('include', '/password');
 
         cy.get('[data-e2e-go-back]').click();
 
-        cy.get('[name=password]').should('not.exist'); // wait till panel transition end
         cy.url().should('include', '/choose-account');
 
         cy.contains('Log into another').click();
@@ -128,7 +118,6 @@ describe('User with invalid token and refreshToken', () => {
 
         cy.get('[name=password]').type(account1.password);
         cy.get('[name=rememberMe]').should('be.checked');
-        cy.get('[type=submit]').should('have.length', 1); // wait till transition ends
         cy.get('[type=submit]').click();
 
         cy.location('pathname').should('eq', '/');
@@ -160,9 +149,6 @@ describe('User with invalid token and refreshToken', () => {
 
         cy.url().should('include', '/password');
 
-        // TODO: remove wait and fix logic so that
-        // it won't show 'Please enter E‑mail or username' error
-        cy.wait(1000);
         cy.get('[name="password"]').type(`${account1.password}{enter}`);
 
         cy.location('pathname').should('eq', '/');
@@ -189,7 +175,6 @@ describe('User with invalid token and refreshToken', () => {
         cy.url().should('contain', '/password');
 
         cy.get('[data-e2e-go-back]').click();
-        cy.get('[name=password]').should('not.exist'); // wait till panel transition end
         cy.contains('[type=submit]', 'Log into another account').click();
         cy.contains('a', 'Create new account').click();
 

@@ -1,34 +1,44 @@
 import '@testing-library/cypress/add-commands';
 
-import { account1, account2 } from '../fixtures/accounts';
+import { account1, account2 } from '../fixtures/accounts.json';
 
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+// During a panel transition PanelTransition (app/components/auth/PanelTransition.tsx) keeps both the leaving
+// and the entering panels in the DOM. Each panel is marked with `data-e2e-panel-active`, so the queries below
+// ignore everything inside an inactive panel and tests don't need to know about the transitions at all.
+const panelAwareQueries: Array<keyof Cypress.Chainable> = [
+    'get',
+    'contains',
+    'findByLabelText',
+    'findAllByLabelText',
+    'findByPlaceholderText',
+    'findAllByPlaceholderText',
+    'findByText',
+    'findAllByText',
+    'findByDisplayValue',
+    'findAllByDisplayValue',
+    'findByAltText',
+    'findAllByAltText',
+    'findByTitle',
+    'findAllByTitle',
+    'findByRole',
+    'findAllByRole',
+    'findByTestId',
+    'findAllByTestId',
+];
 
-const accountsMap = {
+panelAwareQueries.forEach((command) => {
+    Cypress.Commands.overwriteQuery(command, function (originalFn, ...args) {
+        const getElements = originalFn.apply(this, args);
+
+        return (subject: unknown) => {
+            return getElements(subject).filter(
+                (_index: number, el: HTMLElement) => !el.closest('[data-e2e-panel-active="false"]'),
+            );
+        };
+    });
+});
+
+const accountsMap: Record<AccountAlias, typeof account1> = {
     default: account1,
     default2: account2,
 };
@@ -36,14 +46,10 @@ const accountsMap = {
 Cypress.Commands.add('login', async ({ accounts, updateState = true, rawApiResp = false }) => {
     const accountsData = await Promise.all(
         accounts.map(async (account) => {
-            let credentials;
+            const credentials = accountsMap[account];
 
-            if (account) {
-                credentials = accountsMap[account];
-
-                if (!credentials) {
-                    throw new Error(`Unknown account name: ${account}`);
-                }
+            if (!credentials) {
+                throw new Error(`Unknown account name: ${account}`);
             }
 
             const resp = await fetch('/api/authentication/login', {
@@ -82,7 +88,7 @@ Cypress.Commands.add('login', async ({ accounts, updateState = true, rawApiResp 
     return { accounts: accountsData };
 });
 
-function createState(accounts) {
+function createState(accounts: Array<{ id: number }>) {
     return {
         accounts: {
             available: accounts,

@@ -24,12 +24,7 @@ describe('Change locale', () => {
 
     it('should change locale from the profile', () => {
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/language`,
-                response: { success: true },
-            }).as('language');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/language`, { success: true }).as('language');
         });
 
         cy.visit('/');
@@ -41,7 +36,7 @@ describe('Change locale', () => {
 
         cy.findByTestId('languages-list-item').contains('Belarusian').click();
 
-        cy.wait('@language').its('requestBody').should('eq', 'lang=be');
+        cy.wait('@language').its('request.body').should('eq', 'lang=be');
 
         cy.findByTestId('language-switcher').should('not.be.visible');
         cy.findByTestId('profile-index').should('contain', 'Беларуская');

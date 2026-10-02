@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { CaptchaID } from 'app/services/captcha';
 import { Skin } from 'app/components/ui';
-import captcha from 'app/services/captcha';
+import captcha, { registerE2eCallback } from 'app/services/captcha';
 import logger from 'app/services/logger';
 import { ComponentLoader } from 'app/components/ui/loader';
 
@@ -26,7 +26,11 @@ export default class Captcha extends FormInputComponent<
         delay: 0,
     };
 
+    unregisterE2eCallback?: () => void;
+
     componentDidMount() {
+        this.unregisterE2eCallback = registerE2eCallback(this.setCode);
+
         setTimeout(() => {
             const { current: el } = this.elRef;
 
@@ -45,6 +49,10 @@ export default class Captcha extends FormInputComponent<
                         });
                     });
         }, this.props.delay);
+    }
+
+    componentWillUnmount() {
+        this.unregisterE2eCallback?.();
     }
 
     render() {

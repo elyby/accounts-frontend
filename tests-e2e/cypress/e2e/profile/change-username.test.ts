@@ -4,33 +4,24 @@ import { openSectionByName, confirmWithPassword } from './utils';
 
 describe('Profile — Change Username', () => {
     it('should change username', () => {
-        cy.server();
-
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.route({
-                method: 'GET',
-                url: `/api/v1/accounts/${account.id}`,
-                response: {
-                    id: 7,
-                    uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                    username: 'FooBar',
-                    isOtpEnabled: false,
-                    registeredAt: 1475568334,
-                    lang: 'en',
-                    elyProfileLink: 'http://ely.by/u7',
-                    email: 'danilenkos@auroraglobal.com',
-                    isActive: true,
-                    isDeleted: false,
-                    passwordChangedAt: 1476075696,
-                    hasMojangUsernameCollision: true,
-                    shouldAcceptRules: false,
-                } as UserResponse,
-            });
+            cy.intercept('GET', `/api/v1/accounts/${account.id}`, {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: 'FooBar',
+                isOtpEnabled: false,
+                registeredAt: 1475568334,
+                lang: 'en',
+                elyProfileLink: 'http://ely.by/u7',
+                email: 'danilenkos@auroraglobal.com',
+                isActive: true,
+                isDeleted: false,
+                passwordChangedAt: 1476075696,
+                hasMojangUsernameCollision: true,
+                shouldAcceptRules: false,
+            } as UserResponse);
 
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/username`,
-            }).as('username');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/username`).as('username');
 
             cy.visit('/');
 
@@ -41,13 +32,10 @@ describe('Profile — Change Username', () => {
             cy.get('[name=username]').type(`{selectall}${account.username}{enter}`);
 
             // unmock accounts route
-            cy.route({
-                method: 'GET',
-                url: `/api/v1/accounts/${account.id}`,
-            });
+            cy.intercept('GET', `/api/v1/accounts/${account.id}`, (req) => req.continue());
 
             cy.wait('@username')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -59,7 +47,7 @@ describe('Profile — Change Username', () => {
             confirmWithPassword(account.password);
 
             cy.wait('@username')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({

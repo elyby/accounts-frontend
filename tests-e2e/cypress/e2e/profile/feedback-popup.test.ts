@@ -5,12 +5,7 @@ describe('feedback popup', () => {
         const subject = 'Hello world';
         const message = 'This is a feedback message';
 
-        cy.server();
-        cy.route({
-            url: '/api/feedback',
-            method: 'POST',
-            response: { success: true },
-        });
+        cy.intercept('POST', '/api/feedback', { success: true });
 
         cy.login({ accounts: ['default'] });
 

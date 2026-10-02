@@ -44,11 +44,7 @@ describe('OAuth', () => {
 
         describe('static pages', () => {
             it('should authenticate using static page', () => {
-                cy.server();
-                cy.route({
-                    method: 'POST',
-                    url: '/api/oauth2/v1/complete**',
-                }).as('complete');
+                cy.intercept('POST', '/api/oauth2/v1/complete**').as('complete');
 
                 cy.login({ accounts: ['default'] });
 
@@ -66,11 +62,7 @@ describe('OAuth', () => {
             });
 
             it('should authenticate using static page with code', () => {
-                cy.server();
-                cy.route({
-                    method: 'POST',
-                    url: '/api/oauth2/v1/complete**',
-                }).as('complete');
+                cy.intercept('POST', '/api/oauth2/v1/complete**').as('complete');
 
                 cy.login({ accounts: ['default'] });
 
@@ -200,19 +192,15 @@ describe('OAuth', () => {
     describe('Permissions prompt', () => {
         // TODO: remove api mocks, when we will be able to revoke permissions
         it('should prompt for permissions', () => {
-            cy.server();
-
-            cy.route({
-                method: 'POST',
+            cy.intercept('POST', new RegExp('/api/oauth2/v1/complete'), {
                 // NOTE: can not use cypress glob syntax, because it will break due to
                 // '%2F%2F' (//) in redirect_uri
-                // url: '/api/oauth2/v1/complete/*',
-                url: new RegExp('/api/oauth2/v1/complete'),
-                response: {
+                // '/api/oauth2/v1/complete/*',
+                statusCode: 401,
+                body: {
                     statusCode: 401,
                     error: 'accept_required',
                 },
-                status: 401,
             }).as('complete');
 
             cy.login({ accounts: ['default'] });
@@ -230,7 +218,8 @@ describe('OAuth', () => {
 
             assertPermissions();
 
-            cy.server({ enable: false });
+            // stop stubbing so the click below hits the real backend
+            cy.intercept('POST', new RegExp('/api/oauth2/v1/complete'), (req) => req.continue());
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
@@ -238,19 +227,15 @@ describe('OAuth', () => {
         });
 
         it('should redirect to error page, when permission request declined', () => {
-            cy.server();
-
-            cy.route({
-                method: 'POST',
+            cy.intercept('POST', new RegExp('/api/oauth2/v1/complete'), {
                 // NOTE: can not use cypress glob syntax, because it will break due to
                 // '%2F%2F' (//) in redirect_uri
-                // url: '/api/oauth2/v1/complete/*',
-                url: new RegExp('/api/oauth2/v1/complete'),
-                response: {
+                // '/api/oauth2/v1/complete/*',
+                statusCode: 401,
+                body: {
                     statusCode: 401,
                     error: 'accept_required',
                 },
-                status: 401,
             }).as('complete');
 
             cy.login({ accounts: ['default'] });
@@ -267,7 +252,8 @@ describe('OAuth', () => {
 
             assertPermissions();
 
-            cy.server({ enable: false });
+            // stop stubbing so the click below hits the real backend
+            cy.intercept('POST', new RegExp('/api/oauth2/v1/complete'), (req) => req.continue());
 
             cy.findByTestId('auth-controls-secondary').contains('Decline').click();
 
@@ -342,25 +328,16 @@ describe('OAuth', () => {
 
             cy.url().should('include', '/password');
 
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: '/api/authentication/login',
-                response: {
-                    success: false,
-                    errors: { totp: 'error.totp_required' },
-                },
+            cy.intercept('POST', '/api/authentication/login', {
+                success: false,
+                errors: { totp: 'error.totp_required' },
             });
 
             cy.get('[name=password]').type(`${account1.password}{enter}`);
 
             cy.url().should('include', '/mfa');
 
-            // Undo request response mock
-            cy.route({
-                method: 'POST',
-                url: '/api/authentication/login',
-            });
+            cy.intercept('POST', '/api/authentication/login', (req) => req.continue());
 
             cy.get('[name=totp]').type('123456{enter}');
 
@@ -371,26 +348,21 @@ describe('OAuth', () => {
     describe('Deleted account', () => {
         it('should show account switcher and then abort oauth and redirect to profile', () => {
             cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-                cy.server();
-                cy.route({
-                    method: 'GET',
-                    url: `/api/v1/accounts/${account1.id}`,
-                    response: {
-                        id: account.id,
-                        uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                        username: account.username,
-                        isOtpEnabled: false,
-                        registeredAt: 1475568334,
-                        lang: 'en',
-                        elyProfileLink: 'http://ely.by/u7',
-                        email: account.email,
-                        isActive: true,
-                        isDeleted: true, // force user into the deleted state
-                        passwordChangedAt: 1476075696,
-                        hasMojangUsernameCollision: true,
-                        shouldAcceptRules: false,
-                    } as UserResponse,
-                });
+                cy.intercept('GET', `/api/v1/accounts/${account1.id}`, {
+                    id: account.id,
+                    uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                    username: account.username,
+                    isOtpEnabled: false,
+                    registeredAt: 1475568334,
+                    lang: 'en',
+                    elyProfileLink: 'http://ely.by/u7',
+                    email: account.email,
+                    isActive: true,
+                    isDeleted: true, // force user into the deleted state
+                    passwordChangedAt: 1476075696,
+                    hasMojangUsernameCollision: true,
+                    shouldAcceptRules: false,
+                } as UserResponse);
 
                 cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
@@ -412,26 +384,21 @@ describe('OAuth', () => {
 
             cy.url().should('include', '/password');
 
-            cy.server();
-            cy.route({
-                method: 'GET',
-                url: `/api/v1/accounts/${account1.id}`,
-                response: {
-                    id: 7,
-                    uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                    username: 'SleepWalker',
-                    isOtpEnabled: false,
-                    registeredAt: 1475568334,
-                    lang: 'en',
-                    elyProfileLink: 'http://ely.by/u7',
-                    email: 'danilenkos@auroraglobal.com',
-                    isActive: true,
-                    isDeleted: true, // force user into the deleted state
-                    passwordChangedAt: 1476075696,
-                    hasMojangUsernameCollision: true,
-                    shouldAcceptRules: false,
-                } as UserResponse,
-            });
+            cy.intercept('GET', `/api/v1/accounts/${account1.id}`, {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: 'SleepWalker',
+                isOtpEnabled: false,
+                registeredAt: 1475568334,
+                lang: 'en',
+                elyProfileLink: 'http://ely.by/u7',
+                email: 'danilenkos@auroraglobal.com',
+                isActive: true,
+                isDeleted: true, // force user into the deleted state
+                passwordChangedAt: 1476075696,
+                hasMojangUsernameCollision: true,
+                shouldAcceptRules: false,
+            } as UserResponse);
 
             cy.get('[name=password]').type(`${account1.password}{enter}`);
 

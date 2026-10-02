@@ -7,11 +7,9 @@ describe('Profile — mfa', () => {
         const totp = 'totp123';
 
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/two-factor-auth`,
-                response: { success: false, errors: { password: 'foo' } },
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/two-factor-auth`, {
+                success: false,
+                errors: { password: 'foo' },
             }).as('mfaSaved');
 
             cy.visit('/');
@@ -38,7 +36,7 @@ describe('Profile — mfa', () => {
             cy.get('[name=totp]').type(`${totp}{enter}`);
 
             cy.wait('@mfaSaved')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -47,35 +45,29 @@ describe('Profile — mfa', () => {
                     }).toString(),
                 );
 
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/two-factor-auth`,
-                response: { success: true },
-            }).as('mfaSaved');
-            cy.route({
-                method: 'GET',
-                url: `/api/v1/accounts/${account.id}`,
-                response: {
-                    id: 7,
-                    uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                    username: 'SleepWalker',
-                    isOtpEnabled: true, // fake enabled mfa
-                    registeredAt: 1475568334,
-                    lang: 'en',
-                    elyProfileLink: 'http://ely.by/u7',
-                    email: 'danilenkos@auroraglobal.com',
-                    isActive: true,
-                    isDeleted: false,
-                    passwordChangedAt: 1476075696,
-                    hasMojangUsernameCollision: true,
-                    shouldAcceptRules: false,
-                } as UserResponse,
-            });
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/two-factor-auth`, { success: true }).as(
+                'mfaSaved',
+            );
+            cy.intercept('GET', `/api/v1/accounts/${account.id}`, {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: 'SleepWalker',
+                isOtpEnabled: true, // fake enabled mfa
+                registeredAt: 1475568334,
+                lang: 'en',
+                elyProfileLink: 'http://ely.by/u7',
+                email: 'danilenkos@auroraglobal.com',
+                isActive: true,
+                isDeleted: false,
+                passwordChangedAt: 1476075696,
+                hasMojangUsernameCollision: true,
+                shouldAcceptRules: false,
+            } as UserResponse);
 
             confirmWithPassword(account.password);
 
             cy.wait('@mfaSaved')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -93,30 +85,24 @@ describe('Profile — mfa', () => {
         const totp = 'totp123';
 
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'GET',
-                url: `/api/v1/accounts/${account.id}`,
-                response: {
-                    id: 7,
-                    uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
-                    username: 'SleepWalker',
-                    isOtpEnabled: true, // fake enabled mfa
-                    registeredAt: 1475568334,
-                    lang: 'en',
-                    elyProfileLink: 'http://ely.by/u7',
-                    email: 'danilenkos@auroraglobal.com',
-                    isActive: true,
-                    isDeleted: false,
-                    passwordChangedAt: 1476075696,
-                    hasMojangUsernameCollision: true,
-                    shouldAcceptRules: false,
-                } as UserResponse,
-            });
-            cy.route({
-                method: 'DELETE',
-                url: `/api/v1/accounts/${account.id}/two-factor-auth`,
-                response: { success: false, errors: { password: 'foo' } },
+            cy.intercept('GET', `/api/v1/accounts/${account.id}`, {
+                id: 7,
+                uuid: '522e8c19-89d8-4a6d-a2ec-72ebb58c2dbe',
+                username: 'SleepWalker',
+                isOtpEnabled: true, // fake enabled mfa
+                registeredAt: 1475568334,
+                lang: 'en',
+                elyProfileLink: 'http://ely.by/u7',
+                email: 'danilenkos@auroraglobal.com',
+                isActive: true,
+                isDeleted: false,
+                passwordChangedAt: 1476075696,
+                hasMojangUsernameCollision: true,
+                shouldAcceptRules: false,
+            } as UserResponse);
+            cy.intercept('DELETE', `/api/v1/accounts/${account.id}/two-factor-auth`, {
+                success: false,
+                errors: { password: 'foo' },
             }).as('mfaSaved');
 
             cy.visit('/');
@@ -131,7 +117,7 @@ describe('Profile — mfa', () => {
             cy.get('[name=totp]').type(`${totp}{enter}`);
 
             cy.wait('@mfaSaved')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -140,21 +126,16 @@ describe('Profile — mfa', () => {
                     }).toString(),
                 );
 
-            cy.route({
-                method: 'DELETE',
-                url: `/api/v1/accounts/${account.id}/two-factor-auth`,
-                response: { success: true },
-            }).as('mfaSaved');
+            cy.intercept('DELETE', `/api/v1/accounts/${account.id}/two-factor-auth`, { success: true }).as(
+                'mfaSaved',
+            );
             // unmock accounts route
-            cy.route({
-                method: 'GET',
-                url: `/api/v1/accounts/${account.id}`,
-            });
+            cy.intercept('GET', `/api/v1/accounts/${account.id}`, (req) => req.continue());
 
             confirmWithPassword(account.password);
 
             cy.wait('@mfaSaved')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({

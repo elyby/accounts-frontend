@@ -7,6 +7,19 @@ let sitekey: string;
 
 export type CaptchaID = string;
 
+// For E2E testing purposes only: lets tests pass the captcha by calling `window.e2eCaptchaSetCode(code)`.
+// The code is passed to every mounted captcha, so a test doesn't depend on which one of them (e.g. during
+// a panel transition) was rendered last
+const e2eCallbacks = new Set<(code: string) => void>();
+
+(window as any).e2eCaptchaSetCode = (code: string) => e2eCallbacks.forEach((callback) => callback(code));
+
+export function registerE2eCallback(callback: (code: string) => void): () => void {
+    e2eCallbacks.add(callback);
+
+    return () => e2eCallbacks.delete(callback);
+}
+
 class Captcha {
     /**
      * @param {DOMNode|string} el - dom node or id of element where to render captcha
@@ -27,9 +40,6 @@ class Captcha {
             onSetCode: (code: string) => void;
         },
     ): Promise<CaptchaID> {
-        // for testing purposes only
-        (window as any).e2eCaptchaSetCode = callback;
-
         return this.loadApi().then(() =>
             (window as any).grecaptcha.render(el, {
                 sitekey,
@@ -43,8 +53,6 @@ class Captcha {
      * @param {string} captchaId - captcha id, returned from render promise
      */
     reset(captchaId: CaptchaID) {
-        delete (window as any).e2eCaptchaSetCode;
-
         this.loadApi().then(() => (window as any).grecaptcha.reset(captchaId));
     }
 

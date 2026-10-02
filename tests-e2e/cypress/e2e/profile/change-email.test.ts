@@ -6,21 +6,11 @@ describe('Profile — Change Email', () => {
         const key2 = 'key1232';
 
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/email-verification`,
-            }).as('requestEmailChange');
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/new-email-verification`,
-                response: { success: true },
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/email-verification`).as('requestEmailChange');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/new-email-verification`, {
+                success: true,
             }).as('verifyNewEmail');
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/email`,
-                response: { success: true },
-            }).as('saveEmail');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/email`, { success: true }).as('saveEmail');
 
             cy.visit('/');
 
@@ -31,7 +21,7 @@ describe('Profile — Change Email', () => {
             cy.contains('Send E‑mail').click();
 
             cy.wait('@requestEmailChange')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -39,16 +29,14 @@ describe('Profile — Change Email', () => {
                     }).toString(),
                 );
 
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/email-verification`,
-                response: { success: true },
-            }).as('requestEmailChange');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/email-verification`, { success: true }).as(
+                'requestEmailChange',
+            );
 
             confirmWithPassword(account.password);
 
             cy.wait('@requestEmailChange')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -63,7 +51,7 @@ describe('Profile — Change Email', () => {
             cy.findByTestId('step2').find('[name=email]').type(`${account.email}{enter}`);
 
             cy.wait('@verifyNewEmail')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -78,7 +66,7 @@ describe('Profile — Change Email', () => {
             cy.findByTestId('step3').find('[name=key]').type(`${key2}{enter}`);
 
             cy.wait('@saveEmail')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -107,11 +95,8 @@ describe('Profile — Change Email', () => {
         const key = 'key123';
 
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/new-email-verification`,
-                response: { success: true },
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/new-email-verification`, {
+                success: true,
             }).as('verifyNewEmail');
 
             cy.visit(`/profile/change-email/step2/${key}`);
@@ -121,7 +106,7 @@ describe('Profile — Change Email', () => {
             cy.findByTestId('step2').find('[name=email]').type(`${account.email}{enter}`);
 
             cy.wait('@verifyNewEmail')
-                .its('requestBody')
+                .its('request.body')
                 .should(
                     'eq',
                     new URLSearchParams({
@@ -138,12 +123,7 @@ describe('Profile — Change Email', () => {
         const key = 'key123';
 
         cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: `/api/v1/accounts/${account.id}/email`,
-                response: { success: true },
-            }).as('saveEmail');
+            cy.intercept('POST', `/api/v1/accounts/${account.id}/email`, { success: true }).as('saveEmail');
 
             cy.visit(`/profile/change-email/step3/${key}`);
 
@@ -152,7 +132,7 @@ describe('Profile — Change Email', () => {
 
             cy.findByTestId('change-email').find('[type=submit]').click();
 
-            cy.wait('@saveEmail').its('requestBody').should(
+            cy.wait('@saveEmail').its('request.body').should(
                 'eq',
                 new URLSearchParams({
                     key,

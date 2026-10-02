@@ -51,8 +51,6 @@ module.exports = {
             },
             rules: {
                 'no-restricted-globals': 'off',
-                // Cypress plugins/index.js is a plain Node CommonJS file
-                '@typescript-eslint/no-require-imports': 'off',
                 // chai's `expect().to.be.true`-style assertions are bare member expressions
                 // (no call at the end), which this rule otherwise flags as a no-op
                 '@typescript-eslint/no-unused-expressions': 'off',

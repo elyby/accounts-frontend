@@ -4,7 +4,7 @@
     "description": "account.ely.by e2e test suit",
     "main": "index.js",
     "scripts": {
-        "test": "cypress open",
+        "test": "cypress open --e2e --browser chromium",
         "test:ci": "cypress run"
     },
     "keywords": [],
@@ -12,9 +12,7 @@
     "license": "UNLICENSED",
     "private": true,
     "dependencies": {
-        "@cypress/webpack-preprocessor": "^5.4.1",
-        "@testing-library/cypress": "^6.0.0",
-        "@types/testing-library__cypress": "^5.0.5",
-        "cypress": "^4.6.0"
+        "@testing-library/cypress": "^10.0.3",
+        "cypress": "^16.1.1"
     }
 }
