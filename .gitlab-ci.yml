@@ -175,6 +175,12 @@ Storybook:
   image: $DEPLOY_IMAGE
   needs:
     - Build
+  dependencies:
+    - Build
+  variables:
+    GIT_STRATEGY: none
+    DEPLOY_HOST: 167.235.12.151
+    DEPLOY_PORT: 4534
   before_script:
     - *defineVars
     - *installSentry
@@ -182,13 +188,14 @@ Storybook:
     - apk add rsync
   script:
     # Send release to the Sentry
-    - sentry-cli releases new $VERSION
-    - sentry-cli releases set-commits --commit "elyby/accounts-frontend@${CI_COMMIT_SHA}" $VERSION
-    - sentry-cli sourcemaps upload --release=$VERSION source-maps
-    - rsync -v -a -r --delete-after -e "ssh -J deploy@ely.by:4534 -p 722" build/ "root@${VM_HOST_NAME}:${VM_DEPLOY_PATH}"
+    - sentry-cli releases new "$VERSION"
+    - sentry-cli releases set-commits --commit "elyby/accounts-frontend@${CI_COMMIT_SHA}" "$VERSION"
+    - sentry-cli sourcemaps upload --release="$VERSION" source-maps
+    # Deploy
+    - rsync -v -a -r --delete-after -e "ssh -p ${DEPLOY_PORT:-22}" build/ "${DEPLOY_USER:-root}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
     # Finalize Sentry's release
-    - sentry-cli releases deploys $VERSION new -e $CI_ENVIRONMENT_NAME
-    - sentry-cli releases finalize $VERSION
+    - sentry-cli releases deploys "$VERSION" new -e "$CI_ENVIRONMENT_NAME"
+    - sentry-cli releases finalize "$VERSION"
 
 Dev:
   extends:
@@ -196,9 +203,12 @@ Dev:
   environment:
     name: Development
   variables:
-    VM_HOST_NAME: playground.ely.local
-    VM_DEPLOY_PATH: /srv/dev.account.ely.by/frontend
+    DEPLOY_PATH: /srv/account.dev.ely.by/frontend
   rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip deploy\]/'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: on_success
     - if: '$CI_COMMIT_MESSAGE =~ /\[deploy dev\]/'
@@ -209,13 +219,15 @@ Dev:
 Prod:
   extends:
     - .deployJob
-  stage: deploy
   environment:
     name: Production
   variables:
-    VM_HOST_NAME: accounts.ely.local
-    VM_DEPLOY_PATH: /srv/frontend
+    DEPLOY_PATH: /srv/account.ely.by/frontend
   rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip deploy\]/'
+      when: never
     - if: '$CI_COMMIT_BRANCH != "master"'
       when: never
     - if: '$CI_COMMIT_MESSAGE =~ /\[deploy\]/'
