@@ -6,7 +6,6 @@ import { State as AuthState } from './reducer';
 export interface AuthContext {
     auth: AuthState;
     user: User;
-    requestRedraw: () => Promise<void>;
     clearErrors: () => void;
     resolve: (payload: Record<string, any> | undefined) => Promise<any> | void;
     reject: (payload: Record<string, any> | undefined) => Promise<any> | void;
@@ -22,7 +21,6 @@ const Context = React.createContext<AuthContext>({
         id: null,
         isGuest: true,
     } as any,
-    async requestRedraw() {},
     clearErrors() {},
     resolve() {},
     reject() {},

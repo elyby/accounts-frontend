@@ -28,8 +28,6 @@ export default class ChooseAccountBody extends BaseAuthBody {
 
         return (
             <div>
-                {this.renderErrors()}
-
                 <div className={styles.description}>
                     {client ? (
                         <Message

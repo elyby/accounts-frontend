@@ -1,13 +1,12 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import AuthError from 'app/components/auth/authError/AuthError';
 import { FormModel } from 'app/components/ui/form';
 
 import Context, { AuthContext } from './Context';
 
 /**
- * Helps with form fields binding, form serialization and errors rendering
+ * Helps with form fields binding and form serialization
  */
 
 class BaseAuthBody extends React.Component<
@@ -27,27 +26,14 @@ class BaseAuthBody extends React.Component<
     componentDidUpdate() {
         if (this.context.auth.error !== this.prevErrors) {
             this.form.setErrors(this.context.auth.error || {});
-            this.context.requestRedraw();
         }
 
         this.prevErrors = this.context.auth.error;
     }
 
-    renderErrors(): ReactNode {
-        const error = this.form.getFirstError();
-
-        if (error === null) {
-            return null;
-        }
-
-        return <AuthError error={error} onClose={this.onClearErrors} />;
-    }
-
     onFormSubmit() {
         this.context.resolve(this.serialize());
     }
-
-    onClearErrors = () => this.context.clearErrors();
 
     form = new FormModel({
         renderErrors: false,

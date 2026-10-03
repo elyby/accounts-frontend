@@ -21,8 +21,6 @@ export default class LoginBody extends BaseAuthBody {
     render() {
         return (
             <div>
-                {this.renderErrors()}
-
                 <Input {...this.bindField('login')} icon="envelope" required placeholder={messages.emailOrUsername} />
             </div>
         );

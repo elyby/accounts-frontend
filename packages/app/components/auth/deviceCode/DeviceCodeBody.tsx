@@ -15,8 +15,6 @@ export default class DeviceCodeBody extends BaseAuthBody {
     render() {
         return (
             <>
-                {this.renderErrors()}
-
                 <div className={style.icon} />
 
                 <div className={style.description}>

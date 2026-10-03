@@ -19,8 +19,6 @@ export default class MfaBody extends BaseAuthBody {
     render() {
         return (
             <div>
-                {this.renderErrors()}
-
                 <PanelIcon icon="lock" />
 
                 <p className={styles.descriptionText}>

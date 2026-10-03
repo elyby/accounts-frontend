@@ -11,38 +11,18 @@ interface Props {
 }
 
 interface State {
-    version: string;
-    prevChildren: React.ReactNode | undefined;
     stepsHeights: Record<Props['activeStep'], number>;
 }
 
 class SlideMotion extends React.PureComponent<Props, State> {
     state: State = {
-        prevChildren: undefined, // to track version updates
-        version: `${this.props.activeStep}.0`,
         stepsHeights: [],
     };
 
     private isHeightMeasured: boolean;
 
-    static getDerivedStateFromProps(props: Props, state: State) {
-        let [, version] = state.version.split('.').map(Number);
-
-        if (props.children !== state.prevChildren) {
-            version++;
-        }
-
-        // mark this view as dirty to re-measure height
-        return {
-            prevChildren: props.children,
-            version: `${props.activeStep}.${version}`,
-        };
-    }
-
     render() {
         const { activeStep, children } = this.props;
-
-        const { version } = this.state;
 
         const activeStepHeight = this.state.stepsHeights[activeStep] || 0;
 
@@ -85,7 +65,6 @@ class SlideMotion extends React.PureComponent<Props, State> {
                                 <MeasureHeight
                                     className={styles.item}
                                     onMeasure={this.onStepMeasure(index)}
-                                    state={version}
                                     key={index}
                                 >
                                     {child}

@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useState, useCallback } from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 import clsx from 'clsx';
 
 import styles from './panel.scss';
@@ -58,22 +58,15 @@ interface PanelBodyHeaderProps extends PropsWithChildren<any> {
 }
 
 export const PanelBodyHeader: FC<PanelBodyHeaderProps> = ({ type = 'default', onClose, children, ...props }) => {
-    const [isClosed, setIsClosed] = useState<boolean>(false);
-    const handleCloseClick = useCallback(() => {
-        setIsClosed(true);
-        onClose?.();
-    }, [onClose]);
-
     return (
         <div
             className={clsx({
                 [styles.defaultBodyHeader]: type === 'default',
                 [styles.errorBodyHeader]: type === 'error',
-                [styles.isClosed]: isClosed,
             })}
             {...props}
         >
-            {type === 'error' && <span className={styles.close} onClick={handleCloseClick} />}
+            {type === 'error' && <span className={styles.close} onClick={onClose} />}
             {children}
         </div>
     );

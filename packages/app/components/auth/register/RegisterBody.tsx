@@ -23,8 +23,6 @@ export default class RegisterBody extends BaseAuthBody {
     render() {
         return (
             <div>
-                {this.renderErrors()}
-
                 <Input
                     {...this.bindField('username')}
                     icon="user"

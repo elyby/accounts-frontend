@@ -23,8 +23,6 @@ export default class PermissionsBody extends BaseAuthBody {
 
         return (
             <div>
-                {this.renderErrors()}
-
                 <PanelBodyHeader>
                     <div className={styles.authInfo}>
                         <div className={styles.authInfoAvatar}>

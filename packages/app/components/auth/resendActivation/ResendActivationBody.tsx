@@ -20,8 +20,6 @@ export default class ResendActivation extends BaseAuthBody {
     render() {
         return (
             <div>
-                {this.renderErrors()}
-
                 <div className={styles.description}>
                     <Message
                         key="specifyYourEmail"

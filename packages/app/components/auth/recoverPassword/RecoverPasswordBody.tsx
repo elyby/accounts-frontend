@@ -28,8 +28,6 @@ export default class RecoverPasswordBody extends BaseAuthBody {
 
         return (
             <div>
-                {this.renderErrors()}
-
                 <p className={styles.descriptionText}>
                     {user.maskedEmail ? (
                         <Message

@@ -33,8 +33,6 @@ export default class ForgotPasswordBody extends BaseAuthBody {
 
         return (
             <div>
-                {this.renderErrors()}
-
                 <PanelIcon icon="lock" />
 
                 {isLoginEditShown ? (
@@ -91,13 +89,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
         return login || user.username || user.email || '';
     }
 
-    onClickEdit = async () => {
-        this.setState({
-            isLoginEdit: true,
-        });
-
-        await this.context.requestRedraw();
-
-        this.form.focus('login');
+    onClickEdit = () => {
+        this.setState({ isLoginEdit: true }, () => this.form.focus('login'));
     };
 }

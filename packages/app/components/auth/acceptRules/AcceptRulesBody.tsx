@@ -16,8 +16,6 @@ export default class AcceptRulesBody extends BaseAuthBody {
     render() {
         return (
             <div>
-                {this.renderErrors()}
-
                 <div className={styles.security}>
                     <span className={icons.lock} />
                 </div>

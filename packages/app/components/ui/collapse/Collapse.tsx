@@ -44,7 +44,7 @@ export default class Collapse extends Component<Props, State> {
 
         return (
             <div className={styles.overflow} style={wasInitialized ? {} : { height: 0 }}>
-                <MeasureHeight state={this.shouldMeasureHeight()} onMeasure={this.onUpdateHeight}>
+                <MeasureHeight onMeasure={this.onUpdateHeight}>
                     <Motion
                         style={{
                             top: wasInitialized ? spring(isOpened ? 0 : -height) : -height,
@@ -72,9 +72,5 @@ export default class Collapse extends Component<Props, State> {
         this.setState({
             height,
         });
-    };
-
-    shouldMeasureHeight = () => {
-        return [this.props.isOpened, this.state.wasInitialized].join('');
     };
 }

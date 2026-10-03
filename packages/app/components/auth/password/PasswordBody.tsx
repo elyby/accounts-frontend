@@ -24,8 +24,6 @@ export default class PasswordBody extends BaseAuthBody {
 
         return (
             <div>
-                {this.renderErrors()}
-
                 <div className={styles.miniProfile}>
                     <div className={styles.avatar}>
                         {user.avatar ? <img src={user.avatar} /> : <span className={icons.user} />}

@@ -1,78 +1,53 @@
-import React from 'react';
-import { omit, debounce } from 'app/functions';
+import React, { FC, HTMLAttributes, useEffect, useLayoutEffect, useRef } from 'react';
 
-/**
- * MeasureHeight is a component that allows you to measure the height of elements wrapped.
- *
- * Each time the height changed, the `onMeasure` prop will be called.
- * On each component update the `shouldMeasure` prop is being called and depending of
- * the value returned will be decided whether to call `onMeasure`.
- * By default `shouldMeasure` will compare the old and new values of the `state` prop.
- * Both `shouldMeasure` and `state` can be used to reduce the amount of measures, which
- * will reduce the count of forced reflows in browser.
- *
- * Usage:
- * <MeasureHeight
- *     state={theValueToInvalidateCurrentMeasure}
- *     onMeasure={this.onUpdateContextHeight}
- * >
- *     <div>some content here</div>
- *     <div>which may be multiple children</div>
- * </MeasureHeight>
- */
+import { debounce } from 'app/functions';
 
-type ChildState = any;
-
-export default class MeasureHeight extends React.PureComponent<
-    {
-        shouldMeasure: (prevState: ChildState, newState: ChildState) => boolean;
-        onMeasure: (height: number) => void;
-        state: ChildState;
-    } & React.HTMLAttributes<HTMLDivElement>
-> {
-    static defaultProps = {
-        shouldMeasure: (prevState: ChildState, newState: ChildState) => prevState !== newState,
-        onMeasure: () => {},
-    };
-
-    el: HTMLDivElement | null = null;
-
-    // Catches the height changes, that happen outside of React's render cycle
-    resizeObserver?: ResizeObserver;
-
-    componentDidMount() {
-        // we want to measure height immediately on first mount to avoid ui laggs
-        this.measure();
-        window.addEventListener('resize', this.enqueueMeasurement);
-
-        if (this.el && typeof ResizeObserver !== 'undefined') {
-            this.resizeObserver = new ResizeObserver(this.enqueueMeasurement);
-            this.resizeObserver.observe(this.el);
-        }
-    }
-
-    componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
-        if (this.props.shouldMeasure(prevProps.state, this.props.state)) {
-            this.enqueueMeasurement();
-        }
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.enqueueMeasurement);
-        this.resizeObserver?.disconnect();
-    }
-
-    render() {
-        const props = omit(this.props, ['shouldMeasure', 'onMeasure', 'state']);
-
-        return <div {...props} ref={(el: HTMLDivElement) => (this.el = el)} />;
-    }
-
-    measure = () => {
-        requestAnimationFrame(() => {
-            this.el && this.props.onMeasure(this.el.offsetHeight);
-        });
-    };
-
-    enqueueMeasurement = debounce(this.measure);
+interface Props extends HTMLAttributes<HTMLDivElement> {
+    onMeasure: (height: number) => void;
 }
+
+const MeasureHeight: FC<Props> = ({ onMeasure, ...props }) => {
+    const elRef = useRef<HTMLDivElement>(null);
+
+    // The ref is updated after the commit, since the render may be discarded
+    const onMeasureRef = useRef(onMeasure);
+    useLayoutEffect(() => {
+        onMeasureRef.current = onMeasure;
+    });
+
+    useEffect(() => {
+        const measure = () => {
+            requestAnimationFrame(() => {
+                if (!elRef.current) {
+                    return;
+                }
+
+                onMeasureRef.current(elRef.current.getBoundingClientRect().height);
+            });
+        };
+
+        // Run initial measurement
+        measure();
+
+        // The size may change on each animation frame (e.g. while the height is being animated),
+        // so the measurements are debounced to not trigger the state update on each frame
+        const enqueueMeasurement = debounce(measure, 100);
+
+        // ResizeObserver might not be available in very old browsers or unit tests
+        let resizeObserver: ResizeObserver | undefined;
+
+        if (elRef.current && typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(enqueueMeasurement);
+            resizeObserver.observe(elRef.current);
+        }
+
+        return () => {
+            resizeObserver?.disconnect();
+            enqueueMeasurement.clear();
+        };
+    }, []);
+
+    return <div ref={elRef} {...props} />;
+};
+
+export default MeasureHeight;

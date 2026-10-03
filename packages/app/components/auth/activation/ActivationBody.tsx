@@ -23,8 +23,6 @@ export default class ActivationBody extends BaseAuthBody {
 
         return (
             <div>
-                {this.renderErrors()}
-
                 <div className={styles.description}>
                     <div className={styles.descriptionImage} />
 

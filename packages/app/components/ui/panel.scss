@@ -34,6 +34,10 @@ $headerHeight: 60px;
 
     line-height: 1;
     text-align: center;
+
+    // The button's transition is applied to all properties. But the header control can be moved by the panels
+    // transition animation on each frame, so the CSS transition makes it lag behind the spring
+    transition-property: background-color, color;
 }
 
 $bodyLeftRightPadding: 20px;
@@ -41,7 +45,6 @@ $bodyTopBottomPadding: 15px;
 
 .body {
     overflow: hidden;
-    padding: $bodyTopBottomPadding $bodyLeftRightPadding;
     color: #ccc;
     font-size: 18px;
 
@@ -60,6 +63,16 @@ $bodyTopBottomPadding: 15px;
     }
 }
 
+// The body's content paddings are set by a separate element to let the content above it (e.g. an error)
+// take the full body's width without negative margins
+.bodyContent {
+    padding: $bodyTopBottomPadding $bodyLeftRightPadding;
+}
+
+:export {
+    bodyContentVerticalPadding: $bodyTopBottomPadding * 2;
+}
+
 .footer {
     position: relative;
     overflow: hidden;
@@ -75,21 +88,13 @@ $bodyTopBottomPadding: 15px;
     overflow: hidden;
     padding: 10px 20px;
     margin: (-$bodyTopBottomPadding) (-$bodyLeftRightPadding) 15px;
-    max-height: 200px;
     text-align: center;
-
-    transition: 0.4s ease;
-}
-
-.isClosed {
-    max-height: 0;
-    opacity: 0;
-    padding: 0;
-    margin: 0;
 }
 
 .errorBodyHeader {
     composes: bodyHeader;
+    // It's rendered outside the body's content paddings
+    margin: 0;
 
     background: $red;
     border: 1px darker($red) solid;
