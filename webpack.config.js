@@ -11,6 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -151,6 +152,8 @@ const webpackConfig = {
                             api: 'modern',
                             sourceMap: !isProduction,
                             sassOptions: {
+                                // Keep styles unminimized, because minimization done by a separate plugin
+                                style: 'expanded',
                                 sourceMapIncludeSources: !isProduction,
                                 // icons.scss uses @import for fontgen-loader integration via postcss-import
                                 silenceDeprecations: ['import'],
@@ -264,6 +267,8 @@ if (isProduction) {
     }
 
     webpackConfig.optimization = {
+        // '...' keeps the default JS minimizer
+        minimizer: ['...', new CssMinimizerPlugin()],
         moduleIds: 'deterministic',
         runtimeChunk: 'single',
         splitChunks: {

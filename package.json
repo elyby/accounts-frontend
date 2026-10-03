@@ -107,6 +107,7 @@
         "babel-plugin-react-intl-auto": "https://github.com/elyby/babel-plugin-react-intl-auto.git#build",
         "core-js": "^3",
         "css-loader": "^7.1.2",
+        "css-minimizer-webpack-plugin": "^8.0.0",
         "cssnano": "^4.1.10",
         "dotenv": "^8.2.0",
         "eslint": "^8.57.0",
