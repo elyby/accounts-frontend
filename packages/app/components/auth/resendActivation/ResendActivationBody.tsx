@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Input, Captcha } from 'app/components/ui/form';
 
 import BaseAuthBody from '../BaseAuthBody';
+import authStyles from '../auth.scss';
 import styles from './resendActivation.scss';
 
 const placeholders = defineMessages({
@@ -38,7 +39,7 @@ export default class ResendActivation extends BaseAuthBody {
                     defaultValue={this.context.user.email}
                 />
 
-                <Captcha {...this.bindField('captcha')} delay={600} />
+                <Captcha {...this.bindField('captcha')} skin="dark" delay={600} className={authStyles.captcha} />
             </div>
         );
     }

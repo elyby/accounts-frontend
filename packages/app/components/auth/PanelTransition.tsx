@@ -262,7 +262,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
                                         >
                                             <PanelBody>
                                                 <div style={bodyHeight}>
-                                                    {panels.map((config) => this.getBody(config))}
+                                                    {panels.map((config) => this.getBody(config, panels.length > 1))}
                                                 </div>
                                             </PanelBody>
                                             <PanelFooter>{panels.map((config) => this.getFooter(config))}</PanelFooter>
@@ -448,7 +448,7 @@ class PanelTransition extends React.PureComponent<Props, State> {
         );
     }
 
-    getBody({ key, style, data }: TransitionPlainStyle): ReactElement {
+    getBody({ key, style, data }: TransitionPlainStyle, isTransitioning: boolean): ReactElement {
         const { Body } = data as AnimationData;
         const { transformSpring } = style as unknown as AnimationStyle;
         const { direction } = this.state;
@@ -457,8 +457,15 @@ class PanelTransition extends React.PureComponent<Props, State> {
         let verticalOrigin = 'top';
 
         if (direction === 'Y') {
-            verticalOrigin = 'bottom';
             transform = {};
+
+            // The bottom anchoring is needed only for the height toggling between panels.
+            // Once the transition is over, the panel must be anchored to the top: otherwise any later
+            // height change (e.g. an asynchronously loaded captcha) pushes the content up first
+            // and then it floats down along with the height animation
+            if (isTransitioning) {
+                verticalOrigin = 'bottom';
+            }
         }
 
         const transitionStyle: CSSProperties = {

@@ -18,7 +18,7 @@ describe('RegisterState', () => {
         password: '',
         rePassword: '',
         rulesAgreement: true,
-        captcha: '',
+        captcha: { type: 'recaptcha', token: 'captchaToken' },
     };
 
     beforeEach(() => {

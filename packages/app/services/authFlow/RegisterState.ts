@@ -1,3 +1,4 @@
+import { CaptchaValue } from 'app/services/captcha';
 import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
@@ -18,7 +19,7 @@ export default class RegisterState extends AbstractState {
             username: string;
             password: string;
             rePassword: string;
-            captcha: string;
+            captcha?: CaptchaValue;
             rulesAgreement: boolean;
         },
     ): Promise<void> | void {

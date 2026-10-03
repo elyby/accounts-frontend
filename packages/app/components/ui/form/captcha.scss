@@ -1,0 +1,55 @@
+@use '~app/components/ui/colors.scss' as *;
+
+.captchaContainer {
+    position: relative;
+}
+
+.captcha {
+    position: relative;
+    box-sizing: border-box;
+    // reCAPTCHA's size, which is also used while the provider is being chosen
+    height: 77px;
+    overflow: hidden;
+
+    border: 2px solid;
+    transition: border-color 0.25s;
+
+    &:hover {
+        border-color: #aaa;
+    }
+}
+
+.recaptchaCaptcha {
+    // Height is inherited from the base class above
+
+    // Google's Recaptcha has its own border. With negative margin we're hiding it behind overflow: hidden
+    > div {
+        margin: -2px;
+    }
+}
+
+.yandexCaptcha {
+    height: 120px;
+
+    // Despite disabling captcha's border in its styles, we're still using negative margin
+    // for a better positioning in terms of our site design
+    > div {
+        margin-block-start: -2px;
+        margin-inline-start: -4px;
+    }
+}
+
+.darkCaptcha {
+    border-color: lighter($black);
+}
+
+.lightCaptcha {
+    border-color: #dcd8cd;
+}
+
+.captchaLoader {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+}

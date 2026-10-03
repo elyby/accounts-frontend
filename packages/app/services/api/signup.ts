@@ -10,6 +10,7 @@ interface RegisterParams {
     rulesAgreement?: boolean;
     lang?: string;
     captcha?: string;
+    captchaType?: string;
 }
 
 export function register({
@@ -20,10 +21,11 @@ export function register({
     rulesAgreement = false,
     lang = '',
     captcha = '',
+    captchaType = '',
 }: RegisterParams): Promise<Resp<{ success: boolean }>> {
     return request.post(
         '/api/signup',
-        { email, username, password, rePassword, rulesAgreement, lang, captcha },
+        { email, username, password, rePassword, rulesAgreement, lang, captcha, captchaType },
         { token: null },
     );
 }
@@ -32,6 +34,6 @@ export function activate(key: string = ''): Promise<Resp<OAuthResponse>> {
     return request.post('/api/signup/confirm', { key }, { token: null });
 }
 
-export function resendActivation(email: string = '', captcha: string = '') {
-    return request.post('/api/signup/repeat-message', { email, captcha });
+export function resendActivation(email: string = '', captcha: string = '', captchaType: string = '') {
+    return request.post('/api/signup/repeat-message', { email, captcha, captchaType });
 }

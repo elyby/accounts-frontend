@@ -9,6 +9,24 @@ export type ValidationError =
           payload?: Record<string, any>;
       };
 
+/**
+ * The imperative API of a form field, which is used by the {@link FormModel}.
+ *
+ * Class components implement it by extending the {@link FormInputComponent},
+ * function components should expose it via `forwardRef` + `useImperativeHandle`.
+ */
+export interface FormFieldHandle {
+    getValue(): any;
+    setError(error: ValidationError | null): void;
+    onFormInvalid(): void;
+    focus(): void;
+}
+
+function isFormField(el: any): el is FormFieldHandle {
+    return el instanceof FormInputComponent
+        || (typeof el.setError === 'function' && typeof el.onFormInvalid === 'function');
+}
+
 export default class FormModel {
     fields: Record<string, any> = {};
     errors: Record<string, ValidationError> = {};
@@ -52,10 +70,10 @@ export default class FormModel {
             error?: ValidationError;
         } = {
             name,
-            ref: (el: FormInputComponent<any> | null) => {
+            ref: (el: FormInputComponent<any> | FormFieldHandle | null) => {
                 if (el) {
-                    if (!(el instanceof FormInputComponent)) {
-                        throw new Error('Expected FormInputComponent component');
+                    if (!isFormField(el)) {
+                        throw new Error('Expected FormInputComponent component or FormFieldHandle');
                     }
 
                     this.fields[name] = el;

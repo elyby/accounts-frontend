@@ -23,8 +23,6 @@ import { omit, debounce } from 'app/functions';
 
 type ChildState = any;
 
-// TODO: this may be rewritten in more efficient way using resize/mutation observer
-
 export default class MeasureHeight extends React.PureComponent<
     {
         shouldMeasure: (prevState: ChildState, newState: ChildState) => boolean;
@@ -39,10 +37,18 @@ export default class MeasureHeight extends React.PureComponent<
 
     el: HTMLDivElement | null = null;
 
+    // Catches the height changes, that happen outside of React's render cycle
+    resizeObserver?: ResizeObserver;
+
     componentDidMount() {
         // we want to measure height immediately on first mount to avoid ui laggs
         this.measure();
         window.addEventListener('resize', this.enqueueMeasurement);
+
+        if (this.el && typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(this.enqueueMeasurement);
+            this.resizeObserver.observe(this.el);
+        }
     }
 
     componentDidUpdate(prevProps: typeof MeasureHeight.prototype.props) {
@@ -53,6 +59,7 @@ export default class MeasureHeight extends React.PureComponent<
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.enqueueMeasurement);
+        this.resizeObserver?.disconnect();
     }
 
     render() {

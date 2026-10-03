@@ -1,87 +1,179 @@
-import React from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { FormattedMessage as Message, MessageDescriptor } from 'react-intl';
 import clsx from 'clsx';
-import { CaptchaID } from 'app/services/captcha';
-import { Skin } from 'app/components/ui';
-import captcha, { registerE2eCallback } from 'app/services/captcha';
-import logger from 'app/services/logger';
+
+import { Skin, SKIN_LIGHT } from 'app/components/ui';
 import { ComponentLoader } from 'app/components/ui/loader';
+import { useReduxSelector } from 'app/functions';
+import { CaptchaProvider, CaptchaValue, CaptchaWidgetId, registerE2eCallback, resolveCaptcha } from 'app/services/captcha';
+import logger from 'app/services/logger';
 
-import styles from './form.scss';
-import FormInputComponent from './FormInputComponent';
+import formStyles from './form.scss';
+import styles from './captcha.scss';
+import FormError from './FormError';
+import { FormFieldHandle, ValidationError } from './FormModel';
 
-export default class Captcha extends FormInputComponent<
-    {
-        delay: number;
-        skin: Skin;
-    },
-    {
-        code: string;
-    }
-> {
-    elRef = React.createRef<HTMLDivElement>();
-    captchaId: CaptchaID;
+type Error = ValidationError | MessageDescriptor;
 
-    static defaultProps = {
-        skin: 'dark',
-        delay: 0,
-    };
+interface Props {
+    skin?: Skin;
+    /**
+     * Postpones widget rendering, e.g. to let the panel's appearance animation finish
+     */
+    delay?: number;
+    error?: Error;
+    /**
+     * Applied to the widget's frame, e.g. to limit its width in a particular layout
+     */
+    className?: string;
+}
 
-    unregisterE2eCallback?: () => void;
+export interface CaptchaHandle extends FormFieldHandle {
+    getValue(): CaptchaValue | undefined;
+    reset(): void;
+}
 
-    componentDidMount() {
-        this.unregisterE2eCallback = registerE2eCallback(this.setCode);
+interface Widget {
+    provider: CaptchaProvider;
+    id: CaptchaWidgetId;
+}
 
-        setTimeout(() => {
-            const { current: el } = this.elRef;
+type Status = 'loading' | 'ready' | 'unavailable';
 
-            el &&
-                captcha
-                    .render(el, {
-                        skin: this.props.skin,
-                        onSetCode: this.setCode,
-                    })
-                    .then((captchaId) => {
-                        this.captchaId = captchaId;
-                    })
-                    .catch((error) => {
-                        logger.error('Failed rendering captcha', {
-                            error,
-                        });
-                    });
-        }, this.props.delay);
-    }
+const Captcha = forwardRef<CaptchaHandle, Props>(({ skin = SKIN_LIGHT, delay = 0, error: propsError, className }, ref) => {
+    const locale = useReduxSelector((state) => state.i18n.locale);
 
-    componentWillUnmount() {
-        this.unregisterE2eCallback?.();
-    }
+    const containerRef = useRef<HTMLDivElement>(null);
+    const widgetRef = useRef<Widget>();
+    // The token isn't stored in the state, since it doesn't affect rendering
+    const valueRef = useRef<CaptchaValue>();
 
-    render() {
-        const { skin } = this.props;
+    const [status, setStatus] = useState<Status>('loading');
+    const [providerType, setProviderType] = useState<string>();
+    const [error, setError] = useState<Error | null>(null);
 
-        return (
-            <div className={styles.captchaContainer}>
+    const reset = useCallback(() => {
+        // Tokens are single-use, so the old one must not be submitted again
+        valueRef.current = undefined;
+
+        const widget = widgetRef.current;
+
+        if (widget) {
+            widget.provider.reset(widget.id);
+        }
+    }, []);
+
+    useImperativeHandle(ref, () => ({
+        getValue: () => valueRef.current,
+        setError,
+        reset,
+        onFormInvalid: reset,
+        focus() {},
+    }), [reset]);
+
+    useEffect(() => {
+        return registerE2eCallback((value) => {
+            valueRef.current = value;
+        });
+    }, []);
+
+    useEffect(() => {
+        let isCancelled = false;
+        setStatus('loading');
+        // Render each widget into its own element, so it can be safely re-rendered after locale or skin change
+        const host = document.createElement('div');
+
+        const timer = setTimeout(async () => {
+            try {
+                const { provider, params } = await resolveCaptcha(locale);
+
+                if (isCancelled || !containerRef.current) {
+                    return;
+                }
+
+                containerRef.current.appendChild(host);
+
+                const id = provider.render(host, params, {
+                    skin,
+                    lang: locale,
+                    onSetCode(token) {
+                        valueRef.current = {
+                            type: provider.type,
+                            token,
+                        };
+                    },
+                    onExpire() {
+                        valueRef.current = undefined;
+                    },
+                });
+
+                widgetRef.current = { provider, id };
+                setProviderType(provider.type);
+                setStatus('ready');
+            } catch (err) {
+                if (isCancelled) {
+                    return;
+                }
+
+                logger.error('Failed rendering captcha', { error: err });
+                setStatus('unavailable');
+            }
+        }, delay);
+
+        return () => {
+            isCancelled = true;
+            clearTimeout(timer);
+
+            const widget = widgetRef.current;
+            widgetRef.current = undefined;
+            valueRef.current = undefined;
+
+            if (widget) {
+                try {
+                    widget.provider.destroy(widget.id);
+                } catch (err) {
+                    logger.warn('Failed to destroy captcha widget', { error: err });
+                }
+            }
+
+            host.remove();
+        };
+    }, [locale, skin]);
+
+    return (
+        <div className={styles.captchaContainer}>
+            {status === 'loading' && (
                 <div className={styles.captchaLoader}>
                     <ComponentLoader />
                 </div>
+            )}
 
-                <div ref={this.elRef} className={clsx(styles.captcha, styles[`${skin}Captcha`])} />
+            {status === 'unavailable' ? (
+                <div className={formStyles.fieldError} role="alert">
+                    <Message
+                        key="captchaUnavailable"
+                        defaultMessage="Failed to load the captcha. Please, reload the page or try later."
+                    />
+                </div>
+            ) : (
+                <div
+                    ref={containerRef}
+                    className={clsx(
+                        styles.captcha,
+                        styles[`${skin}Captcha`],
+                        {
+                            [styles[`${providerType}Captcha`]]: providerType,
+                        },
+                        className,
+                    )}
+                />
+            )}
 
-                {this.renderError()}
-            </div>
-        );
-    }
+            <FormError error={error || propsError} />
+        </div>
+    );
+});
 
-    reset() {
-        captcha.reset(this.captchaId);
-    }
+Captcha.displayName = 'Captcha';
 
-    getValue() {
-        return this.state && this.state.code;
-    }
-
-    onFormInvalid() {
-        this.reset();
-    }
-
-    setCode = (code: string) => this.setState({ code });
-}
+export default Captcha;

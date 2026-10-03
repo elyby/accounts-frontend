@@ -13,7 +13,7 @@ describe('ResendActivationState', () => {
 
     const mockPayload = {
         email: 'foo@bar.com',
-        captcha: '',
+        captcha: { type: 'recaptcha', token: 'captchaToken' },
     };
 
     beforeEach(() => {

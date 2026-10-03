@@ -24,6 +24,7 @@ import ContactForm from 'app/components/contact';
 import { Account } from 'app/components/accounts/reducer';
 import { Action as AppAction, Dispatch } from 'app/types';
 import { Resp } from 'app/services/request';
+import { CaptchaValue } from 'app/services/captcha';
 
 import { Credentials, Client, OAuthState, getCredentials } from './reducer';
 
@@ -117,9 +118,9 @@ export function acceptRules() {
     return wrapInLoader((dispatch) => dispatch(userAcceptRules()).catch(validationErrorsHandler(dispatch)));
 }
 
-export function forgotPassword({ login = '', captcha = '' }: { login: string; captcha: string }) {
+export function forgotPassword({ login = '', captcha }: { login: string; captcha?: CaptchaValue }) {
     return wrapInLoader((dispatch, getState) =>
-        forgotPasswordEndpoint(login, captcha)
+        forgotPasswordEndpoint(login, captcha?.token ?? '', captcha?.type ?? '')
             .then(({ data = {} }) =>
                 dispatch(
                     updateUser({
@@ -152,14 +153,14 @@ export function register({
     username = '',
     password = '',
     rePassword = '',
-    captcha = '',
+    captcha,
     rulesAgreement = false,
 }: {
     email: string;
     username: string;
     password: string;
     rePassword: string;
-    captcha: string;
+    captcha?: CaptchaValue;
     rulesAgreement: boolean;
 }) {
     return wrapInLoader((dispatch, getState) =>
@@ -170,7 +171,8 @@ export function register({
             rePassword,
             rulesAgreement,
             lang: getState().user.lang,
-            captcha,
+            captcha: captcha?.token,
+            captchaType: captcha?.type,
         })
             .then(() => {
                 dispatch(needActivation({ login: email || username }));
@@ -189,9 +191,9 @@ export function activate(key: string): AppAction<Promise<Account>> {
     );
 }
 
-export function resendActivation({ email = '', captcha }: { email: string; captcha: string }) {
+export function resendActivation({ email = '', captcha }: { email: string; captcha?: CaptchaValue }) {
     return wrapInLoader((dispatch) =>
-        resendActivationEndpoint(email, captcha)
+        resendActivationEndpoint(email, captcha?.token, captcha?.type)
             .then((resp) => {
                 dispatch(
                     updateUser({

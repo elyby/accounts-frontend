@@ -7,6 +7,7 @@ import { getLogin } from 'app/components/auth/reducer';
 import { PanelIcon } from 'app/components/ui/Panel';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
+import authStyles from '../auth.scss';
 import styles from './forgotPassword.scss';
 
 const messages = defineMessages({
@@ -68,7 +69,7 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                     </div>
                 )}
 
-                <Captcha {...this.bindField('captcha')} delay={600} />
+                <Captcha {...this.bindField('captcha')} skin="dark" delay={600} className={authStyles.captcha} />
             </div>
         );
     }

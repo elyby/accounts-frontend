@@ -1,3 +1,4 @@
+import { CaptchaValue } from 'app/services/captcha';
 import { AuthContext } from 'app/services/authFlow';
 import logger from 'app/services/logger';
 
@@ -10,7 +11,7 @@ export default class ResendActivationState extends AbstractState {
         context.navigate('/resend-activation');
     }
 
-    resolve(context: AuthContext, payload: { email: string; captcha: string }): Promise<void> | void {
+    resolve(context: AuthContext, payload: { email: string; captcha?: CaptchaValue }): Promise<void> | void {
         return context
             .run('resendActivation', payload)
             .then(() => context.setState(new ActivationState()))

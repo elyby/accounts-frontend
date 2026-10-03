@@ -40,6 +40,7 @@ describe('Forgot / reset password', () => {
                 new URLSearchParams({
                     login: account1.username,
                     captcha: captchaCode,
+                    captchaType: 'recaptcha',
                 }).toString(),
             );
 
@@ -90,6 +91,7 @@ describe('Forgot / reset password', () => {
                 new URLSearchParams({
                     login,
                     captcha: captchaCode,
+                    captchaType: 'recaptcha',
                 }).toString(),
             );
 
@@ -126,6 +128,7 @@ describe('Forgot / reset password', () => {
                 new URLSearchParams({
                     login,
                     captcha: captchaCode,
+                    captchaType: 'recaptcha',
                 }).toString(),
             );
 

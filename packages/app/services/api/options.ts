@@ -1,6 +1,10 @@
 import request, { Resp } from 'app/services/request';
 
-type Options = { reCaptchaPublicKey: string };
+export type CaptchaPublicParams = { publicKey: string } & Record<string, unknown>;
+
+export type Options = {
+    captcha: Record<string, CaptchaPublicParams>;
+};
 
 let options: Resp<Options>;
 

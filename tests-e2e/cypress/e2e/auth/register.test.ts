@@ -49,6 +49,7 @@ describe('Register', () => {
                     rulesAgreement: '1',
                     lang: 'en',
                     captcha: captchaCode,
+                    captchaType: 'recaptcha',
                 }).toString(),
             );
 
@@ -171,7 +172,7 @@ describe('Register', () => {
 
         cy.wait('@resend')
             .its('request.body')
-            .should('eq', new URLSearchParams({ email, captcha: captchaCode }).toString());
+            .should('eq', new URLSearchParams({ email, captcha: captchaCode, captchaType: 'recaptcha' }).toString());
 
         cy.location('pathname').should('eq', '/activation');
     });

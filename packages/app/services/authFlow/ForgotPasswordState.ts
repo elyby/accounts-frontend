@@ -1,3 +1,4 @@
+import { CaptchaValue } from 'app/services/captcha';
 import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
@@ -10,7 +11,7 @@ export default class ForgotPasswordState extends AbstractState {
         context.navigate('/forgot-password');
     }
 
-    resolve(context: AuthContext, payload: { login: string; captcha: string }): Promise<void> | void {
+    resolve(context: AuthContext, payload: { login: string; captcha?: CaptchaValue }): Promise<void> | void {
         return context
             .run('forgotPassword', payload)
             .then(() => {

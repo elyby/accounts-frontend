@@ -61,7 +61,7 @@ export default class RegisterBody extends BaseAuthBody {
                     placeholder={placeholders.repeatPassword}
                 />
 
-                <Captcha {...this.bindField('captcha')} delay={600} />
+                <Captcha {...this.bindField('captcha')} skin="dark" delay={600} className={styles.captcha} />
 
                 <div className={styles.checkboxInput}>
                     <Checkbox

@@ -1,5 +1,4 @@
 import { IntlShape, createIntl, createIntlCache } from 'react-intl';
-import captcha from 'app/services/captcha';
 import locales from 'app/i18n';
 
 import intlPolyfill from './intlPolyfill';
@@ -48,8 +47,6 @@ class I18N {
 
     async changeLocale(locale: string = DEFAULT_LANGUAGE): Promise<IntlShape> {
         const { messages } = await this.require(locale);
-
-        captcha.setLang(locale);
 
         intl = createIntl(
             {

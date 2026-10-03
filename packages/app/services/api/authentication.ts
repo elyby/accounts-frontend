@@ -52,6 +52,7 @@ export function logout(token?: string): Promise<{ success: boolean }> {
 export function forgotPassword(
     login: string,
     captcha: string,
+    captchaType: string,
 ): Promise<{
     success: boolean;
     data: {
@@ -68,6 +69,7 @@ export function forgotPassword(
         {
             login,
             captcha,
+            captchaType,
         },
         { token: null },
     );
