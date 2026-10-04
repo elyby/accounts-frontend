@@ -159,6 +159,7 @@ function handleOauthParamsValidation(
               error:
                   | 'invalid_request'
                   | 'unsupported_response_type'
+                  | 'unsupported_grant_type'
                   | 'invalid_scope'
                   | 'invalid_client'
                   | 'invalid_user_code';
@@ -171,6 +172,8 @@ function handleOauthParamsValidation(
         userMessage = `Invalid request (${resp.parameter} required).`;
     } else if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
         userMessage = `Invalid response type '${resp.parameter}'.`;
+    } else if (resp.statusCode === 400 && resp.error === 'unsupported_grant_type') {
+        userMessage = 'Unsupported grant type.';
     } else if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
         userMessage = `Invalid scope '${resp.parameter}'.`;
     } else if (resp.statusCode === 401 && resp.error === 'invalid_client') {
