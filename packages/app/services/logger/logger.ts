@@ -141,15 +141,15 @@ class Logger {
     }
 
     error(message: string | Error, context?: Context) {
-        log('error', message, context);
+        log('error', message, context, Logger.prototype.error);
     }
 
     info(message: string | Error, context?: Context) {
-        log('info', message, context);
+        log('info', message, context, Logger.prototype.info);
     }
 
     warn(message: string | Error, context?: Context) {
-        log('warning', message, context);
+        log('warning', message, context, Logger.prototype.warn);
     }
 
     /**
@@ -191,7 +191,16 @@ class Logger {
     }
 }
 
-function log(level: Level, message: string | Error, rawContext?: Context) {
+/**
+ * Every logged message is reported as an exception, created right here, synchronously: its stack leads to the code
+ * that called the logger (`stackStart` and the frames below it are cut off where the browser supports that).
+ * A message reported via captureMessage() would get either no stack at all or a synthetic one taken in the async
+ * callback below, which turns the event into an untyped exception titled by that callback's name.
+ *
+ * When the context contains an Error, it's attached as the `cause`, so Sentry shows the chain: our message on top
+ * and the original error with its own stack below (like `new Exception($message, previous: $e)` in PHP)
+ */
+function log(level: Level, message: string | Error, rawContext: Context | undefined, stackStart: Function) {
     const method = level === 'warning' ? 'warn' : level;
 
     if (isTest) {
@@ -202,6 +211,21 @@ function log(level: Level, message: string | Error, rawContext?: Context) {
     const context: Context =
         typeof rawContext === 'object' && rawContext !== null ? rawContext : { message: rawContext };
 
+    let error: Error;
+
+    if (message instanceof Error) {
+        error = message;
+    } else {
+        error = new Error(message);
+        Error.captureStackTrace?.(error, stackStart);
+    }
+
+    const cause = findError(context);
+
+    if (cause && cause !== error && error.cause === undefined) {
+        error.cause = cause;
+    }
+
     prepareContext(context).then((preparedContext) => {
         console[method](message, context); // eslint-disable-line
 
@@ -210,7 +234,7 @@ function log(level: Level, message: string | Error, rawContext?: Context) {
             Sentry.addBreadcrumb({
                 category: 'app',
                 level,
-                message: message instanceof Error ? message.message : message,
+                message: error.message,
                 data: preparedContext,
             });
 
@@ -220,14 +244,17 @@ function log(level: Level, message: string | Error, rawContext?: Context) {
         Sentry.withScope((scope) => {
             scope.setLevel(level);
             scope.setExtras(preparedContext);
-
-            if (message instanceof Error) {
-                Sentry.captureException(message);
-            } else {
-                Sentry.captureMessage(message);
-            }
+            Sentry.captureException(error);
         });
     });
+}
+
+/**
+ * Finds the error that caused the logged situation.
+ * The context may have different shapes: the error itself, `{ error }` or `{ resp }`
+ */
+function findError(context: Context): Error | undefined {
+    return [context, context.error, context.resp].find((value): value is Error => value instanceof Error);
 }
 
 /**
