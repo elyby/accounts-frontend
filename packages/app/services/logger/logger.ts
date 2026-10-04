@@ -30,6 +30,11 @@ const IGNORE_ERRORS: Array<string | RegExp> = [
     /MetaMask/,
 ];
 
+/**
+ * Errors that are already handled by the app, but still propagate to the callers, which don't always catch them
+ */
+const handledErrors = new WeakSet<object>();
+
 const DENY_URLS: Array<RegExp> = [
     /^(chrome|moz|safari(-web)?)-extension:\/\//,
     /^webkit-masked-url:\/\//,
@@ -60,6 +65,15 @@ class Logger {
             ignoreErrors: IGNORE_ERRORS,
             // Enough to reach fields like extra.resp.originalResponse.body.errors.*
             normalizeDepth: 6,
+            beforeSend(event, hint) {
+                const error = hint.originalException;
+
+                if (typeof error === 'object' && error !== null && handledErrors.has(error)) {
+                    return null;
+                }
+
+                return event;
+            },
             integrations: applicationKey
                 ? [
                       // Our bundles are marked with this key by @sentry/webpack-plugin (see webpack.config.js).
@@ -156,6 +170,16 @@ class Logger {
             this.pendingBreadcrumbs.push(breadcrumb);
         } else {
             Sentry.addBreadcrumb(breadcrumb);
+        }
+    }
+
+    /**
+     * Marks the error as handled: it won't be reported if it reaches Sentry later, e.g. as an unhandled rejection
+     * from a caller that doesn't catch it. The error itself must be passed, not a copy or a wrapper
+     */
+    markAsHandled(error: unknown) {
+        if (typeof error === 'object' && error !== null) {
+            handledErrors.add(error);
         }
     }
 

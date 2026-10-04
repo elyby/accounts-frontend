@@ -171,7 +171,11 @@ export async function requestToken(refreshToken: string): Promise<string> {
     } catch (resp) {
         const errors = resp.errors || {};
 
-        if (errors.refresh_token !== 'error.refresh_token_not_exist') {
+        if (errors.refresh_token === 'error.refresh_token_not_exist') {
+            // The session is over. The callers log the user out (see relogin() calls in accounts/actions),
+            // but the rejection still reaches places that don't expect it, so don't report it as unhandled
+            logger.markAsHandled(resp);
+        } else {
             logger.error('Failed refreshing token: unknown error', {
                 resp,
             });
