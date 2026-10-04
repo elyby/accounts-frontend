@@ -2173,7 +2173,7 @@
     "@sentry/replay" "11.4.0"
     "@sentry/replay-canvas" "11.4.0"
 
-"@sentry/bundler-plugins@^10.64.0":
+"@sentry/bundler-plugins@^10.64.0", "@sentry/bundler-plugins@^10.76.0":
   version "10.76.0"
   resolved "https://registry.yarnpkg.com/@sentry/bundler-plugins/-/bundler-plugins-10.76.0.tgz#056aa7c4804ea2ad1d07b5dfbbfd4dd37ffac70a"
   integrity sha512-xDcvwDk3WlvK67wtuHzNdaJit7z9dmp5urftgAtH2sIt8YmpdV68J8crFh6W4TEulYdhJHvSogLEnX+UoFl01A==

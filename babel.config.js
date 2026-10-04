@@ -67,7 +67,15 @@ module.exports = function (api) {
         env: {
             browser: browserEnv,
             'browser-development': browserEnv,
-            'browser-production': browserEnv,
+            'browser-production': {
+                ...browserEnv,
+                // Adds data-sentry-component/data-sentry-element attributes, so Sentry's ui.click breadcrumbs
+                // contain React component names instead of hashed CSS classes.
+                // Don't use the reactComponentAnnotation option of @sentry/webpack-plugin instead: it runs its own
+                // Babel transform that picks up this config without the browser env, so preset-env converts
+                // modules into commonjs, which breaks code splitting and tree shaking
+                plugins: [...browserEnv.plugins, '@sentry/bundler-plugins/babel-plugin'],
+            },
         },
     };
 };

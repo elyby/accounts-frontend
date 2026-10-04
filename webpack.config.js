@@ -151,7 +151,8 @@ const webpackConfig = {
                         loader: 'css-loader',
                         options: {
                             modules: {
-                                localIdentName: isProduction ? '[hash:base64:5]' : '[path][name]-[local]',
+                                // Keep readable names in production, so CSS classes in Sentry's breadcrumbs are meaningful
+                                localIdentName: isProduction ? '[name]__[local]--[hash:base64:5]' : '[path][name]-[local]',
                                 // css-loader v7 changed the default to 'camel-case-only', which broke
                                 // composes: some-dashed-class from '...', restore the v3 behaviour
                                 exportLocalsConvention: 'as-is',
