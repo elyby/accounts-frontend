@@ -19,6 +19,9 @@ const IGNORE_ERRORS: Array<string | RegExp> = [
     // the SDK's fetch instrumentation suffix "Failed to fetch (account.ely.by)" and non-Error rejections like
     // "'Unauthorized' captured as exception with message 'Failed to fetch'"
     new RegExp(`(^|: |')${NETWORK_ERRORS}( \\(.+\\))?('|$)`),
+    // webpack's ChunkLoadError. Chunk files have the content hash only in the query string, so their URLs stay
+    // valid after a deploy: the loading fails because of the user's network or content blockers
+    /Loading (CSS )?chunk [\w-]+ failed/,
     // Google reCAPTCHA internals
     /reCAPTCHA Timeout/,
     /No reCAPTCHA clients exist/,
