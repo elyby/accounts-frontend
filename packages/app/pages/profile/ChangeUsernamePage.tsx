@@ -58,7 +58,9 @@ class ChangeUsernamePage extends React.Component<Props> {
                 },
             })
             .then(() => {
-                this.actualUsername = form.value('username');
+                // The entered value is already in the store (see onUsernameChange). Don't read it from the form:
+                // the field may be already unmounted by the time the request completes
+                this.actualUsername = this.props.username;
 
                 this.context.goToProfile();
             });
