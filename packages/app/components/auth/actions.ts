@@ -102,7 +102,9 @@ export function login({
                             }),
                         );
                     } else if (resp.errors.login === LOGIN_REQUIRED && password) {
-                        logger.warn('No login on password panel');
+                        // The login was lost from the state (e.g. the page was reloaded on the password panel).
+                        // Expected situation: logoutAll() sends the user back to the login panel
+                        logger.breadcrumb('No login on password panel');
 
                         return dispatch(logoutAll());
                     }
