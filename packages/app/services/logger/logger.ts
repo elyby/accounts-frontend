@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/react';
 
+import { isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
+
 const isTest = process.env.NODE_ENV === 'test';
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -73,6 +75,12 @@ class Logger {
 
                 if (typeof error === 'object' && error !== null && handledErrors.has(error)) {
                     return null;
+                }
+
+                // The integration below doesn't recognize third-party errors caught by an ErrorBoundary,
+                // see isExclusivelyThirdPartyErrorBoundaryEvent for details
+                if (applicationKey && isExclusivelyThirdPartyErrorBoundaryEvent(event, applicationKey)) {
+                    event.tags = { ...event.tags, third_party_code: true };
                 }
 
                 return event;
