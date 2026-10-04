@@ -164,7 +164,11 @@ export default class AuthFlow implements AuthContext {
                 this.onReady = () => {};
 
                 return resp.then(callback, (error) => {
-                    logger.error('State transition error', { error });
+                    // OAuth params validation errors (invalid_client, invalid_request, etc.) are expected:
+                    // they're caused by the requesting application and are already shown to the user
+                    if (!error?.userMessage) {
+                        logger.error('State transition error', { error });
+                    }
 
                     return error;
                 });
