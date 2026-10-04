@@ -317,7 +317,9 @@ export function logoutStrangers(): AppAction<Promise<void>> {
             if (accountToReplace) {
                 available.filter(isStranger).forEach((account) => {
                     dispatch(remove(account));
-                    logout(account.token);
+                    logout(account.token).catch(() => {
+                        // we don't care: the token might be already expired
+                    });
                 });
 
                 if (activeAccount && isStranger(activeAccount)) {
