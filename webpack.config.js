@@ -15,12 +15,14 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const SUPPORTED_LANGUAGES = Object.keys(require('app/i18n').default);
 const { getCountriesList } = require('app/components/i18n/localeFlags');
 const rootPath = path.resolve('./packages');
 const outputPath = path.join(__dirname, 'build');
 
 const isProduction = process.env.NODE_ENV === 'production';
+const SENTRY_APPLICATION_KEY = 'elyby-accounts-frontend';
 const isAnalyze = process.argv.some((arg) => arg === '--analyze');
 
 const isDockerized = !!process.env.DOCKERIZED;
@@ -94,6 +96,23 @@ const webpackConfig = {
         new webpack.EnvironmentPlugin({
             NODE_ENV: process.env.NODE_ENV,
             __VERSION__: process.env.VERSION || process.env.NODE_ENV,
+            __SENTRY_APPLICATION_KEY__: SENTRY_APPLICATION_KEY,
+        }),
+        // Only marks our bundles with the application key, so the SDK's thirdPartyErrorFilterIntegration
+        // can tell our code apart from the scripts injected by browser extensions and WebView hosts.
+        // Releases and source maps are still managed by sentry-cli in the CI deploy job
+        sentryWebpackPlugin({
+            applicationKey: SENTRY_APPLICATION_KEY,
+            sourcemaps: {
+                disable: true,
+            },
+            release: {
+                inject: false,
+                create: false,
+                finalize: false,
+            },
+            telemetry: false,
+            silent: true,
         }),
         new HtmlWebpackPlugin({
             template: 'packages/app/index.ejs',

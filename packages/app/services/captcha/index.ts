@@ -84,7 +84,7 @@ async function doResolve(priority: Array<string>, locale: string): Promise<Resol
 
             return { provider, params };
         } catch (error) {
-            logger.warn('Failed to load captcha provider, trying the next one', {
+            logger.breadcrumb('Failed to load captcha provider, trying the next one', {
                 provider: type,
                 error,
             });

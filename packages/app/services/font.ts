@@ -30,7 +30,7 @@ export default {
                 classes: false,
                 active: resolve,
                 inactive() {
-                    logger.warn('Failed loading the font', {
+                    logger.breadcrumb('Failed loading the font', {
                         families,
                     });
                     resolve();

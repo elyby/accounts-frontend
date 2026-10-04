@@ -148,10 +148,6 @@ export default connect(
                                                         // something wrong with parent form, hiding popup and show that form
                                                         props.onClose();
                                                         reject(resp);
-                                                        logger.warn(
-                                                            'Profile: can not submit password popup due to errors in source form',
-                                                            { resp },
-                                                        );
                                                     }
                                                 } else {
                                                     return Promise.reject(resp);

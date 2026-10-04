@@ -10,7 +10,8 @@ try {
     _hasStorage = true;
 } catch {
     // bad luck, no storage available
-    logger.info('No storage available'); // log for statistic purposes
+    logger.breadcrumb('No storage available');
+    logger.setTag('storage', 'unavailable');
 }
 
 export function hasStorage(): boolean {

@@ -28,7 +28,7 @@ describe('services/captcha', () => {
         beforeEach(() => {
             sandbox = sinon.createSandbox();
             clearResolvedCaptcha();
-            sandbox.stub(logger, 'warn');
+            sandbox.stub(logger, 'breadcrumb');
         });
 
         afterEach(() => sandbox.restore());

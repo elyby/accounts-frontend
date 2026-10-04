@@ -1,54 +1,118 @@
-import Raven from 'raven-js';
-
-import abbreviate from './abbreviate';
+import * as Sentry from '@sentry/react';
 
 const isTest = process.env.NODE_ENV === 'test';
 const isProduction = process.env.NODE_ENV === 'production';
 
+type Level = 'error' | 'warning' | 'info';
+type Context = Record<string, any>;
+
+// Chrome, Firefox, Safari, whatwg-fetch polyfill
+const NETWORK_ERRORS = '(Failed to fetch|NetworkError when attempting to fetch resource\\.?|Load failed|Network request failed)';
+const NETWORK_ERROR_REGEX = new RegExp(`^${NETWORK_ERRORS}( \\(.+\\))?$`);
+
+/**
+ * Errors that are caused by the user's environment (browser extensions, injected scripts, third-party SDKs, network)
+ * and that we can't fix
+ */
+const IGNORE_ERRORS: Array<string | RegExp> = [
+    // Network failures in different browsers. Matches "TypeError: Failed to fetch", our wrappers like "o: Failed to fetch",
+    // the SDK's fetch instrumentation suffix "Failed to fetch (account.ely.by)" and non-Error rejections like
+    // "'Unauthorized' captured as exception with message 'Failed to fetch'"
+    new RegExp(`(^|: |')${NETWORK_ERRORS}( \\(.+\\))?('|$)`),
+    // Google reCAPTCHA internals
+    /reCAPTCHA Timeout/,
+    /No reCAPTCHA clients exist/,
+    // Microsoft Outlook SafeLinks scanner
+    /Object Not Found Matching Id:\d+/,
+    // Scripts injected into the page by launchers and browser extensions
+    /Identifier 'nativeIframe' has already been declared/,
+    /not allowed by ACL/,
+    /MetaMask/,
+];
+
+const DENY_URLS: Array<RegExp> = [
+    /^(chrome|moz|safari(-web)?)-extension:\/\//,
+    /^webkit-masked-url:\/\//,
+];
+
 class Logger {
+    /**
+     * Sentry drops breadcrumbs that are added before the initialization,
+     * but some modules (e.g. localStorage) leave them right on import
+     */
+    private pendingBreadcrumbs: Array<Sentry.Breadcrumb> | null = [];
+
     init({ sentryDSN }: { sentryDSN: string }) {
-        if (sentryDSN) {
-            Raven.config(sentryDSN, {
-                logger: 'accounts-js-app',
-                level: 'info',
-                environment: window.location.host === 'account.ely.by' ? 'Production' : 'Development',
-                release: process.env.__VERSION__,
-                shouldSendCallback: () => !isTest,
-                dataCallback: (data) => {
-                    if (!data.level) {
-                        // log unhandled errors as info
-                        data.level = 'info';
-                    }
+        if (!sentryDSN || isTest) {
+            this.pendingBreadcrumbs = null;
 
-                    return data;
-                },
-                whitelistUrls: isProduction ? [/ely\.by/] : [],
-            }).install();
-
-            window.addEventListener('unhandledrejection', (event) => {
-                const error = event.reason || {};
-
-                let message = error.message || error;
-
-                if (typeof message === 'string') {
-                    message = `: ${message}`;
-                } else {
-                    message = '';
-                }
-
-                this.info(`Unhandled rejection${message}`, {
-                    error,
-                    event,
-                });
-            });
+            return;
         }
+
+        const applicationKey = process.env.__SENTRY_APPLICATION_KEY__;
+
+        Sentry.init({
+            dsn: sentryDSN,
+            environment: window.location.host === 'account.ely.by' ? 'Production' : 'Development',
+            release: process.env.__VERSION__,
+            allowUrls: isProduction ? [/ely\.by/] : undefined,
+            denyUrls: DENY_URLS,
+            ignoreErrors: IGNORE_ERRORS,
+            // Enough to reach fields like extra.resp.originalResponse.body.errors.*
+            normalizeDepth: 6,
+            integrations: applicationKey
+                ? [
+                      // Our bundles are marked with this key by @sentry/webpack-plugin (see webpack.config.js).
+                      // Errors that have no frames from our code come from browser extensions or scripts injected by
+                      // the WebView hosts. For now they are only tagged to verify the filter before dropping them
+                      Sentry.thirdPartyErrorFilterIntegration({
+                          filterKeys: [applicationKey],
+                          behaviour: 'apply-tag-if-exclusively-contains-third-party-frames',
+                      }),
+                  ]
+                : [],
+        });
+
+        const pending = this.pendingBreadcrumbs || [];
+        this.pendingBreadcrumbs = null;
+        pending.forEach((breadcrumb) => Sentry.addBreadcrumb(breadcrumb));
     }
 
     setUser(user: { username: string | null; email: string | null; id: number | null }) {
-        Raven.setUserContext({
-            username: user.username,
-            email: user.email,
-            id: user.id,
+        Sentry.setUser({
+            id: user.id ?? undefined,
+            username: user.username ?? undefined,
+            email: user.email ?? undefined,
+        });
+    }
+
+    /**
+     * Sets a searchable tag that will be attached to all the following events. Pass undefined to remove it
+     */
+    setTag(key: string, value: string | undefined) {
+        Sentry.setTag(key, value);
+    }
+
+    /**
+     * Registers a function that will be called for every reported event to attach the actual state of some part
+     * of the app. The provider should return null when there is nothing to attach
+     */
+    addContextProvider(name: string, provider: () => { context: Context; tags?: Record<string, string> } | null) {
+        Sentry.addEventProcessor((event) => {
+            let data: ReturnType<typeof provider>;
+            try {
+                data = provider();
+            } catch {
+                // A broken provider must not prevent the event from being reported
+                return event;
+            }
+
+            if (data) {
+                event.contexts = { ...event.contexts, [name]: data.context };
+                event.tags = { ...event.tags, ...data.tags };
+            }
+
+            return event;
         });
     }
 
@@ -59,80 +123,166 @@ class Logger {
         });
     }
 
-    error(message: string | Error, context?: { [key: string]: any }) {
+    error(message: string | Error, context?: Context) {
         log('error', message, context);
     }
 
-    info(message: string | Error, context?: { [key: string]: any }) {
+    info(message: string | Error, context?: Context) {
         log('info', message, context);
     }
 
-    warn(message: string | Error, context?: { [key: string]: any }) {
+    warn(message: string | Error, context?: Context) {
         log('warning', message, context);
     }
 
-    getLastEventId(): string | void {
-        return Raven.lastEventId();
+    /**
+     * Leaves a trace that will be attached to the next reported event, but doesn't create an event by itself.
+     * Use it for expected situations that are useful only as a context for other errors
+     */
+    breadcrumb(message: string, data?: Context) {
+        if (isTest) {
+            return;
+        }
+
+        const breadcrumb: Sentry.Breadcrumb = {
+            category: 'app',
+            level: 'info',
+            message,
+            data,
+            timestamp: Date.now() / 1000,
+        };
+
+        if (this.pendingBreadcrumbs) {
+            this.pendingBreadcrumbs.push(breadcrumb);
+        } else {
+            Sentry.addBreadcrumb(breadcrumb);
+        }
+    }
+
+    getLastEventId(): string | undefined {
+        return Sentry.lastEventId();
     }
 }
 
-function log(level: 'error' | 'warning' | 'info' | 'debug', message: string | Error, context?: Record<string, any>) {
-    const method: 'error' | 'warn' | 'info' | 'debug' = level === 'warning' ? 'warn' : level;
+function log(level: Level, message: string | Error, rawContext?: Context) {
+    const method = level === 'warning' ? 'warn' : level;
 
     if (isTest) {
         return;
     }
 
-    if (typeof context !== 'object') {
-        // it would better to always have an object here
-        context = {
-            message: context,
-        };
-    }
+    // it would better to always have an object here
+    const context: Context =
+        typeof rawContext === 'object' && rawContext !== null ? rawContext : { message: rawContext };
 
-    prepareContext(context).then((context) => {
+    prepareContext(context).then((preparedContext) => {
         console[method](message, context); // eslint-disable-line
 
-        Raven.captureException(message, {
-            level,
-            extra: context,
-            ...(typeof message === 'string' ? { fingerprint: [message] } : {}),
+        if (isNetworkError(context)) {
+            // The user has connectivity problems, there is nothing we can do about it
+            Sentry.addBreadcrumb({
+                category: 'app',
+                level,
+                message: message instanceof Error ? message.message : message,
+                data: preparedContext,
+            });
+
+            return;
+        }
+
+        Sentry.withScope((scope) => {
+            scope.setLevel(level);
+            scope.setExtras(preparedContext);
+
+            if (message instanceof Error) {
+                Sentry.captureException(message);
+            } else {
+                Sentry.captureMessage(message);
+            }
         });
     });
 }
 
 /**
- * prepare data for JSON.stringify
- *
- * @param  {object} context
- *
- * @returns {Promise}
+ * Checks whether the logged context is caused by a failed network request.
+ * The context may have different shapes: the error itself, `{ error }`, `{ resp }` or `{ resp: { error } }`
  */
-function prepareContext(context: Record<string, any>): Promise<string> {
-    if (context instanceof Response) {
-        // TODO: rewrite abbreviate to use promises and recursively find Response
-        return context
-            .json()
-            .catch(() => context.text())
-            .then((body) =>
-                abbreviate({
-                    type: context.type,
-                    url: context.url,
-                    status: context.status,
-                    statusText: context.statusText,
-                    body,
-                }),
-            );
-    } else if (context.originalResponse instanceof Response) {
-        return prepareContext(context.originalResponse).then((originalResponse) =>
-            abbreviate({
-                ...context,
-                originalResponse,
-            }),
-        );
+function isNetworkError(context: Context, depth: number = 0): boolean {
+    if (!context || typeof context !== 'object' || depth > 2) {
+        return false;
     }
 
-    return Promise.resolve(abbreviate(context));
+    if (typeof context.message === 'string' && NETWORK_ERROR_REGEX.test(context.message)) {
+        return true;
+    }
+
+    return isNetworkError(context.error, depth + 1) || isNetworkError(context.resp, depth + 1);
+}
+
+/**
+ * Prepares the context to be sent to Sentry. The SDK normalizes the data itself (errors, circular references, depth),
+ * so here we only need to extract the things it can't: the non-enumerable fields of an Error used as the whole context
+ * and the bodies of Response objects
+ */
+async function prepareContext(context: Context): Promise<Context> {
+    if (context instanceof Response) {
+        return describeResponse(context);
+    }
+
+    const prepared: Context = context instanceof Error ? copyError(context) : { ...context };
+
+    // Our request errors keep the Response in the `originalResponse` field, which the SDK serializes
+    // as an empty object. It may be in the context itself or one level deeper: `{ resp }`, `{ error }`
+    if (prepared.originalResponse instanceof Response) {
+        prepared.originalResponse = await describeResponse(prepared.originalResponse);
+    }
+
+    for (const key of Object.keys(prepared)) {
+        const value = prepared[key];
+
+        if (typeof value === 'object' && value !== null && value.originalResponse instanceof Response) {
+            const copy: Context = value instanceof Error ? copyError(value) : { ...value };
+            copy.originalResponse = await describeResponse(value.originalResponse);
+            prepared[key] = copy;
+        }
+    }
+
+    return prepared;
+}
+
+function copyError(error: Error): Context {
+    // name, message and stack are non-enumerable
+    return { ...error, name: error.name, message: error.message, stack: error.stack };
+}
+
+async function describeResponse(response: Response): Promise<Context> {
+    return {
+        type: response.type,
+        url: response.url,
+        status: response.status,
+        statusText: response.statusText,
+        body: await readBody(response),
+    };
+}
+
+async function readBody(response: Response): Promise<unknown> {
+    // The body might be already consumed by the code that has produced this response
+    if (response.bodyUsed) {
+        return '[body already read]';
+    }
+
+    let text: string;
+    try {
+        text = await response.clone().text();
+    } catch {
+        return '[failed to read body]';
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        return text;
+    }
 }
 
 export default new Logger();
