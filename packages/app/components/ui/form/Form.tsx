@@ -1,8 +1,6 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 
-import logger from 'app/services/logger';
-
 import FormModel from './FormModel';
 import styles from './form.scss';
 
@@ -30,7 +28,7 @@ interface State {
     isTouched: boolean;
     isLoading: boolean;
 }
-type InputElement = HTMLInputElement | HTMLTextAreaElement;
+type InputElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 export default class Form extends React.Component<Props, State> {
     static defaultProps = {
@@ -141,14 +139,15 @@ export default class Form extends React.Component<Props, State> {
                     .finally(() => this.mounted && this.setState({ isLoading: false }));
             }
         } else {
-            const invalidEls: NodeListOf<InputElement> = form.querySelectorAll(':invalid');
+            // Only form controls: a <fieldset> also matches :invalid when it contains an invalid control
+            const invalidEls: NodeListOf<InputElement> = form.querySelectorAll(
+                'input:invalid, select:invalid, textarea:invalid',
+            );
             const errors: Record<string, string> = {};
-            invalidEls[0].focus(); // focus on first error
+            invalidEls[0]?.focus(); // focus on first error
 
             Array.from(invalidEls).reduce((acc, el) => {
                 if (!el.name) {
-                    logger.warn('Found an element without name', { el });
-
                     return acc;
                 }
 
