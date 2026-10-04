@@ -58,7 +58,8 @@ export function loadScript(src: string): Promise<void> {
 
     return new Promise((resolve, reject) => {
         script.onload = () => resolve();
-        script.onerror = reject;
+        // onerror receives a DOM Event, which is useless as a rejection reason
+        script.onerror = () => reject(new Error(`Failed to load script ${src}`));
 
         if (document && document.body) {
             document.body.appendChild(script);
