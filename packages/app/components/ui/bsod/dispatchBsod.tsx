@@ -14,7 +14,6 @@ let onBsod: undefined | (() => void);
 
 export default function dispatchBsod(store = injectedStore, history = injectedHistory) {
     store.dispatch(bsod());
-    onBsod && onBsod();
 
     ReactDOM.render(
         <ContextProvider store={store} history={history}>
@@ -22,6 +21,8 @@ export default function dispatchBsod(store = injectedStore, history = injectedHi
         </ContextProvider>,
         document.getElementById('app'),
     );
+
+    onBsod?.();
 }
 
 export function inject({
