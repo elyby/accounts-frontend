@@ -5,6 +5,7 @@ import { ContextProvider } from 'app/shell';
 import { browserHistory } from 'app/services/history';
 import storeFactory from 'app/storeFactory';
 import 'app/index.scss';
+import 'app/services/font';
 
 import { IntlDecorator } from './decorators';
 

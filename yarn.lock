@@ -1269,6 +1269,16 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
+"@fontsource/roboto-condensed@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto-condensed/-/roboto-condensed-5.3.0.tgz#77335105a938e2f33c5a1911d5a5fdf46e09fa70"
+  integrity sha512-Vbh5pesre/M/Jspd10btdKRqLSTe3yn4l6B2tXHGElCeASfA7Pgdpu1mb8wTG8E72J4Xk6FUfqnSe46UN2QAog==
+
+"@fontsource/roboto@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-5.3.0.tgz#fd0dcdaa0c6ef3a1621253ea702db933ca1b573a"
+  integrity sha512-BapRJOWYP+LZ21zp+wBQjfpPYKRoxc4LspJ/RLuI+HSMBD5u/X4O+ESDrSvEqDSy0rAl7GwBJ+09mdc16cVQ1Q==
+
 "@formatjs/ecma402-abstract@1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@formatjs/ecma402-abstract/-/ecma402-abstract-1.4.0.tgz#ac6c17a8fffac43c6d68c849a7b732626d32654c"
@@ -3110,11 +3120,6 @@
   version "9.0.8"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.8.tgz#7545ba4fc3c003d6c756f651f3bf163d8f0f29ba"
   integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
-
-"@types/webfontloader@^1.6.30":
-  version "1.6.38"
-  resolved "https://registry.yarnpkg.com/@types/webfontloader/-/webfontloader-1.6.38.tgz#2cb965a7e7e4a83af6bac67688bc7d1c076107e8"
-  integrity sha512-kUaF72Fv202suFx6yBrwXqeVRMx7hGtJTesyESZgn9sEPCUeDXm2p0SiyS1MTqW74nQP4p7JyrOCwZ7pNFns4w==
 
 "@types/webpack-env@^1", "@types/webpack-env@^1.15.2":
   version "1.18.8"
@@ -12379,11 +12384,6 @@ web-vitals@^6.1.1:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-6.2.2.tgz#ff4a7a8d7c5df18074a01f1c4f169e1a57df7193"
   integrity sha512-oto5x6dLEgrRqfcWed+pZEUb2q6ikbFmqF54CRDhI/QGbn+qxC49b4C4OkbH+kb9C3a8shpFD3SgR9kRcs80ZQ==
-
-webfontloader@^1.6.26:
-  version "1.6.28"
-  resolved "https://registry.yarnpkg.com/webfontloader/-/webfontloader-1.6.28.tgz#db786129253cb6e8eae54c2fb05f870af6675bae"
-  integrity sha512-Egb0oFEga6f+nSgasH3E0M405Pzn6y3/9tOVanv/DLfa1YBIgcv90L18YyWnvXkRbIM17v5Kv6IT2N6g1x5tvQ==
 
 webfonts-generator@0.3.5:
   version "0.3.5"

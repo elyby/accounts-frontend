@@ -2,6 +2,8 @@
     "name": "app",
     "version": "1.0.0",
     "dependencies": {
+        "@fontsource/roboto": "^5.3.0",
+        "@fontsource/roboto-condensed": "^5.3.0",
         "@formatjs/intl-pluralrules": "^1.5.9",
         "@formatjs/intl-relativetimeformat": "^4.5.16",
         "@hot-loader/react-dom": "^17",
@@ -28,8 +30,7 @@
         "redux": "^4.0.5",
         "redux-localstorage": "^0.4.1",
         "redux-thunk": "^2.0.0",
-        "rtl-detect": "^1.0.2",
-        "webfontloader": "^1.6.26"
+        "rtl-detect": "^1.0.2"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "^5.8.0",
@@ -41,7 +42,6 @@
         "@types/react-motion": "^0.0.29",
         "@types/react-transition-group": "^4.2.4",
         "@types/rtl-detect": "^1.0.0",
-        "@types/webfontloader": "^1.6.30",
         "@types/webpack-env": "^1.15.2",
         "synchronous-promise": "^2.0.17",
         "utility-types": "^3.10.0"

@@ -12,7 +12,7 @@ import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import getOAuthDebugContext from 'app/components/auth/oauthDebugContext';
 import * as loader from 'app/services/loader';
 import logger from 'app/services/logger';
-import font from 'app/services/font';
+import { loadFonts } from 'app/services/fonts';
 import history, { browserHistory } from 'app/services/history';
 import i18n from 'app/services/i18n';
 import { loadScript, debounce } from 'app/functions';
@@ -41,7 +41,7 @@ authFlow.setStore(store);
 
 Promise.all([
     userFactory(store),
-    font.load(['Roboto', 'Roboto Condensed']),
+    loadFonts(),
     i18n.ensureIntl(), // ensure, that intl is polyfilled before any rendering
 ]).then(() => {
     ReactDOM.render(
