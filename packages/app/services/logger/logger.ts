@@ -93,6 +93,9 @@ class Logger {
                       Sentry.thirdPartyErrorFilterIntegration({
                           filterKeys: [applicationKey],
                           behaviour: 'apply-tag-if-exclusively-contains-third-party-frames',
+                          // Skip the SDK's own wrapper frame (e.g. sentryWrapped around setTimeout callbacks),
+                          // which is bundled into our code and would otherwise mark an injected script's error as ours
+                          ignoreSentryInternalFrames: true,
                       }),
                   ]
                 : [],
