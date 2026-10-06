@@ -2,10 +2,18 @@ import ky, { Hooks } from 'ky';
 
 import { ensureToken, recoverFromTokenError } from 'app/components/accounts/actions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
-import { RequestContext } from 'app/services/request';
+import { RequestContext, UnauthorizedError, createResponseError } from 'app/services/request';
 import { Store } from 'app/types';
 
 const REFRESH_TOKEN_URL = '/api/authentication/refresh-token';
+
+interface AuthRequestContext extends RequestContext {
+    /**
+     * Set before retrying the request with the refreshed token.
+     * The context is shared by all the attempts of the request
+     */
+    isTokenRefreshed?: boolean;
+}
 
 /**
  * Creates ky hooks, that authorize requests on behalf of the active account:
@@ -44,30 +52,33 @@ export default function createAuthHooks({ dispatch, getState }: Store): Hooks {
         ],
 
         afterResponse: [
-            async ({ response, options, retryCount }) => {
-                const context = options.context as RequestContext;
+            async ({ response, options }) => {
+                const context = options.context as AuthRequestContext;
 
-                // Retry only once, so a still rejected token will not lead to an infinite loop
-                if (response.status !== 401 || retryCount > 0 || isAutoRefreshDisabled(context)) {
+                // Refresh the token only once, so a still rejected token will not lead to an infinite loop.
+                // Don't rely on retryCount: the request may be retried for other reasons
+                if (response.status !== 401 || context.isTokenRefreshed || isAutoRefreshDisabled(context)) {
                     return;
                 }
 
-                type AuthErrorBody = { status?: number; message?: string };
-                const { status, message = '' } = await response.json<AuthErrorBody>().catch((): AuthErrorBody => ({}));
+                const body = await response.json().catch(() => null);
+                const error = createResponseError(response, body);
 
-                // Only the API auth errors have { status: 401 } in the body.
+                // Only the API auth errors are recoverable.
                 // Others 401 errors (e.g. oauth's { statusCode: 401, error: 'access_denied' }) are passed to the caller
-                if (status !== 401) {
+                if (!(error instanceof UnauthorizedError)) {
                     return;
                 }
 
                 try {
                     // Will reject when the error isn't recoverable (and log the user out)
-                    await dispatch(recoverFromTokenError({ status, message }));
+                    await dispatch(recoverFromTokenError(error));
                 } catch {
                     // Let the original 401 response reach the caller
                     return;
                 }
+
+                context.isTokenRefreshed = true;
 
                 return ky.retry({ delay: 0 });
             },

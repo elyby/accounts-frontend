@@ -6,7 +6,7 @@ import { updateToken } from 'app/components/accounts/actions';
 import { browserHistory } from 'app/services/history';
 import * as authentication from 'app/services/api/authentication';
 import * as request from 'app/services/request';
-import { ApiError, InternalServerError, RequestAbortedError } from 'app/services/request';
+import { InternalServerError, OAuthError, RequestAbortedError, UnauthorizedError, ValidationError } from 'app/services/request';
 
 const refreshToken = 'foo';
 const expiredToken =
@@ -158,7 +158,7 @@ describe('authHooks', () => {
         });
 
         it('should not relogin if token request failed with 5xx', async () => {
-            const resp = new InternalServerError({}, new Response('{}', { status: 500 }));
+            const resp = new InternalServerError(new Response('{}', { status: 500 }));
             (authentication.requestToken as SinonStub).rejects(resp);
 
             await expect(request.get('/api/foo'), 'to be rejected with', resp);
@@ -179,10 +179,10 @@ describe('authHooks', () => {
 
         it('should relogin if the backend rejected the refresh token', async () => {
             (authentication.requestToken as SinonStub).rejects(
-                new ApiError(
-                    { success: false, errors: { refresh_token: 'error.refresh_token_not_exist' } },
-                    new Response('{}', { status: 200 }),
-                ),
+                new ValidationError(new Response('{}', { status: 200 }), {
+                    success: false,
+                    errors: { refresh_token: 'error.refresh_token_not_exist' },
+                }),
             );
 
             await expect(request.get('/api/foo'), 'to be rejected');
@@ -192,13 +192,27 @@ describe('authHooks', () => {
         });
     });
 
-    it('should relogin if token can not be parsed', async () => {
-        setAccount({ id: 42, email, token: 'realy bad token', refreshToken });
+    describe('when token can not be parsed', () => {
+        it('should refresh the token', async () => {
+            setAccount({ id: 42, email, token: 'realy bad token', refreshToken });
+            (authentication.requestToken as SinonStub).resolves(validToken);
+            fetch.resolves(jsonResponse({}));
 
-        await expect(request.get('/api/foo'), 'to be rejected with', { message: 'Invalid token' });
+            await request.get('/api/foo');
 
-        expect(authentication.requestToken, 'was not called');
-        assertRelogin();
+            expect(authentication.requestToken, 'to have a call satisfying', [refreshToken]);
+            expect(authHeaders(), 'to equal', [`Bearer ${validToken}`]);
+        });
+
+        it('should relogin if there is no refresh token', async () => {
+            setAccount({ id: 42, email, token: 'realy bad token', refreshToken: null });
+            fetch.resolves(jsonResponse({ name: 'Unauthorized', message: 'Incorrect token', status: 401 }, 401));
+
+            await expect(request.get('/api/foo'), 'to be rejected with', expect.it('to be an', UnauthorizedError));
+
+            expect(authentication.requestToken, 'was not called');
+            assertRelogin();
+        });
     });
 
     describe('on 401 response', () => {
@@ -228,9 +242,24 @@ describe('authHooks', () => {
 
             const error = await request.get('/api/foo').catch((err) => err);
 
-            expect(error, 'to be an', ApiError);
+            expect(error, 'to be an', UnauthorizedError);
             expect(error.status, 'to be', 401);
             expect(fetch, 'was called twice');
+        });
+
+        it('should refresh token again for the next request', async () => {
+            (authentication.requestToken as SinonStub).resolves(validToken);
+            const unauthorized = () => jsonResponse({ name: 'Unauthorized', message: 'Token expired', status: 401 }, 401);
+            fetch.onCall(0).callsFake(async () => unauthorized());
+            fetch.onCall(1).callsFake(async () => jsonResponse({}));
+            fetch.onCall(2).callsFake(async () => unauthorized());
+            fetch.onCall(3).callsFake(async () => jsonResponse({}));
+
+            await request.get('/api/foo');
+            await request.get('/api/bar');
+
+            expect(authentication.requestToken, 'was called twice');
+            expect(fetch, 'was called times', 4);
         });
 
         it('should relogin on an unknown 401 error', async () => {
@@ -238,7 +267,7 @@ describe('authHooks', () => {
 
             const error = await request.get('/api/foo').catch((err) => err);
 
-            expect(error, 'to be an', ApiError);
+            expect(error, 'to be an', UnauthorizedError);
             expect(fetch, 'was called once');
             expect(authentication.requestToken, 'was not called');
             assertRelogin();
@@ -246,7 +275,7 @@ describe('authHooks', () => {
 
         it('should not relogin if token request failed with 5xx', async () => {
             (authentication.requestToken as SinonStub).rejects(
-                new InternalServerError({}, new Response('{}', { status: 500 })),
+                new InternalServerError(new Response('{}', { status: 500 })),
             );
             fetch.resolves(jsonResponse({ name: 'Unauthorized', message: 'Token expired', status: 401 }, 401));
 
@@ -262,8 +291,8 @@ describe('authHooks', () => {
 
             const error = await request.post('/api/oauth2/v1/complete').catch((err) => err);
 
-            expect(error, 'to be an', ApiError);
-            expect(error, 'to satisfy', { statusCode: 401, error: 'access_denied', redirectUri: 'x' });
+            expect(error, 'to be an', OAuthError);
+            expect(error, 'to satisfy', { status: 401, error: 'access_denied', redirectUri: 'x' });
             expect(fetch, 'was called once');
             expect(authentication.requestToken, 'was not called');
             expect(browserHistory.push, 'was not called');

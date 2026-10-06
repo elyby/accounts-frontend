@@ -14,6 +14,7 @@ import { BackButton } from 'app/components/profile/ProfileForm';
 import { COLOR_GREEN } from 'app/components/ui';
 import styles from 'app/components/profile/profileForm.scss';
 import logger from 'app/services/logger';
+import { ValidationError } from 'app/services/request';
 
 import ApplicationTypeSwitcher from './ApplicationTypeSwitcher';
 import WebsiteType from './WebsiteType';
@@ -80,7 +81,7 @@ const ApplicationForm: FC<Props> = ({ app, form, displayTypeSwitcher, type, setT
         try {
             await onSubmit?.(form);
         } catch (resp) {
-            if (resp.errors) {
+            if (resp instanceof ValidationError) {
                 form.setErrors(resp.errors);
 
                 return;

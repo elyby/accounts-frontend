@@ -2,6 +2,7 @@ import React, { ComponentType, useCallback, useRef, useState } from 'react';
 
 import { send as sendFeedback } from 'app/services/api/feedback';
 import logger from 'app/services/logger';
+import { ValidationError } from 'app/services/request';
 import { useReduxSelector } from 'app/functions';
 
 import ContactFormPopup from './ContactFormPopup';
@@ -23,7 +24,7 @@ const ContactForm: ComponentType<Props> = ({ onClose }) => {
                     usedEmailRef.current = params.email;
                 })
                 .catch((resp) => {
-                    if (!resp.errors) {
+                    if (!(resp instanceof ValidationError)) {
                         logger.warn('Error sending feedback', resp);
                     }
 

@@ -122,6 +122,7 @@ const errorsMap: Record<string, (props?: Record<string, any>) => ReactElement> =
         <Message key="accountAlreadyActivated" defaultMessage="This account is already activated" />
     ),
 
+    'error.request_failed': () => <Message key="requestFailed" defaultMessage="The request has failed. Please, try again later." />,
     'error.captcha_required': () => <Message key="captchaRequired" defaultMessage="Please, solve the captcha" />,
     'error.captcha_invalid': (props) => errorsMap['error.captcha_required'](props),
 

@@ -7,7 +7,7 @@ import { ApiError, InternalServerError } from 'app/services/request';
 describe('bsodErrorListener', () => {
     [500, 503, 555].forEach((code) =>
         it(`should dispatch for ${code}`, () => {
-            const resp = new InternalServerError({}, new Response('{}', { status: code }));
+            const resp = new InternalServerError(new Response('{}', { status: code }));
 
             const dispatchBsod = sinon.spy();
             const logger = { warn: sinon.spy() };
@@ -20,7 +20,7 @@ describe('bsodErrorListener', () => {
     );
 
     it('should dispatch for invalid json', () => {
-        const resp = new InternalServerError(new SyntaxError('Unexpected token'), new Response('foo'));
+        const resp = new InternalServerError(new Response('foo'), 'Unexpected token');
 
         const dispatchBsod = sinon.spy();
         const logger = { warn: sinon.spy() };
@@ -33,7 +33,7 @@ describe('bsodErrorListener', () => {
 
     [400, 401, 404].forEach((code) =>
         it(`should not dispatch for ${code}`, () => {
-            const resp = new ApiError({}, new Response('{}', { status: code }));
+            const resp = new ApiError(new Response('{}', { status: code }), {});
 
             const dispatchBsod = sinon.spy();
             const logger = { warn: sinon.spy() };

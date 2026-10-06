@@ -1,4 +1,3 @@
-import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
@@ -18,8 +17,7 @@ export default class AcceptRulesState extends AbstractState {
     resolve(context: AuthContext): Promise<void> | void {
         return context
             .run('acceptRules')
-            .then(() => context.setState(new CompleteState()))
-            .catch((err = {}) => err.errors || logger.warn('Error accepting rules', err));
+            .then(() => context.setState(new CompleteState()));
     }
 
     reject(context: AuthContext, payload: Record<string, any>): void {

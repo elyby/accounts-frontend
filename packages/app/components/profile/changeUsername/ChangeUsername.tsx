@@ -3,6 +3,7 @@ import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { Input, Button, Form, FormModel } from 'app/components/ui/form';
 import { BackButton } from 'app/components/profile/ProfileForm';
+import { ValidationError } from 'app/services/request';
 
 import styles from '../profileForm.scss';
 
@@ -85,9 +86,8 @@ export default class ChangeUsername extends React.Component<Props> {
         const { form } = this.props;
 
         this.props.onSubmit(form).catch((resp) => {
-            if (resp.errors) {
-                form.setErrors(resp.errors);
-            } else {
+            // Validation errors are already shown in the form by the onSubmit handler
+            if (!(resp instanceof ValidationError)) {
                 return Promise.reject(resp);
             }
         });

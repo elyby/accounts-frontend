@@ -1,7 +1,7 @@
 import { UserResponse } from 'app/services/api/accounts';
 import logger from 'app/services/logger';
 import { post } from 'app/services/request';
-import { InternalServerError, RequestAbortedError } from 'app/services/request';
+import { InternalServerError, RequestAbortedError, UnauthorizedError, ValidationError } from 'app/services/request';
 import { getInfo as getInfoEndpoint } from 'app/services/api/accounts';
 
 export interface OAuthResponse {
@@ -37,7 +37,6 @@ export function login({
 /**
  * @param {string} token - an optional token to overwrite headers
  *                         in middleware and disable token auto-refresh
- *
  * @returns {Promise}
  */
 export function logout(token?: string): Promise<{ success: boolean }> {
@@ -90,15 +89,12 @@ export function recoverPassword(key: string, newPassword: string, newRePassword:
 
 /**
  * Resolves if token is valid
- *
  * @param {number} id
  * @param {string} token
  * @param {string} refreshToken
- *
  * @returns {Promise} - resolves with options.token or with a new token
  *                     if it was refreshed. As a side effect the response
  *                     will have a `user` field with current user data
- *
  */
 export async function validateToken(
     id: number,
@@ -130,16 +126,14 @@ export async function validateToken(
     };
 }
 
-const recoverableErrors = ['Token expired', 'Incorrect token', 'You are requesting with an invalid credential.'];
-
-function handleTokenError(resp: Error | { message: string }, refreshToken: string | null): Promise<string> {
+function handleTokenError(resp: unknown, refreshToken: string | null): Promise<string> {
     if (resp instanceof InternalServerError) {
         // delegate error recovering to the bsod middleware
         return new Promise(() => {});
     }
 
     if (refreshToken) {
-        if (recoverableErrors.includes(resp.message)) {
+        if (resp instanceof UnauthorizedError && resp.isRecoverable) {
             return requestToken(refreshToken);
         }
 
@@ -154,9 +148,7 @@ function handleTokenError(resp: Error | { message: string }, refreshToken: strin
 
 /**
  * Request new access token using a refreshToken
- *
  * @param {string} refreshToken
- *
  * @returns {Promise} - resolves to token
  */
 export async function requestToken(refreshToken: string): Promise<string> {
@@ -173,9 +165,7 @@ export async function requestToken(refreshToken: string): Promise<string> {
 
         return response.access_token;
     } catch (resp) {
-        const errors = resp.errors || {};
-
-        if (errors.refresh_token === 'error.refresh_token_not_exist') {
+        if (resp instanceof ValidationError && resp.errors.refresh_token === 'error.refresh_token_not_exist') {
             // The session is over. The callers log the user out (see relogin() calls in accounts/actions),
             // but the rejection still reaches places that don't expect it, so don't report it as unhandled
             logger.markAsHandled(resp);

@@ -1,4 +1,3 @@
-import logger from 'app/services/logger';
 import { getCredentials } from 'app/components/auth/reducer';
 import { getActiveAccount, getAvailableAccounts } from 'app/components/accounts/reducer';
 
@@ -60,8 +59,7 @@ export default class PasswordState extends AbstractState {
                 }
 
                 return context.setState(new CompleteState());
-            })
-            .catch((err = {}) => err.errors || logger.warn('Error logging in', err));
+            });
     }
 
     reject(context: AuthContext): void {

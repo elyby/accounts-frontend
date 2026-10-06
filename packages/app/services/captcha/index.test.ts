@@ -34,7 +34,7 @@ describe('services/captcha', () => {
         afterEach(() => sandbox.restore());
 
         const givenProviders = (captcha: Record<string, { publicKey: string }>) =>
-            sandbox.stub(options, 'fetch').resolves({ captcha, originalResponse: new Response() });
+            sandbox.stub(options, 'fetch').resolves({ captcha, response: new Response() });
 
         it('should pick the preferred provider', async () => {
             givenProviders({ recaptcha: { publicKey: 'g' }, yandex: { publicKey: 'y' } });

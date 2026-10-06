@@ -1,11 +1,12 @@
 import ky, { type Options as KyOptions, type Hooks, type KyInstance, isNetworkError } from 'ky';
 
-import ApiError from './ApiError';
+import createResponseError from './createResponseError';
 import InternalServerError from './InternalServerError';
 import RequestAbortedError from './RequestAbortedError';
+import RequestError from './RequestError';
 
 export type Resp<T> = T & {
-    originalResponse: Response;
+    response: Response;
 };
 
 type Data = Record<string, any>;
@@ -105,30 +106,23 @@ async function parseResponse<T>(response: Response): Promise<Resp<T>> {
             throw new RequestAbortedError(error);
         }
 
-        throw new InternalServerError(error, response);
+        // Don't check `instanceof Error`: the error may come from another realm (e.g. jsdom in tests)
+        throw new InternalServerError(response, String(error?.message || 'Invalid JSON'), { cause: error });
     }
 
-    if (response.status >= 500) {
-        throw new InternalServerError(json, response);
+    const error = createResponseError(response, json);
+
+    if (error) {
+        throw error;
     }
 
-    // The backend always responds with an object or an array
-    if (typeof json !== 'object' || json === null) {
-        throw new InternalServerError('Unexpected response body', response);
-    }
-
-    // The backend has ugly API, so it responds with 200, but body states { success: false } and so its validation error
-    if (!response.ok || json.success === false) {
-        throw new ApiError(json, response);
-    }
-
-    json.originalResponse = response;
+    json.response = response;
 
     return json;
 }
 
 function normalizeError(error: unknown): unknown {
-    if (error instanceof ApiError || error instanceof InternalServerError || error instanceof RequestAbortedError) {
+    if (error instanceof RequestError) {
         return error;
     }
 

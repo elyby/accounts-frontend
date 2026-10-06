@@ -47,19 +47,18 @@ class ChangeEmailPage extends React.Component<Props> {
         return this.context
             .onSubmit({
                 form,
+                repeatUrl: step > 0 ? '/profile/change-email' : undefined,
                 sendData: () => {
                     const { userId } = this.context;
                     const data = form.serialize();
 
                     switch (step) {
                         case 0:
-                            return requestEmailChange(userId, data.password).catch(handleErrors());
+                            return requestEmailChange(userId, data.password);
                         case 1:
-                            return setNewEmail(userId, data.email, data.key).catch(
-                                handleErrors('/profile/change-email'),
-                            );
+                            return setNewEmail(userId, data.email, data.key);
                         case 2:
-                            return confirmNewEmail(userId, data.key).catch(handleErrors('/profile/change-email'));
+                            return confirmNewEmail(userId, data.key);
                         default:
                             throw new Error(`Unsupported step ${step}`);
                     }
@@ -68,27 +67,6 @@ class ChangeEmailPage extends React.Component<Props> {
             .then(() => {
                 step > 1 && this.context.goToProfile();
             });
-    };
-}
-
-function handleErrors(repeatUrl?: string): <T extends { errors: Record<string, any> }>(resp: T) => Promise<T> {
-    return (resp) => {
-        if (resp.errors) {
-            if (resp.errors.key) {
-                resp.errors.key = {
-                    type: resp.errors.key,
-                    payload: {},
-                };
-
-                if (['error.key_not_exists', 'error.key_expire'].includes(resp.errors.key.type) && repeatUrl) {
-                    Object.assign(resp.errors.key.payload, {
-                        repeatUrl,
-                    });
-                }
-            }
-        }
-
-        return Promise.reject(resp);
     };
 }
 

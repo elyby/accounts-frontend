@@ -1,5 +1,5 @@
 import { ApplicationType } from 'app/components/dev/apps';
-import { get, post, put, del } from 'app/services/request';
+import { get, post, put, del, OAuthError, Resp } from 'app/services/request';
 
 export type Scope = 'minecraft_server_session' | 'offline_access' | 'account_info' | 'account_email';
 
@@ -68,8 +68,8 @@ interface FormPayloads {
 
 const api = {
     validate(oauthData: OauthRequestData) {
-        return get<OAuthValidateResponse>('/api/oauth2/v1/validate', oauthData)
-            .catch(handleOauthParamsValidation);
+        // Rejects with OAuthError, which has the userMessage for the invalid OAuth params
+        return get<OAuthValidateResponse>('/api/oauth2/v1/validate', oauthData);
     },
 
     complete(
@@ -86,29 +86,19 @@ const api = {
         }
 
         return post<{ success: boolean; redirectUri: string }>('/api/oauth2/v1/complete', data, { searchParams: oauthData })
-            .catch((resp = {}) => {
-                if (resp.statusCode === 401 && resp.error === 'access_denied') {
+            .catch((error): Resp<{ success: false; redirectUri?: string }> => {
+                if (error instanceof OAuthError && error.error === 'access_denied') {
                     // user declined permissions
                     return {
                         success: false,
-                        redirectUri: resp.redirectUri,
-                        originalResponse: resp.originalResponse,
+                        redirectUri: error.redirectUri,
+                        response: error.response,
                     };
                 }
 
-                if (resp.status === 401 && resp.name === 'Unauthorized') {
-                    const error: { [key: string]: any } = new Error('Unauthorized');
-                    error.unauthorized = true;
-                    throw error;
-                }
-
-                if (resp.statusCode === 401 && resp.error === 'accept_required') {
-                    const error: { [key: string]: any } = new Error('Permissions accept required');
-                    error.acceptRequired = true;
-                    throw error;
-                }
-
-                return handleOauthParamsValidation(resp);
+                // UnauthorizedError, OAuthError 'accept_required' and the invalid OAuth params (see OAuthError.userMessage)
+                // are handled by the callers
+                throw error;
             });
     },
 
@@ -144,36 +134,3 @@ if ('Cypress' in window) {
 }
 
 export default api;
-
-function handleOauthParamsValidation(
-    resp:
-        | Record<string, any>
-        | {
-              statusCode: number;
-              success: false;
-              error:
-                  | 'invalid_request'
-                  | 'unsupported_response_type'
-                  | 'unsupported_grant_type'
-                  | 'invalid_scope'
-                  | 'invalid_client'
-                  | 'invalid_user_code';
-              parameter: string;
-          } = {},
-) {
-    let userMessage: string | null = null;
-
-    if (resp.statusCode === 400 && resp.error === 'invalid_request') {
-        userMessage = `Invalid request (${resp.parameter} required).`;
-    } else if (resp.statusCode === 400 && resp.error === 'unsupported_response_type') {
-        userMessage = `Invalid response type '${resp.parameter}'.`;
-    } else if (resp.statusCode === 400 && resp.error === 'unsupported_grant_type') {
-        userMessage = 'Unsupported grant type.';
-    } else if (resp.statusCode === 400 && resp.error === 'invalid_scope') {
-        userMessage = `Invalid scope '${resp.parameter}'.`;
-    } else if (resp.statusCode === 401 && resp.error === 'invalid_client') {
-        userMessage = 'Can not find application you are trying to authorize.';
-    }
-
-    return userMessage ? Promise.reject({ ...resp, userMessage }) : Promise.reject(resp);
-}

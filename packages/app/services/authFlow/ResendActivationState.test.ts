@@ -1,3 +1,4 @@
+import expect from 'app/test/unexpected';
 import sinon, { SinonMock } from 'sinon';
 
 import ResendActivationState from 'app/services/authFlow/ResendActivationState';
@@ -79,9 +80,8 @@ describe('ResendActivationState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, mockPayload);
-
-            return promise.catch(mock.verify.bind(mock));
+            // The rejection is handled by AuthFlow
+            return expect(state.resolve(context, mockPayload), 'to be rejected').then(mock.verify.bind(mock));
         });
     });
 

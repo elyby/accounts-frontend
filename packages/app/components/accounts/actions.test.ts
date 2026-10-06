@@ -1,7 +1,7 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
 import { browserHistory } from 'app/services/history';
-import { ApiError, InternalServerError, RequestAbortedError } from 'app/services/request';
+import { InternalServerError, RequestAbortedError, UnauthorizedError } from 'app/services/request';
 import { sessionStorage } from 'app/services/localStorage';
 import * as authentication from 'app/services/api/authentication';
 import { authenticate, revoke, logoutAll, logoutStrangers } from 'app/components/accounts/actions';
@@ -136,10 +136,11 @@ describe('components/accounts/actions', () => {
 
         it('rejects when bad auth data', () => {
             (authentication.validateToken as any).rejects(
-                new ApiError(
-                    { name: 'Unauthorized', message: 'Incorrect token', status: 401 },
-                    new Response('{}', { status: 401 }),
-                ),
+                new UnauthorizedError(new Response('{}', { status: 401 }), {
+                    name: 'Unauthorized',
+                    message: 'Incorrect token',
+                    status: 401,
+                }),
             );
 
             return expect(authenticate(account)(dispatch, getState, undefined), 'to be rejected').then(() => {
@@ -150,7 +151,7 @@ describe('components/accounts/actions', () => {
         });
 
         it('rejects when 5xx without logouting', () => {
-            const resp = new InternalServerError('500', { status: 500 });
+            const resp = new InternalServerError(new Response('{}', { status: 500 }));
 
             (authentication.validateToken as any).rejects(resp);
 

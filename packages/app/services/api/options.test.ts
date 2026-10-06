@@ -15,7 +15,7 @@ describe('services/api/options', () => {
             .named('request.get')
             .returns(
                 Promise.resolve({
-                    originalResponse: new Response(),
+                    response: new Response(),
                     ...expectedResp,
                 }),
             );
@@ -29,7 +29,7 @@ describe('services/api/options', () => {
         options.fetch().then((resp) => {
             expect(resp, 'to satisfy', {
                 ...expectedResp,
-                originalResponse: expect.it('to be a', Response),
+                response: expect.it('to be a', Response),
             });
             expect(request.get, 'to have a call satisfying', ['/api/options', {}, { token: null }]);
         }));
@@ -40,7 +40,7 @@ describe('services/api/options', () => {
         options.fetch().then((resp) => {
             expect(resp, 'to satisfy', {
                 ...expectedResp,
-                originalResponse: expect.it('to be a', Response),
+                response: expect.it('to be a', Response),
             });
             expect(request.get, 'was not called');
         }));

@@ -5,6 +5,7 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import * as feedback from 'app/services/api/feedback';
 import { User } from 'app/components/user';
 import { TestContextProvider } from 'app/shell';
+import { ValidationError } from 'app/services/request';
 
 import ContactForm from './ContactForm';
 
@@ -116,10 +117,7 @@ describe('ContactForm', () => {
         };
 
         (feedback.send as any).callsFake(() =>
-            Promise.reject({
-                success: false,
-                errors: { email: 'error.email_invalid' },
-            }),
+            Promise.reject(new ValidationError(new Response('{}'), { success: false, errors: { email: 'error.email_invalid' } })),
         );
 
         render(

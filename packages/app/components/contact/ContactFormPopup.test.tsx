@@ -5,6 +5,7 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import expect from 'app/test/unexpected';
 import * as feedback from 'app/services/api/feedback';
 import { TestContextProvider } from 'app/shell';
+import { ValidationError } from 'app/services/request';
 
 import ContactFormPopup from './ContactFormPopup';
 
@@ -113,10 +114,7 @@ describe('ContactFormPopup', () => {
         const onSubmitMock = jest.fn(
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             (form): Promise<void> =>
-                Promise.reject({
-                    success: false,
-                    errors: { email: 'error.email_invalid' },
-                }),
+                Promise.reject(new ValidationError(new Response('{}'), { success: false, errors: { email: 'error.email_invalid' } })),
         );
 
         render(

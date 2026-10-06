@@ -1,5 +1,4 @@
 import { CaptchaValue } from 'app/services/captcha';
-import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
@@ -25,8 +24,7 @@ export default class RegisterState extends AbstractState {
     ): Promise<void> | void {
         return context
             .run('register', payload)
-            .then(() => context.setState(new CompleteState()))
-            .catch((err) => err?.errors || logger.warn('Error registering', err));
+            .then(() => context.setState(new CompleteState()));
     }
 
     reject(context: AuthContext, payload: Record<string, any>): void {

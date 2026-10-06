@@ -371,4 +371,29 @@ describe('Sign in / Log out', () => {
             cy.get('[data-e2e-account-id]').should('have.length', 0);
         });
     });
+
+    describe('when the login request fails', () => {
+        it('should show an error in the form on a network error', () => {
+            cy.intercept('POST', '/api/authentication/login', { forceNetworkError: true });
+
+            cy.visit('/');
+
+            cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+            cy.findByTestId('auth-error').contains('The request has failed');
+            cy.location('pathname').should('eq', '/login');
+            cy.findByTestId('bsod').should('not.exist');
+        });
+
+        it('should show BSoD on an unexpected error in the code', () => {
+            // Without access_token the authentication fails to parse the token, which is a plain Error
+            cy.intercept('POST', '/api/authentication/login', { statusCode: 200, body: { success: true } });
+
+            cy.visit('/');
+
+            cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+            cy.findByTestId('bsod').should('be.visible');
+        });
+    });
 });

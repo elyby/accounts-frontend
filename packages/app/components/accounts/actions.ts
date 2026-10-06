@@ -5,7 +5,7 @@ import { relogin as navigateToLogin } from 'app/components/auth/actions';
 import { updateUser, setGuest } from 'app/components/user/actions';
 import { setLocale } from 'app/components/i18n/actions';
 import logger from 'app/services/logger';
-import { ApiError } from 'app/services/request';
+import { ApiError, UnauthorizedError } from 'app/services/request';
 import { Action as AppAction } from 'app/types';
 
 import { getActiveAccount, Account } from './reducer';
@@ -121,12 +121,10 @@ function findAccountIdFromToken(token: string): number {
 }
 
 /**
- * Checks the current user's token exp time. Supposed to be used before performing
- * any api request
+ * Checks the current user's token exp time.
+ * Supposed to be used before performing any api request
  *
  * @see components/user/authHooks
- *
- * @returns {Function}
  */
 export function ensureToken(): AppAction<Promise<void>> {
     return (dispatch, getState) => {
@@ -140,13 +138,9 @@ export function ensureToken(): AppAction<Promise<void>> {
                 return dispatch(requestNewToken());
             }
         } catch {
-            logger.warn('Refresh token error: bad token', {
-                token,
-            });
-
-            dispatch(relogin());
-
-            return Promise.reject(new Error('Invalid token'));
+            // There is might be an exception only if getJwtPayloads() will fail to parse the token,
+            // so handle it like the expired token
+            return dispatch(requestNewToken());
         }
 
         return Promise.resolve();
@@ -154,45 +148,30 @@ export function ensureToken(): AppAction<Promise<void>> {
 }
 
 /**
- * Checks whether request `error` is an auth error and tries recover from it by
- * requesting a new auth token
+ * Tries to recover from the rejected access token by requesting a new one.
+ * Logs the user out, when it's impossible
  *
  * @see components/user/authHooks
- *
- * @param  {object} error
- *
- * @returns {Function}
  */
-export function recoverFromTokenError(
-    error: {
-        status: number;
-        message: string;
-    } | void,
-): AppAction<Promise<void>> {
+export function recoverFromTokenError(error: UnauthorizedError): AppAction<Promise<void>> {
     return (dispatch, getState) => {
-        if (error && error.status === 401) {
-            const activeAccount = getActiveAccount(getState());
+        const activeAccount = getActiveAccount(getState());
 
-            if (activeAccount && activeAccount.refreshToken) {
-                if (
-                    ['Token expired', 'Incorrect token', 'You are requesting with an invalid credential.'].includes(
-                        error.message,
-                    )
-                ) {
-                    // request token and retry
-                    return dispatch(requestNewToken());
-                }
-
-                logger.error('Unknown unauthorized response', {
-                    error,
-                });
+        if (activeAccount && activeAccount.refreshToken) {
+            if (error.isRecoverable) {
+                // request token and retry
+                return dispatch(requestNewToken());
             }
 
-            // user's access token is outdated and we have no refreshToken
-            // or something unexpected happend
-            // in both cases we resetting all the user's state
-            dispatch(relogin());
+            logger.error('Unknown unauthorized response', {
+                error,
+            });
         }
+
+        // user's access token is outdated and we have no refreshToken
+        // or something unexpected happend
+        // in both cases we resetting all the user's state
+        dispatch(relogin());
 
         return Promise.reject(error);
     };
@@ -204,7 +183,6 @@ const pendingTokenRequests = new Map<string, Promise<void>>();
 /**
  * Requests new token and updates state. In case, when token can not be updated,
  * it will redirect user to login page
- *
  * @returns {Function}
  */
 export function requestNewToken(): AppAction<Promise<void>> {
@@ -249,9 +227,7 @@ export function requestNewToken(): AppAction<Promise<void>> {
 
 /**
  * Remove one account from current user's account list
- *
  * @param {Account} account
- *
  * @returns {Function}
  */
 export function revoke(account: Account): AppAction<Promise<void>> {
@@ -318,7 +294,6 @@ export function logoutAll(): AppAction<Promise<void>> {
  *
  * We detecting foreign accounts by the absence of refreshToken. The account
  * won't be removed, until key `stranger${account.id}` is present in sessionStorage
- *
  * @returns {Function}
  */
 export function logoutStrangers(): AppAction<Promise<void>> {

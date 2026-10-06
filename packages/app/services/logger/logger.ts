@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/react';
 
+import { RequestError } from 'app/services/request';
+
 import { isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
 
 const isTest = process.env.NODE_ENV === 'test';
@@ -17,7 +19,7 @@ const NETWORK_ERROR_REGEX = new RegExp(`^${NETWORK_ERRORS}( \\(.+\\))?$`);
  * and that we can't fix
  */
 const IGNORE_ERRORS: Array<string | RegExp> = [
-    // Network failures in different browsers. Matches "TypeError: Failed to fetch", our wrappers like "o: Failed to fetch",
+    // Network failures in different browsers. Matches "TypeError: Failed to fetch", our wrappers like "RequestAbortedError: Failed to fetch",
     // the SDK's fetch instrumentation suffix "Failed to fetch (account.ely.by)" and non-Error rejections like
     // "'Unauthorized' captured as exception with message 'Failed to fetch'"
     new RegExp(`(^|: |')${NETWORK_ERRORS}( \\(.+\\))?('|$)`),
@@ -68,7 +70,7 @@ class Logger {
             allowUrls: isProduction ? [/ely\.by/] : undefined,
             denyUrls: DENY_URLS,
             ignoreErrors: IGNORE_ERRORS,
-            // Enough to reach fields like extra.resp.originalResponse.body.errors.*
+            // Enough to reach fields like extra.resp.response.body.errors.*
             normalizeDepth: 6,
             beforeSend(event, hint) {
                 const error = hint.originalException;
@@ -296,18 +298,18 @@ async function prepareContext(context: Context): Promise<Context> {
 
     const prepared: Context = context instanceof Error ? copyError(context) : { ...context };
 
-    // Our request errors keep the Response in the `originalResponse` field, which the SDK serializes
+    // Our request errors keep the Response in the `response` field, which the SDK serializes
     // as an empty object. It may be in the context itself or one level deeper: `{ resp }`, `{ error }`
-    if (prepared.originalResponse instanceof Response) {
-        prepared.originalResponse = await describeResponse(prepared.originalResponse);
+    if (context instanceof RequestError && context.response) {
+        prepared.response = await describeResponse(context.response);
     }
 
     for (const key of Object.keys(prepared)) {
         const value = prepared[key];
 
-        if (typeof value === 'object' && value !== null && value.originalResponse instanceof Response) {
-            const copy: Context = value instanceof Error ? copyError(value) : { ...value };
-            copy.originalResponse = await describeResponse(value.originalResponse);
+        if (value instanceof RequestError && value.response) {
+            const copy = copyError(value);
+            copy.response = await describeResponse(value.response);
             prepared[key] = copy;
         }
     }

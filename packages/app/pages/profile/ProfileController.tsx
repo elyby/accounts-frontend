@@ -7,9 +7,11 @@ import { refreshUserData } from 'app/components/accounts/actions';
 import { create as createPopup } from 'app/components/ui/popup/actions';
 import PasswordRequestForm from 'app/components/profile/passwordRequestForm';
 import logger from 'app/services/logger';
+import { ValidationError } from 'app/services/request';
 import { browserHistory } from 'app/services/history';
 import { FooterMenu } from 'app/components/footerMenu';
 import { FormModel } from 'app/components/ui/form';
+import type { ValidationError as FormValidationError } from 'app/components/ui/form/FormModel';
 import { Provider } from 'app/components/profile/Context';
 import { User } from 'app/components/user';
 
@@ -79,49 +81,41 @@ export default connect(
     {
         refreshUserData,
         onSubmit:
-            ({ form, sendData }: { form: FormModel; sendData: () => Promise<any> }) =>
+            ({ form, sendData, repeatUrl }: { form: FormModel; sendData: () => Promise<any>; repeatUrl?: string }) =>
             (dispatch: Dispatch) => {
                 form.beginLoading();
 
                 return sendData()
                     .catch((resp) => {
-                        const requirePassword = resp.errors && !!resp.errors.password;
+                        if (!(resp instanceof ValidationError)) {
+                            return Promise.reject(resp);
+                        }
 
                         // prevalidate user input, because requestPassword popup will block the
                         // entire form from input, so it must be valid
-                        if (resp.errors) {
-                            delete resp.errors.password;
+                        const { password, ...errors } = formatErrors(resp, repeatUrl);
 
-                            if (resp.errors.email && resp.data && resp.data.canRepeatIn) {
-                                resp.errors.email = {
-                                    type: resp.errors.email,
-                                    payload: {
-                                        msLeft: resp.data.canRepeatIn * 1000,
-                                    },
-                                };
-                            }
+                        if (Object.keys(errors).length) {
+                            form.setErrors(errors);
 
-                            if (Object.keys(resp.errors).length) {
-                                form.setErrors(resp.errors);
+                            return Promise.reject(resp);
+                        }
 
-                                return Promise.reject(resp);
-                            }
-
-                            if (requirePassword) {
-                                return requestPassword(form);
-                            }
+                        if (password) {
+                            return requestPassword(form);
                         }
 
                         return Promise.reject(resp);
                     })
                     .catch((resp) => {
-                        if (!resp || !resp.errors) {
-                            logger.warn('Unexpected profile editing error', {
-                                resp,
-                            });
-                        } else {
+                        // Validation errors are already shown in the form
+                        if (resp instanceof ValidationError) {
                             return Promise.reject(resp);
                         }
+
+                        logger.warn('Unexpected profile editing error', {
+                            resp,
+                        });
                     })
                     .finally(() => form.endLoading());
 
@@ -137,11 +131,12 @@ export default connect(
                                             .then(resolve)
                                             .then(props.onClose)
                                             .catch((resp) => {
-                                                if (resp.errors) {
-                                                    form.setErrors(resp.errors);
+                                                if (resp instanceof ValidationError) {
+                                                    const errors = formatErrors(resp, repeatUrl);
+                                                    form.setErrors(errors);
 
                                                     const parentFormHasErrors =
-                                                        Object.keys(resp.errors).filter((name) => name !== 'password')
+                                                        Object.keys(errors).filter((name) => name !== 'password')
                                                             .length > 0;
 
                                                     if (parentFormHasErrors) {
@@ -167,3 +162,33 @@ export default connect(
             },
     },
 )(ProfileController);
+
+/**
+ * Converts the error codes into the form errors, adding the data, that is required to display them
+ * @param error
+ * @param repeatUrl - where the user can repeat the process, when the key has expired
+ */
+function formatErrors(error: ValidationError, repeatUrl?: string): Record<string, FormValidationError> {
+    const errors: Record<string, FormValidationError> = { ...error.errors };
+    const { canRepeatIn } = error.data;
+
+    if (error.errors.email && canRepeatIn) {
+        errors.email = {
+            type: error.errors.email,
+            payload: {
+                msLeft: canRepeatIn * 1000,
+            },
+        };
+    }
+
+    if (error.errors.key) {
+        const isKeyExpired = ['error.key_not_exists', 'error.key_expire'].includes(error.errors.key);
+
+        errors.key = {
+            type: error.errors.key,
+            payload: isKeyExpired && repeatUrl ? { repeatUrl } : {},
+        };
+    }
+
+    return errors;
+}

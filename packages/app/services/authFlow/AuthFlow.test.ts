@@ -4,6 +4,9 @@ import sinon, { SinonStub } from 'sinon';
 import AuthFlow from 'app/services/authFlow/AuthFlow';
 import AbstractState from 'app/services/authFlow/AbstractState';
 import localStorage from 'app/services/localStorage';
+import logger from 'app/services/logger';
+import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
+import { RequestAbortedError, UnauthorizedError, ValidationError } from 'app/services/request';
 
 import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
 import RegisterState from 'app/services/authFlow/RegisterState';
@@ -16,6 +19,8 @@ import CompleteState from 'app/services/authFlow/CompleteState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
 import FinishState from 'app/services/authFlow/FinishState';
 import { Store } from 'redux';
+
+jest.mock('app/components/ui/bsod/dispatchBsod');
 
 describe('AuthFlow', () => {
     let flow: AuthFlow;
@@ -278,6 +283,74 @@ describe('AuthFlow', () => {
 
             expect(state.resolve, 'was called once');
             expect(state.resolve, 'to have a call satisfying', [flow, expectedPayload]);
+        });
+
+        describe('when the state rejects', () => {
+            let state: AbstractState;
+
+            beforeEach(() => {
+                state = new AbstractState();
+                flow.setState(state);
+                sinon.stub(flow, 'run').named('flow.run');
+                sinon.stub(logger, 'warn').named('logger.warn');
+                sinon.stub(logger, 'error').named('logger.error');
+            });
+
+            afterEach(() => {
+                (logger.warn as SinonStub).restore();
+                (logger.error as SinonStub).restore();
+                (dispatchBsod as jest.Mock).mockClear();
+            });
+
+            const resolveWith = async (error: unknown) => {
+                const promise = Promise.reject(error);
+                sinon.stub(state, 'resolve').returns(promise);
+
+                flow.resolve();
+
+                await promise.catch(() => {});
+                // Let the flow's handler run
+                await Promise.resolve();
+            };
+
+            it('should ignore validation errors', async () => {
+                await resolveWith(new ValidationError(new Response('{}'), { success: false, errors: { login: 'foo' } }));
+
+                expect(logger.warn, 'was not called');
+                expect(logger.error, 'was not called');
+                expect(flow.run, 'was not called');
+                expect((dispatchBsod as jest.Mock).mock.calls, 'to be empty');
+            });
+
+            it('should show the request error in the form', async () => {
+                const error = new RequestAbortedError(new TypeError('Failed to fetch'));
+
+                await resolveWith(error);
+
+                expect(logger.warn, 'to have a call satisfying', [expect.it('to be a string'), { error }]);
+                expect(flow.run, 'to have a call satisfying', ['setErrors', { request: 'error.request_failed' }]);
+                expect(logger.error, 'was not called');
+                expect((dispatchBsod as jest.Mock).mock.calls, 'to be empty');
+            });
+
+            it('should not show the error in the form when the token was rejected', async () => {
+                await resolveWith(
+                    new UnauthorizedError(new Response('{}', { status: 401 }), { name: 'Unauthorized', status: 401 }),
+                );
+
+                expect(logger.warn, 'was called');
+                expect(flow.run, 'was not called');
+            });
+
+            it('should report unexpected errors', async () => {
+                const error = new Error('Something went wrong');
+
+                await resolveWith(error);
+
+                expect(logger.error, 'to have a call satisfying', [expect.it('to be a string'), { error }]);
+                expect(flow.run, 'was not called');
+                expect((dispatchBsod as jest.Mock).mock.calls, 'to have length', 1);
+            });
         });
     });
 

@@ -3,6 +3,7 @@ import { FormattedMessage as Message, defineMessages } from 'react-intl';
 
 import Popup from 'app/components/ui/popup';
 import { Input, TextArea, Button, Form, FormModel, Dropdown } from 'app/components/ui/form';
+import { ValidationError } from 'app/services/request';
 
 import styles from './contactForm.scss';
 
@@ -43,10 +44,8 @@ const ContactFormPopup: ComponentType<Props> = ({ initEmail = '', onSubmit, onCl
             // @ts-ignore serialize() returns Record<string, string>, but we exactly know returning keys
             onSubmit(form.serialize())
                 .catch((resp) => {
-                    if (resp.errors) {
+                    if (resp instanceof ValidationError) {
                         form.setErrors(resp.errors);
-
-                        return;
                     }
                 })
                 .finally(() => isMountedRef.current && setIsLoading(false))

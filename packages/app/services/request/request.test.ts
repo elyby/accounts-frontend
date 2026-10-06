@@ -2,7 +2,15 @@ import expect from 'app/test/unexpected';
 import sinon, { SinonStub } from 'sinon';
 
 import * as request from 'app/services/request';
-import { ApiError, InternalServerError, RequestAbortedError } from 'app/services/request';
+import {
+    ApiError,
+    InternalServerError,
+    OAuthError,
+    RequestAbortedError,
+    RequestError,
+    UnauthorizedError,
+    ValidationError,
+} from 'app/services/request';
 
 const jsonResponse = (body: any, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
@@ -27,7 +35,7 @@ describe('services/request', () => {
             const resp = await request.get<{ foo: string }>('/api/foo', { foo: 1, bar: true });
 
             expect(resp.foo, 'to be', 'bar');
-            expect(resp.originalResponse, 'to be a', Response);
+            expect(resp.response, 'to be a', Response);
             expect(lastRequest().method, 'to be', 'GET');
             expect(new URL(lastRequest().url).search, 'to be', '?foo=1&bar=1');
             expect(lastRequest().headers.get('Accept'), 'to be', 'application/json');
@@ -73,32 +81,139 @@ describe('services/request', () => {
     });
 
     describe('ApiError', () => {
-        it('should reject with response body fields on 4xx', async () => {
+        it('should reject with ValidationError on { success: false, errors }', async () => {
             fetch.resolves(jsonResponse({ success: false, errors: { login: 'error.login_required' } }, 400));
 
             const error = await request.post('/api/foo').catch((err) => err);
 
+            expect(error, 'to be a', ValidationError);
             expect(error, 'to be an', ApiError);
+            expect(error, 'to be a', RequestError);
             expect(error, 'to be an', Error);
-            expect(error.errors, 'to satisfy', { login: 'error.login_required' });
-            expect(error.originalResponse.status, 'to be', 400);
+            expect(error, 'to satisfy', {
+                name: 'ValidationError',
+                message: 'Validation failed: error.login_required',
+                errors: { login: 'error.login_required' },
+                data: {},
+                status: 400,
+            });
+            expect(error.response, 'to be a', Response);
         });
 
-        it('should reject when success is false with 200 status', async () => {
-            fetch.resolves(jsonResponse({ success: false, errors: { key: 'error.key_expire' } }));
+        it('should reject with ValidationError when success is false with 200 status', async () => {
+            fetch.resolves(
+                jsonResponse({ success: false, errors: { key: 'error.key_expire' }, data: { canRepeatIn: 60 } }),
+            );
+
+            const error = await request.post('/api/foo').catch((err) => err);
+
+            expect(error, 'to be a', ValidationError);
+            expect(error, 'to satisfy', { errors: { key: 'error.key_expire' }, data: { canRepeatIn: 60 }, status: 200 });
+        });
+
+        it('should normalize empty data, serialized by PHP as an array', async () => {
+            fetch.resolves(jsonResponse({ success: false, errors: { key: 'error.key_expire' }, data: [] }));
+
+            const error = await request.post('/api/foo').catch((err) => err);
+
+            expect(error.data, 'to equal', {});
+        });
+
+        it('should reject with ApiError when success is false without errors', async () => {
+            fetch.resolves(jsonResponse({ success: false }));
 
             const error = await request.post('/api/foo').catch((err) => err);
 
             expect(error, 'to be an', ApiError);
-            expect(error.errors.key, 'to be', 'error.key_expire');
+            expect(error, 'not to be a', ValidationError);
+            expect(error, 'to satisfy', { name: 'ApiError', status: 200, body: { success: false } });
         });
 
-        it('should expose name, message and status from the body', async () => {
+        it('should reject with UnauthorizedError on the API auth errors', async () => {
             fetch.resolves(jsonResponse({ name: 'Unauthorized', message: 'Token expired', status: 401 }, 401));
 
             const error = await request.get('/api/foo').catch((err) => err);
 
-            expect(error, 'to satisfy', { name: 'Unauthorized', message: 'Token expired', status: 401 });
+            expect(error, 'to be an', UnauthorizedError);
+            expect(error, 'to satisfy', {
+                name: 'UnauthorizedError',
+                message: 'Token expired',
+                reason: 'Token expired',
+                status: 401,
+                isRecoverable: true,
+            });
+        });
+
+        it('should not consider unknown auth errors as recoverable', async () => {
+            fetch.resolves(jsonResponse({ name: 'Unauthorized', message: 'Your account has been banned', status: 401 }, 401));
+
+            const error = await request.get('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', UnauthorizedError);
+            expect(error.isRecoverable, 'to be false');
+        });
+
+        it('should reject with OAuthError on the OAuth2 errors', async () => {
+            fetch.resolves(jsonResponse({ error: 'invalid_scope', parameter: 'foo', statusCode: 400 }, 400));
+
+            const error = await request.get('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', OAuthError);
+            expect(error, 'to satisfy', {
+                name: 'OAuthError',
+                message: 'invalid_scope (foo)',
+                error: 'invalid_scope',
+                parameter: 'foo',
+                status: 400,
+                userMessage: "Invalid scope 'foo'.",
+            });
+        });
+
+        it('should reject with OAuthError on 401 OAuth2 errors', async () => {
+            fetch.resolves(
+                jsonResponse({ error: 'access_denied', statusCode: 401, redirectUri: 'http://ely.by?error=access_denied' }, 401),
+            );
+
+            const error = await request.post('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', OAuthError);
+            expect(error, 'to satisfy', {
+                error: 'access_denied',
+                parameter: undefined,
+                redirectUri: 'http://ely.by?error=access_denied',
+                userMessage: null,
+            });
+        });
+
+        it('should reject with OAuthError when success is false with 200 status', async () => {
+            fetch.resolves(jsonResponse({ success: false, error: 'invalid_user_code', parameter: 'user_code' }));
+
+            const error = await request.get('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', OAuthError);
+            expect(error, 'to satisfy', { error: 'invalid_user_code', parameter: 'user_code', status: 200 });
+        });
+
+        it('should reject with ApiError on other 4xx errors', async () => {
+            fetch.resolves(jsonResponse({ name: 'Not Found', message: 'Page not found.', status: 404 }, 404));
+
+            const error = await request.get('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', ApiError);
+            expect(error, 'to satisfy', {
+                name: 'ApiError',
+                message: 'Request failed with status 404',
+                status: 404,
+                body: { name: 'Not Found', message: 'Page not found.' },
+            });
+        });
+
+        it('should resolve 2xx responses with the error field', async () => {
+            fetch.resolves(jsonResponse({ error: 'not an error' }));
+
+            const resp = await request.get<{ error: string }>('/api/foo');
+
+            expect(resp.error, 'to be', 'not an error');
         });
     });
 
@@ -109,7 +224,7 @@ describe('services/request', () => {
             const error = await request.get('/api/foo').catch((err) => err);
 
             expect(error, 'to be an', InternalServerError);
-            expect(error.originalResponse, 'to be a', Response);
+            expect(error.response, 'to be a', Response);
             expect(error.message, 'to contain', 'Unexpected token');
         });
 
@@ -121,7 +236,7 @@ describe('services/request', () => {
 
                 expect(error, 'to be an', InternalServerError);
                 expect(error.message, 'to be', 'Unexpected response body');
-                expect(error.originalResponse.status, 'to be', 200);
+                expect(error.response.status, 'to be', 200);
             }),
         );
 
@@ -131,7 +246,9 @@ describe('services/request', () => {
             const error = await request.get('/api/foo').catch((err) => err);
 
             expect(error, 'to be an', InternalServerError);
-            expect(error.originalResponse.status, 'to be', 500);
+            expect(error, 'to be a', RequestError);
+            expect(error.name, 'to be', 'InternalServerError');
+            expect(error.response.status, 'to be', 500);
         });
 
         it('should keep the original response body readable', async () => {
@@ -139,7 +256,7 @@ describe('services/request', () => {
 
             const error = await request.get('/api/foo').catch((err) => err);
 
-            expect(await error.originalResponse.text(), 'to be', '{"foo":"bar"}');
+            expect(await error.response.text(), 'to be', '{"foo":"bar"}');
         });
     });
 
@@ -158,6 +275,8 @@ describe('services/request', () => {
             const error = await request.get('/api/foo').catch((err) => err);
 
             expect(error, 'to be an', RequestAbortedError);
+            expect(error, 'to be a', RequestError);
+            expect(error.name, 'to be', 'RequestAbortedError');
             // The logger filters network errors by this message
             expect(error.message, 'to be', 'Failed to fetch');
         });

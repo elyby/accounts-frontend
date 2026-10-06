@@ -3,7 +3,7 @@ import sinon from 'sinon';
 
 // Stub the functions in the module itself: the index re-exports them as getters, which sinon can't replace
 import * as request from 'app/services/request/request';
-import { RequestAbortedError } from 'app/services/request';
+import { InternalServerError, RequestAbortedError, UnauthorizedError } from 'app/services/request';
 import logger from 'app/services/logger';
 import * as authentication from 'app/services/api/authentication';
 import * as accounts from 'app/services/api/accounts';
@@ -94,13 +94,13 @@ describe('authentication api', () => {
         });
 
         describe('when token is expired', () => {
-            const expiredResponse = {
+            const expiredResponse = new UnauthorizedError(new Response('{}', { status: 401 }), {
                 name: 'Unauthorized',
                 message: 'Token expired',
                 code: 0,
                 status: 401,
                 type: 'yii\\web\\UnauthorizedHttpException',
-            };
+            });
             const newToken = 'baz';
 
             beforeEach(() => {
@@ -148,18 +148,22 @@ describe('authentication api', () => {
 
                 (fetch as any).returns(Promise.resolve(new Response(JSON.stringify(error), { status: 500 })));
 
-                return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
+                return expect(
+                    authentication.validateToken(...validateTokenArgs),
+                    'to be rejected with',
+                    expect.it('to be an', InternalServerError),
+                );
             });
         });
 
         describe('when token is incorrect', () => {
-            const expiredResponse = {
+            const expiredResponse = new UnauthorizedError(new Response('{}', { status: 401 }), {
                 name: 'Unauthorized',
                 message: 'Incorrect token',
                 code: 0,
                 status: 401,
                 type: 'yii\\web\\UnauthorizedHttpException',
-            };
+            });
             const newToken = 'baz';
 
             beforeEach(() => {
@@ -204,7 +208,11 @@ describe('authentication api', () => {
 
                 (fetch as any).returns(Promise.resolve(new Response(JSON.stringify(error), { status: 500 })));
 
-                return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
+                return expect(
+                    authentication.validateToken(...validateTokenArgs),
+                    'to be rejected with',
+                    expect.it('to be an', InternalServerError),
+                );
             });
         });
     });
