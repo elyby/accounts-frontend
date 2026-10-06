@@ -2,7 +2,8 @@ import { Action as ReduxAction } from 'redux';
 import sinon from 'sinon';
 import expect from 'app/test/unexpected';
 
-import request from 'app/services/request';
+// Stub the functions in the module itself: the index re-exports them as getters, which sinon can't replace
+import * as request from 'app/services/request/request';
 
 import {
     setLoadingState,
@@ -121,8 +122,9 @@ describe('components/auth/actions', () => {
 
             return callThunk(oAuthComplete).then(() => {
                 expect(request.post, 'to have a call satisfying', [
-                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&scope=&state=',
+                    '/api/oauth2/v1/complete',
                     {},
+                    { searchParams: { client_id: '', redirect_uri: '', response_type: '', scope: '', state: '' } },
                 ]);
             });
         });

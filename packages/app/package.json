@@ -16,6 +16,7 @@
         "debounce": "^1.0.0",
         "flag-icons": "^7",
         "intl": "^1.2.5",
+        "ky": "^2",
         "prop-types": "^15.6.2",
         "react": "^17",
         "react-click-away-listener": "^1.4.3",

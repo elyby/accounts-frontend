@@ -5,6 +5,7 @@ import { relogin as navigateToLogin } from 'app/components/auth/actions';
 import { updateUser, setGuest } from 'app/components/user/actions';
 import { setLocale } from 'app/components/i18n/actions';
 import logger from 'app/services/logger';
+import { ApiError } from 'app/services/request';
 import { Action as AppAction } from 'app/types';
 
 import { getActiveAccount, Account } from './reducer';
@@ -75,10 +76,10 @@ export function authenticate(
 
             return newAccount;
         } catch (resp) {
-            // all the logic to get the valid token was failed,
-            // looks like we have some problems with token
-            // lets redirect to login page
-            if (typeof email === 'string') {
+            // Log out only when the backend has explicitly rejected the credentials.
+            // Server errors and unexpected responses are shown as BSoD (see bsodErrorListener)
+            // and, like the network errors, must not lose the user's session
+            if (typeof email === 'string' && resp instanceof ApiError) {
                 // TODO: we should somehow try to find email by token
                 dispatch(relogin(email));
             }
@@ -123,7 +124,7 @@ function findAccountIdFromToken(token: string): number {
  * Checks the current user's token exp time. Supposed to be used before performing
  * any api request
  *
- * @see components/user/middlewares/refreshTokenMiddleware
+ * @see components/user/authHooks
  *
  * @returns {Function}
  */
@@ -156,7 +157,7 @@ export function ensureToken(): AppAction<Promise<void>> {
  * Checks whether request `error` is an auth error and tries recover from it by
  * requesting a new auth token
  *
- * @see components/user/middlewares/refreshTokenMiddleware
+ * @see components/user/authHooks
  *
  * @param  {object} error
  *
@@ -197,6 +198,9 @@ export function recoverFromTokenError(
     };
 }
 
+// Concurrent requests with an expired token share a single refresh request instead of sending one each
+const pendingTokenRequests = new Map<string, Promise<void>>();
+
 /**
  * Requests new token and updates state. In case, when token can not be updated,
  * it will redirect user to login page
@@ -213,18 +217,33 @@ export function requestNewToken(): AppAction<Promise<void>> {
             return Promise.resolve();
         }
 
-        return requestToken(refreshToken)
+        const pending = pendingTokenRequests.get(refreshToken);
+
+        if (pending) {
+            return pending;
+        }
+
+        const promise = requestToken(refreshToken)
             .then((token) => {
                 dispatch(updateToken(token));
             })
             .catch((resp) => {
-                // all the logic to get the valid token was failed,
-                // looks like we have some problems with token
-                // lets redirect to login page
-                dispatch(relogin());
+                // Log out only when the backend has explicitly rejected the refresh token.
+                // Server errors and unexpected responses are shown as BSoD (see bsodErrorListener)
+                // and, like the network errors, must not lose the user's session
+                if (resp instanceof ApiError) {
+                    dispatch(relogin());
+                }
 
                 return Promise.reject(resp);
+            })
+            .finally(() => {
+                pendingTokenRequests.delete(refreshToken);
             });
+
+        pendingTokenRequests.set(refreshToken, promise);
+
+        return promise;
     };
 }
 

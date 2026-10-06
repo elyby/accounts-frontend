@@ -1,11 +1,10 @@
 import { authenticate, logoutStrangers } from 'app/components/accounts/actions';
 import { getActiveAccount } from 'app/components/accounts/reducer';
-import request from 'app/services/request';
+import { addHooks } from 'app/services/request';
 import { Store } from 'app/types';
 
 import { changeLang } from './actions';
-import bearerHeaderMiddleware from './middlewares/bearerHeaderMiddleware';
-import refreshTokenMiddleware from './middlewares/refreshTokenMiddleware';
+import createAuthHooks from './authHooks';
 
 let promise: Promise<void>;
 
@@ -21,8 +20,7 @@ export function factory(store: Store): Promise<void> {
         return promise;
     }
 
-    request.addMiddleware(refreshTokenMiddleware(store));
-    request.addMiddleware(bearerHeaderMiddleware(store));
+    addHooks(createAuthHooks(store));
 
     promise = Promise.resolve()
         .then(() => store.dispatch(logoutStrangers()))

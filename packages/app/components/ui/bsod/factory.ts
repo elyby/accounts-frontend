@@ -1,10 +1,11 @@
-import request from 'app/services/request';
-import logger from 'app/services/logger';
-import { Store } from 'app/types';
 import { History } from 'history';
 
+import { addErrorListener } from 'app/services/request';
+import logger from 'app/services/logger';
+import { Store } from 'app/types';
+
 import dispatchBsod, { inject } from './dispatchBsod';
-import BsodMiddleware from './BsodMiddleware';
+import createBsodErrorListener from './bsodErrorListener';
 
 export default function factory({
     store,
@@ -18,5 +19,5 @@ export default function factory({
     inject({ store, history, stopLoading });
 
     // do bsod for 500/404 errors
-    request.addMiddleware(new BsodMiddleware(dispatchBsod, logger));
+    addErrorListener(createBsodErrorListener(dispatchBsod, logger));
 }

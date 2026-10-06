@@ -1,4 +1,4 @@
-import request, { Resp } from 'app/services/request';
+import { type Resp, get, post, del } from 'app/services/request';
 
 export function getSecret(id: number): Promise<
     Resp<{
@@ -7,18 +7,18 @@ export function getSecret(id: number): Promise<
         uri: string;
     }>
 > {
-    return request.get(`/api/v1/accounts/${id}/two-factor-auth`);
+    return get(`/api/v1/accounts/${id}/two-factor-auth`);
 }
 
 export function enable(id: number, totp: string, password?: string): Promise<Resp<any>> {
-    return request.post(`/api/v1/accounts/${id}/two-factor-auth`, {
+    return post(`/api/v1/accounts/${id}/two-factor-auth`, {
         totp,
         password,
     });
 }
 
 export function disable(id: number, totp: string, password?: string): Promise<Resp<any>> {
-    return request.delete(`/api/v1/accounts/${id}/two-factor-auth`, {
+    return del(`/api/v1/accounts/${id}/two-factor-auth`, {
         totp,
         password,
     });

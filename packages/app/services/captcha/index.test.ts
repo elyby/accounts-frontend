@@ -1,6 +1,6 @@
 import expect from 'app/test/unexpected';
 import sinon, { SinonSandbox } from 'sinon';
-import options from 'app/services/api/options';
+import * as options from 'app/services/api/options';
 import logger from 'app/services/logger';
 
 import { clearResolvedCaptcha, getProvidersPriority, NoCaptchaAvailableError, registerE2eCallback, resolveCaptcha } from './index';
@@ -34,7 +34,7 @@ describe('services/captcha', () => {
         afterEach(() => sandbox.restore());
 
         const givenProviders = (captcha: Record<string, { publicKey: string }>) =>
-            sandbox.stub(options, 'get').resolves({ captcha, originalResponse: new Response() });
+            sandbox.stub(options, 'fetch').resolves({ captcha, originalResponse: new Response() });
 
         it('should pick the preferred provider', async () => {
             givenProviders({ recaptcha: { publicKey: 'g' }, yandex: { publicKey: 'y' } });

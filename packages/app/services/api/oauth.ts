@@ -1,5 +1,5 @@
 import { ApplicationType } from 'app/components/dev/apps';
-import request from 'app/services/request';
+import { get, post, put, del } from 'app/services/request';
 
 export type Scope = 'minecraft_server_session' | 'offline_access' | 'account_info' | 'account_email';
 
@@ -68,8 +68,7 @@ interface FormPayloads {
 
 const api = {
     validate(oauthData: OauthRequestData) {
-        return request
-            .get<OAuthValidateResponse>('/api/oauth2/v1/validate', oauthData)
+        return get<OAuthValidateResponse>('/api/oauth2/v1/validate', oauthData)
             .catch(handleOauthParamsValidation);
     },
 
@@ -86,11 +85,7 @@ const api = {
             data.accept = params.accept;
         }
 
-        return request
-            .post<{
-                success: boolean;
-                redirectUri: string;
-            }>(`/api/oauth2/v1/complete?${request.buildQuery(oauthData)}`, data)
+        return post<{ success: boolean; redirectUri: string }>('/api/oauth2/v1/complete', data, { searchParams: oauthData })
             .catch((resp = {}) => {
                 if (resp.statusCode === 401 && resp.error === 'access_denied') {
                     // user declined permissions
@@ -118,29 +113,29 @@ const api = {
     },
 
     create(type: string, formParams: FormPayloads) {
-        return request.post<{ success: boolean; data: OauthAppResponse }>(`/api/v1/oauth2/${type}`, formParams);
+        return post<{ success: boolean; data: OauthAppResponse }>(`/api/v1/oauth2/${type}`, formParams);
     },
 
     update(clientId: string, formParams: FormPayloads) {
-        return request.put<{ success: boolean; data: OauthAppResponse }>(`/api/v1/oauth2/${clientId}`, formParams);
+        return put<{ success: boolean; data: OauthAppResponse }>(`/api/v1/oauth2/${clientId}`, formParams);
     },
 
     getApp(clientId: string) {
-        return request.get<OauthAppResponse>(`/api/v1/oauth2/${clientId}`);
+        return get<OauthAppResponse>(`/api/v1/oauth2/${clientId}`);
     },
 
     getAppsByUser(userId: number): Promise<OauthAppResponse[]> {
-        return request.get(`/api/v1/accounts/${userId}/oauth2/clients`);
+        return get(`/api/v1/accounts/${userId}/oauth2/clients`);
     },
 
     reset(clientId: string, regenerateSecret: boolean = false) {
-        return request.post<{ success: boolean; data: OauthAppResponse }>(
+        return post<{ success: boolean; data: OauthAppResponse }>(
             `/api/v1/oauth2/${clientId}/reset${regenerateSecret ? '?regenerateSecret' : ''}`,
         );
     },
 
     delete(clientId: string) {
-        return request.delete<{ success: boolean }>(`/api/v1/oauth2/${clientId}`);
+        return del<{ success: boolean }>(`/api/v1/oauth2/${clientId}`);
     },
 };
 

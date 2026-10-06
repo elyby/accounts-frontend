@@ -1,6 +1,7 @@
 import { UserResponse } from 'app/services/api/accounts';
 import logger from 'app/services/logger';
-import request, { InternalServerError } from 'app/services/request';
+import { post } from 'app/services/request';
+import { InternalServerError, RequestAbortedError } from 'app/services/request';
 import { getInfo as getInfoEndpoint } from 'app/services/api/accounts';
 
 export interface OAuthResponse {
@@ -21,7 +22,7 @@ export function login({
     totp?: string;
     rememberMe: boolean;
 }): Promise<OAuthResponse> {
-    return request.post(
+    return post(
         '/api/authentication/login',
         {
             login,
@@ -40,7 +41,7 @@ export function login({
  * @returns {Promise}
  */
 export function logout(token?: string): Promise<{ success: boolean }> {
-    return request.post(
+    return post(
         '/api/authentication/logout',
         {},
         {
@@ -64,7 +65,7 @@ export function forgotPassword(
         [key: string]: string;
     };
 }> {
-    return request.post(
+    return post(
         '/api/authentication/forgot-password',
         {
             login,
@@ -76,7 +77,7 @@ export function forgotPassword(
 }
 
 export function recoverPassword(key: string, newPassword: string, newRePassword: string): Promise<OAuthResponse> {
-    return request.post(
+    return post(
         '/api/authentication/recover-password',
         {
             key,
@@ -142,7 +143,10 @@ function handleTokenError(resp: Error | { message: string }, refreshToken: strin
             return requestToken(refreshToken);
         }
 
-        logger.error('Unexpected error during token validation', { resp });
+        // The user has connectivity problems, there is nothing to report
+        if (!(resp instanceof RequestAbortedError)) {
+            logger.error('Unexpected error during token validation', { resp });
+        }
     }
 
     return Promise.reject(resp);
@@ -157,7 +161,7 @@ function handleTokenError(resp: Error | { message: string }, refreshToken: strin
  */
 export async function requestToken(refreshToken: string): Promise<string> {
     try {
-        const response: OAuthResponse = await request.post(
+        const response: OAuthResponse = await post(
             '/api/authentication/refresh-token',
             {
                 refresh_token: refreshToken,
