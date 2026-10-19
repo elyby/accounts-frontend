@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { getJwtPayloads } from 'app/functions';
 import { sessionStorage } from 'app/services/localStorage';
 import { validateToken, requestToken, logout } from 'app/services/api/authentication';
@@ -201,7 +202,14 @@ export function requestNewToken(): AppAction<Promise<void>> {
             return pending;
         }
 
-        const promise = requestToken(refreshToken)
+        // The span is started synchronously, while the request, that needs the token, is active (see authHooks).
+        // It must be passed explicitly: by default the browser SDK attaches the new spans to the root one
+        const spanOptions = {
+            name: 'Refresh access token',
+            op: 'auth.token.refresh',
+            parentSpan: Sentry.getActiveSpan(),
+        };
+        const promise = Sentry.startSpan(spanOptions, () => requestToken(refreshToken))
             .then((token) => {
                 dispatch(updateToken(token));
             })

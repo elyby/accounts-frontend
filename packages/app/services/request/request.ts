@@ -1,9 +1,11 @@
+import type { Span } from '@sentry/react';
 import ky, { type Options as KyOptions, type Hooks, type KyInstance, isNetworkError } from 'ky';
 
 import createResponseError from './createResponseError';
 import InternalServerError from './InternalServerError';
 import RequestAbortedError from './RequestAbortedError';
 import RequestError from './RequestError';
+import { API_PATH_REGEX, getTraceHeaders, recordResponse, traceRequest } from './tracing';
 
 export type Resp<T> = T & {
     response: Response;
@@ -33,6 +35,11 @@ export interface RequestContext extends Record<string, unknown> {
      * When the key is absent, the active account's token is used
      */
     token?: string | null;
+    /**
+     * The span of the whole request (see `traceRequest`). The hooks are called asynchronously,
+     * when the request's span is no longer active, so it must be referenced explicitly
+     */
+    span?: Span;
 }
 
 export type ErrorListener = (error: unknown) => void;
@@ -51,6 +58,20 @@ let client: KyInstance = ky.create({
     headers: {
         Accept: 'application/json',
     },
+    hooks: {
+        beforeRequest: [
+            ({ request, options }) => {
+                const { span } = options.context as RequestContext;
+
+                // Continue the trace on the backend. The SDK's fetch instrumentation keeps the existing headers
+                if (span && API_PATH_REGEX.test(new URL(request.url).pathname)) {
+                    for (const [name, value] of Object.entries(getTraceHeaders(span))) {
+                        request.headers.set(name, value);
+                    }
+                }
+            },
+        ],
+    },
 });
 
 const errorListeners: ErrorListener[] = [];
@@ -62,31 +83,35 @@ async function send<T>(
     url: string,
     { token, searchParams, ...options }: Options & { body?: URLSearchParams },
 ): Promise<Resp<T>> {
-    // `{ token: undefined }` means the same as no token option at all
-    const context: RequestContext = token === undefined ? {} : { token };
+    return traceRequest(method, url, async (span) => {
+        // `{ token: undefined }` means the same as no token option at all
+        const context: RequestContext = token === undefined ? { span } : { token, span };
 
-    try {
-        const response = await client(url, {
-            ...options,
-            method,
-            searchParams: searchParams && convertQueryValues(searchParams),
-            context,
-        });
+        try {
+            const response = await client(url, {
+                ...options,
+                method,
+                searchParams: searchParams && convertQueryValues(searchParams),
+                context,
+            });
+            recordResponse(span, response);
 
-        return await parseResponse<T>(response);
-    } catch (error) {
-        const normalizedError = normalizeError(error);
+            return await parseResponse<T>(response);
+        } catch (error) {
+            const normalizedError = normalizeError(error);
+            const isObject = typeof normalizedError === 'object' && normalizedError !== null;
 
-        if (typeof normalizedError !== 'object' || normalizedError === null || !notifiedErrors.has(normalizedError)) {
-            if (typeof normalizedError === 'object' && normalizedError !== null) {
-                notifiedErrors.add(normalizedError);
+            if (!isObject || !notifiedErrors.has(normalizedError)) {
+                if (isObject) {
+                    notifiedErrors.add(normalizedError);
+                }
+
+                errorListeners.forEach((listener) => listener(normalizedError));
             }
 
-            errorListeners.forEach((listener) => listener(normalizedError));
+            throw normalizedError;
         }
-
-        throw normalizedError;
-    }
+    });
 }
 
 async function parseResponse<T>(response: Response): Promise<Resp<T>> {

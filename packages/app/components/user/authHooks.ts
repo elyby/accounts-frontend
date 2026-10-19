@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import ky, { Hooks } from 'ky';
 
 import { ensureToken, recoverFromTokenError } from 'app/components/accounts/actions';
@@ -37,6 +38,13 @@ export default function createAuthHooks({ dispatch, getState }: Store): Hooks {
         }
     };
 
+    /**
+     * The hooks are called asynchronously, when the request's span is no longer active.
+     * Restore it, so the token refresh span is attached to the request, that has triggered it
+     */
+    const withRequestSpan = <T>(context: RequestContext, callback: () => T): T =>
+        context.span ? Sentry.withActiveSpan(context.span, callback) : callback();
+
     return {
         beforeRequest: [
             async ({ request, options }) => {
@@ -44,7 +52,7 @@ export default function createAuthHooks({ dispatch, getState }: Store): Hooks {
                 const isRefreshTokenRequest = new URL(request.url).pathname === REFRESH_TOKEN_URL;
 
                 if (!isAutoRefreshDisabled(context) && !isRefreshTokenRequest && getActiveAccount(getState())) {
-                    await dispatch(ensureToken());
+                    await withRequestSpan(context, () => dispatch(ensureToken()));
                 }
 
                 setAuthorizationHeader(request, context);
@@ -72,13 +80,14 @@ export default function createAuthHooks({ dispatch, getState }: Store): Hooks {
 
                 try {
                     // Will reject when the error isn't recoverable (and log the user out)
-                    await dispatch(recoverFromTokenError(error));
+                    await withRequestSpan(context, () => dispatch(recoverFromTokenError(error)));
                 } catch {
                     // Let the original 401 response reach the caller
                     return;
                 }
 
                 context.isTokenRefreshed = true;
+                context.span?.setAttribute('app.auth.token_refreshed', true);
 
                 return ky.retry({ delay: 0 });
             },

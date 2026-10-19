@@ -1,6 +1,13 @@
 import * as Sentry from '@sentry/react';
+import type { History } from 'history';
 
 import { RequestError } from 'app/services/request';
+import {
+    API_PATH_REGEX,
+    applyPathTemplates,
+    sanitizeRequestUrl,
+    type PathTemplate,
+} from 'app/services/request/tracing';
 
 import { isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
 
@@ -8,6 +15,8 @@ const isTest = process.env.NODE_ENV === 'test';
 const isProduction = process.env.NODE_ENV === 'production';
 
 type Level = 'error' | 'warning' | 'info';
+// @sentry/core, which exports this type, isn't a direct dependency
+type StartSpanOptions = Parameters<typeof Sentry.startSpan>[0];
 type Context = Record<string, any>;
 
 // Chrome, Firefox, Safari, whatwg-fetch polyfill
@@ -47,6 +56,38 @@ const DENY_URLS: Array<RegExp> = [
     /^webkit-masked-url:\/\//,
 ];
 
+/**
+ * Pages, whose paths contain the secret keys or the ids. The other paths are used as is.
+ * The page's path becomes the name of the pageload/navigation span, which is also sent
+ * to the backend in the `baggage` header and attached to the error events as the transaction
+ */
+const PAGE_TEMPLATES: ReadonlyArray<PathTemplate> = [
+    { pattern: /^\/activation\/[^/]+$/, replacement: '/activation/{key}' },
+    { pattern: /^\/recover-password\/[^/]+$/, replacement: '/recover-password/{key}' },
+    { pattern: /^(\/profile\/change-email\/[^/]+)\/[^/]+$/, replacement: '$1/{code}' },
+    { pattern: /^\/dev\/applications\/(?!new$)[^/]+$/, replacement: '/dev/applications/{clientId}' },
+    { pattern: /^(\/oauth2\/v\d+)\/[^/]+$/, replacement: '$1/{clientId}' },
+];
+
+export function getPageTemplate(path: string): string {
+    return applyPathTemplates(PAGE_TEMPLATES, path);
+}
+
+/**
+ * Replaces the secret parts of the page's path and drops the query and the hash:
+ * they may contain arbitrary data, e.g. the OAuth client's params (the safe ones are attached by oauthDebugContext)
+ */
+export function sanitizePageUrl(url: string): string {
+    try {
+        const { origin, pathname } = new URL(url);
+
+        return `${origin}${getPageTemplate(pathname)}`;
+    } catch {
+        // Not an absolute url, e.g. the SDK couldn't read the location
+        return getPageTemplate(url.split(/[?#]/)[0]);
+    }
+}
+
 class Logger {
     /**
      * Sentry drops breadcrumbs that are added before the initialization,
@@ -54,7 +95,19 @@ class Logger {
      */
     private pendingBreadcrumbs: Array<Sentry.Breadcrumb> | null = [];
 
-    init({ sentryDSN }: { sentryDSN: string }) {
+    /**
+     * Tracing is disabled when `tracesSampleRate` is undefined.
+     * The error events are still linked with the backend ones by the trace id
+     */
+    init({
+        sentryDSN,
+        tracesSampleRate,
+        history,
+    }: {
+        sentryDSN: string;
+        tracesSampleRate?: number;
+        history: History;
+    }) {
         if (!sentryDSN || isTest) {
             this.pendingBreadcrumbs = null;
 
@@ -72,11 +125,63 @@ class Logger {
             ignoreErrors: IGNORE_ERRORS,
             // Enough to reach fields like extra.resp.response.body.errors.*
             normalizeDepth: 6,
+            beforeSendSpan(span) {
+                const { attributes } = span;
+                const url = attributes['url.full'];
+
+                // The SDK puts the raw urls into the spans: the pages' ones into the browser metrics spans,
+                // the requests' ones (with the query, e.g. the analytics' params, containing the page's url)
+                // into the http.client spans. The pageload/navigation spans are already sanitized by sanitizePageSpan()
+                if (typeof url === 'string') {
+                    attributes['url.full'] =
+                        attributes['sentry.op'] === 'http.client'
+                            ? sanitizeRequestUrl(String(attributes['http.request.method'] ?? 'GET'), url)
+                            : sanitizePageUrl(url);
+                }
+
+                delete attributes['url.query'];
+
+                return span;
+            },
+            beforeBreadcrumb(breadcrumb) {
+                // The history changes, recorded by the SDK. Pages' urls are sanitized like the event's request.url
+                if (breadcrumb.category === 'navigation' && breadcrumb.data) {
+                    const { from, to } = breadcrumb.data;
+                    breadcrumb.data = {
+                        ...breadcrumb.data,
+                        from: typeof from === 'string' ? sanitizePageUrl(from) : from,
+                        to: typeof to === 'string' ? sanitizePageUrl(to) : to,
+                    };
+                }
+
+                // The requests, recorded by the SDK. The data object may be shared with the SDK, so it's copied
+                if ((breadcrumb.category === 'fetch' || breadcrumb.category === 'xhr') && breadcrumb.data) {
+                    const { method, url } = breadcrumb.data;
+
+                    if (typeof url === 'string') {
+                        breadcrumb.data = {
+                            ...breadcrumb.data,
+                            url: sanitizeRequestUrl(typeof method === 'string' ? method.toUpperCase() : 'GET', url),
+                        };
+                    }
+                }
+
+                return breadcrumb;
+            },
             beforeSend(event, hint) {
                 const error = hint.originalException;
 
                 if (typeof error === 'object' && error !== null && handledErrors.has(error)) {
                     return null;
+                }
+
+                // The SDK names the transaction by the raw page's path, see sanitizePageSpan() for the spans
+                if (event.transaction) {
+                    event.transaction = getPageTemplate(event.transaction);
+                }
+
+                if (event.request?.url) {
+                    event.request.url = sanitizePageUrl(event.request.url);
                 }
 
                 // The integration below doesn't recognize third-party errors caught by an ErrorBoundary,
@@ -87,20 +192,37 @@ class Logger {
 
                 return event;
             },
-            integrations: applicationKey
-                ? [
-                      // Our bundles are marked with this key by @sentry/webpack-plugin (see webpack.config.js).
-                      // Errors that have no frames from our code come from browser extensions or scripts injected by
-                      // the WebView hosts. For now they are only tagged to verify the filter before dropping them
-                      Sentry.thirdPartyErrorFilterIntegration({
-                          filterKeys: [applicationKey],
-                          behaviour: 'apply-tag-if-exclusively-contains-third-party-frames',
-                          // Skip the SDK's own wrapper frame (e.g. sentryWrapped around setTimeout callbacks),
-                          // which is bundled into our code and would otherwise mark an injected script's error as ours
-                          ignoreSentryInternalFrames: true,
-                      }),
-                  ]
-                : [],
+            tracesSampleRate,
+            // Matched against the pathname for the same origin requests. Other origins don't allow these headers
+            tracePropagationTargets: [API_PATH_REGEX],
+            integrations: [
+                ...(tracesSampleRate === undefined
+                    ? []
+                    : [
+                          Sentry.reactRouterV5BrowserTracingIntegration({
+                              history,
+                              beforeStartSpan: sanitizePageSpan,
+                              // The API requests are traced by the request service (see services/request/tracing)
+                              shouldCreateSpanForRequest: (url) => !isApiUrl(url),
+                          }),
+                      ]),
+                ...(applicationKey
+                    ? [
+                          // Our bundles are marked with this key by @sentry/webpack-plugin (see webpack.config.js).
+                          // Errors that have no frames from our code come from browser extensions or scripts
+                          // injected by the WebView hosts. For now they are only tagged to verify the filter
+                          // before dropping them
+                          Sentry.thirdPartyErrorFilterIntegration({
+                              filterKeys: [applicationKey],
+                              behaviour: 'apply-tag-if-exclusively-contains-third-party-frames',
+                              // Skip the SDK's own wrapper frame (e.g. sentryWrapped around setTimeout callbacks),
+                              // which is bundled into our code and would otherwise mark an injected script's error
+                              // as ours
+                              ignoreSentryInternalFrames: true,
+                          }),
+                      ]
+                    : []),
+            ],
         });
 
         const pending = this.pendingBreadcrumbs || [];
@@ -201,6 +323,36 @@ class Logger {
 
     getLastEventId(): string | undefined {
         return Sentry.lastEventId();
+    }
+}
+
+/**
+ * Names the pageload/navigation span by the page's path, replacing the secret parts of it.
+ * The SDK puts the raw url into the span's attributes too, so they are replaced as well.
+ * The error events' transaction is replaced in `beforeSend`: the SDK sets it after this hook on navigation.
+ * The history listeners are called after the location is changed, so it's actual for the navigation spans
+ */
+function sanitizePageSpan(options: StartSpanOptions): StartSpanOptions {
+    const path = getPageTemplate(window.location.pathname);
+
+    return {
+        ...options,
+        name: path,
+        attributes: {
+            ...options.attributes,
+            'url.path': path,
+            'url.full': sanitizePageUrl(window.location.href),
+        },
+    };
+}
+
+function isApiUrl(url: string): boolean {
+    try {
+        const parsed = new URL(url, window.location.origin);
+
+        return parsed.origin === window.location.origin && API_PATH_REGEX.test(parsed.pathname);
+    } catch {
+        return false;
     }
 }
 
