@@ -1,5 +1,6 @@
 import { OAuthState } from 'app/components/auth/reducer';
 import { getActiveAccount } from 'app/components/accounts/reducer';
+import { OAuthError, UnauthorizedError } from 'app/services/request';
 
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
@@ -129,10 +130,10 @@ export default class CompleteState extends AbstractState {
                     return context.run('redirect', resp.redirectUri);
                 }
             })
-            .catch((resp) => {
-                if (resp.unauthorized) {
+            .catch((error) => {
+                if (error instanceof UnauthorizedError) {
                     context.setState(new LoginState());
-                } else if (resp.acceptRequired) {
+                } else if (error instanceof OAuthError && error.error === 'accept_required') {
                     context.setState(new PermissionsState());
                 }
             });

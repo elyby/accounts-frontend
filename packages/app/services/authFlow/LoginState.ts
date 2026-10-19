@@ -1,4 +1,3 @@
-import logger from 'app/services/logger';
 import { getLogin } from 'app/components/auth/reducer';
 
 import AbstractState from './AbstractState';
@@ -32,8 +31,7 @@ export default class LoginState extends AbstractState {
     ): Promise<void> | void {
         return context
             .run('login', payload)
-            .then(() => context.setState(new PasswordState()))
-            .catch((err = {}) => err.errors || logger.warn('Error validating login', err));
+            .then(() => context.setState(new PasswordState()));
     }
 
     reject(context: AuthContext): void {

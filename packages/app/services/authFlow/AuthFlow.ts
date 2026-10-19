@@ -1,6 +1,7 @@
 import { browserHistory } from 'app/services/history';
 import logger from 'app/services/logger';
 import localStorage from 'app/services/localStorage';
+import { OAuthError, RequestError, UnauthorizedError, ValidationError } from 'app/services/request';
 import { Store, State as RootState, Dispatch } from 'app/types';
 import {
     activate as activateAccount,
@@ -125,11 +126,30 @@ export default class AuthFlow implements AuthContext {
         const maybePromise = this.state.resolve(this, payload);
 
         if (maybePromise && maybePromise.catch) {
-            maybePromise.catch((err) => {
-                dispatchBsod();
-                throw err;
-            });
+            maybePromise.catch((error) => this.handleResolveError(error));
         }
+    }
+
+    private handleResolveError(error: unknown): void {
+        // validationErrorsHandler (auth/actions) has already shown them in the form
+        if (error instanceof ValidationError) {
+            return;
+        }
+
+        // Network problems or an unexpected response. Additionally, 5xx responses are shown as BSoD
+        // (see bsodErrorListener) and the rejected token logs the user out (see accounts/actions)
+        if (error instanceof RequestError) {
+            logger.warn('Auth flow request failed', { error });
+
+            if (!(error instanceof UnauthorizedError)) {
+                this.run('setErrors', { request: 'error.request_failed' });
+            }
+
+            return;
+        }
+
+        logger.error('Auth flow state resolving error', { error });
+        dispatchBsod();
     }
 
     reject(payload: Record<string, any> = {}) {
@@ -166,7 +186,7 @@ export default class AuthFlow implements AuthContext {
                 return resp.then(callback, (error) => {
                     // OAuth params validation errors (invalid_client, invalid_request, etc.) are expected:
                     // they're caused by the requesting application and are already shown to the user
-                    if (!error?.userMessage) {
+                    if (!(error instanceof OAuthError && error.userMessage)) {
                         logger.error('State transition error', { error });
                     }
 

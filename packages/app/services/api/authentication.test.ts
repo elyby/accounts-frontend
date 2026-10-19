@@ -1,7 +1,10 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
 
-import request from 'app/services/request';
+// Stub the functions in the module itself: the index re-exports them as getters, which sinon can't replace
+import * as request from 'app/services/request/request';
+import { InternalServerError, RequestAbortedError, UnauthorizedError } from 'app/services/request';
+import logger from 'app/services/logger';
 import * as authentication from 'app/services/api/authentication';
 import * as accounts from 'app/services/api/accounts';
 
@@ -76,14 +79,28 @@ describe('authentication api', () => {
             return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
         });
 
+        it('rejects without logging on network error', async () => {
+            const error = new RequestAbortedError(new TypeError('Failed to fetch'));
+            (accounts.getInfo as any).returns(Promise.reject(error));
+            sinon.stub(logger, 'error');
+
+            try {
+                await expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
+
+                expect(logger.error, 'was not called');
+            } finally {
+                (logger.error as any).restore();
+            }
+        });
+
         describe('when token is expired', () => {
-            const expiredResponse = {
+            const expiredResponse = new UnauthorizedError(new Response('{}', { status: 401 }), {
                 name: 'Unauthorized',
                 message: 'Token expired',
                 code: 0,
                 status: 401,
                 type: 'yii\\web\\UnauthorizedHttpException',
-            };
+            });
             const newToken = 'baz';
 
             beforeEach(() => {
@@ -100,19 +117,20 @@ describe('authentication api', () => {
             });
 
             it('resolves with new token and user object', async () => {
-                (fetch as any).returns(
-                    Promise.resolve(
-                        new Response(
-                            JSON.stringify({
-                                access_token: newToken,
-                                refresh_token: validRefreshToken,
-                                success: true,
-                                expires_in: 50000,
-                            }),
-                            { status: 200 },
-                        ),
-                    ),
-                );
+                const sentRequests: Array<{ url: string; body: string }> = [];
+                (fetch as any).callsFake(async (req: Request) => {
+                    sentRequests.push({ url: new URL(req.url).pathname, body: await req.text() });
+
+                    return new Response(
+                        JSON.stringify({
+                            access_token: newToken,
+                            refresh_token: validRefreshToken,
+                            success: true,
+                            expires_in: 50000,
+                        }),
+                        { status: 200 },
+                    );
+                });
 
                 await expect(authentication.validateToken(...validateTokenArgs), 'to be fulfilled with', {
                     token: newToken,
@@ -120,9 +138,8 @@ describe('authentication api', () => {
                     user,
                 });
 
-                expect(fetch, 'to have a call satisfying', [
-                    '/api/authentication/refresh-token',
-                    { body: `refresh_token=${validRefreshToken}` },
+                expect(sentRequests, 'to equal', [
+                    { url: '/api/authentication/refresh-token', body: `refresh_token=${validRefreshToken}` },
                 ]);
             });
 
@@ -131,18 +148,22 @@ describe('authentication api', () => {
 
                 (fetch as any).returns(Promise.resolve(new Response(JSON.stringify(error), { status: 500 })));
 
-                return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
+                return expect(
+                    authentication.validateToken(...validateTokenArgs),
+                    'to be rejected with',
+                    expect.it('to be an', InternalServerError),
+                );
             });
         });
 
         describe('when token is incorrect', () => {
-            const expiredResponse = {
+            const expiredResponse = new UnauthorizedError(new Response('{}', { status: 401 }), {
                 name: 'Unauthorized',
                 message: 'Incorrect token',
                 code: 0,
                 status: 401,
                 type: 'yii\\web\\UnauthorizedHttpException',
-            };
+            });
             const newToken = 'baz';
 
             beforeEach(() => {
@@ -156,19 +177,20 @@ describe('authentication api', () => {
             });
 
             it('resolves with new token and user object', async () => {
-                (fetch as any).returns(
-                    Promise.resolve(
-                        new Response(
-                            JSON.stringify({
-                                access_token: newToken,
-                                refresh_token: validRefreshToken,
-                                success: true,
-                                expires_in: 50000,
-                            }),
-                            { status: 200 },
-                        ),
-                    ),
-                );
+                const sentRequests: Array<{ url: string; body: string }> = [];
+                (fetch as any).callsFake(async (req: Request) => {
+                    sentRequests.push({ url: new URL(req.url).pathname, body: await req.text() });
+
+                    return new Response(
+                        JSON.stringify({
+                            access_token: newToken,
+                            refresh_token: validRefreshToken,
+                            success: true,
+                            expires_in: 50000,
+                        }),
+                        { status: 200 },
+                    );
+                });
 
                 await expect(authentication.validateToken(...validateTokenArgs), 'to be fulfilled with', {
                     token: newToken,
@@ -176,9 +198,8 @@ describe('authentication api', () => {
                     user,
                 });
 
-                expect(fetch, 'to have a call satisfying', [
-                    '/api/authentication/refresh-token',
-                    { body: `refresh_token=${validRefreshToken}` },
+                expect(sentRequests, 'to equal', [
+                    { url: '/api/authentication/refresh-token', body: `refresh_token=${validRefreshToken}` },
                 ]);
             });
 
@@ -187,7 +208,11 @@ describe('authentication api', () => {
 
                 (fetch as any).returns(Promise.resolve(new Response(JSON.stringify(error), { status: 500 })));
 
-                return expect(authentication.validateToken(...validateTokenArgs), 'to be rejected with', error);
+                return expect(
+                    authentication.validateToken(...validateTokenArgs),
+                    'to be rejected with',
+                    expect.it('to be an', InternalServerError),
+                );
             });
         });
     });

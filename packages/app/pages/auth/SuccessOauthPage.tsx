@@ -1,18 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
-import * as loader from 'app/services/loader';
-import { Query } from 'app/services/request';
 
+import * as loader from 'app/services/loader';
 import siteName from 'app/pages/root/siteName.intl';
+
 import styles from './success-oauth.scss';
 
-export default class SuccessOauthPage extends React.Component<{
-    location: {
-        query: Query<'appName'>;
-    };
-}> {
+export default class SuccessOauthPage extends React.Component<RouteComponentProps> {
     componentDidMount() {
         this.onPageUpdate();
 
@@ -36,7 +32,7 @@ export default class SuccessOauthPage extends React.Component<{
     }
 
     render() {
-        const appName = this.props.location.query.get('appName');
+        const appName = new URLSearchParams(this.props.location.search).get('appName');
 
         return (
             <div className={styles.page}>

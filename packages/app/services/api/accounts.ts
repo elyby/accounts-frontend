@@ -1,4 +1,4 @@
-import request from 'app/services/request';
+import { get, post, del } from 'app/services/request';
 
 export interface UserResponse {
     elyProfileLink: string;
@@ -17,7 +17,7 @@ export interface UserResponse {
 }
 
 export function getInfo(id: number, token?: string): Promise<UserResponse> {
-    return request.get(`/api/v1/accounts/${id}`, {}, { token });
+    return get(`/api/v1/accounts/${id}`, {}, { token });
 }
 
 export function changePassword(
@@ -34,7 +34,7 @@ export function changePassword(
         logoutAll?: boolean;
     },
 ): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/password`, {
+    return post(`/api/v1/accounts/${id}/password`, {
         password,
         newPassword,
         newRePassword,
@@ -43,7 +43,7 @@ export function changePassword(
 }
 
 export function acceptRules(id: number): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/rules`);
+    return post(`/api/v1/accounts/${id}/rules`);
 }
 
 export function changeUsername(
@@ -51,43 +51,43 @@ export function changeUsername(
     username: string | void,
     password: string | void,
 ): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/username`, {
+    return post(`/api/v1/accounts/${id}/username`, {
         username,
         password,
     });
 }
 
 export function changeLang(id: number, lang: string): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/language`, {
+    return post(`/api/v1/accounts/${id}/language`, {
         lang,
     });
 }
 
 export function requestEmailChange(id: number, password: string): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/email-verification`, {
+    return post(`/api/v1/accounts/${id}/email-verification`, {
         password,
     });
 }
 
 export function setNewEmail(id: number, email: string, key: string): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/new-email-verification`, {
+    return post(`/api/v1/accounts/${id}/new-email-verification`, {
         email,
         key,
     });
 }
 
 export function confirmNewEmail(id: number, key: string): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/email`, {
+    return post(`/api/v1/accounts/${id}/email`, {
         key,
     });
 }
 
 export function deleteAccount(id: number, { password }: { password?: string }): Promise<{ success: boolean }> {
-    return request.delete(`/api/v1/accounts/${id}`, {
+    return del(`/api/v1/accounts/${id}`, {
         password,
     });
 }
 
 export function restoreAccount(id: number): Promise<{ success: boolean }> {
-    return request.post(`/api/v1/accounts/${id}/restore`);
+    return post(`/api/v1/accounts/${id}/restore`);
 }

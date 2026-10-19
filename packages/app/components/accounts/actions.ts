@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { getJwtPayloads } from 'app/functions';
 import { sessionStorage } from 'app/services/localStorage';
 import { validateToken, requestToken, logout } from 'app/services/api/authentication';
@@ -5,6 +6,7 @@ import { relogin as navigateToLogin } from 'app/components/auth/actions';
 import { updateUser, setGuest } from 'app/components/user/actions';
 import { setLocale } from 'app/components/i18n/actions';
 import logger from 'app/services/logger';
+import { ApiError, UnauthorizedError } from 'app/services/request';
 import { Action as AppAction } from 'app/types';
 
 import { getActiveAccount, Account } from './reducer';
@@ -75,10 +77,10 @@ export function authenticate(
 
             return newAccount;
         } catch (resp) {
-            // all the logic to get the valid token was failed,
-            // looks like we have some problems with token
-            // lets redirect to login page
-            if (typeof email === 'string') {
+            // Log out only when the backend has explicitly rejected the credentials.
+            // Server errors and unexpected responses are shown as BSoD (see bsodErrorListener)
+            // and, like the network errors, must not lose the user's session
+            if (typeof email === 'string' && resp instanceof ApiError) {
                 // TODO: we should somehow try to find email by token
                 dispatch(relogin(email));
             }
@@ -120,12 +122,10 @@ function findAccountIdFromToken(token: string): number {
 }
 
 /**
- * Checks the current user's token exp time. Supposed to be used before performing
- * any api request
+ * Checks the current user's token exp time.
+ * Supposed to be used before performing any api request
  *
- * @see components/user/middlewares/refreshTokenMiddleware
- *
- * @returns {Function}
+ * @see components/user/authHooks
  */
 export function ensureToken(): AppAction<Promise<void>> {
     return (dispatch, getState) => {
@@ -139,13 +139,9 @@ export function ensureToken(): AppAction<Promise<void>> {
                 return dispatch(requestNewToken());
             }
         } catch {
-            logger.warn('Refresh token error: bad token', {
-                token,
-            });
-
-            dispatch(relogin());
-
-            return Promise.reject(new Error('Invalid token'));
+            // There is might be an exception only if getJwtPayloads() will fail to parse the token,
+            // so handle it like the expired token
+            return dispatch(requestNewToken());
         }
 
         return Promise.resolve();
@@ -153,54 +149,41 @@ export function ensureToken(): AppAction<Promise<void>> {
 }
 
 /**
- * Checks whether request `error` is an auth error and tries recover from it by
- * requesting a new auth token
+ * Tries to recover from the rejected access token by requesting a new one.
+ * Logs the user out, when it's impossible
  *
- * @see components/user/middlewares/refreshTokenMiddleware
- *
- * @param  {object} error
- *
- * @returns {Function}
+ * @see components/user/authHooks
  */
-export function recoverFromTokenError(
-    error: {
-        status: number;
-        message: string;
-    } | void,
-): AppAction<Promise<void>> {
+export function recoverFromTokenError(error: UnauthorizedError): AppAction<Promise<void>> {
     return (dispatch, getState) => {
-        if (error && error.status === 401) {
-            const activeAccount = getActiveAccount(getState());
+        const activeAccount = getActiveAccount(getState());
 
-            if (activeAccount && activeAccount.refreshToken) {
-                if (
-                    ['Token expired', 'Incorrect token', 'You are requesting with an invalid credential.'].includes(
-                        error.message,
-                    )
-                ) {
-                    // request token and retry
-                    return dispatch(requestNewToken());
-                }
-
-                logger.error('Unknown unauthorized response', {
-                    error,
-                });
+        if (activeAccount && activeAccount.refreshToken) {
+            if (error.isRecoverable) {
+                // request token and retry
+                return dispatch(requestNewToken());
             }
 
-            // user's access token is outdated and we have no refreshToken
-            // or something unexpected happend
-            // in both cases we resetting all the user's state
-            dispatch(relogin());
+            logger.error('Unknown unauthorized response', {
+                error,
+            });
         }
+
+        // user's access token is outdated and we have no refreshToken
+        // or something unexpected happend
+        // in both cases we resetting all the user's state
+        dispatch(relogin());
 
         return Promise.reject(error);
     };
 }
 
+// Concurrent requests with an expired token share a single refresh request instead of sending one each
+const pendingTokenRequests = new Map<string, Promise<void>>();
+
 /**
  * Requests new token and updates state. In case, when token can not be updated,
  * it will redirect user to login page
- *
  * @returns {Function}
  */
 export function requestNewToken(): AppAction<Promise<void>> {
@@ -213,26 +196,46 @@ export function requestNewToken(): AppAction<Promise<void>> {
             return Promise.resolve();
         }
 
-        return requestToken(refreshToken)
+        const pending = pendingTokenRequests.get(refreshToken);
+
+        if (pending) {
+            return pending;
+        }
+
+        // The span is started synchronously, while the request, that needs the token, is active (see authHooks).
+        // It must be passed explicitly: by default the browser SDK attaches the new spans to the root one
+        const spanOptions = {
+            name: 'Refresh access token',
+            op: 'auth.token.refresh',
+            parentSpan: Sentry.getActiveSpan(),
+        };
+        const promise = Sentry.startSpan(spanOptions, () => requestToken(refreshToken))
             .then((token) => {
                 dispatch(updateToken(token));
             })
             .catch((resp) => {
-                // all the logic to get the valid token was failed,
-                // looks like we have some problems with token
-                // lets redirect to login page
-                dispatch(relogin());
+                // Log out only when the backend has explicitly rejected the refresh token.
+                // Server errors and unexpected responses are shown as BSoD (see bsodErrorListener)
+                // and, like the network errors, must not lose the user's session
+                if (resp instanceof ApiError) {
+                    dispatch(relogin());
+                }
 
                 return Promise.reject(resp);
+            })
+            .finally(() => {
+                pendingTokenRequests.delete(refreshToken);
             });
+
+        pendingTokenRequests.set(refreshToken, promise);
+
+        return promise;
     };
 }
 
 /**
  * Remove one account from current user's account list
- *
  * @param {Account} account
- *
  * @returns {Function}
  */
 export function revoke(account: Account): AppAction<Promise<void>> {
@@ -299,7 +302,6 @@ export function logoutAll(): AppAction<Promise<void>> {
  *
  * We detecting foreign accounts by the absence of refreshToken. The account
  * won't be removed, until key `stranger${account.id}` is present in sessionStorage
- *
  * @returns {Function}
  */
 export function logoutStrangers(): AppAction<Promise<void>> {

@@ -1,4 +1,3 @@
-import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
@@ -19,8 +18,7 @@ export default class RecoverPasswordState extends AbstractState {
     ): Promise<void> | void {
         return context
             .run('recoverPassword', payload)
-            .then(() => context.setState(new CompleteState()))
-            .catch((err = {}) => err.errors || logger.warn('Error recovering password', err));
+            .then(() => context.setState(new CompleteState()));
     }
 
     goBack(context: AuthContext): void {

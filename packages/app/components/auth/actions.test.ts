@@ -2,7 +2,8 @@ import { Action as ReduxAction } from 'redux';
 import sinon from 'sinon';
 import expect from 'app/test/unexpected';
 
-import request from 'app/services/request';
+// Stub the functions in the module itself: the index re-exports them as getters, which sinon can't replace
+import * as request from 'app/services/request/request';
 
 import {
     setLoadingState,
@@ -17,6 +18,7 @@ import {
     setLogin,
 } from 'app/components/auth/actions';
 import { OAuthValidateResponse } from 'app/services/api/oauth';
+import { OAuthError, ValidationError } from 'app/services/request';
 
 import { OAuthState } from './reducer';
 
@@ -121,8 +123,9 @@ describe('components/auth/actions', () => {
 
             return callThunk(oAuthComplete).then(() => {
                 expect(request.post, 'to have a call satisfying', [
-                    '/api/oauth2/v1/complete?client_id=&redirect_uri=&response_type=&scope=&state=',
+                    '/api/oauth2/v1/complete',
                     {},
+                    { searchParams: { client_id: '', redirect_uri: '', response_type: '', scope: '', state: '' } },
                 ]);
             });
         });
@@ -149,32 +152,32 @@ describe('components/auth/actions', () => {
         });
 
         it('should resolve to with success false and redirectUri for access_denied', async () => {
-            const resp = {
+            const resp = new OAuthError(new Response('{}', { status: 401 }), {
                 statusCode: 401,
                 error: 'access_denied',
                 redirectUri: 'redirectUri',
-            };
+            });
 
             (request.post as any).returns(Promise.reject(resp));
 
             const data = await callThunk(oAuthComplete);
 
-            expect(data, 'to equal', {
+            expect(data, 'to satisfy', {
                 success: false,
                 redirectUri: 'redirectUri',
             });
         });
 
         it('should dispatch requirePermissionsAccept if accept_required', () => {
-            const resp = {
+            const resp = new OAuthError(new Response('{}', { status: 401 }), {
                 statusCode: 401,
                 error: 'accept_required',
-            };
+            });
 
             (request.post as any).returns(Promise.reject(resp));
 
             return callThunk(oAuthComplete).catch((error) => {
-                expect(error.acceptRequired, 'to be true');
+                expect(error, 'to be', resp);
                 expectDispatchCalls([[requirePermissionsAccept()]]);
             });
         });
@@ -184,11 +187,14 @@ describe('components/auth/actions', () => {
         describe('when correct login was entered', () => {
             beforeEach(() => {
                 (request.post as any).returns(
-                    Promise.reject({
-                        errors: {
-                            password: 'error.password_incorrect',
-                        },
-                    }),
+                    Promise.reject(
+                        new ValidationError(new Response('{}'), {
+                            success: false,
+                            errors: {
+                                password: 'error.password_incorrect',
+                            },
+                        }),
+                    ),
                 );
             });
 

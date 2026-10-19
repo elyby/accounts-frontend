@@ -21,7 +21,7 @@ const BSoD: ComponentType<Props> = ({ lastEventId }) => {
     }
 
     return (
-        <div className={styles.body}>
+        <div className={styles.body} data-testid="bsod">
             <canvas className={styles.canvas} ref={(el: HTMLCanvasElement | null) => el && new BoxesField(el)} />
 
             <div className={styles.wrapper}>

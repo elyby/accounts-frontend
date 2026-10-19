@@ -1,7 +1,7 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
 import { browserHistory } from 'app/services/history';
-import { InternalServerError } from 'app/services/request';
+import { InternalServerError, RequestAbortedError, UnauthorizedError } from 'app/services/request';
 import { sessionStorage } from 'app/services/localStorage';
 import * as authentication from 'app/services/api/authentication';
 import { authenticate, revoke, logoutAll, logoutStrangers } from 'app/components/accounts/actions';
@@ -135,7 +135,13 @@ describe('components/accounts/actions', () => {
             authenticate(account)(dispatch, getState, undefined).then((resp) => expect(resp, 'to equal', account)));
 
         it('rejects when bad auth data', () => {
-            (authentication.validateToken as any).returns(Promise.reject({}));
+            (authentication.validateToken as any).rejects(
+                new UnauthorizedError(new Response('{}', { status: 401 }), {
+                    name: 'Unauthorized',
+                    message: 'Incorrect token',
+                    status: 401,
+                }),
+            );
 
             return expect(authenticate(account)(dispatch, getState, undefined), 'to be rejected').then(() => {
                 expect(dispatch, 'to have a call satisfying', [setLogin(account.email)]);
@@ -145,13 +151,26 @@ describe('components/accounts/actions', () => {
         });
 
         it('rejects when 5xx without logouting', () => {
-            const resp = new InternalServerError('500', { status: 500 });
+            const resp = new InternalServerError(new Response('{}', { status: 500 }));
 
             (authentication.validateToken as any).rejects(resp);
 
-            return expect(authenticate(account)(dispatch, getState, undefined), 'to be rejected with', resp).then(() =>
-                expect(dispatch, 'to have no calls satisfying', [{ payload: { isGuest: true } }]),
-            );
+            return expect(authenticate(account)(dispatch, getState, undefined), 'to be rejected with', resp).then(() => {
+                expect(dispatch, 'to have no calls satisfying', [{ payload: { isGuest: true } }]);
+                expect(dispatch, 'to have no calls satisfying', [setLogin(account.email)]);
+                expect(browserHistory.push, 'was not called');
+            });
+        });
+
+        it('rejects on network error without logouting', () => {
+            const resp = new RequestAbortedError(new TypeError('Failed to fetch'));
+
+            (authentication.validateToken as any).rejects(resp);
+
+            return expect(authenticate(account)(dispatch, getState, undefined), 'to be rejected with', resp).then(() => {
+                expect(dispatch, 'to have no calls satisfying', [setLogin(account.email)]);
+                expect(browserHistory.push, 'was not called');
+            });
         });
 
         it('marks user as stranger, if there is no refreshToken', () => {

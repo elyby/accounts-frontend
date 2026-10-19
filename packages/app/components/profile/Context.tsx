@@ -3,7 +3,14 @@ import { FormModel } from 'app/components/ui/form';
 
 export interface ProfileContext {
     userId: number;
-    onSubmit: (options: { form: FormModel; sendData: () => Promise<any> }) => Promise<void>;
+    onSubmit: (options: {
+        form: FormModel;
+        sendData: () => Promise<any>;
+        /**
+         * Where the user can repeat the process, when the key from the email has expired
+         */
+        repeatUrl?: string;
+    }) => Promise<void>;
     goToProfile: () => Promise<void>;
 }
 

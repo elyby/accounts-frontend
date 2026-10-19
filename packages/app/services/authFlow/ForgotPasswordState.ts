@@ -1,5 +1,4 @@
 import { CaptchaValue } from 'app/services/captcha';
-import logger from 'app/services/logger';
 
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
@@ -17,8 +16,7 @@ export default class ForgotPasswordState extends AbstractState {
             .then(() => {
                 context.run('setLogin', payload.login);
                 context.setState(new RecoverPasswordState());
-            })
-            .catch((err) => err.errors || logger.warn('Error requesting password recoverage', err));
+            });
     }
 
     goBack(context: AuthContext): void {

@@ -1,18 +1,18 @@
-export default class RequestAbortedError extends Error {
-    private error: Error | Response;
+import RequestError from './RequestError';
 
-    constructor(error: Error | Response) {
-        super();
-
-        this.name = this.constructor.name;
-        this.message = this.constructor.name;
-        this.stack = new Error().stack;
-
-        if ('message' in error) {
-            this.message = error.message;
+/**
+ * The request has failed without a response from the backend: network problems, CORS, aborted request, etc.
+ */
+export default class RequestAbortedError extends RequestError {
+    constructor(cause: Error | Response) {
+        if (cause instanceof Response) {
+            // e.g. the network error response or an opaque response
+            super('Request aborted', { response: cause });
+        } else {
+            // Keep the browser's message: the logger filters network errors by it (e.g. 'Failed to fetch')
+            super(cause.message, { cause });
         }
 
-        this.error = error;
-        Object.assign(this, error);
+        this.name = 'RequestAbortedError';
     }
 }

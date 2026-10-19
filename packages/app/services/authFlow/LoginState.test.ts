@@ -1,3 +1,4 @@
+import expect from 'app/test/unexpected';
 import sinon, { SinonMock } from 'sinon';
 
 import LoginState from 'app/services/authFlow/LoginState';
@@ -77,9 +78,8 @@ describe('LoginState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, { login: 'login' });
-
-            return promise.catch(mock.verify.bind(mock));
+            // The rejection is handled by AuthFlow
+            return expect(state.resolve(context, { login: 'login' }), 'to be rejected').then(mock.verify.bind(mock));
         });
     });
 

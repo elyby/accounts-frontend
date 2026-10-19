@@ -1,4 +1,3 @@
-import logger from 'app/services/logger';
 
 import { getCredentials } from 'app/components/auth/reducer';
 
@@ -38,8 +37,7 @@ export default class MfaState extends AbstractState {
                 }
 
                 return context.setState(new CompleteState());
-            })
-            .catch((err = {}) => err.errors || logger.warn('Error logging in', err));
+            });
     }
 
     goBack(context: AuthContext) {

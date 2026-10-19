@@ -9,6 +9,7 @@ import { BackButton } from 'app/components/profile/ProfileForm';
 import styles from 'app/components/profile/profileForm.scss';
 import helpLinks from 'app/components/auth/helpLinks.scss';
 import Stepper from 'app/components/ui/stepper';
+import { ValidationError } from 'app/services/request';
 
 import changeEmail from './changeEmail.scss';
 
@@ -334,8 +335,8 @@ export default class ChangeEmail extends React.Component<Props, State> {
                 });
             },
             (resp) => {
-                if (resp.errors) {
-                    form.setErrors(resp.errors);
+                // Validation errors are already set to the form by the onSubmit handler
+                if (resp instanceof ValidationError) {
                     this.forceUpdate();
                 } else {
                     return Promise.reject(resp);

@@ -1,7 +1,8 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
-import request from 'app/services/request';
-import options from './options';
+// Stub the functions in the module itself: the index re-exports them as getters, which sinon can't replace
+import * as request from 'app/services/request/request';
+import * as options from './options';
 
 describe('services/api/options', () => {
     const expectedResp = {
@@ -14,7 +15,7 @@ describe('services/api/options', () => {
             .named('request.get')
             .returns(
                 Promise.resolve({
-                    originalResponse: new Response(),
+                    response: new Response(),
                     ...expectedResp,
                 }),
             );
@@ -25,10 +26,10 @@ describe('services/api/options', () => {
     });
 
     it('should request options without token', () =>
-        options.get().then((resp) => {
+        options.fetch().then((resp) => {
             expect(resp, 'to satisfy', {
                 ...expectedResp,
-                originalResponse: expect.it('to be a', Response),
+                response: expect.it('to be a', Response),
             });
             expect(request.get, 'to have a call satisfying', ['/api/options', {}, { token: null }]);
         }));
@@ -36,10 +37,10 @@ describe('services/api/options', () => {
     it('should cache options', () =>
         // NOTE: this is bad practice, but we are relying on the state from
         // the previous test
-        options.get().then((resp) => {
+        options.fetch().then((resp) => {
             expect(resp, 'to satisfy', {
                 ...expectedResp,
-                originalResponse: expect.it('to be a', Response),
+                response: expect.it('to be a', Response),
             });
             expect(request.get, 'was not called');
         }));

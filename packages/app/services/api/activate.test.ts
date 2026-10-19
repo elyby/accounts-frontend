@@ -1,7 +1,8 @@
 import expect from 'app/test/unexpected';
 import sinon from 'sinon';
 
-import request from 'app/services/request';
+// Stub the functions in the module itself: the index re-exports them as getters, which sinon can't replace
+import * as request from 'app/services/request/request';
 import * as signup from 'app/services/api/signup';
 
 describe('signup api', () => {

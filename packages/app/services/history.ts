@@ -2,21 +2,9 @@
  * A helper wrapper service around window.history
  */
 
-import { createBrowserHistory, History } from 'history';
+import { createBrowserHistory } from 'history';
 
 export const browserHistory = createBrowserHistory();
-
-browserHistory.listen(() => {
-    patchHistory(browserHistory);
-});
-
-function patchHistory(history: History): void {
-    Object.assign(history.location, {
-        query: new URLSearchParams(history.location.search),
-    });
-}
-
-patchHistory(browserHistory);
 
 export default {
     initialLength: 0,

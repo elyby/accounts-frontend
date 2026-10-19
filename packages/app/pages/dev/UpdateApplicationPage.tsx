@@ -2,6 +2,7 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router';
 
 import logger from 'app/services/logger';
+import { ApiError } from 'app/services/request';
 import { connect } from 'app/functions';
 import { FormModel } from 'app/components/ui/form';
 import { browserHistory } from 'app/services/history';
@@ -59,7 +60,7 @@ class UpdateApplicationPage extends React.Component<
             loader.show();
             await fetchApp(match.params.clientId);
         } catch (resp) {
-            const { status } = resp.originalResponse;
+            const status = resp instanceof ApiError ? resp.status : null;
 
             if (status === 403) {
                 this.goToMainPage();

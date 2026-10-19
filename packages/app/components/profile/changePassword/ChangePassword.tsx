@@ -2,6 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
 import { Input, Button, Checkbox, Form, FormModel } from 'app/components/ui/form';
+import { ValidationError } from 'app/services/request';
 
 import { BackButton } from '../ProfileForm';
 import styles from '../profileForm.scss';
@@ -111,9 +112,8 @@ export default class ChangePassword extends React.Component<Props> {
         const { form } = this.props;
 
         this.props.onSubmit(form).catch((resp) => {
-            if (resp.errors) {
-                form.setErrors(resp.errors);
-            } else {
+            // Validation errors are already shown in the form by the onSubmit handler
+            if (!(resp instanceof ValidationError)) {
                 return Promise.reject(resp);
             }
         });

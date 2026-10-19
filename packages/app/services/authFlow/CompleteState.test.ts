@@ -10,6 +10,7 @@ import FinishState from 'app/services/authFlow/FinishState';
 import PermissionsState from 'app/services/authFlow/PermissionsState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
 import { Account } from 'app/components/accounts/reducer';
+import { OAuthError, UnauthorizedError } from 'app/services/request';
 import AbstractState from './AbstractState';
 
 import { bootstrap, expectState, expectNavigate, expectRun, MockedAuthContext } from './helpers';
@@ -416,10 +417,18 @@ describe('CompleteState', () => {
             testOAuth('resolve', { redirectUri: 'static_page_with_code' }, FinishState));
 
         it('should transition to login state if rejected with unauthorized', () =>
-            testOAuth('reject', { unauthorized: true }, LoginState));
+            testOAuth(
+                'reject',
+                new UnauthorizedError(new Response('{}', { status: 401 }), { name: 'Unauthorized', status: 401 }),
+                LoginState,
+            ));
 
         it('should transition to permissions state if rejected with acceptRequired', () =>
-            testOAuth('reject', { acceptRequired: true }, PermissionsState));
+            testOAuth(
+                'reject',
+                new OAuthError(new Response('{}', { status: 401 }), { error: 'accept_required', statusCode: 401 }),
+                PermissionsState,
+            ));
 
         describe('when loginHint is set', () => {
             const testSuccessLoginHint = (field: keyof Account) => {

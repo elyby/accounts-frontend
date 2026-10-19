@@ -1,3 +1,4 @@
+import expect from 'app/test/unexpected';
 import sinon, { SinonMock } from 'sinon';
 
 import RecoverPasswordState from 'app/services/authFlow/RecoverPasswordState';
@@ -75,9 +76,8 @@ describe('RecoverPasswordState', () => {
             mock.expects('run').returns(promise);
             mock.expects('setState').never();
 
-            state.resolve(context, { key: '', newPassword: '', newRePassword: '' });
-
-            return promise.catch(mock.verify.bind(mock));
+            // The rejection is handled by AuthFlow
+            return expect(state.resolve(context, { key: '', newPassword: '', newRePassword: '' }), 'to be rejected').then(mock.verify.bind(mock));
         });
     });
 

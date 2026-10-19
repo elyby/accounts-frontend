@@ -1,167 +1,210 @@
-import PromiseMiddlewareLayer, { Middleware } from './PromiseMiddlewareLayer';
+import type { Span } from '@sentry/react';
+import ky, { type Options as KyOptions, type Hooks, type KyInstance, isNetworkError } from 'ky';
+
+import createResponseError from './createResponseError';
 import InternalServerError from './InternalServerError';
 import RequestAbortedError from './RequestAbortedError';
-
-const middlewareLayer = new PromiseMiddlewareLayer();
+import RequestError from './RequestError';
+import { API_PATH_REGEX, getTraceHeaders, recordResponse, traceRequest } from './tracing';
 
 export type Resp<T> = T & {
-    originalResponse: Response;
+    response: Response;
 };
 
-export interface Options extends RequestInit {
+type Data = Record<string, any>;
+
+/**
+ * Only the explicitly allowed ky options: the others (`throwHttpErrors`, `json`, `retry`, `hooks`, etc.)
+ * would break the assumptions of this client.
+ * NOTE: don't add `signal` without checking the browserslist: ky combines it via AbortSignal.any() (Safari 17.4+)
+ */
+export interface Options extends Pick<KyOptions, 'headers'> {
+    searchParams?: Data;
+    /**
+     * Overrides the active account's token.
+     * Pass `null` to send the request without the Authorization header and to disable token auto-refresh
+     */
     token?: string | null;
-    headers: Record<string, any>;
 }
 
-const buildOptions = (
-    method: string,
-    data: { [key: string]: any } | undefined,
-    options: Partial<Options> = {},
-): Options => ({
-    method,
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        ...options.headers,
+/**
+ * Per-request data, that is available in the ky hooks as `options.context`
+ */
+export interface RequestContext extends Record<string, unknown> {
+    /**
+     * When the key is absent, the active account's token is used
+     */
+    token?: string | null;
+    /**
+     * The span of the whole request (see `traceRequest`). The hooks are called asynchronously,
+     * when the request's span is no longer active, so it must be referenced explicitly
+     */
+    span?: Span;
+}
+
+export type ErrorListener = (error: unknown) => void;
+
+let client: KyInstance = ky.create({
+    // Relative urls can't be resolved outside the browser (e.g. in tests)
+    baseUrl: typeof window === 'undefined' ? undefined : window.location.origin,
+    timeout: false,
+    // Only the forced retries from the hooks are allowed (see `ky.retry()`), no automatic ones
+    retry: {
+        limit: 1,
+        shouldRetry: () => false,
     },
-    body: buildQuery(data),
-    ...options,
+    // Non-2xx responses are handled in `parseResponse`
+    throwHttpErrors: false,
+    headers: {
+        Accept: 'application/json',
+    },
+    hooks: {
+        beforeRequest: [
+            ({ request, options }) => {
+                const { span } = options.context as RequestContext;
+
+                // Continue the trace on the backend. The SDK's fetch instrumentation keeps the existing headers
+                if (span && API_PATH_REGEX.test(new URL(request.url).pathname)) {
+                    for (const [name, value] of Object.entries(getTraceHeaders(span))) {
+                        request.headers.set(name, value);
+                    }
+                }
+            },
+        ],
+    },
 });
 
-export default {
-    /**
-     * @param {string} url
-     * @param {object} [data] - request data
-     * @param {object} [options] - additional options for fetch or middlewares
-     *
-     * @returns {Promise}
-     */
-    post<T>(url: string, data?: { [key: string]: any }, options?: Partial<Options>): Promise<Resp<T>> {
-        return doFetch(url, buildOptions('POST', data, options));
-    },
+const errorListeners: ErrorListener[] = [];
+// A nested request's error (e.g. the token refresh in a hook) may be rethrown by the outer request
+const notifiedErrors = new WeakSet<object>();
 
-    /**
-     * @param {string} url
-     * @param {object} [data] - request data
-     * @param {object} [options] - additional options for fetch or middlewares
-     *
-     * @returns {Promise}
-     */
-    get<T>(url: string, data?: { [key: string]: any }, options?: Partial<Options>): Promise<Resp<T>> {
-        url = buildUrl(url, data);
+async function send<T>(
+    method: string,
+    url: string,
+    { token, searchParams, ...options }: Options & { body?: URLSearchParams },
+): Promise<Resp<T>> {
+    return traceRequest(method, url, async (span) => {
+        // `{ token: undefined }` means the same as no token option at all
+        const context: RequestContext = token === undefined ? { span } : { token, span };
 
-        return doFetch(url, { ...options, method: 'GET', headers: {} });
-    },
+        try {
+            const response = await client(url, {
+                ...options,
+                method,
+                searchParams: searchParams && convertQueryValues(searchParams),
+                context,
+            });
+            recordResponse(span, response);
 
-    /**
-     * @param {string} url
-     * @param {object} [data] - request data
-     * @param {object} [options] - additional options for fetch or middlewares
-     *
-     * @returns {Promise}
-     */
-    delete<T>(url: string, data?: { [key: string]: any }, options?: Partial<Options>): Promise<Resp<T>> {
-        return doFetch(url, buildOptions('DELETE', data, options));
-    },
+            return await parseResponse<T>(response);
+        } catch (error) {
+            const normalizedError = normalizeError(error);
+            const isObject = typeof normalizedError === 'object' && normalizedError !== null;
 
-    /**
-     * @param {string} url
-     * @param {object} [data] - request data
-     * @param {object} [options] - additional options for fetch or middlewares
-     *
-     * @returns {Promise}
-     */
-    put<T>(url: string, data?: { [key: string]: any }, options?: Partial<Options>): Promise<Resp<T>> {
-        return doFetch(url, buildOptions('PUT', data, options));
-    },
+            if (!isObject || !notifiedErrors.has(normalizedError)) {
+                if (isObject) {
+                    notifiedErrors.add(normalizedError);
+                }
 
-    /**
-     * Serializes object into encoded key=value presentation
-     *
-     * @param {object} data
-     *
-     * @returns {string}
-     */
-    buildQuery,
+                errorListeners.forEach((listener) => listener(normalizedError));
+            }
 
-    /**
-     * @param {object} middleware
-     * @param {Function} [middleware.before] - a function({url, options}), that will be called before executing request.
-     *                                         It will get data object {url, options} as an argument and should return
-     *                                         Promise, that will resolve into new data object
-     * @param {Function} [middleware.then] - a function(resp), that will be called on successful request result. It will
-     *                                       get response as an argument and should return a Promise that resolves to
-     *                                       the new response
-     * @param {Function} [middleware.catch] - a function(resp, restart), that will be called on request fail. It will
-     *                                        get response and callback to restart request as an arguments and should
-     *                                        return a Promise that resolves to the new response.
-     */
-    addMiddleware(middleware: Middleware) {
-        middlewareLayer.add(middleware);
-    },
-};
+            throw normalizedError;
+        }
+    });
+}
 
-const checkStatus = (resp: Response) =>
-    resp.status >= 200 && resp.status < 300 ? Promise.resolve(resp) : Promise.reject(resp);
-const toJSON = (resp: Response) => {
-    if (!resp.json || resp.status === 0) {
-        // e.g. 'TypeError: Failed to fetch' due to CORS or request was aborted
-        throw new RequestAbortedError(resp);
+async function parseResponse<T>(response: Response): Promise<Resp<T>> {
+    if (response.status === 0) {
+        // e.g. the network error response or an opaque response
+        throw new RequestAbortedError(response);
     }
 
-    return resp.json().then(
-        (json) => {
-            json.originalResponse = resp;
+    let json: any;
 
-            return json;
-        },
-        (error) => Promise.reject(new InternalServerError(error, resp)),
-    );
-};
-const rejectWithJSON = (resp: Response) =>
-    toJSON(resp).then((resp) => {
-        if (resp.originalResponse.status >= 500) {
-            throw new InternalServerError(resp, resp.originalResponse);
+    try {
+        // Read a clone to keep the original body available for the logger
+        json = await response.clone().json();
+    } catch (error) {
+        // Very rare, but request might be aborted during its response reading
+        if (isAbortError(error)) {
+            throw new RequestAbortedError(error);
         }
 
-        throw resp;
-    });
-const handleResponseSuccess = (resp: { success?: boolean }) =>
-    resp.success || typeof resp.success === 'undefined' ? Promise.resolve(resp) : Promise.reject(resp);
+        // Don't check `instanceof Error`: the error may come from another realm (e.g. jsdom in tests)
+        throw new InternalServerError(response, String(error?.message || 'Invalid JSON'), { cause: error });
+    }
 
-async function doFetch<T>(url: string, options: Options): Promise<Resp<T>> {
-    // NOTE: we are wrapping fetch, because it is returning
-    // Promise instance that can not be polyfilled with Promise.prototype.finally
+    const error = createResponseError(response, json);
 
-    const headers: Record<string, string> = { ...options.headers } as any;
-    headers.Accept = 'application/json';
+    if (error) {
+        throw error;
+    }
 
-    options.headers = headers;
+    json.response = response;
 
-    return middlewareLayer.run('before', { url, options }).then(({ url: nextUrl, options: nextOptions }) =>
-        fetch(nextUrl, nextOptions)
-            .then(checkStatus)
-            .then(toJSON, rejectWithJSON)
-            .then(handleResponseSuccess)
-            .then((resp) =>
-                middlewareLayer.run('then', resp, {
-                    url: nextUrl,
-                    options: nextOptions,
-                }),
-            )
-            .catch((resp) =>
-                middlewareLayer.run('catch', resp, { url: nextUrl, options: nextOptions }, () =>
-                    doFetch(nextUrl, nextOptions),
-                ),
-            ),
-    );
+    return json;
+}
+
+function normalizeError(error: unknown): unknown {
+    if (error instanceof RequestError) {
+        return error;
+    }
+
+    // ky wraps the browser's error, but the logger relies on its original message (e.g. 'Failed to fetch')
+    if (isNetworkError(error) && error.cause instanceof Error) {
+        return new RequestAbortedError(error.cause);
+    }
+
+    // e.g. 'TypeError: Failed to fetch' due to CORS or the request was aborted
+    if (isNetworkError(error) || isAbortError(error) || error instanceof TypeError) {
+        return new RequestAbortedError(error as Error);
+    }
+
+    // Errors, thrown from the hooks (e.g. a failed token refresh) are passed as is
+    return error;
+}
+
+function isAbortError(error: unknown): error is DOMException {
+    return error instanceof DOMException && error.name === 'AbortError';
+}
+
+export function get<T>(url: string, data?: Data, options: Omit<Options, 'searchParams'> = {}): Promise<Resp<T>> {
+    return send<T>('GET', url, { searchParams: data, ...options });
+}
+
+export function post<T>(url: string, data?: Data, options: Options = {}): Promise<Resp<T>> {
+    return send<T>('POST', url, { body: new URLSearchParams(convertQueryValues(data)), ...options });
+}
+
+export function put<T>(url: string, data?: Data, options: Options = {}): Promise<Resp<T>> {
+    return send<T>('PUT', url, { body: new URLSearchParams(convertQueryValues(data)), ...options });
+}
+
+export function del<T>(url: string, data?: Data, options: Options = {}): Promise<Resp<T>> {
+    return send<T>('DELETE', url, { body: new URLSearchParams(convertQueryValues(data)), ...options });
+}
+
+/**
+ * Registers ky hooks for all subsequent requests. Hooks are appended to the already registered ones
+ * and receive the request's {@link RequestContext} as `options.context`
+ */
+export function addHooks(hooks: Hooks): void {
+    client = client.extend({ hooks });
+}
+
+/**
+ * Registers a listener, that will be notified about every failed request.
+ * It can't change the error, which will be thrown to the caller anyway
+ */
+export function addErrorListener(listener: ErrorListener): void {
+    if (!errorListeners.includes(listener)) {
+        errorListeners.push(listener);
+    }
 }
 
 /**
  * Converts specific js values to query friendly values
- *
- * @param {any} value
- *
- * @returns {string}
  */
 function convertQueryValue(value: any): string {
     if (typeof value === 'undefined' || value === null) {
@@ -180,23 +223,8 @@ function convertQueryValue(value: any): string {
 }
 
 /**
- * Serializes object into encoded key=value presentation
- *
- * @param {object} data
- *
- * @returns {string}
+ * ky would serialize true as 'true', null as 'null' and drop undefined values, but the backend expects 1, 0 and ''
  */
-function buildQuery(data: { [key: string]: any } = {}): string {
-    return Object.keys(data)
-        .map((keyName) => [keyName, convertQueryValue(data[keyName])].map(encodeURIComponent).join('='))
-        .join('&');
-}
-
-function buildUrl(url: string, data?: { [key: string]: any }): string {
-    if (typeof data === 'object' && Object.keys(data).length) {
-        const separator = url.indexOf('?') === -1 ? '?' : '&';
-        url += separator + buildQuery(data);
-    }
-
-    return url;
+function convertQueryValues(data: Data = {}): Record<string, string> {
+    return Object.fromEntries(Object.entries(data).map(([key, value]) => [key, convertQueryValue(value)]));
 }

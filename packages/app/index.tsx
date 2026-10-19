@@ -12,6 +12,7 @@ import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import getOAuthDebugContext from 'app/components/auth/oauthDebugContext';
 import * as loader from 'app/services/loader';
 import logger from 'app/services/logger';
+import { parseSampleRate } from 'app/services/request/tracing';
 import { loadFonts } from 'app/services/fonts';
 import history, { browserHistory } from 'app/services/history';
 import i18n from 'app/services/i18n';
@@ -26,6 +27,8 @@ history.init();
 
 logger.init({
     sentryDSN: (window as any).SENTRY_DSN as string,
+    tracesSampleRate: parseSampleRate((window as any).SENTRY_TRACES_SAMPLE_RATE),
+    history: browserHistory,
 });
 
 const store = storeFactory();

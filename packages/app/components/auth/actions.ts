@@ -23,7 +23,7 @@ import { create as createPopup } from 'app/components/ui/popup/actions';
 import ContactForm from 'app/components/contact';
 import { Account } from 'app/components/accounts/reducer';
 import { Action as AppAction, Dispatch } from 'app/types';
-import { Resp } from 'app/services/request';
+import { OAuthError, ValidationError as RequestValidationError } from 'app/services/request';
 import { CaptchaValue } from 'app/services/captcha';
 
 import { Credentials, Client, OAuthState, getCredentials } from './reducer';
@@ -37,10 +37,8 @@ type ValidationError = string | ValidationErrorLiteral;
 
 /**
  * Routes user to the previous page if it is possible
- *
  * @param {object} options
  * @param {string} options.fallbackUrl - an url to route user to if goBack is not possible
- *
  * @returns {object} - action definition
  */
 export function goBack(options: { fallbackUrl?: string }) {
@@ -88,12 +86,14 @@ export function login({
         loginEndpoint({ login, password, totp, rememberMe })
             .then(authHandler(dispatch))
             .catch((resp) => {
-                if (resp.errors) {
-                    if (resp.errors.password === INVALID_PASSWORD && password === '') {
+                if (resp instanceof RequestValidationError) {
+                    const { errors } = resp;
+
+                    if (errors.password === INVALID_PASSWORD && password === '') {
                         return dispatch(setLogin(login));
-                    } else if (resp.errors.login === ACTIVATION_REQUIRED) {
+                    } else if (errors.login === ACTIVATION_REQUIRED) {
                         return dispatch(needActivation({ login }));
-                    } else if (resp.errors.totp === TOTP_REQUIRED) {
+                    } else if (errors.totp === TOTP_REQUIRED) {
                         return dispatch(
                             requestTotp({
                                 login,
@@ -101,7 +101,7 @@ export function login({
                                 rememberMe,
                             }),
                         );
-                    } else if (resp.errors.login === LOGIN_REQUIRED && password) {
+                    } else if (errors.login === LOGIN_REQUIRED && password) {
                         // The login was lost from the state (e.g. the page was reloaded on the password panel).
                         // Expected situation: logoutAll() sends the user back to the login panel
                         logger.breadcrumb('No login on password panel');
@@ -408,21 +408,13 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
 
                 return resp;
             } catch (error) {
-                const resp:
-                    | {
-                          acceptRequired: boolean;
-                      }
-                    | {
-                          unauthorized: boolean;
-                      } = error;
-
-                if ('acceptRequired' in resp) {
+                if (error instanceof OAuthError && error.error === 'accept_required') {
                     dispatch(requirePermissionsAccept());
 
-                    return Promise.reject(resp);
+                    return Promise.reject(error);
                 }
 
-                return handleOauthParamsValidation(resp);
+                return handleOauthParamsValidation(error);
             }
         },
     );
@@ -452,18 +444,15 @@ function getOAuthRequest({ params, description }: OAuthState): OauthRequestData 
     return data;
 }
 
-function handleOauthParamsValidation(
-    resp: {
-        [key: string]: any;
-        userMessage?: string;
-    } = {},
-) {
+function handleOauthParamsValidation(error: unknown) {
     localStorage.removeItem('oauthData');
 
-    // eslint-disable-next-line no-alert
-    resp.userMessage && setTimeout(() => alert(resp.userMessage), 500); // 500 ms to allow re-render
+    if (error instanceof OAuthError && error.userMessage) {
+        // eslint-disable-next-line no-alert
+        setTimeout(() => alert(error.userMessage), 500); // 500 ms to allow re-render
+    }
 
-    return Promise.reject(resp);
+    return Promise.reject(error);
 }
 
 interface SetClientAction extends ReduxAction {
@@ -618,41 +607,26 @@ function authHandler(dispatch: Dispatch) {
         });
 }
 
-function validationErrorsHandler(
-    dispatch: Dispatch,
-    repeatUrl?: string,
-): (
-    resp: Resp<{
-        errors?: Record<string, string | ValidationError>;
-        data?: Record<string, any>;
-    }>,
-) => Promise<never> {
+function validationErrorsHandler(dispatch: Dispatch, repeatUrl?: string): (resp: unknown) => Promise<never> {
     return (resp) => {
-        if (resp.errors) {
+        if (resp instanceof RequestValidationError) {
             const [firstError] = Object.keys(resp.errors);
-            const firstErrorObj: ValidationError = {
-                type: resp.errors[firstError] as string,
+            const firstErrorObj: ValidationErrorLiteral = {
+                type: resp.errors[firstError],
                 payload: {
                     isGuest: true,
                     repeatUrl: '',
+                    // TODO: this should be formatted on backend
+                    ...resp.data,
                 },
             };
-
-            if (resp.data) {
-                // TODO: this should be formatted on backend
-                Object.assign(firstErrorObj.payload, resp.data);
-            }
 
             if (['error.key_not_exists', 'error.key_expire'].includes(firstErrorObj.type) && repeatUrl) {
                 // TODO: this should be formatted on backend
                 firstErrorObj.payload.repeatUrl = repeatUrl;
             }
 
-            // TODO: can I clone the object or its necessary to catch modified errors list on corresponding catches?
-            const { errors } = resp;
-            errors[firstError] = firstErrorObj;
-
-            dispatch(setErrors(errors));
+            dispatch(setErrors({ ...resp.errors, [firstError]: firstErrorObj }));
         }
 
         return Promise.reject(resp);

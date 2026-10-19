@@ -1,4 +1,4 @@
-import options from 'app/services/api/options';
+import { fetch as fetchOptions } from 'app/services/api/options';
 import logger from 'app/services/logger';
 
 import recaptcha from './providers/recaptcha';
@@ -69,7 +69,7 @@ export function clearResolvedCaptcha(): void {
 }
 
 async function doResolve(priority: Array<string>, locale: string): Promise<ResolvedCaptcha> {
-    const { captcha: available } = await options.get();
+    const { captcha: available } = await fetchOptions();
 
     for (const type of priority) {
         const provider = PROVIDERS.find((item) => item.type === type);

@@ -1,3 +1,5 @@
+import { OAuthError } from 'app/services/request';
+
 import AbstractState from './AbstractState';
 import { AuthContext } from './AuthFlow';
 import CompleteState from './CompleteState';
@@ -16,7 +18,11 @@ export default class DeviceCodeState extends AbstractState {
             })
             .then(() => context.setState(new CompleteState()))
             .catch((err) => {
-                if (['invalid_user_code', 'expired_token', 'used_user_code'].includes(err.error)) {
+                if (
+                    err instanceof OAuthError &&
+                    err.parameter &&
+                    ['invalid_user_code', 'expired_token', 'used_user_code'].includes(err.error)
+                ) {
                     return context.run('setErrors', { [err.parameter]: err.error });
                 }
 

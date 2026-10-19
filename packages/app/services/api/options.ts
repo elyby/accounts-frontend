@@ -1,4 +1,4 @@
-import request, { Resp } from 'app/services/request';
+import { type Resp, get } from 'app/services/request';
 
 export type CaptchaPublicParams = { publicKey: string } & Record<string, unknown>;
 
@@ -8,16 +8,14 @@ export type Options = {
 
 let options: Resp<Options>;
 
-export default {
-    async get(): Promise<Resp<Options>> {
-        if (options) {
-            return Promise.resolve(options);
-        }
+export async function fetch(): Promise<Resp<Options>> {
+    if (options) {
+        return Promise.resolve(options);
+    }
 
-        const resp = await request.get<Options>('/api/options', {}, { token: null });
+    const resp = await get<Options>('/api/options', {}, { token: null });
 
-        options = resp;
+    options = resp;
 
-        return resp;
-    },
-};
+    return resp;
+}
