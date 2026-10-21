@@ -1,3 +1,5 @@
+import createSdkCaptcha from 'app/components/ui/form/sdkCaptcha/createSdkCaptcha';
+
 import loadSdk from '../loadSdk';
 import { CaptchaProvider } from '../types';
 
@@ -22,28 +24,32 @@ const yandex: CaptchaProvider = {
         return loadPromise;
     },
 
-    render(el, { publicKey }, { skin, lang, onSetCode, onExpire }) {
-        const api = getApi();
-        const id = api.render(el, {
-            sitekey: publicKey,
-            // When received an unknown language, SDK will try to find the preferred language itself
-            hl: lang,
-            // Isn't documented, but supported by the SDK: 'auto' | 'light' | 'dark'
-            theme: skin,
-            callback: onSetCode,
-        });
-        api.subscribe(id, 'token-expired', onExpire);
+    isRenderingDeferred: true,
 
-        return id;
-    },
+    Component: createSdkCaptcha('YandexCaptcha', {
+        render(el, { publicKey }, { skin, lang, onSetCode, onExpire }) {
+            const api = getApi();
+            const id = api.render(el, {
+                sitekey: publicKey,
+                // When received an unknown language, SDK will try to find the preferred language itself
+                hl: lang,
+                // Isn't documented, but supported by the SDK: 'auto' | 'light' | 'dark'
+                theme: skin,
+                callback: onSetCode,
+            });
+            api.subscribe(id, 'token-expired', onExpire);
 
-    reset(id) {
-        getApi().reset(id);
-    },
+            return id;
+        },
 
-    destroy(id) {
-        getApi().destroy(id);
-    },
+        reset(id) {
+            getApi().reset(id);
+        },
+
+        destroy(id) {
+            getApi().destroy(id);
+        },
+    }),
 };
 
 export default yandex;

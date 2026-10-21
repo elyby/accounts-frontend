@@ -40,6 +40,18 @@ const customFlags = fs
     .map((file) => path.basename(file, '.svg'));
 const flagIconCountries = getCountriesList().filter((country) => !customFlags.includes(country));
 
+/**
+ * Web Workers must stay self-contained, so their chunks are excluded from the splitting.
+ * Webpack creates an async entrypoint for every new Worker(new URL(...)), which tells a worker's chunk apart from
+ * the app's entrypoint (an initial one) and the lazy pages (regular chunk groups), so the latter still use the vendors
+ */
+const isNotWorkerChunk = (chunk) => ![...chunk.groupsIterable].some((group) => group.getEntrypointChunk && !group.isInitial());
+
+/**
+ * The same as the default chunks: 'async', but without the workers
+ */
+const asyncNotWorkerChunks = (chunk) => !chunk.canBeInitial() && isNotWorkerChunk(chunk);
+
 const webpackConfig = {
     mode: webpackEnv,
 
@@ -67,6 +79,12 @@ const webpackConfig = {
         extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
         alias: {
             'react-dom': isProduction ? 'react-dom' : '@hot-loader/react-dom',
+        },
+    },
+
+    optimization: {
+        splitChunks: {
+            chunks: asyncNotWorkerChunks,
         },
     },
 
@@ -293,12 +311,13 @@ if (isProduction) {
         moduleIds: 'deterministic',
         runtimeChunk: 'single',
         splitChunks: {
+            chunks: asyncNotWorkerChunks,
             cacheGroups: {
                 vendor: {
                     name: 'vendors',
                     priority: 0,
                     test: /node_modules/,
-                    chunks: 'all',
+                    chunks: isNotWorkerChunk,
                 },
                 polyfills: {
                     name: 'intl-polyfills',

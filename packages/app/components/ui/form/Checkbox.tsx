@@ -1,55 +1,15 @@
-import React from 'react';
-import { MessageDescriptor } from 'react-intl';
-import clsx from 'clsx';
-import { SKIN_DARK, COLOR_GREEN, Color, Skin } from 'app/components/ui';
-import { omit } from 'app/functions';
+import React, { forwardRef } from 'react';
 
-import styles from './form.scss';
-import FormInputComponent from './FormInputComponent';
+import Markable, { Props as MarkableProps } from './Markable';
 
-export default class Checkbox extends FormInputComponent<
-    React.InputHTMLAttributes<HTMLInputElement> & {
-        color: Color;
-        skin: Skin;
-        label: string | MessageDescriptor | React.ReactElement;
-    }
-> {
-    static defaultProps = {
-        color: COLOR_GREEN,
-        skin: SKIN_DARK,
-    };
+type Props = Omit<MarkableProps, 'type'>;
 
-    elRef = React.createRef<HTMLInputElement>();
+const Checkbox = forwardRef<HTMLInputElement, Props>((props, ref) => {
+    return (
+        <Markable ref={ref} type="checkbox" {...props} />
+    );
+});
 
-    render() {
-        const { color, skin } = this.props;
-        let { label } = this.props;
+Checkbox.displayName = 'Checkbox';
 
-        label = React.isValidElement(label) ? label : this.formatMessage(label);
-
-        const props = omit(this.props, ['color', 'skin', 'label']);
-
-        return (
-            <div className={clsx(styles[`${color}MarkableRow`], styles[`${skin}MarkableRow`])}>
-                <label className={styles.markableContainer}>
-                    <input ref={this.elRef} className={styles.markableInput} type="checkbox" {...props} />
-                    <div className={styles.checkbox} />
-                    {label}
-                </label>
-                {this.renderError()}
-            </div>
-        );
-    }
-
-    getValue() {
-        const { current: el } = this.elRef;
-
-        return el && el.checked ? 1 : 0;
-    }
-
-    focus() {
-        const { current: el } = this.elRef;
-
-        el && el.focus();
-    }
-}
+export default Checkbox;

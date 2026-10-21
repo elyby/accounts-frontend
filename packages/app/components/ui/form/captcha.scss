@@ -7,7 +7,8 @@
 .captcha {
     position: relative;
     box-sizing: border-box;
-    // reCAPTCHA's size, which is also used while the provider is being chosen
+    // reCAPTCHA's size, which is also used while the provider is being chosen and by our own ALTCHA widget,
+    // so the auth panel doesn't jump when the provider is chosen
     height: 77px;
     overflow: hidden;
 

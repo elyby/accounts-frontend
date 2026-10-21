@@ -1,9 +1,9 @@
 import React from 'react';
 import icons from 'app/components/ui/icons.scss';
-import { Input, Checkbox } from 'app/components/ui/form';
+import { Input, FormCheckbox } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 import authStyles from 'app/components/auth/auth.scss';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage as Message } from 'react-intl';
 
 import styles from './password.scss';
 
@@ -40,7 +40,11 @@ export default class PasswordBody extends BaseAuthBody {
                 />
 
                 <div className={authStyles.checkboxInput}>
-                    <Checkbox {...this.bindField('rememberMe')} defaultChecked label={messages.rememberMe} />
+                    <FormCheckbox
+                        {...this.bindField('rememberMe')}
+                        defaultChecked
+                        label={<Message {...messages.rememberMe} />}
+                    />
                 </div>
             </div>
         );

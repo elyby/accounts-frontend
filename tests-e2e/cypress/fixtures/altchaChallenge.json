@@ -1,0 +1,16 @@
+{
+    "parameters": {
+        "algorithm": "PBKDF2/SHA-256",
+        "cost": 10,
+        "data": {
+            "counterMax": 100
+        },
+        "expiresAt": 4102444800,
+        "keyLength": 32,
+        "keyPrefix": "5b8f3627d377b1a63e3b5741c27a05dc",
+        "keySignature": "6cce7171e543eac6a9b33fa11d704ce6569810efa9529418e66cff41c652c591",
+        "nonce": "b46b4afc1167cd29c6be41f2681ada49",
+        "salt": "198e7a0476ca75badf7bfb574eac0dff"
+    },
+    "signature": "575647068b00ec307ce6552a2497f38e2869638f0f35ccef0fbfee78c4c9bcc4"
+}

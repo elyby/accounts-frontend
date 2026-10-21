@@ -1,24 +1,35 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { FormattedMessage as Message, MessageDescriptor } from 'react-intl';
 import clsx from 'clsx';
 
-import { Skin, SKIN_LIGHT } from 'app/components/ui';
+import { Color, COLOR_GREEN, Skin, SKIN_LIGHT } from 'app/components/ui';
 import { ComponentLoader } from 'app/components/ui/loader';
 import { useReduxSelector } from 'app/functions';
-import { CaptchaProvider, CaptchaValue, CaptchaWidgetId, registerE2eCallback, resolveCaptcha } from 'app/services/captcha';
+import {
+    type CaptchaComponentHandle,
+    type CaptchaValue,
+    type ResolvedCaptcha,
+    registerE2eCallback,
+    resolveCaptcha,
+} from 'app/services/captcha';
 import logger from 'app/services/logger';
 
 import formStyles from './form.scss';
 import styles from './captcha.scss';
 import FormError from './FormError';
-import { FormFieldHandle, ValidationError } from './FormModel';
+import type { FormFieldHandle, ValidationError } from './FormModel';
 
 type Error = ValidationError | MessageDescriptor;
 
 interface Props {
     skin?: Skin;
     /**
-     * Postpones widget rendering, e.g. to let the panel's appearance animation finish
+     * Color accent if the resolved captcha supports it
+     */
+    color?: Color;
+    /**
+     * Postpones rendering of the heavy third-party widgets (see CaptchaProvider.isRenderingDeferred).
+     * The provider is resolved at once anyway.
      */
     delay?: number;
     error?: Error;
@@ -33,34 +44,21 @@ export interface CaptchaHandle extends FormFieldHandle {
     reset(): void;
 }
 
-interface Widget {
-    provider: CaptchaProvider;
-    id: CaptchaWidgetId;
-}
-
-type Status = 'loading' | 'ready' | 'unavailable';
-
-const Captcha = forwardRef<CaptchaHandle, Props>(({ skin = SKIN_LIGHT, delay = 0, error: propsError, className }, ref) => {
+const Captcha = forwardRef<CaptchaHandle, Props>(({ skin = SKIN_LIGHT, color = COLOR_GREEN, delay = 0, error: propsError, className }, ref) => {
     const locale = useReduxSelector((state) => state.i18n.locale);
 
-    const containerRef = useRef<HTMLDivElement>(null);
-    const widgetRef = useRef<Widget>();
+    const widgetRef = useRef<CaptchaComponentHandle>(null);
     // The token isn't stored in the state, since it doesn't affect rendering
     const valueRef = useRef<CaptchaValue>();
 
-    const [status, setStatus] = useState<Status>('loading');
-    const [providerType, setProviderType] = useState<string>();
+    const [resolved, setResolved] = useState<ResolvedCaptcha>();
+    const [isUnavailable, setIsUnavailable] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
     const reset = useCallback(() => {
         // Tokens are single-use, so the old one must not be submitted again
         valueRef.current = undefined;
-
-        const widget = widgetRef.current;
-
-        if (widget) {
-            widget.provider.reset(widget.id);
-        }
+        widgetRef.current?.reset();
     }, []);
 
     useImperativeHandle(ref, () => ({
@@ -77,78 +75,68 @@ const Captcha = forwardRef<CaptchaHandle, Props>(({ skin = SKIN_LIGHT, delay = 0
         });
     }, []);
 
+    // The provider is chosen once: its choice is memoized for the whole page lifetime anyway
     useEffect(() => {
         let isCancelled = false;
-        setStatus('loading');
-        // Render each widget into its own element, so it can be safely re-rendered after locale or skin change
-        const host = document.createElement('div');
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const mountedAt = Date.now();
 
-        const timer = setTimeout(async () => {
-            try {
-                const { provider, params } = await resolveCaptcha(locale);
-
-                if (isCancelled || !containerRef.current) {
+        resolveCaptcha(locale).then(
+            (result) => {
+                if (isCancelled) {
                     return;
                 }
 
-                containerRef.current.appendChild(host);
+                const remainingDelay = result.provider.isRenderingDeferred ? delay - (Date.now() - mountedAt) : 0;
 
-                const id = provider.render(host, params, {
-                    skin,
-                    lang: locale,
-                    onSetCode(token) {
-                        valueRef.current = {
-                            type: provider.type,
-                            token,
-                        };
-                    },
-                    onExpire() {
-                        valueRef.current = undefined;
-                    },
-                });
-
-                widgetRef.current = { provider, id };
-                setProviderType(provider.type);
-                setStatus('ready');
-            } catch (err) {
+                if (remainingDelay > 0) {
+                    timer = setTimeout(() => setResolved(result), remainingDelay);
+                } else {
+                    setResolved(result);
+                }
+            },
+            (err) => {
                 if (isCancelled) {
                     return;
                 }
 
                 logger.error('Failed rendering captcha', { error: err });
-                setStatus('unavailable');
-            }
-        }, delay);
+                setIsUnavailable(true);
+            },
+        );
 
         return () => {
             isCancelled = true;
             clearTimeout(timer);
-
-            const widget = widgetRef.current;
-            widgetRef.current = undefined;
-            valueRef.current = undefined;
-
-            if (widget) {
-                try {
-                    widget.provider.destroy(widget.id);
-                } catch (err) {
-                    logger.warn('Failed to destroy captcha widget', { error: err });
-                }
-            }
-
-            host.remove();
         };
-    }, [locale, skin]);
+    }, []);
+
+    const providerType = resolved?.provider.type;
+
+    const callbacks = useMemo(() => ({
+        onSetCode(token: string) {
+            if (providerType) {
+                valueRef.current = { type: providerType, token };
+            }
+        },
+        onExpire() {
+            valueRef.current = undefined;
+        },
+        onError(err: unknown) {
+            logger.error('Failed rendering captcha', { error: err });
+            setIsUnavailable(true);
+        },
+    }), [providerType]);
 
     return (
         <div className={styles.captchaContainer}>
-            {status === 'loading' && (
+            {!resolved && !isUnavailable && (
                 <div className={styles.captchaLoader}>
                     <ComponentLoader />
                 </div>
             )}
 
-            {status === 'unavailable' ? (
+            {isUnavailable ? (
                 <div className={formStyles.fieldError} role="alert">
                     <Message
                         key="captchaUnavailable"
@@ -157,7 +145,6 @@ const Captcha = forwardRef<CaptchaHandle, Props>(({ skin = SKIN_LIGHT, delay = 0
                 </div>
             ) : (
                 <div
-                    ref={containerRef}
                     className={clsx(
                         styles.captcha,
                         styles[`${skin}Captcha`],
@@ -166,7 +153,18 @@ const Captcha = forwardRef<CaptchaHandle, Props>(({ skin = SKIN_LIGHT, delay = 0
                         },
                         className,
                     )}
-                />
+                >
+                    {resolved && (
+                        <resolved.provider.Component
+                            ref={widgetRef}
+                            params={resolved.params}
+                            skin={skin}
+                            color={color}
+                            lang={locale}
+                            {...callbacks}
+                        />
+                    )}
+                </div>
             )}
 
             <FormError error={error || propsError} />

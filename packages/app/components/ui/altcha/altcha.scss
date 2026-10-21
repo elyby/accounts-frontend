@@ -1,0 +1,66 @@
+@use '~app/components/ui/colors.scss' as *;
+@use '~app/components/ui/fonts.scss' as *;
+
+.altcha {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 0 16px;
+
+    font-family: $font-family-title;
+    font-size: 16px;
+    line-height: 24px;
+
+    cursor: pointer;
+}
+
+.darkAltcha {
+    color: #fff;
+}
+
+.lightAltcha {
+    color: #666;
+}
+
+.label {
+    transition: color 0.25s;
+}
+
+.verifiedAltcha {
+    cursor: default;
+}
+
+.verifyingAltcha {
+    cursor: progress;
+}
+
+/**
+ * The container of the checkbox and the world generation map (see AltchaCheckbox), its size is animated
+ */
+.mark {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.markLayer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// The world generation map takes the final color of its chunks from here (see WorldGeneration)
+@each $name, $color in ('green': $green, 'blue': $blue, 'red': $red, 'lightViolet': $light_violet) {
+    .#{$name}Altcha {
+        --altcha-accent: #{$color};
+    }
+}
+
+.errorAltcha {
+    .label {
+        color: $red;
+    }
+}

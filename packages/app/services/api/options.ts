@@ -1,6 +1,6 @@
 import { type Resp, get } from 'app/services/request';
 
-export type CaptchaPublicParams = { publicKey: string } & Record<string, unknown>;
+export type CaptchaPublicParams = Readonly<Record<string, unknown>>;
 
 export type Options = {
     captcha: Record<string, CaptchaPublicParams>;

@@ -1,13 +1,19 @@
 import { fetch as fetchOptions } from 'app/services/api/options';
 import logger from 'app/services/logger';
 
+import altcha from './providers/altcha';
 import recaptcha from './providers/recaptcha';
 import yandex from './providers/yandex';
 import { CaptchaProvider, CaptchaPublicParams, CaptchaValue } from './types';
 
-export type { CaptchaProvider, CaptchaPublicParams, CaptchaValue, CaptchaWidgetId } from './types';
-
-const PROVIDERS: ReadonlyArray<CaptchaProvider> = [recaptcha, yandex];
+export type {
+    CaptchaComponent,
+    CaptchaComponentHandle,
+    CaptchaComponentProps,
+    CaptchaProvider,
+    CaptchaPublicParams,
+    CaptchaValue,
+} from './types';
 
 /**
  * Locales of the Eastern Europe/Asia region, where Yandex SmartCaptcha is preferred over Google reCAPTCHA.
@@ -17,16 +23,16 @@ const PROVIDERS: ReadonlyArray<CaptchaProvider> = [recaptcha, yandex];
 const YANDEX_PREFERRED_LOCALES: ReadonlyArray<string> = ['ru', 'be', 'kk', 'ky', 'tg', 'tt', 'udm', 'uz'];
 
 /**
- * Returns the captcha providers types in the order they should be tried for the passed locale
+ * Returns the captcha providers in the order they should be tried for the passed locale
  */
-export function getProvidersPriority(locale: string): Array<string> {
+export function getProvidersPriority(locale: string): Array<CaptchaProvider> {
     const [language] = locale.toLowerCase().split(/[-_]/);
 
     if (YANDEX_PREFERRED_LOCALES.includes(language)) {
-        return [yandex.type, recaptcha.type];
+        return [altcha, yandex, recaptcha];
     }
 
-    return [recaptcha.type, yandex.type];
+    return [altcha, recaptcha, yandex];
 }
 
 export interface ResolvedCaptcha {
@@ -68,14 +74,13 @@ export function clearResolvedCaptcha(): void {
     resolved = null;
 }
 
-async function doResolve(priority: Array<string>, locale: string): Promise<ResolvedCaptcha> {
+async function doResolve(priority: Array<CaptchaProvider>, locale: string): Promise<ResolvedCaptcha> {
     const { captcha: available } = await fetchOptions();
 
-    for (const type of priority) {
-        const provider = PROVIDERS.find((item) => item.type === type);
-        const params = available[type];
+    for (const provider of priority) {
+        const params = available[provider.type];
 
-        if (!provider || !params) {
+        if (!params) {
             continue;
         }
 
@@ -85,7 +90,7 @@ async function doResolve(priority: Array<string>, locale: string): Promise<Resol
             return { provider, params };
         } catch (error) {
             logger.breadcrumb('Failed to load captcha provider, trying the next one', {
-                provider: type,
+                provider: provider.type,
                 error,
             });
         }

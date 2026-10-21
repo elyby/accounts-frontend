@@ -1,3 +1,5 @@
+import createSdkCaptcha from 'app/components/ui/form/sdkCaptcha/createSdkCaptcha';
+
 import loadSdk from '../loadSdk';
 import { CaptchaProvider } from '../types';
 
@@ -26,22 +28,26 @@ const recaptcha: CaptchaProvider = {
         return loadPromise;
     },
 
-    render(el, { publicKey }, { skin, onSetCode, onExpire }) {
-        return getApi().render(el, {
-            sitekey: publicKey,
-            theme: skin,
-            callback: onSetCode,
-            'expired-callback': onExpire,
-        });
-    },
+    isRenderingDeferred: true,
 
-    reset(id) {
-        getApi().reset(id);
-    },
+    Component: createSdkCaptcha('ReCaptcha', {
+        render(el, { publicKey }, { skin, onSetCode, onExpire }) {
+            return getApi().render(el, {
+                sitekey: publicKey,
+                theme: skin,
+                callback: onSetCode,
+                'expired-callback': onExpire,
+            });
+        },
 
-    destroy() {
-        // reCAPTCHA has no API to destroy a widget. Removing its element from the DOM is enough
-    },
+        reset(id) {
+            getApi().reset(id);
+        },
+
+        destroy() {
+            // reCAPTCHA has no API to destroy a widget. Removing its element from the DOM is enough
+        },
+    }),
 };
 
 export default recaptcha;

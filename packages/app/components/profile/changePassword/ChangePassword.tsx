@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Helmet } from 'react-helmet-async';
-import { Input, Button, Checkbox, Form, FormModel } from 'app/components/ui/form';
+import { Input, Button, FormCheckbox, Form, FormModel } from 'app/components/ui/form';
 import { ValidationError } from 'app/services/request';
 
 import { BackButton } from '../ProfileForm';
@@ -90,11 +90,11 @@ export default class ChangePassword extends React.Component<Props> {
                             </div>
 
                             <div className={styles.formRow}>
-                                <Checkbox
+                                <FormCheckbox
                                     {...form.bindField('logoutAll')}
                                     defaultChecked
                                     skin="light"
-                                    label={labels.logoutOnAllDevices}
+                                    label={<Message {...labels.logoutOnAllDevices} />}
                                 />
                             </div>
                         </div>

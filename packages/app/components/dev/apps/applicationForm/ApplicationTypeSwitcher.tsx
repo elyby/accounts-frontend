@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import { ApplicationType } from 'app/components/dev/apps';
-import { MessageDescriptor } from 'react-intl';
+import { FormattedMessage as Message, MessageDescriptor } from 'react-intl';
 import { SKIN_LIGHT } from 'app/components/ui';
 import { Radio } from 'app/components/ui/form';
 
@@ -19,7 +19,7 @@ const ApplicationTypeSwitcher: ComponentType<Props> = ({ appTypes, selectedType,
                 <Radio
                     onChange={() => setType?.(type)}
                     skin={SKIN_LIGHT}
-                    label={appTypes[type]}
+                    label={<Message {...appTypes[type]} />}
                     value={type}
                     checked={selectedType === type}
                 />

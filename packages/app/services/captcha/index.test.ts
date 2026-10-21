@@ -4,21 +4,27 @@ import * as options from 'app/services/api/options';
 import logger from 'app/services/logger';
 
 import { clearResolvedCaptcha, getProvidersPriority, NoCaptchaAvailableError, registerE2eCallback, resolveCaptcha } from './index';
+import altcha from './providers/altcha';
 import recaptcha from './providers/recaptcha';
 import yandex from './providers/yandex';
 
 describe('services/captcha', () => {
     describe('#getProvidersPriority', () => {
-        it('should prefer Yandex for the Russian region locales', () => {
-            expect(getProvidersPriority('ru'), 'to equal', ['yandex', 'recaptcha']);
-            expect(getProvidersPriority('be'), 'to equal', ['yandex', 'recaptcha']);
-            expect(getProvidersPriority('ru-RU'), 'to equal', ['yandex', 'recaptcha']);
+        it('should always prefer ALTCHA', () => {
+            expect(getProvidersPriority('ru')[0], 'to be', altcha);
+            expect(getProvidersPriority('en')[0], 'to be', altcha);
         });
 
-        it('should prefer Google for other locales', () => {
-            expect(getProvidersPriority('en'), 'to equal', ['recaptcha', 'yandex']);
-            expect(getProvidersPriority('uk'), 'to equal', ['recaptcha', 'yandex']);
-            expect(getProvidersPriority('pt-BR'), 'to equal', ['recaptcha', 'yandex']);
+        it('should prefer Yandex over Google for the Russian region locales', () => {
+            expect(getProvidersPriority('ru'), 'to equal', [altcha, yandex, recaptcha]);
+            expect(getProvidersPriority('be'), 'to equal', [altcha, yandex, recaptcha]);
+            expect(getProvidersPriority('ru-RU'), 'to equal', [altcha, yandex, recaptcha]);
+        });
+
+        it('should prefer Google over Yandex for other locales', () => {
+            expect(getProvidersPriority('en'), 'to equal', [altcha, recaptcha, yandex]);
+            expect(getProvidersPriority('uk'), 'to equal', [altcha, recaptcha, yandex]);
+            expect(getProvidersPriority('pt-BR'), 'to equal', [altcha, recaptcha, yandex]);
         });
     });
 
@@ -33,7 +39,7 @@ describe('services/captcha', () => {
 
         afterEach(() => sandbox.restore());
 
-        const givenProviders = (captcha: Record<string, { publicKey: string }>) =>
+        const givenProviders = (captcha: Record<string, Record<string, string>>) =>
             sandbox.stub(options, 'fetch').resolves({ captcha, response: new Response() });
 
         it('should pick the preferred provider', async () => {
@@ -90,6 +96,31 @@ describe('services/captcha', () => {
             expect(first.provider, 'to be', recaptcha);
             expect(second.provider, 'to be', recaptcha);
             expect(yandexLoad, 'was not called');
+        });
+
+        it('should pick ALTCHA when it is enabled on the backend', async () => {
+            givenProviders({ altcha: { challengeUrl: '/c' }, recaptcha: { publicKey: 'g' }, yandex: { publicKey: 'y' } });
+            const altchaLoad = sandbox.stub(altcha, 'load').resolves();
+            const recaptchaLoad = sandbox.stub(recaptcha, 'load').resolves();
+            const yandexLoad = sandbox.stub(yandex, 'load').resolves();
+
+            const { provider, params } = await resolveCaptcha('ru');
+
+            expect(provider, 'to be', altcha);
+            expect(params, 'to equal', { challengeUrl: '/c' });
+            expect(altchaLoad, 'was called once');
+            expect(recaptchaLoad, 'was not called');
+            expect(yandexLoad, 'was not called');
+        });
+
+        it('should fallback from ALTCHA, when it can not solve challenges', async () => {
+            givenProviders({ altcha: { challengeUrl: '/c' }, recaptcha: { publicKey: 'g' } });
+            sandbox.stub(recaptcha, 'load').resolves();
+
+            // jsdom has no Web Crypto API, as the browsers outside the secure contexts
+            const { provider } = await resolveCaptcha('en');
+
+            expect(provider, 'to be', recaptcha);
         });
 
         it('should reject when no provider is available', async () => {

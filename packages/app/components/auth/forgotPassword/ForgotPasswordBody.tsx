@@ -67,7 +67,13 @@ export default class ForgotPasswordBody extends BaseAuthBody {
                     </div>
                 )}
 
-                <Captcha {...this.bindField('captcha')} skin="dark" delay={600} className={authStyles.captcha} />
+                <Captcha
+                    {...this.bindField('captcha')}
+                    skin="dark"
+                    color="lightViolet"
+                    delay={600}
+                    className={authStyles.captcha}
+                />
             </div>
         );
     }

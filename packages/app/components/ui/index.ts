@@ -2,6 +2,7 @@ export type Color = 'green' | 'blue' | 'darkBlue' | 'violet' | 'lightViolet' | '
 
 export type Skin = 'dark' | 'light';
 
+// Must match with colors.scss
 export const COLOR_GREEN: Color = 'green';
 export const COLOR_BLUE: Color = 'blue';
 export const COLOR_DARK_BLUE: Color = 'darkBlue';

@@ -7,7 +7,7 @@
         "module": "esnext",
         "target": "esnext",
         "esModuleInterop": true, // allow importing commonjs exports as default in es imports
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "noEmit": true,
         "allowJs": true,
         "skipLibCheck": true,

@@ -65,6 +65,10 @@ module.exports = function (api) {
             ],
         ],
         env: {
+            // Jest runs the code as commonjs modules, where import.meta (e.g. the Web Worker's URL) is a syntax error
+            test: {
+                plugins: ['babel-plugin-transform-import-meta'],
+            },
             browser: browserEnv,
             'browser-development': browserEnv,
             'browser-production': {

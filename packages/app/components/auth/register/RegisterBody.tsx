@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage as Message } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { Input, Checkbox, Captcha } from 'app/components/ui/form';
+import { Input, FormCheckbox, Captcha } from 'app/components/ui/form';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
 import styles from '../auth.scss';
@@ -59,10 +59,16 @@ export default class RegisterBody extends BaseAuthBody {
                     placeholder={placeholders.repeatPassword}
                 />
 
-                <Captcha {...this.bindField('captcha')} skin="dark" delay={600} className={styles.captcha} />
+                <Captcha
+                    {...this.bindField('captcha')}
+                    skin="dark"
+                    color="blue"
+                    delay={600}
+                    className={styles.captcha}
+                />
 
                 <div className={styles.checkboxInput}>
-                    <Checkbox
+                    <FormCheckbox
                         {...this.bindField('rulesAgreement')}
                         color="blue"
                         required
