@@ -335,8 +335,9 @@ if (isProduction) {
     };
 } else {
     webpackConfig.devServer = {
-        host: 'localhost',
+        host: '0.0.0.0',
         port: 8080,
+        allowedHosts: 'all',
         proxy: [
             {
                 context: ['/api'],
