@@ -21,5 +21,5 @@ export interface AltchaChallenge {
  * @param url - the challengeUrl from the ALTCHA's captcha params
  */
 export function getAltchaChallenge(url: string = '/api/captcha/altcha/challenge'): Promise<Resp<AltchaChallenge>> {
-    return get(url);
+    return get(url, {}, { token: null });
 }
