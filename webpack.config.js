@@ -110,7 +110,6 @@ const webpackConfig = {
         new webpack.DefinePlugin({
             'window.SENTRY_DSN': process.env.SENTRY_DSN ? JSON.stringify(process.env.SENTRY_DSN) : undefined,
             'window.SENTRY_TRACES_SAMPLE_RATE': process.env.SENTRY_TRACES_SAMPLE_RATE ? JSON.stringify(process.env.SENTRY_TRACES_SAMPLE_RATE) : undefined,
-            'window.GA_ID': process.env.GA_ID ? JSON.stringify(process.env.GA_ID) : undefined,
         }),
         new webpack.EnvironmentPlugin({
             NODE_ENV: process.env.NODE_ENV,
