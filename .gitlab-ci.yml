@@ -140,8 +140,8 @@ Build:
     - find . -name '*.js' | cpio -pdm ../source-maps/
     - cd ..
     # Cleanup source maps for unimportant bundles
-    - rm -f source-maps/runtime.js
-    - rm -f source-maps/intl-polyfills.js
+    - rm -f source-maps/runtime.*
+    - rm -f source-maps/intl-polyfills.*
     - rm -rf source-maps/locale-*
   artifacts:
     name: "Production build for $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
@@ -191,8 +191,13 @@ Storybook:
     - sentry-cli releases new "$VERSION"
     - sentry-cli releases set-commits --commit "elyby/accounts-frontend@${CI_COMMIT_SHA}" "$VERSION"
     - sentry-cli sourcemaps upload --release="$VERSION" source-maps
-    # Deploy
-    - rsync -v -a -r --delete-after -e "ssh -p ${DEPLOY_PORT:-22}" build/ "${DEPLOY_USER:-root}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+    # Deploy. The files of the previous builds are kept: already opened pages still load their chunks.
+    # index.html goes last, when all the files it refers to are already uploaded
+    - rsync -v -a --exclude=/index.html -e "ssh -p ${DEPLOY_PORT:-22}" build/ "${DEPLOY_USER:-root}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+    - rsync -v -a -e "ssh -p ${DEPLOY_PORT:-22}" build/index.html "${DEPLOY_USER:-root}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+    # rsync sets the build's mtime to every uploaded file, even to unchanged ones,
+    # so only the files of the outdated builds are older than that
+    - ssh -p "${DEPLOY_PORT:-22}" "${DEPLOY_USER:-root}@${DEPLOY_HOST}" "find '${DEPLOY_PATH}' -type f -mtime +14 -delete"
     # Finalize Sentry's release
     - sentry-cli releases deploys "$VERSION" new -e "$CI_ENVIRONMENT_NAME"
     - sentry-cli releases finalize "$VERSION"

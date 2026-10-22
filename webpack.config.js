@@ -62,7 +62,7 @@ const webpackConfig = {
     output: {
         path: outputPath,
         publicPath: '/',
-        filename: `[name].js?[${isProduction ? 'contenthash' : 'fullhash'}]`,
+        filename: isProduction ? '[name].[contenthash].js' : '[name].js',
         clean: true,
     },
 
@@ -280,7 +280,7 @@ if (isProduction) {
 
         webpackConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: '[name].css?[contenthash]',
+                filename: '[name].[contenthash].css',
             }),
         );
 
