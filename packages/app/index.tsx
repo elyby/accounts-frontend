@@ -10,6 +10,7 @@ import storeFactory from 'app/storeFactory';
 import bsodFactory from 'app/components/ui/bsod/factory';
 import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 import getOAuthDebugContext from 'app/components/auth/oauthDebugContext';
+import { observePageTranslation } from 'app/components/i18n/pageTranslation';
 import * as loader from 'app/services/loader';
 import logger from 'app/services/logger';
 import { parseSampleRate } from 'app/services/request/tracing';
@@ -30,6 +31,7 @@ logger.init({
 const store = storeFactory();
 
 logger.addContextProvider('oauth', () => getOAuthDebugContext(store.getState()));
+observePageTranslation(() => store.getState().i18n.locale);
 
 bsodFactory({
     store,
