@@ -1,6 +1,6 @@
 import type { ErrorEvent, Exception, StackFrame } from '@sentry/react';
 
-import { isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
+import { hasUserScriptFrames, isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
 
 const APP_KEY = 'test-app-key';
 
@@ -64,5 +64,33 @@ describe('isExclusivelyThirdPartyErrorBoundaryEvent', () => {
         );
 
         expect(result).toBe(false);
+    });
+});
+
+describe('hasUserScriptFrames', () => {
+    const sdkWrapperFrame: StackFrame = { filename: 'https://account.ely.by/app.js', lineno: 1, colno: 5000 };
+
+    it('should recognize a user script calling a wrapped browser API (ACCOUNTS-FRONTEND-3NV)', () => {
+        const userScriptFrame: StackFrame = {
+            filename: 'userscript:GM-https://github.com/kelesmert/unwall/Unwall',
+            lineno: 2527,
+            colno: 14,
+        };
+
+        expect(hasUserScriptFrames(event(exception('TypeError', [userScriptFrame, sdkWrapperFrame])))).toBe(true);
+    });
+
+    it('should recognize a Tampermonkey script in Chrome', () => {
+        const userScriptFrame: StackFrame = {
+            filename: 'chrome-extension://dhdgffkkebhmkfjojejmpbldmpobfkfo/userscript.html?name=Script.user.js&id=1',
+            lineno: 1,
+            colno: 1,
+        };
+
+        expect(hasUserScriptFrames(event(exception('TypeError', [userScriptFrame, ourFrame])))).toBe(true);
+    });
+
+    it('should not recognize our own errors', () => {
+        expect(hasUserScriptFrames(event(exception('TypeError', [ourFrame, sdkWrapperFrame])))).toBe(false);
     });
 });

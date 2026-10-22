@@ -9,7 +9,7 @@ import {
     type PathTemplate,
 } from 'app/services/request/tracing';
 
-import { isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
+import { hasUserScriptFrames, isExclusivelyThirdPartyErrorBoundaryEvent } from './thirdPartyErrors';
 
 const isTest = process.env.NODE_ENV === 'test';
 const isProduction = process.env.NODE_ENV === 'production';
@@ -187,7 +187,11 @@ class Logger {
                 // The integration below doesn't recognize third-party errors caught by an ErrorBoundary,
                 // see isExclusivelyThirdPartyErrorBoundaryEvent for details
                 if (applicationKey && isExclusivelyThirdPartyErrorBoundaryEvent(event, applicationKey)) {
-                    event.tags = { ...event.tags, third_party_code: true };
+                    return null;
+                }
+
+                if (hasUserScriptFrames(event)) {
+                    return null;
                 }
 
                 return event;
@@ -210,11 +214,10 @@ class Logger {
                     ? [
                           // Our bundles are marked with this key by @sentry/webpack-plugin (see webpack.config.js).
                           // Errors that have no frames from our code come from browser extensions or scripts
-                          // injected by the WebView hosts. For now they are only tagged to verify the filter
-                          // before dropping them
+                          // injected by the WebView hosts
                           Sentry.thirdPartyErrorFilterIntegration({
                               filterKeys: [applicationKey],
-                              behaviour: 'apply-tag-if-exclusively-contains-third-party-frames',
+                              behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
                               // Skip the SDK's own wrapper frame (e.g. sentryWrapped around setTimeout callbacks),
                               // which is bundled into our code and would otherwise mark an injected script's error
                               // as ours

@@ -41,3 +41,19 @@ export function isExclusivelyThirdPartyErrorBoundaryEvent(event: ErrorEvent, app
     return frames.length > 0
         && frames.every((frame) => !hasAppKey(frame, applicationKey));
 }
+
+// Tampermonkey and similar managers: "userscript:GM-https://..." or ".../userscript.html?name=..."
+const USERSCRIPT_FILENAME_REGEX = /^userscript:|\/userscript\.html(\?|$)/;
+
+/**
+ * Checks whether a user script took part in the error. Such errors pass both denyUrls and thirdPartyErrorFilterIntegration
+ * when the script calls a browser API wrapped by the SDK (e.g. MutationObserver callbacks): the innermost frame
+ * is the SDK's wrapper, which is bundled into our code (ACCOUNTS-FRONTEND-3NV)
+ */
+export function hasUserScriptFrames(event: ErrorEvent): boolean {
+    return (event.exception?.values ?? []).some((value) =>
+        (value.stacktrace?.frames ?? []).some(
+            (frame) => !!frame.filename && USERSCRIPT_FILENAME_REGEX.test(frame.filename),
+        ),
+    );
+}
