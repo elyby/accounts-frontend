@@ -6,7 +6,7 @@ import AbstractState from 'app/services/authFlow/AbstractState';
 import localStorage from 'app/services/localStorage';
 import logger from 'app/services/logger';
 import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
-import { RequestAbortedError, UnauthorizedError, ValidationError } from 'app/services/request';
+import { InternalServerError, RequestAbortedError, UnauthorizedError, ValidationError } from 'app/services/request';
 
 import InitOAuthAuthCodeFlowState from './InitOAuthAuthCodeFlowState';
 import RegisterState from 'app/services/authFlow/RegisterState';
@@ -217,6 +217,41 @@ describe('AuthFlow', () => {
 
             expect(actual, 'to be', expected);
         });
+
+        describe('when the async #enter() rejects before the route is ready', () => {
+            let errorStub: SinonStub;
+
+            beforeEach(() => {
+                errorStub = sinon.stub(logger, 'error').named('logger.error');
+            });
+
+            afterEach(() => {
+                errorStub.restore();
+            });
+
+            const enterWith = async (error: unknown) => {
+                const onReady = sinon.stub().named('onReady');
+                const state = new AbstractState();
+                state.enter = () => Promise.reject(error);
+                flow.onReady = onReady;
+
+                await flow.setState(state);
+            };
+
+            it('should report unexpected errors', async () => {
+                const error = new Error('Something went wrong');
+
+                await enterWith(error);
+
+                expect(logger.error, 'to have a call satisfying', ['State transition error', { error }]);
+            });
+
+            it('should not report 5xx responses twice', async () => {
+                await enterWith(new InternalServerError(new Response('<html>', { status: 502 })));
+
+                expect(logger.error, 'was not called');
+            });
+        });
     });
 
     describe('#run', () => {
@@ -331,6 +366,14 @@ describe('AuthFlow', () => {
                 expect(flow.run, 'to have a call satisfying', ['setErrors', { request: 'error.request_failed' }]);
                 expect(logger.error, 'was not called');
                 expect((dispatchBsod as jest.Mock).mock.calls, 'to be empty');
+            });
+
+            it('should not report 5xx responses twice', async () => {
+                await resolveWith(new InternalServerError(new Response('<html>', { status: 502 })));
+
+                expect(logger.warn, 'was not called');
+                expect(logger.error, 'was not called');
+                expect(flow.run, 'to have a call satisfying', ['setErrors', { request: 'error.request_failed' }]);
             });
 
             it('should not show the error in the form when the token was rejected', async () => {
