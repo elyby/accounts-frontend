@@ -27,7 +27,7 @@ describe('services/api/captcha', () => {
 
             const resp = await getAltchaChallenge('/api/captcha/altcha/challenge');
 
-            expect(get, 'to have a call satisfying', ['/api/captcha/altcha/challenge']);
+            expect(get, 'to have a call satisfying', ['/api/captcha/altcha/challenge', {}, { token: null }]);
             expect(resp, 'to satisfy', { ...challenge, response: expect.it('to be a', Response) });
         });
     });
