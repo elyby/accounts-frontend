@@ -317,6 +317,7 @@ export default class AuthFlow implements AuthContext {
         try {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const data = JSON.parse(localStorage.getItem('oauthData')!);
+
             if (isOutdatedOAuthPayload(data.payload)) {
                 return false;
             }
