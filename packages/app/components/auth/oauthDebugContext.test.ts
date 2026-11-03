@@ -19,13 +19,18 @@ describe('getOAuthDebugContext', () => {
                 scopes: ['account_info'],
                 oauth: {
                     params: {
-                        clientId: 'tlauncher',
-                        redirectUrl: 'http://127.0.0.1:57935/?foo=bar',
-                        responseType: 'code',
-                        scope: 'account_info',
-                        state: 'secret-state',
-                        code_challenge: 'secret-challenge',
-                        code_challenge_method: 'S256',
+                        query: {
+                            client_id: 'tlauncher',
+                            redirect_uri: 'http://127.0.0.1:57935/?foo=bar',
+                            response_type: 'code',
+                            scope: 'account_info',
+                            state: 'secret-state',
+                            code_challenge: 'secret-challenge',
+                            code_challenge_method: 'S256',
+                            nonce: 'secret-nonce',
+                            request: 'secret-request',
+                            ui_locales: 'ru',
+                        },
                     },
                     loginHint: 'user@example.com',
                 },
@@ -38,12 +43,16 @@ describe('getOAuthDebugContext', () => {
                 client_id: 'tlauncher',
                 client_name: 'TLauncher',
                 redirect_uri: 'http://127.0.0.1:57935/',
+                response_type: 'code',
+                scope: 'account_info',
+                code_challenge_method: 'S256',
+                ui_locales: 'ru',
                 pkce: 'S256',
                 has_login_hint: true,
                 scopes: ['account_info'],
             },
         });
-        expect(JSON.stringify(result), 'not to contain', 'secret-state', 'secret-challenge', 'user@example.com', 'foo=bar');
+        expect(JSON.stringify(result), 'not to contain', 'secret-state', 'secret-challenge', 'secret-nonce', 'secret-request', 'user@example.com', 'foo=bar');
     });
 
     it('should describe the device code request without the user code', () => {

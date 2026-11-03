@@ -35,7 +35,7 @@ export default class OAuthError extends ApiError {
     get userMessage(): string | null {
         switch (this.error) {
             case 'invalid_request':
-                return `Invalid request (${this.parameter} required).`;
+                return this.parameter ? `Invalid request (${this.parameter} required).` : 'Invalid request.';
             case 'unsupported_response_type':
                 return `Invalid response type '${this.parameter}'.`;
             case 'unsupported_grant_type':

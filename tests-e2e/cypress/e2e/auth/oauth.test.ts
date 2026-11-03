@@ -26,11 +26,12 @@ describe('OAuth', () => {
                     timestamp: Date.now() - 3600,
                     payload: {
                         params: {
-                            clientId: 'ely',
-                            redirectUrl: 'https://dev.ely.by/authorization/oauth',
-                            responseType: 'code',
-                            state: '',
-                            scope: 'account_info account_email',
+                            query: {
+                                client_id: 'ely',
+                                redirect_uri: 'https://dev.ely.by/authorization/oauth',
+                                response_type: 'code',
+                                scope: 'account_info account_email',
+                            },
                         },
                     } as OAuthState,
                 }),
@@ -40,6 +41,40 @@ describe('OAuth', () => {
             cy.visit('/');
 
             cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should pass PKCE and OpenID Connect params to the backend as is', () => {
+            const params = {
+                code_challenge: 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
+                code_challenge_method: 'S256',
+                nonce: 'n-0S6_WzA2Mj',
+            };
+
+            cy.intercept('GET', '/api/oauth2/v1/validate**').as('validate');
+            cy.intercept('POST', '/api/oauth2/v1/complete**').as('complete');
+
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(
+                `/oauth2/v1/ely?${new URLSearchParams({
+                    ...defaults,
+                    scope: 'openid profile email',
+                    ...params,
+                })}`,
+            );
+
+            for (const alias of ['@validate', '@complete'] as const) {
+                cy.wait(alias).then(({ request }) => {
+                    const query = new URL(request.url).searchParams;
+
+                    expect(query.get('code_challenge')).to.equal(params.code_challenge);
+                    expect(query.get('code_challenge_method')).to.equal(params.code_challenge_method);
+                    expect(query.get('nonce')).to.equal(params.nonce);
+                    expect(query.has('request')).to.equal(false);
+                    expect(query.has('request_uri')).to.equal(false);
+                    expect(query.has('state')).to.equal(false);
+                });
+            }
         });
 
         describe('static pages', () => {

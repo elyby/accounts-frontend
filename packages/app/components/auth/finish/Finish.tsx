@@ -27,10 +27,10 @@ const Finish: FC<Props> = () => {
 
     let authData: string | undefined;
 
-    if (oauth && 'state' in oauth.params) {
+    if (oauth && 'query' in oauth.params) {
         authData = JSON.stringify({
             auth_code: oauth.code,
-            state: oauth.params.state,
+            state: oauth.params.query.state ?? null,
         });
     }
 

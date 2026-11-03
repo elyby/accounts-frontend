@@ -6,16 +6,22 @@ export default class InitOAuthAuthCodeFlowState extends AbstractState {
     enter(context: AuthContext): Promise<void> | void {
         const { query, params } = context.getRequest();
 
+        const oauthQuery = Object.fromEntries(query);
+        const clientId = query.get('client_id') ?? params.clientId;
+
+        if (clientId !== undefined) {
+            oauthQuery.client_id = clientId;
+        }
+
+        if (oauthQuery.scope !== undefined) {
+            // The backend splits the scopes only by spaces, but the legacy clients pass them comma separated
+            oauthQuery.scope = oauthQuery.scope.replace(/,/g, ' ');
+        }
+
         return context
             .run('oAuthValidate', {
                 params: {
-                    clientId: query.get('client_id') || params.clientId,
-                    redirectUrl: query.get('redirect_uri')!,
-                    responseType: query.get('response_type')!,
-                    scope: (query.get('scope') || '').replace(/,/g, ' '),
-                    state: query.get('state')!,
-                    code_challenge: query.get('code_challenge') || undefined,
-                    code_challenge_method: query.get('code_challenge_method') || undefined,
+                    query: oauthQuery,
                 },
                 description: query.get('description')!,
                 prompt: query.get('prompt')!,

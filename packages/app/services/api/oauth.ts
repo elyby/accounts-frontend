@@ -35,13 +35,11 @@ export interface OauthMinecraftServerResponse extends OauthCommonResponse {
 
 export type OauthAppResponse = OauthWebAppResponse | OauthDesktopAppResponse | OauthMinecraftServerResponse;
 
-interface AuthCodeFlowRequestData {
-    client_id: string;
-    redirect_uri: string;
-    response_type: string;
-    scope: string;
-    state?: string;
-}
+/**
+ * The authorization request's query as is (client_id, redirect_uri, response_type, etc.).
+ * The backend validates all of them.
+ */
+type AuthCodeFlowRequestData = Record<string, string>;
 
 interface DeviceCodeFlowRequestData {
     user_code: string;

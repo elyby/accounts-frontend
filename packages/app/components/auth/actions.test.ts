@@ -22,13 +22,22 @@ import { OAuthError, ValidationError } from 'app/services/request';
 
 import { OAuthState } from './reducer';
 
+const oauthQuery: Record<string, string> = {
+    client_id: 'client',
+    redirect_uri: 'http://127.0.0.1:8080/cb',
+    response_type: 'code',
+    scope: 'openid profile',
+    state: 'state',
+    code_challenge: 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
+    code_challenge_method: 'S256',
+    nonce: ' nonce ',
+    request: '',
+    unknown_param: 'value',
+};
+
 const oauthData: OAuthState = {
     params: {
-        clientId: '',
-        redirectUrl: '',
-        responseType: '',
-        scope: '',
-        state: '',
+        query: oauthQuery,
     },
     prompt: 'none',
 };
@@ -78,10 +87,59 @@ describe('components/auth/actions', () => {
             (request.get as any).returns(Promise.resolve(resp));
         });
 
-        it('should send get request to an api', () =>
-            callThunk(oAuthValidate, oauthData).then(() => {
-                expect(request.get, 'to have a call satisfying', ['/api/oauth2/v1/validate', {}]);
-            }));
+        it('should pass the query to the api as is', async () => {
+            await callThunk(oAuthValidate, oauthData);
+
+            expect(request.get, 'to have a call exhaustively satisfying', [
+                '/api/oauth2/v1/validate',
+                oauthQuery,
+            ]);
+        });
+
+        it('should pass the device code flow user code', async () => {
+            await callThunk(oAuthValidate, { params: { userCode: 'USERCODE' } });
+
+            expect(request.get, 'to have a call exhaustively satisfying', [
+                '/api/oauth2/v1/validate',
+                { user_code: 'USERCODE' },
+            ]);
+        });
+
+        describe('when the request is invalid', () => {
+            it('should redirect the user to the client when the error has the redirect uri', async () => {
+                const error = new OAuthError(new Response('{}', { status: 400 }), {
+                    success: false,
+                    error: 'request_not_supported',
+                    redirectUri: 'https://example.com/cb?error=request_not_supported&state=state',
+                });
+                (request.get as any).returns(Promise.reject(error));
+                // The redirect never resolves, since the page is unloaded
+                dispatch.withArgs(sinon.match.func).returns(new Promise(() => {}));
+
+                const result = await Promise.race([
+                    callThunk(oAuthValidate, oauthData).then(
+                        () => 'resolved',
+                        () => 'rejected',
+                    ),
+                    new Promise((resolve) => setTimeout(() => resolve('pending'), 10)),
+                ]);
+
+                expect(result, 'to equal', 'pending');
+                expect(dispatch, 'to have a call satisfying', [expect.it('to be a function')]);
+            });
+
+            it('should reject when the error has no redirect uri', async () => {
+                const error = new OAuthError(new Response('{}', { status: 400 }), {
+                    success: false,
+                    // The error without a user message, so no alert is shown
+                    error: 'server_error',
+                });
+                (request.get as any).returns(Promise.reject(error));
+
+                await expect(callThunk(oAuthValidate, oauthData), 'to be rejected with', error);
+                expect(dispatch, 'to have no calls satisfying', [expect.it('to be a function')]);
+            });
+        });
 
         it('should dispatch setClient, setOAuthRequest and setScopes', () =>
             callThunk(oAuthValidate, oauthData).then(() => {
@@ -89,13 +147,7 @@ describe('components/auth/actions', () => {
                     [setClient(resp.client)],
                     [
                         setOAuthRequest({
-                            params: {
-                                clientId: '',
-                                redirectUrl: '',
-                                responseType: '',
-                                state: '',
-                                scope: '',
-                            },
+                            params: oauthData.params,
                             prompt: ['none'],
                             loginHint: undefined,
                         }),
@@ -114,20 +166,16 @@ describe('components/auth/actions', () => {
             });
         });
 
-        it('should post to api/oauth2/complete', () => {
-            (request.post as any).returns(
-                Promise.resolve({
-                    redirectUri: '',
-                }),
-            );
+        it('should post the query to api/oauth2/complete as is', async () => {
+            (request.post as any).returns(Promise.resolve({ success: true, redirectUri: 'https://example.com' }));
 
-            return callThunk(oAuthComplete).then(() => {
-                expect(request.post, 'to have a call satisfying', [
-                    '/api/oauth2/v1/complete',
-                    {},
-                    { searchParams: { client_id: '', redirect_uri: '', response_type: '', scope: '', state: '' } },
-                ]);
-            });
+            await callThunk(oAuthComplete);
+
+            expect(request.post, 'to have a call exhaustively satisfying', [
+                '/api/oauth2/v1/complete',
+                {},
+                { searchParams: oauthQuery },
+            ]);
         });
 
         it('should dispatch setOAuthCode for static_page redirect', () => {

@@ -23,7 +23,7 @@ describe('OAuthState', () => {
     });
 
     describe('#enter', () => {
-        it('should run oAuthValidate', () => {
+        it('should run oAuthValidate with the whole query', () => {
             const query = {
                 client_id: 'client_id',
                 redirect_uri: 'redirect_uri',
@@ -32,6 +32,9 @@ describe('OAuthState', () => {
                 scope: 'scope1 scope2',
                 code_challenge: 'code_challenge',
                 code_challenge_method: 'S256',
+                nonce: ' nonce ',
+                request: '',
+                unknown_param: 'value',
                 prompt: 'none',
                 login_hint: '1',
                 state: 'state',
@@ -47,13 +50,7 @@ describe('OAuthState', () => {
                 'oAuthValidate',
                 sinon.match({
                     params: {
-                        clientId: query.client_id,
-                        redirectUrl: query.redirect_uri,
-                        responseType: query.response_type,
-                        scope: query.scope,
-                        state: query.state,
-                        code_challenge: query.code_challenge,
-                        code_challenge_method: query.code_challenge_method,
+                        query: sinon.match(query),
                     },
                     description: query.description,
                     prompt: query.prompt,
@@ -64,18 +61,28 @@ describe('OAuthState', () => {
             state.enter(context);
         });
 
-        it('should support clientId through route params', () => {
-            const clientId = 'client_id';
-            const query = {
-                redirect_uri: 'redirect_uri',
-                response_type: 'response_type',
-                scope: 'scope1 scope2',
-                state: 'state',
-            };
-
+        it('should not add the absent params', () => {
             context.getRequest.returns({
-                query: new URLSearchParams(query),
-                params: { clientId },
+                query: new URLSearchParams({ client_id: 'client_id' }),
+                params: {},
+            });
+
+            expectRun(
+                mock,
+                'oAuthValidate',
+                sinon.match(
+                    ({ params }) => JSON.stringify(params.query) === JSON.stringify({ client_id: 'client_id' }),
+                    'only the passed params',
+                ),
+            ).returns({ then() {} });
+
+            state.enter(context);
+        });
+
+        it('should support clientId through route params', () => {
+            context.getRequest.returns({
+                query: new URLSearchParams({ state: 'state' }),
+                params: { clientId: 'client_id' },
             });
 
             expectRun(
@@ -83,11 +90,7 @@ describe('OAuthState', () => {
                 'oAuthValidate',
                 sinon.match({
                     params: {
-                        clientId,
-                        redirectUrl: query.redirect_uri,
-                        responseType: query.response_type,
-                        scope: query.scope,
-                        state: query.state,
+                        query: { client_id: 'client_id', state: 'state' },
                     },
                 }),
             ).returns({ then() {} });
@@ -96,18 +99,9 @@ describe('OAuthState', () => {
         });
 
         it('should give preference to client_id from query', () => {
-            const clientId = 'wrong_id';
-            const query = {
-                client_id: 'client_id',
-                redirect_uri: 'redirect_uri',
-                response_type: 'response_type',
-                scope: 'scope1 scope2',
-                state: 'state',
-            };
-
             context.getRequest.returns({
-                query: new URLSearchParams(query),
-                params: { clientId },
+                query: new URLSearchParams({ client_id: 'client_id' }),
+                params: { clientId: 'wrong_id' },
             });
 
             expectRun(
@@ -115,11 +109,7 @@ describe('OAuthState', () => {
                 'oAuthValidate',
                 sinon.match({
                     params: {
-                        clientId: query.client_id,
-                        redirectUrl: query.redirect_uri,
-                        responseType: query.response_type,
-                        scope: query.scope,
-                        state: query.state,
+                        query: { client_id: 'client_id' },
                     },
                 }),
             ).returns({ then() {} });
@@ -128,16 +118,9 @@ describe('OAuthState', () => {
         });
 
         it('should replace commas with spaces in scope param', () => {
-            const query = {
-                client_id: 'client_id',
-                redirect_uri: 'redirect_uri',
-                response_type: 'response_type',
-                scope: 'scope1,scope2,scope3',
-                state: 'state',
-            };
-
             context.getRequest.returns({
-                query: new URLSearchParams(query),
+                query: new URLSearchParams({ client_id: 'client_id', scope: 'scope1,scope2,scope3' }),
+                params: {},
             });
 
             expectRun(
@@ -145,11 +128,7 @@ describe('OAuthState', () => {
                 'oAuthValidate',
                 sinon.match({
                     params: {
-                        clientId: query.client_id,
-                        redirectUrl: query.redirect_uri,
-                        responseType: query.response_type,
-                        scope: 'scope1 scope2 scope3',
-                        state: query.state,
+                        query: { scope: 'scope1 scope2 scope3' },
                     },
                 }),
             ).returns({ then() {} });

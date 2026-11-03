@@ -39,13 +39,7 @@ export interface Client {
 }
 
 export interface OauthAuthCodeFlowParams {
-    clientId: string;
-    redirectUrl: string;
-    responseType: string;
-    state: string;
-    scope: string;
-    code_challenge?: string;
-    code_challenge_method?: string;
+    query: Record<string, string>;
 }
 
 export interface OauthDeviceCodeFlowParams {

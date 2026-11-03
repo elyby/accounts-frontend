@@ -360,7 +360,7 @@ export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'descriptio
                     }),
                 );
             })
-            .catch(handleOauthParamsValidation),
+            .catch((error) => handleOauthParamsValidation(dispatch, error)),
     );
 }
 
@@ -414,7 +414,7 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
                     return Promise.reject(error);
                 }
 
-                return handleOauthParamsValidation(error);
+                return handleOauthParamsValidation(dispatch, error);
             }
         },
     );
@@ -428,13 +428,7 @@ function getOAuthRequest({ params, description }: OAuthState): OauthRequestData 
             user_code: params.userCode,
         };
     } else {
-        data = {
-            client_id: params.clientId,
-            redirect_uri: params.redirectUrl,
-            response_type: params.responseType,
-            scope: params.scope,
-            state: params.state,
-        };
+        data = { ...params.query };
     }
 
     if (description) {
@@ -444,12 +438,26 @@ function getOAuthRequest({ params, description }: OAuthState): OauthRequestData 
     return data;
 }
 
-function handleOauthParamsValidation(error: unknown) {
+/**
+ * When the backend returns the redirect uri with the error, the error must be returned to the client
+ * (RFC 6749 section 4.1.2.1, OpenID Connect Core 1.0 section 3.1.2.6), so the user is redirected as is.
+ * Otherwise, the client can't be trusted (e.g. the redirect uri is invalid), so the error is shown to the user
+ */
+function handleOauthParamsValidation(dispatch: Dispatch, error: unknown): Promise<never> {
     localStorage.removeItem('oauthData');
 
-    if (error instanceof OAuthError && error.userMessage) {
-        // eslint-disable-next-line no-alert
-        setTimeout(() => alert(error.userMessage), 500); // 500 ms to allow re-render
+    if (error instanceof OAuthError) {
+        if (error.redirectUri) {
+            // The redirect never resolves to keep the loader visible until the page is unloaded
+            return dispatch(redirect(error.redirectUri)) as Promise<never>;
+        }
+
+        const { userMessage } = error;
+
+        if (userMessage) {
+            // eslint-disable-next-line no-alert
+            setTimeout(() => alert(userMessage), 500); // 500 ms to allow re-render
+        }
     }
 
     return Promise.reject(error);

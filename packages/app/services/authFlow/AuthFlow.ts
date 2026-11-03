@@ -10,6 +10,7 @@ import {
     remove as removeAccount,
 } from 'app/components/accounts/actions';
 import * as actions from 'app/components/auth/actions';
+import { OAuthState } from 'app/components/auth/reducer';
 import { updateUser } from 'app/components/user/actions';
 import dispatchBsod from 'app/components/ui/bsod/dispatchBsod';
 
@@ -316,6 +317,10 @@ export default class AuthFlow implements AuthContext {
         try {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const data = JSON.parse(localStorage.getItem('oauthData')!);
+            if (isOutdatedOAuthPayload(data.payload)) {
+                return false;
+            }
+
             const expirationTime = 2 * 60 * 60 * 1000; // 2h
 
             if (Date.now() - data.timestamp < expirationTime) {
@@ -331,4 +336,11 @@ export default class AuthFlow implements AuthContext {
 
         return false;
     }
+}
+
+/**
+ * Previously the auth code flow params were stored field by field instead of the raw query
+ */
+function isOutdatedOAuthPayload(payload: OAuthState): boolean {
+    return 'redirectUrl' in payload.params;
 }

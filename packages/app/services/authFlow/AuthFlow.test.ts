@@ -63,10 +63,10 @@ describe('AuthFlow', () => {
     });
 
     describe('#restoreOAuthState', () => {
-        let oauthData: Record<string, string>;
+        let oauthData: Record<string, any>;
 
         beforeEach(() => {
-            oauthData = { foo: 'bar' };
+            oauthData = { params: { query: { client_id: 'ely' } } };
             localStorage.setItem(
                 'oauthData',
                 JSON.stringify({
@@ -151,6 +151,37 @@ describe('AuthFlow', () => {
             );
 
             expect(flow.run, 'was not called'); // this.run('oAuthValidate'...
+        });
+
+        it('should restore device code flow oauth state', () => {
+            oauthData = { params: { userCode: 'USERCODE' } };
+            localStorage.setItem('oauthData', JSON.stringify({ timestamp: Date.now() - 10, payload: oauthData }));
+
+            flow.handleRequest(
+                { path: '/', query: new URLSearchParams(''), params: {} },
+                () => {},
+                () => {},
+            );
+
+            expect(flow.run, 'to have a call satisfying', ['oAuthValidate', oauthData]);
+        });
+
+        it('should not restore the oauth state stored in the legacy format', () => {
+            localStorage.setItem(
+                'oauthData',
+                JSON.stringify({
+                    timestamp: Date.now() - 10,
+                    payload: { params: { clientId: 'ely', redirectUrl: 'https://ely.by', scope: '' } },
+                }),
+            );
+
+            flow.handleRequest(
+                { path: '/', query: new URLSearchParams(''), params: {} },
+                () => {},
+                () => {},
+            );
+
+            expect(flow.run, 'was not called');
         });
 
         it('should not restore outdated (>1h) oauth state', () => {
