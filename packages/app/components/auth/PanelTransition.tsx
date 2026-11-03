@@ -136,7 +136,10 @@ interface State {
 }
 
 // TODO: completely broken for RTL languages
-class PanelTransition extends React.PureComponent<Props, State> {
+/**
+ * The panel itself without the store connection, e.g. to render it with the predefined state
+ */
+export class PanelTransition extends React.PureComponent<Props, State> {
     state: State = {
         contextHeight: 0,
         panelId: this.props.Body && (this.props.Body.type as any).panelId,

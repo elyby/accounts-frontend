@@ -311,13 +311,6 @@ export function clearErrors(): SetErrorAction {
 
 export type ErrorAction = SetErrorAction;
 
-const KNOWN_SCOPES: ReadonlyArray<string> = [
-    'minecraft_server_session',
-    'offline_access',
-    'account_info',
-    'account_email',
-];
-
 export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'description' | 'prompt' | 'loginHint'>) {
     // TODO: move to oAuth actions?
     // auth code flow: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
@@ -327,14 +320,6 @@ export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'descriptio
             .validate(getOAuthRequest(oauthData))
             .then((resp) => {
                 const { scopes } = resp.session;
-                const invalidScopes = scopes.filter((scope) => !KNOWN_SCOPES.includes(scope));
-
-                if (invalidScopes.length) {
-                    logger.error('Got invalid scopes after oauth validation', {
-                        invalidScopes,
-                    });
-                }
-
                 let { prompt } = oauthData;
 
                 if (prompt && !Array.isArray(prompt)) {

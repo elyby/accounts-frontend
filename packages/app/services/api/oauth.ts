@@ -1,7 +1,7 @@
 import { ApplicationType } from 'app/components/dev/apps';
 import { get, post, put, del, OAuthError, Resp } from 'app/services/request';
 
-export type Scope = 'minecraft_server_session' | 'offline_access' | 'account_info' | 'account_email';
+export type Scope = string;
 
 export interface Client {
     id: string;

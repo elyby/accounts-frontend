@@ -5,6 +5,7 @@ import { PanelBodyHeader } from 'app/components/ui/Panel';
 import BaseAuthBody from 'app/components/auth/BaseAuthBody';
 
 import styles from './permissions.scss';
+import getDisplayScopes from './getDisplayScopes';
 
 const scopesMessages = defineMessages({
     scope_minecraft_server_session: 'Authorization data for minecraft server',
@@ -19,7 +20,7 @@ export default class PermissionsBody extends BaseAuthBody {
 
     render() {
         const { user } = this.context;
-        const { scopes } = this.context.auth;
+        const scopes = getDisplayScopes(this.context.auth.scopes);
 
         return (
             <div>
@@ -41,6 +42,11 @@ export default class PermissionsBody extends BaseAuthBody {
                         <Message key="theAppNeedsAccess2" defaultMessage="to your data" />
                     </div>
                     <ul className={styles.permissionsList}>
+                        {scopes.length === 0 && (
+                            <li>
+                                <Message key="identityConfirmation" defaultMessage="Confirmation of your identity" />
+                            </li>
+                        )}
                         {scopes.map((scope) => {
                             const key = `scope_${scope}`;
                             // @ts-ignore
