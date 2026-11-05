@@ -287,7 +287,7 @@ describe('authHooks', () => {
         });
 
         it('should pass through oauth 401 errors', async () => {
-            fetch.resolves(jsonResponse({ statusCode: 401, error: 'access_denied', redirectUri: 'x' }, 401));
+            fetch.resolves(jsonResponse({ error: 'access_denied', redirectUri: 'x' }, 401));
 
             const error = await request.post('/api/oauth2/v1/complete').catch((err) => err);
 

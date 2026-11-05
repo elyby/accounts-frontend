@@ -154,24 +154,55 @@ describe('services/request', () => {
         });
 
         it('should reject with OAuthError on the OAuth2 errors', async () => {
-            fetch.resolves(jsonResponse({ error: 'invalid_scope', parameter: 'foo', statusCode: 400 }, 400));
+            fetch.resolves(
+                jsonResponse(
+                    { error: 'invalid_scope', error_description: 'The scope `foo` is unknown.', parameter: 'scope' },
+                    400,
+                ),
+            );
 
             const error = await request.get('/api/foo').catch((err) => err);
 
             expect(error, 'to be an', OAuthError);
             expect(error, 'to satisfy', {
                 name: 'OAuthError',
-                message: 'invalid_scope (foo)',
+                message: 'invalid_scope (scope)',
                 error: 'invalid_scope',
-                parameter: 'foo',
+                description: 'The scope `foo` is unknown.',
+                parameter: 'scope',
                 status: 400,
-                userMessage: "Invalid scope 'foo'.",
+                userMessage: 'The scope `foo` is unknown.',
             });
+        });
+
+        it('should use own user message for the invalid_client OAuth2 error', async () => {
+            fetch.resolves(jsonResponse({ error: 'invalid_client', error_description: 'Client authentication failed' }, 401));
+
+            const error = await request.get('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', OAuthError);
+            expect(error.userMessage, 'to equal', 'Can not find application you are trying to authorize.');
+        });
+
+        it('should have no user message for the OAuth2 error without description', async () => {
+            fetch.resolves(jsonResponse({ error: 'server_error' }, 400));
+
+            const error = await request.get('/api/foo').catch((err) => err);
+
+            expect(error, 'to be an', OAuthError);
+            expect(error, 'to satisfy', { description: undefined, userMessage: null });
         });
 
         it('should reject with OAuthError on 401 OAuth2 errors', async () => {
             fetch.resolves(
-                jsonResponse({ error: 'access_denied', statusCode: 401, redirectUri: 'http://ely.by?error=access_denied' }, 401),
+                jsonResponse(
+                    {
+                        error: 'access_denied',
+                        error_description: 'The resource owner or authorization server denied the request.',
+                        redirectUri: 'http://ely.by?error=access_denied',
+                    },
+                    401,
+                ),
             );
 
             const error = await request.post('/api/foo').catch((err) => err);
@@ -181,7 +212,6 @@ describe('services/request', () => {
                 error: 'access_denied',
                 parameter: undefined,
                 redirectUri: 'http://ely.by?error=access_denied',
-                userMessage: null,
             });
         });
 

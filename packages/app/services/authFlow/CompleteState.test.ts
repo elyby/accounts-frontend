@@ -426,7 +426,7 @@ describe('CompleteState', () => {
         it('should transition to permissions state if rejected with acceptRequired', () =>
             testOAuth(
                 'reject',
-                new OAuthError(new Response('{}', { status: 401 }), { error: 'accept_required', statusCode: 401 }),
+                new OAuthError(new Response('{}', { status: 401 }), { error: 'accept_required' }),
                 PermissionsState,
             ));
 

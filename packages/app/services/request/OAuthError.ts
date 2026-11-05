@@ -1,7 +1,8 @@
 import ApiError, { ResponseBody } from './ApiError';
 
 /**
- * The OAuth2 server has rejected the request: `{ error: 'invalid_scope', parameter: 'foo', statusCode: 400 }`
+ * The OAuth2 server has rejected the request:
+ * `{ error: 'invalid_request', error_description: 'Code challenge method must be `S256`.', parameter: 'code_challenge_method' }`
  */
 export default class OAuthError extends ApiError {
     /**
@@ -9,13 +10,15 @@ export default class OAuthError extends ApiError {
      */
     readonly error: string;
 
+    readonly description?: string;
+
     /**
-     * The name or the value of the request parameter, that has caused the error
+     * The name of the request parameter, that has caused the error
      */
     readonly parameter?: string;
 
     /**
-     * Where to redirect the user, e.g. when they have declined the permissions
+     * Where to redirect the user (if should)
      */
     readonly redirectUri?: string;
 
@@ -24,28 +27,20 @@ export default class OAuthError extends ApiError {
 
         this.name = 'OAuthError';
         this.error = body.error;
+        this.description = typeof body.error_description === 'string' ? body.error_description : undefined;
         this.parameter = typeof body.parameter === 'string' ? body.parameter : undefined;
         this.redirectUri = typeof body.redirectUri === 'string' ? body.redirectUri : undefined;
     }
 
     /**
-     * The error caused by the invalid request of the OAuth client (not by the user),
-     * that should be shown to the user as is. Not localized, because it's meant for the client's developers
+     * The message, that should be shown to the user, when the error can't be returned to the client.
+     * The errors caused by the client's request are shown as is, since only the client's developers can fix them
      */
     get userMessage(): string | null {
-        switch (this.error) {
-            case 'invalid_request':
-                return this.parameter ? `Invalid request (${this.parameter} required).` : 'Invalid request.';
-            case 'unsupported_response_type':
-                return `Invalid response type '${this.parameter}'.`;
-            case 'unsupported_grant_type':
-                return 'Unsupported grant type.';
-            case 'invalid_scope':
-                return `Invalid scope '${this.parameter}'.`;
-            case 'invalid_client':
-                return 'Can not find application you are trying to authorize.';
-            default:
-                return null;
+        if (this.error === 'invalid_client') {
+            return 'Can not find application you are trying to authorize.';
         }
+
+        return this.description ?? null;
     }
 }

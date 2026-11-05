@@ -73,7 +73,7 @@ export default function createAuthHooks({ dispatch, getState }: Store): Hooks {
                 const error = createResponseError(response, body);
 
                 // Only the API auth errors are recoverable.
-                // Others 401 errors (e.g. oauth's { statusCode: 401, error: 'access_denied' }) are passed to the caller
+                // Others 401 errors (e.g. oauth's { error: 'access_denied' }) are passed to the caller
                 if (!(error instanceof UnauthorizedError)) {
                     return;
                 }

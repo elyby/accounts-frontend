@@ -233,8 +233,8 @@ describe('OAuth', () => {
                 // '/api/oauth2/v1/complete/*',
                 statusCode: 401,
                 body: {
-                    statusCode: 401,
                     error: 'accept_required',
+                    error_description: 'Client must accept authentication request.',
                 },
             }).as('complete');
 
@@ -258,7 +258,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+&state=123$/);
+            assertRedirectedWithCode('123');
         });
 
         it('should redirect to error page, when permission request declined', () => {
@@ -268,8 +268,8 @@ describe('OAuth', () => {
                 // '/api/oauth2/v1/complete/*',
                 statusCode: 401,
                 body: {
-                    statusCode: 401,
                     error: 'accept_required',
+                    error_description: 'Client must accept authentication request.',
                 },
             }).as('complete');
 
@@ -555,7 +555,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
+            assertRedirectedWithCode();
         });
 
         it('should redirect to error page, when permission request declined', () => {
@@ -598,7 +598,7 @@ describe('OAuth', () => {
 
                 cy.findByTestId('auth-controls').contains('Approve').click();
 
-                cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
+                assertRedirectedWithCode();
             });
         });
 
@@ -624,7 +624,7 @@ describe('OAuth', () => {
 
             cy.findByTestId('auth-controls').contains('Approve').click();
 
-            cy.url().should('match', /^http:\/\/localhost:8080\/?\?code=[^&]+$/);
+            assertRedirectedWithCode();
         });
     });
 });
@@ -635,4 +635,20 @@ function assertPermissions() {
     cy.findByTestId('auth-header').should('contain', 'Application permissions');
     cy.findByTestId('auth-body').should('contain', 'Access to your profile data (except E‑mail)');
     cy.findByTestId('auth-body').should('contain', 'Access to your E‑mail address');
+}
+
+/**
+ * Checks only the params, that matter for the client, so the other params added by the backend don't break it
+ */
+function assertRedirectedWithCode(state?: string) {
+    cy.location('origin').should('equal', 'http://localhost:8080');
+    cy.location('search').should((search) => {
+        const query = new URLSearchParams(search);
+
+        expect(query.get('code')).to.be.a('string').and.not.be.empty;
+
+        if (state !== undefined) {
+            expect(query.get('state')).to.equal(state);
+        }
+    });
 }

@@ -108,8 +108,8 @@ describe('components/auth/actions', () => {
         describe('when the request is invalid', () => {
             it('should redirect the user to the client when the error has the redirect uri', async () => {
                 const error = new OAuthError(new Response('{}', { status: 400 }), {
-                    success: false,
                     error: 'request_not_supported',
+                    error_description: 'The request parameter is not supported.',
                     redirectUri: 'https://example.com/cb?error=request_not_supported&state=state',
                 });
                 (request.get as any).returns(Promise.reject(error));
@@ -130,7 +130,6 @@ describe('components/auth/actions', () => {
 
             it('should reject when the error has no redirect uri', async () => {
                 const error = new OAuthError(new Response('{}', { status: 400 }), {
-                    success: false,
                     // The error without a user message, so no alert is shown
                     error: 'server_error',
                 });
@@ -201,7 +200,6 @@ describe('components/auth/actions', () => {
 
         it('should resolve to with success false and redirectUri for access_denied', async () => {
             const resp = new OAuthError(new Response('{}', { status: 401 }), {
-                statusCode: 401,
                 error: 'access_denied',
                 redirectUri: 'redirectUri',
             });
@@ -218,7 +216,6 @@ describe('components/auth/actions', () => {
 
         it('should dispatch requirePermissionsAccept if accept_required', () => {
             const resp = new OAuthError(new Response('{}', { status: 401 }), {
-                statusCode: 401,
                 error: 'accept_required',
             });
 
