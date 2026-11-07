@@ -209,10 +209,7 @@ describe('User with invalid token and refreshToken', () => {
 
         cy.get('[name=password]').type(`${account2.password}{enter}`);
 
-        cy.url().should('contain', '/oauth/choose-account');
-
-        cy.get('[data-e2e-content]').contains(account2.username).click();
-
+        // The user has just logged into the account, so there is nothing to choose
         cy.url().should('contain', '//dev.ely.by');
     });
 });

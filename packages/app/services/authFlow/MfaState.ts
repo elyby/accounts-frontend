@@ -18,7 +18,7 @@ export default class MfaState extends AbstractState {
     }
 
     resolve(context: AuthContext, { totp }: { totp: string }): Promise<void> | void {
-        const { login, password, rememberMe, returnUrl, isRelogin } = getCredentials(context.getState());
+        const { login, password, rememberMe, returnUrl } = getCredentials(context.getState());
 
         return context
             .run('login', {
@@ -28,8 +28,10 @@ export default class MfaState extends AbstractState {
                 totp,
                 rememberMe,
             })
-            .then(() => !isRelogin && context.run('setAccountSwitcher', false))
             .then(() => {
+                // The user has just logged into the account, so there is nothing to choose
+                context.run('setAccountSwitcher', false);
+
                 if (returnUrl) {
                     context.navigate(returnUrl);
 

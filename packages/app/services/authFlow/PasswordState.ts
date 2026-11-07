@@ -32,7 +32,7 @@ export default class PasswordState extends AbstractState {
             rememberMe: boolean;
         },
     ): Promise<void> | void {
-        const { login, returnUrl, isRelogin } = getCredentials(context.getState());
+        const { login, returnUrl } = getCredentials(context.getState());
 
         return context
             .run('login', {
@@ -48,9 +48,8 @@ export default class PasswordState extends AbstractState {
                     return context.setState(new MfaState());
                 }
 
-                if (!isRelogin) {
-                    context.run('setAccountSwitcher', false);
-                }
+                // The user has just logged into the account, so there is nothing to choose
+                context.run('setAccountSwitcher', false);
 
                 if (returnUrl) {
                     context.navigate(returnUrl);

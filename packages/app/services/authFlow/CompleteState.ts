@@ -11,7 +11,6 @@ import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
 import { AuthContext } from './AuthFlow';
 
-const PROMPT_ACCOUNT_CHOOSE = 'select_account';
 const PROMPT_PERMISSIONS = 'consent';
 
 function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
@@ -84,15 +83,9 @@ export default class CompleteState extends AbstractState {
             }
         }
 
-        if (
-            isSwitcherEnabled &&
-            (accounts.available.length > 1 ||
-                // we are always showing account switcher for deleted users
-                // so that they can see, that their account was deleted
-                // (this info is displayed on switcher)
-                user.isDeleted ||
-                hasPrompt(oauth.prompt, PROMPT_ACCOUNT_CHOOSE))
-        ) {
+        // The account switcher is always shown, even for a single account.
+        // It's skipped only when the account is already known by the login_hint or the user has just logged in.
+        if (isSwitcherEnabled) {
             return context.setState(new ChooseAccountState());
         }
 

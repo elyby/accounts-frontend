@@ -203,6 +203,32 @@ describe('CompleteState', () => {
                     state.enter(context);
                 });
 
+                it('should transition to ChooseAccountState if user has a single acc and switcher enabled', () => {
+                    context.getState.returns({
+                        user: {
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }],
+                            active: 1,
+                        },
+                        auth: {
+                            credentials: {},
+                            isSwitcherEnabled: true,
+                            oauth: {
+                                params: {
+                                    clientId: 'ely.by',
+                                },
+                                prompt: [],
+                            },
+                        },
+                    });
+
+                    expectState(mock, ChooseAccountState);
+
+                    state.enter(context);
+                });
+
                 it('should transition to ChooseAccountState if user isDeleted', () => {
                     context.getState.returns({
                         user: {

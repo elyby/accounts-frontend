@@ -124,6 +124,23 @@ describe('PasswordState', () => {
             return expect(state.resolve(context, payload), 'to be fulfilled');
         });
 
+        it('should disable the account switcher on relogin', () => {
+            context.getState.returns({
+                auth: {
+                    credentials: {
+                        login: 'foo',
+                        isRelogin: true,
+                    },
+                },
+            });
+
+            expectRun(mock, 'login', sinon.match.object).returns(Promise.resolve());
+            expectRun(mock, 'setAccountSwitcher', false);
+            expectState(mock, CompleteState);
+
+            return expect(state.resolve(context, { password: 'bar', rememberMe: true }), 'to be fulfilled');
+        });
+
         it('should navigate to returnUrl if any', () => {
             const expectedLogin = 'foo';
             const expectedPassword = 'bar';

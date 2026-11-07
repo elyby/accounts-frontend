@@ -111,7 +111,7 @@ describe('MfaState', () => {
                 },
             });
 
-            // Should not run "setAccountSwitcher" because of isRelogin
+            expectRun(mock, 'setAccountSwitcher', false);
             expectRun(
                 mock,
                 'login',

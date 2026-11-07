@@ -16,6 +16,8 @@ describe('OAuth', () => {
 
             cy.visit(`/oauth2/v1/ely?${new URLSearchParams(defaults)}`);
 
+            chooseAccount();
+
             cy.url().should('equal', 'https://dev.ely.by/');
         });
 
@@ -40,6 +42,8 @@ describe('OAuth', () => {
 
             cy.visit('/');
 
+            chooseAccount();
+
             cy.url().should('equal', 'https://dev.ely.by/');
         });
 
@@ -63,6 +67,8 @@ describe('OAuth', () => {
                 })}`,
             );
 
+            chooseAccount();
+
             for (const alias of ['@validate', '@complete'] as const) {
                 cy.wait(alias).then(({ request }) => {
                     const query = new URL(request.url).searchParams;
@@ -84,6 +90,8 @@ describe('OAuth', () => {
 
             cy.visit('/code?user_code=E2E-APPROVED');
 
+            chooseAccount();
+
             cy.location('pathname').should('eq', '/oauth/finish');
             cy.get('[data-e2e-content]').contains('successfully completed');
         });
@@ -94,6 +102,8 @@ describe('OAuth', () => {
             cy.visit('/code');
 
             cy.get('[name=user_code]').type('E2E-UNAPPROVED{enter}');
+
+            chooseAccount();
 
             cy.location('pathname').should('eq', '/oauth/permissions');
 
@@ -110,6 +120,8 @@ describe('OAuth', () => {
 
             cy.get('[name=user_code]').type('E2E-APPROVED{enter}');
 
+            chooseAccount();
+
             cy.location('pathname').should('eq', '/oauth/finish');
             cy.get('[data-e2e-content]').contains('successfully completed');
         });
@@ -120,6 +132,8 @@ describe('OAuth', () => {
             cy.visit('/code');
 
             cy.get('[name=user_code]').type('E2E-UNAPPROVED{enter}');
+
+            chooseAccount();
 
             cy.location('pathname').should('eq', '/oauth/permissions');
 
@@ -204,6 +218,8 @@ describe('OAuth', () => {
                 })}`,
             );
 
+            chooseAccount();
+
             cy.wait('@complete');
 
             assertPermissions();
@@ -237,6 +253,8 @@ describe('OAuth', () => {
                     redirect_uri: 'http://localhost:8080',
                 })}`,
             );
+
+            chooseAccount();
 
             cy.wait('@complete');
 
@@ -506,6 +524,8 @@ describe('OAuth', () => {
                 })}`,
             );
 
+            chooseAccount();
+
             assertPermissions();
 
             cy.findByTestId('auth-controls').contains('Approve').click();
@@ -524,6 +544,8 @@ describe('OAuth', () => {
                     prompt: 'consent',
                 })}`,
             );
+
+            chooseAccount();
 
             cy.url().should('include', '/oauth/permissions');
 
@@ -583,6 +605,15 @@ describe('OAuth', () => {
         });
     });
 });
+
+/**
+ * The account switcher is always shown during oauth for the logged in user
+ */
+function chooseAccount(email: string = account1.email) {
+    cy.url().should('include', '/oauth/choose-account');
+
+    cy.findByTestId('auth-body').contains(email).click();
+}
 
 function assertPermissions() {
     cy.url().should('include', '/oauth/permissions');
