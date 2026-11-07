@@ -229,6 +229,59 @@ describe('CompleteState', () => {
                     state.enter(context);
                 });
 
+                it('should NOT transition to ChooseAccountState if prompt=skip_account_selection', () => {
+                    context.getState.returns({
+                        user: {
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }, { id: 2 }],
+                            active: 1,
+                        },
+                        auth: {
+                            credentials: {},
+                            isSwitcherEnabled: true,
+                            oauth: {
+                                params: {
+                                    clientId: 'ely.by',
+                                },
+                                prompt: ['skip_account_selection'],
+                            },
+                        },
+                    });
+
+                    expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve());
+
+                    state.enter(context);
+                });
+
+
+                it('should transition to ChooseAccountState if both prompt=select_account and skip_account_selection', () => {
+                    context.getState.returns({
+                        user: {
+                            isGuest: false,
+                        },
+                        accounts: {
+                            available: [{ id: 1 }],
+                            active: 1,
+                        },
+                        auth: {
+                            credentials: {},
+                            isSwitcherEnabled: true,
+                            oauth: {
+                                params: {
+                                    clientId: 'ely.by',
+                                },
+                                prompt: ['skip_account_selection', 'select_account'],
+                            },
+                        },
+                    });
+
+                    expectState(mock, ChooseAccountState);
+
+                    state.enter(context);
+                });
+
                 it('should transition to ChooseAccountState if user isDeleted', () => {
                     context.getState.returns({
                         user: {

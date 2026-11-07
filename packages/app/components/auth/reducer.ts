@@ -50,11 +50,11 @@ export interface OAuthState {
     params: OauthAuthCodeFlowParams | OauthDeviceCodeFlowParams;
     description?: string;
     /**
-     * Possible values:
-     * - none - default behaviour
-     * - consent - forcibly prompt user for rules acceptance
-     * - select_account - force account choosage, even if user has only one
-     * comma separated list of 'none' | 'consent' | 'select_account';
+     * The supported values (comma separated list):
+     * - consent - forcibly prompt user for permissions acceptance
+     * - select_account - show the account switcher. It's shown by default anyway, but this value wins
+     *                    over skip_account_selection
+     * - skip_account_selection - our own extension: don't show the account switcher and use the active account
      */
     prompt?: string | Array<string>;
     /**

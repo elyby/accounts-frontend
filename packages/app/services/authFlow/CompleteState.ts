@@ -12,6 +12,11 @@ import FinishState from './FinishState';
 import { AuthContext } from './AuthFlow';
 
 const PROMPT_PERMISSIONS = 'consent';
+const PROMPT_ACCOUNT_CHOOSE = 'select_account';
+/**
+ * Our own extension: skips the account switcher and completes the authorization with the active account.
+ */
+const PROMPT_SKIP_ACCOUNT_CHOOSE = 'skip_account_selection';
 
 function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
     if (Array.isArray(prompt)) {
@@ -19,6 +24,13 @@ function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
     }
 
     return prompt === needle;
+}
+
+/**
+ * The client may ask to skip the switcher. The standard select_account wins over our own extension
+ */
+function canSkipAccountSwitcher(prompt: OAuthState['prompt']): boolean {
+    return hasPrompt(prompt, PROMPT_SKIP_ACCOUNT_CHOOSE) && !hasPrompt(prompt, PROMPT_ACCOUNT_CHOOSE);
 }
 
 export default class CompleteState extends AbstractState {
@@ -84,8 +96,9 @@ export default class CompleteState extends AbstractState {
         }
 
         // The account switcher is always shown, even for a single account.
-        // It's skipped only when the account is already known by the login_hint or the user has just logged in.
-        if (isSwitcherEnabled) {
+        // It's skipped when the account is already known by the login_hint, the user has just logged in,
+        // or when the client has asked to skip it with prompt
+        if (isSwitcherEnabled && !canSkipAccountSwitcher(oauth.prompt)) {
             return context.setState(new ChooseAccountState());
         }
 

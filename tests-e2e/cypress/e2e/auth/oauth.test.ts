@@ -487,6 +487,19 @@ describe('OAuth', () => {
             });
         });
 
+        it('should skip the account switcher and use the active account', () => {
+            cy.login({ accounts: ['default', 'default2'] });
+
+            cy.visit(
+                `/oauth2/v1/ely?${new URLSearchParams({
+                    ...defaults,
+                    prompt: 'skip_account_selection',
+                })}`,
+            );
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
         it('should allow sign in with another account', () => {
             cy.login({ accounts: ['default2'] });
 
