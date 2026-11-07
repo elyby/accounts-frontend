@@ -131,26 +131,6 @@ describe('CompleteState', () => {
         });
 
         describe('oauth', () => {
-            it('should transition to finish state if code is present', () => {
-                context.getState.returns({
-                    user: {
-                        isGuest: false,
-                    },
-                    auth: {
-                        credentials: {},
-                        oauth: {
-                            params: {
-                                clientId: 'ely.by',
-                            },
-                            code: 'XXX',
-                        },
-                    },
-                });
-
-                expectState(mock, FinishState);
-
-                state.enter(context);
-            });
 
             describe('permissions', () => {
                 it('should transition to permissions state if acceptRequired', () => {
@@ -410,11 +390,8 @@ describe('CompleteState', () => {
             return promise.catch(mock.verify.bind(mock));
         };
 
-        it('should transition to finish state if rejected with static_page', () =>
-            testOAuth('resolve', { redirectUri: 'static_page' }, FinishState));
-
-        it('should transition to finish state if rejected with static_page_with_code', () =>
-            testOAuth('resolve', { redirectUri: 'static_page_with_code' }, FinishState));
+        it('should transition to finish state if resolved without redirect uri', () =>
+            testOAuth('resolve', { success: true }, FinishState));
 
         it('should transition to login state if rejected with unauthorized', () =>
             testOAuth(

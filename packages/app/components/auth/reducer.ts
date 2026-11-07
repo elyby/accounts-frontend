@@ -63,8 +63,6 @@ export interface OAuthState {
      */
     loginHint?: string;
     success?: boolean;
-    code?: string;
-    displayCode?: boolean;
     acceptRequired?: boolean;
 }
 

@@ -12,7 +12,6 @@ import {
     setClient,
     setOAuthRequest,
     setScopes,
-    setOAuthCode,
     requirePermissionsAccept,
     login,
     setLogin,
@@ -177,26 +176,6 @@ describe('components/auth/actions', () => {
             ]);
         });
 
-        it('should dispatch setOAuthCode for static_page redirect', () => {
-            const resp = {
-                success: true,
-                redirectUri: 'static_page?code=123&state=',
-            };
-
-            (request.post as any).returns(Promise.resolve(resp));
-
-            return callThunk(oAuthComplete).then(() => {
-                expectDispatchCalls([
-                    [
-                        setOAuthCode({
-                            success: true,
-                            code: '123',
-                            displayCode: false,
-                        }),
-                    ],
-                ]);
-            });
-        });
 
         it('should resolve to with success false and redirectUri for access_denied', async () => {
             const resp = new OAuthError(new Response('{}', { status: 401 }), {

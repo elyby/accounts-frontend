@@ -104,10 +104,6 @@ export default class CompleteState extends AbstractState {
             return context.navigate('/');
         }
 
-        if (oauth.code) {
-            return context.setState(new FinishState());
-        }
-
         const data: Record<string, any> = {};
 
         if (typeof this.isPermissionsAccepted !== 'undefined') {
@@ -122,9 +118,8 @@ export default class CompleteState extends AbstractState {
         return context
             .run('oAuthComplete', data)
             .then((resp: { redirectUri?: string }) => {
-                // TODO: пусть в стейт попадает флаг или тип авторизации
-                //       вместо волшебства над редирект урлой
-                if (!resp.redirectUri || resp.redirectUri.includes('static_page')) {
+                // The device code flow has no address to return the user to
+                if (!resp.redirectUri) {
                     context.setState(new FinishState());
                 } else {
                     return context.run('redirect', resp.redirectUri);

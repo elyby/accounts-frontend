@@ -59,7 +59,7 @@ export const availableActions = {
     resetOAuth: actions.resetOAuth,
     resetAuth: actions.resetAuth,
     setOAuthRequest: actions.setOAuthRequest,
-    setOAuthCode: actions.setOAuthCode,
+    setOAuthResult: actions.setOAuthResult,
     requirePermissionsAccept: actions.requirePermissionsAccept,
     setScopes: actions.setScopes,
     setLoadingState: actions.setLoadingState,

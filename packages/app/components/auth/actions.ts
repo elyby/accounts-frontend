@@ -369,24 +369,12 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
 
                 localStorage.removeItem('oauthData');
 
+                // The device code flow has no address to return the user to, so the result is shown on our page
                 if (!resp.redirectUri) {
                     dispatch(
-                        setOAuthCode({
+                        setOAuthResult({
                             // if accept is undefined, then it was auto approved
                             success: resp.success && (typeof params.accept === 'undefined' || params.accept),
-                        }),
-                    );
-                } else if (resp.redirectUri.startsWith('static_page')) {
-                    const displayCode = resp.redirectUri.includes('static_page_with_code');
-
-                    const [, code] = resp.redirectUri.match(/code=([^&]+)/) || [];
-                    [, resp.redirectUri] = resp.redirectUri.match(/^(.+)\?/) || [];
-
-                    dispatch(
-                        setOAuthCode({
-                            success: resp.success,
-                            code,
-                            displayCode,
                         }),
                     );
                 }
@@ -480,10 +468,10 @@ export function setOAuthRequest(payload: SetOauthRequestPayload | null): SetOaut
 
 interface SetOAuthResultAction extends ReduxAction {
     type: 'set_oauth_result';
-    payload: Pick<OAuthState, 'success' | 'code' | 'displayCode'>;
+    payload: Pick<OAuthState, 'success'>;
 }
 
-export function setOAuthCode(payload: Pick<OAuthState, 'success' | 'code' | 'displayCode'>): SetOAuthResultAction {
+export function setOAuthResult(payload: SetOAuthResultAction['payload']): SetOAuthResultAction {
     return {
         type: 'set_oauth_result',
         payload,

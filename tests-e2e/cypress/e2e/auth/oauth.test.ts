@@ -76,51 +76,6 @@ describe('OAuth', () => {
                 });
             }
         });
-
-        describe('static pages', () => {
-            it('should authenticate using static page', () => {
-                cy.intercept('POST', '/api/oauth2/v1/complete**').as('complete');
-
-                cy.login({ accounts: ['default'] });
-
-                cy.visit(
-                    `/oauth2/v1/ely?${new URLSearchParams({
-                        ...defaults,
-                        client_id: 'tlauncher',
-                        redirect_uri: 'static_page',
-                    })}`,
-                );
-
-                cy.wait('@complete');
-
-                cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
-            });
-
-            it('should authenticate using static page with code', () => {
-                cy.intercept('POST', '/api/oauth2/v1/complete**').as('complete');
-
-                cy.login({ accounts: ['default'] });
-
-                cy.visit(
-                    `/oauth2/v1/ely?${new URLSearchParams({
-                        ...defaults,
-                        client_id: 'tlauncher',
-                        redirect_uri: 'static_page_with_code',
-                    })}`,
-                );
-
-                cy.wait('@complete');
-
-                cy.url().should('include', 'oauth/finish#{%22auth_code%22:');
-
-                cy.findByTestId('oauth-code-container').should('contain', 'provide the following code');
-
-                // just click on copy, but we won't assert if the string was copied
-                // because it is a little bit complicated
-                // https://github.com/cypress-io/cypress/issues/2752
-                cy.findByTestId('oauth-code-container').contains('Copy').click();
-            });
-        });
     });
 
     describe('DeviceCode grant flow', () => {

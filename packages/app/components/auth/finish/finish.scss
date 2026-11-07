@@ -58,19 +58,3 @@
     font-size: 18px;
     margin-bottom: 10px;
 }
-
-.codeContainer {
-    margin-bottom: 5px;
-    margin-top: 35px;
-}
-
-.code {
-    $border: 5px solid darker($green);
-
-    display: inline-block;
-    border-right: $border;
-    border-left: $border;
-    padding: 5px 10px;
-    word-break: break-all;
-    text-align: center;
-}
