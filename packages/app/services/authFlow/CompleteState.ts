@@ -1,4 +1,10 @@
-import { OAuthState } from 'app/components/auth/reducer';
+import {
+    type OAuthState,
+    PROMPT_ACCOUNT_CHOOSE,
+    PROMPT_NONE,
+    PROMPT_PERMISSIONS,
+    PROMPT_SKIP_ACCOUNT_CHOOSE,
+} from 'app/components/auth/reducer';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import { OAuthError, UnauthorizedError } from 'app/services/request';
 
@@ -11,19 +17,16 @@ import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
 import { AuthContext } from './AuthFlow';
 
-const PROMPT_PERMISSIONS = 'consent';
-const PROMPT_ACCOUNT_CHOOSE = 'select_account';
-/**
- * Our own extension: skips the account switcher and completes the authorization with the active account.
- */
-const PROMPT_SKIP_ACCOUNT_CHOOSE = 'skip_account_selection';
-
-function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
-    if (Array.isArray(prompt)) {
-        return prompt.includes(needle);
+function toArray(input: string|Array<string>|null|undefined): Array<string> {
+    if (Array.isArray(input)) {
+        return input;
     }
 
-    return prompt === needle;
+    return input ? [input] : [];
+}
+
+function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
+    return toArray(prompt).includes(needle);
 }
 
 /**
@@ -52,11 +55,24 @@ export default class CompleteState extends AbstractState {
             user,
         } = context.getState();
 
-        if (credentials.isActivationRequired) {
-            context.setState(new ActivationState());
-        } else if (user.isGuest) {
-            context.setState(new LoginState());
+        const isSilent = hasPrompt(oauth?.prompt, PROMPT_NONE);
+
+        // Prompt "none" can't be combined with others
+        if (isSilent && toArray(oauth?.prompt).length > 1) {
+            return this.returnError(context, 'invalid_request');
+        }
+
+        if (credentials.isActivationRequired || user.isGuest) {
+            if (isSilent) {
+                return this.returnError(context, 'login_required');
+            }
+
+            context.setState(credentials.isActivationRequired ? new ActivationState() : new LoginState());
         } else if (user.shouldAcceptRules && !user.isDeleted) {
+            if (isSilent) {
+                return this.returnError(context, 'interaction_required');
+            }
+
             context.setState(new AcceptRulesState());
         } else if (oauth?.params) {
             return this.processOAuth(context);
@@ -75,6 +91,7 @@ export default class CompleteState extends AbstractState {
             throw new Error('Empty oauth state');
         }
 
+        const isSilent = hasPrompt(oauth.prompt, PROMPT_NONE);
         const { loginHint } = oauth;
 
         if (loginHint) {
@@ -89,20 +106,32 @@ export default class CompleteState extends AbstractState {
                 isSwitcherEnabled = false;
 
                 if (!activeAccount || account.id !== activeAccount.id) {
-                    // lets switch user to an account, that is needed for auth
+                    // Let's switch user to an account, that is needed for auth
                     return context.run('authenticate', account).then(() => context.setState(new CompleteState()));
                 }
+            } else if (isSilent) {
+                return this.returnError(context, 'login_required');
             }
+        }
+
+        // The silent authorization can't choose from multiple accounts without a login_hint
+        if (isSwitcherEnabled && isSilent && accounts.available.length > 1) {
+            return this.returnError(context, 'account_selection_required');
         }
 
         // The account switcher is always shown, even for a single account.
         // It's skipped when the account is already known by the login_hint, the user has just logged in,
-        // or when the client has asked to skip it with prompt
-        if (isSwitcherEnabled && !canSkipAccountSwitcher(oauth.prompt)) {
+        // or when the client has asked to skip it with prompt.
+        // At this point prompt "none" would be already assert that there is only 1 account
+        if (isSwitcherEnabled && !isSilent && !canSkipAccountSwitcher(oauth.prompt)) {
             return context.setState(new ChooseAccountState());
         }
 
         if (user.isDeleted) {
+            if (isSilent) {
+                return this.returnError(context, 'interaction_required');
+            }
+
             // you shall not pass
             // if we are here, this means that user have already seen account
             // switcher and now we should redirect him to his profile,
@@ -115,6 +144,10 @@ export default class CompleteState extends AbstractState {
         if (typeof this.isPermissionsAccepted !== 'undefined') {
             data.accept = this.isPermissionsAccepted;
         } else if (oauth.acceptRequired || hasPrompt(oauth.prompt, PROMPT_PERMISSIONS)) {
+            if (isSilent) {
+                return this.returnError(context, 'consent_required');
+            }
+
             context.setState(new PermissionsState());
 
             return;
@@ -133,10 +166,24 @@ export default class CompleteState extends AbstractState {
             })
             .catch((error) => {
                 if (error instanceof UnauthorizedError) {
+                    if (isSilent) {
+                        return this.returnError(context, 'login_required');
+                    }
+
                     context.setState(new LoginState());
                 } else if (error instanceof OAuthError && error.error === 'accept_required') {
+                    if (isSilent) {
+                        return this.returnError(context, 'consent_required');
+                    }
+
                     context.setState(new PermissionsState());
                 }
             });
+    }
+
+    private returnError(context: AuthContext, error: string): Promise<void> {
+        // When the user is redirected to the client, the promise never resolves (see the redirect action),
+        // so the navigation happens only when there is no address to return the user to
+        return context.run('oAuthRedirectError', error).then(() => context.navigate('/'));
     }
 }

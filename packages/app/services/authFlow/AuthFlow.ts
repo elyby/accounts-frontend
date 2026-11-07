@@ -55,6 +55,7 @@ export const availableActions = {
     clearErrors: actions.clearErrors,
     oAuthValidate: actions.oAuthValidate,
     oAuthComplete: actions.oAuthComplete,
+    oAuthRedirectError: actions.oAuthRedirectError,
     setClient: actions.setClient,
     resetOAuth: actions.resetOAuth,
     resetAuth: actions.resetAuth,

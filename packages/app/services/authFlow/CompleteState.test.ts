@@ -714,4 +714,142 @@ describe('CompleteState', () => {
             state.enter(context);
         });
     });
+
+    describe('silent authorization (prompt=none)', () => {
+        function getSilentState({
+            user = {},
+            credentials = {},
+            oauth = {},
+            accounts = { available: [{ id: 1 }], active: 1 },
+        }: {
+            user?: Record<string, any>;
+            credentials?: Record<string, any>;
+            oauth?: Record<string, any>;
+            accounts?: Record<string, any>;
+        } = {}) {
+            return {
+                user: { isGuest: false, ...user },
+                accounts,
+                auth: {
+                    credentials,
+                    isSwitcherEnabled: true,
+                    oauth: { params: { query: {} }, prompt: ['none'], ...oauth },
+                },
+            };
+        }
+
+        // When there is no address to return the user to, the user stays on our side
+        function expectRedirectError(error: string) {
+            expectRun(mock, 'oAuthRedirectError', error).returns(Promise.resolve());
+            expectNavigate(mock, '/');
+        }
+
+        it('should return invalid_request, when none is combined with other values', async () => {
+            context.getState.returns(getSilentState({ oauth: { prompt: ['none', 'consent'] } }));
+            expectRedirectError('invalid_request');
+
+            await state.enter(context);
+        });
+
+        it('should return login_required for a guest', async () => {
+            context.getState.returns(getSilentState({ user: { isGuest: true } }));
+            expectRedirectError('login_required');
+
+            await state.enter(context);
+        });
+
+        it('should return login_required, when the account activation is required', async () => {
+            context.getState.returns(getSilentState({ credentials: { isActivationRequired: true } }));
+            expectRedirectError('login_required');
+
+            await state.enter(context);
+        });
+
+        it('should return interaction_required, when the rules must be accepted', async () => {
+            context.getState.returns(getSilentState({ user: { shouldAcceptRules: true } }));
+            expectRedirectError('interaction_required');
+
+            await state.enter(context);
+        });
+
+        it('should return interaction_required for a deleted account', async () => {
+            context.getState.returns(getSilentState({ user: { isDeleted: true } }));
+            expectRedirectError('interaction_required');
+
+            await state.enter(context);
+        });
+
+        it('should return login_required, when the login_hint account is not logged in', async () => {
+            context.getState.returns(getSilentState({ oauth: { loginHint: 'unknown@ely.by' } }));
+            expectRedirectError('login_required');
+
+            await state.enter(context);
+        });
+
+        it('should return consent_required, when the permissions must be accepted', async () => {
+            context.getState.returns(getSilentState({ oauth: { acceptRequired: true } }));
+            expectRedirectError('consent_required');
+
+            await state.enter(context);
+        });
+
+        it('should return account_selection_required, when the user has multiple accounts', async () => {
+            context.getState.returns(getSilentState({ accounts: { available: [{ id: 1 }, { id: 2 }], active: 1 } }));
+            expectRedirectError('account_selection_required');
+
+            await state.enter(context);
+        });
+
+        it('should complete with the login_hint account, when the user has multiple accounts', async () => {
+            context.getState.returns(
+                getSilentState({
+                    accounts: { available: [{ id: 1, email: 'foo@ely.by' }, { id: 2 }], active: 1 },
+                    oauth: { loginHint: 'foo@ely.by' },
+                }),
+            );
+            expectRun(mock, 'setAccountSwitcher', false);
+            expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve({ redirectUri: 'https://example.com?code=1' }));
+            expectRun(mock, 'redirect', 'https://example.com?code=1');
+
+            await state.enter(context);
+        });
+
+        it('should not show the account switcher and complete with the single account', async () => {
+            context.getState.returns(getSilentState());
+            expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve({ redirectUri: 'https://example.com?code=1' }));
+            expectRun(mock, 'redirect', 'https://example.com?code=1');
+
+            await state.enter(context);
+        });
+
+        it('should return login_required, when the completion is rejected as unauthorized', async () => {
+            context.getState.returns(getSilentState());
+            expectRun(mock, 'oAuthComplete', {}).returns(
+                Promise.reject(
+                    new UnauthorizedError(new Response('{}', { status: 401 }), { name: 'Unauthorized', status: 401 }),
+                ),
+            );
+            expectRedirectError('login_required');
+
+            await state.enter(context);
+        });
+
+        it('should return consent_required, when the completion requires the permissions acceptance', async () => {
+            context.getState.returns(getSilentState());
+            expectRun(mock, 'oAuthComplete', {}).returns(
+                Promise.reject(new OAuthError(new Response('{}', { status: 401 }), { error: 'accept_required' })),
+            );
+            expectRedirectError('consent_required');
+
+            await state.enter(context);
+        });
+
+        it('should not navigate, while the user is being redirected to the client', () => {
+            context.getState.returns(getSilentState({ user: { isGuest: true } }));
+            // The redirect never resolves
+            expectRun(mock, 'oAuthRedirectError', 'login_required').returns(new Promise(() => {}));
+
+            state.enter(context);
+        });
+    });
 });

@@ -50,6 +50,13 @@ export type OauthRequestData = (AuthCodeFlowRequestData | DeviceCodeFlowRequestD
 };
 
 export interface OAuthValidateResponse {
+    oAuth: {
+        /**
+         * Might contain query part. Absent for the device code flow.
+         * Must not be passed back to the backend as the redirect_uri.
+         */
+        redirect_uri?: string;
+    };
     session: {
         scopes: Scope[];
     };

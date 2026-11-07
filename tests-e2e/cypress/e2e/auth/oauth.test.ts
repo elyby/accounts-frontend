@@ -617,6 +617,131 @@ describe('OAuth', () => {
             assertRedirectedWithCode();
         });
     });
+
+    describe('prompt=none', () => {
+        // The client, that returns the user to the localhost:8080, which is the app itself in the tests
+        const silentRequest = {
+            ...defaults,
+            client_id: 'tlauncher',
+            redirect_uri: 'http://localhost:8080',
+            state: '123',
+            prompt: 'none',
+        };
+
+        beforeEach(() => {
+            // The app would redirect the guest from its own main page to /login and the error params would be lost
+            cy.intercept('GET', /^http:\/\/localhost:8080\/?\?(.+&)?error=/, {
+                statusCode: 200,
+                headers: { 'content-type': 'text/html' },
+                body: '<html><body>The client</body></html>',
+            });
+        });
+
+        it('should complete silently with the single account', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'none' })}`);
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should complete silently with the login_hint account, when there are multiple accounts', () => {
+            cy.login({ accounts: ['default2', 'default'] }).then(({ accounts: [, account] }) => {
+                cy.visit(
+                    `/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'none', login_hint: account.email })}`,
+                );
+
+                cy.url().should('equal', 'https://dev.ely.by/');
+            });
+        });
+
+        it('should return login_required for a guest and not remember the request', () => {
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(silentRequest)}`);
+
+            assertRedirectedWithError('login_required', '123');
+            cy.window().then((win) => expect(win.localStorage.getItem('oauthData')).to.equal(null));
+        });
+
+        it('should return account_selection_required for multiple accounts', () => {
+            cy.login({ accounts: ['default', 'default2'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(silentRequest)}`);
+
+            assertRedirectedWithError('account_selection_required', '123');
+        });
+
+        it('should return login_required, when the login_hint account is not logged in', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...silentRequest, login_hint: 'unknown@ely.by' })}`);
+
+            assertRedirectedWithError('login_required', '123');
+        });
+
+        it('should return invalid_request, when none is combined with other values', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...silentRequest, prompt: 'none consent' })}`);
+
+            assertRedirectedWithError('invalid_request', '123');
+        });
+
+        it('should return consent_required, when the permissions must be accepted', () => {
+            cy.intercept('POST', new RegExp('/api/oauth2/v1/complete'), {
+                statusCode: 401,
+                body: {
+                    error: 'accept_required',
+                    error_description: 'Client must accept authentication request.',
+                },
+            });
+
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams(silentRequest)}`);
+
+            assertRedirectedWithError('consent_required', '123');
+        });
+
+        it('should return interaction_required, when the rules must be accepted', () => {
+            cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
+                cy.intercept('GET', `/api/v1/accounts/${account.id}`, (req) => {
+                    req.continue((res) => {
+                        res.body.shouldAcceptRules = true;
+                    });
+                });
+
+                cy.visit(`/oauth2/v1/ely?${new URLSearchParams(silentRequest)}`);
+
+                assertRedirectedWithError('interaction_required', '123');
+            });
+        });
+
+        it('should return interaction_required for a deleted account', () => {
+            cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
+                cy.intercept('GET', `/api/v1/accounts/${account.id}`, (req) => {
+                    req.continue((res) => {
+                        res.body.isDeleted = true;
+                    });
+                });
+
+                cy.visit(`/oauth2/v1/ely?${new URLSearchParams(silentRequest)}`);
+
+                assertRedirectedWithError('interaction_required', '123');
+            });
+        });
+
+        it('should be ignored for the device code flow', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit('/code?user_code=E2E-APPROVED&prompt=none');
+
+            // The account switcher is shown as usual
+            chooseAccount();
+
+            cy.location('pathname').should('eq', '/oauth/finish');
+            cy.get('[data-e2e-content]').contains('successfully completed');
+        });
+    });
 });
 
 /**
@@ -645,6 +770,22 @@ function assertRedirectedWithCode(state?: string) {
         const query = new URLSearchParams(search);
 
         expect(query.get('code')).to.be.a('string').and.not.be.empty;
+
+        if (state !== undefined) {
+            expect(query.get('state')).to.equal(state);
+        }
+    });
+}
+
+/**
+ * Checks only the params, that matter for the client, so the other params added by the backend don't break it
+ */
+function assertRedirectedWithError(error: string, state?: string) {
+    cy.location('origin').should('equal', 'http://localhost:8080');
+    cy.location('search').should((search) => {
+        const query = new URLSearchParams(search);
+
+        expect(query.get('error')).to.equal(error);
 
         if (state !== undefined) {
             expect(query.get('state')).to.equal(state);

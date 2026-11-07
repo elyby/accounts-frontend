@@ -9,6 +9,7 @@ import {
     setLoadingState,
     oAuthValidate,
     oAuthComplete,
+    oAuthRedirectError,
     setClient,
     setOAuthRequest,
     setScopes,
@@ -73,6 +74,9 @@ describe('components/auth/actions', () => {
 
         beforeEach(() => {
             resp = {
+                oAuth: {
+                    redirect_uri: 'http://127.0.0.1:8080/cb?state=state&iss=https%3A%2F%2Faccount.ely.by',
+                },
                 client: {
                     id: '123',
                     name: '',
@@ -162,11 +166,80 @@ describe('components/auth/actions', () => {
                             params: oauthData.params,
                             prompt: ['none'],
                             loginHint: undefined,
+                            redirectUri: resp.oAuth.redirect_uri,
                         }),
                     ],
                     [setScopes(resp.session.scopes)],
                 ]);
             }));
+
+        it('should drop prompt=none, when there is no address to return an error to', async () => {
+            // e.g. the device code flow
+            delete resp.oAuth.redirect_uri;
+
+            await callThunk(oAuthValidate, { params: { userCode: 'USERCODE' }, prompt: 'none consent' });
+
+            expect(dispatch, 'to have a call satisfying', [{ type: 'set_oauth', payload: { prompt: ['consent'] } }]);
+        });
+
+        describe('oauthData persistence', () => {
+            beforeEach(() => window.localStorage.removeItem('oauthData'));
+
+            it('should store the request to restore it later', async () => {
+                await callThunk(oAuthValidate, { ...oauthData, prompt: 'consent' });
+
+                expect(window.localStorage.getItem('oauthData'), 'not to be null');
+            });
+
+            it('should not store the silent request', async () => {
+                await callThunk(oAuthValidate, { ...oauthData, prompt: 'none' });
+
+                expect(window.localStorage.getItem('oauthData'), 'to be null');
+            });
+        });
+    });
+
+    describe('#oAuthRedirectError()', () => {
+        it('should redirect the user to the client, when the error redirect uri is known', async () => {
+            getState.returns({
+                auth: {
+                    oauth: {
+                        ...oauthData,
+                        redirectUri: 'http://127.0.0.1:8080/cb?state=state&iss=https%3A%2F%2Faccount.ely.by',
+                    },
+                },
+            });
+            // The redirect never resolves, since the page is unloaded
+            dispatch.withArgs(sinon.match.func).returns(new Promise(() => {}));
+
+            const result = await Promise.race([
+                callThunk(oAuthRedirectError, 'login_required').then(() => 'resolved'),
+                new Promise((resolve) => setTimeout(() => resolve('pending'), 10)),
+            ]);
+
+            expect(result, 'to equal', 'pending');
+            expect(dispatch, 'to have a call satisfying', [expect.it('to be a function')]);
+        });
+
+        it('should show the error and reset the oauth request, when there is no error redirect uri', async () => {
+            const clock = sinon.useFakeTimers();
+            const alert = sinon.stub(window, 'alert');
+
+            try {
+                getState.returns({ auth: { oauth: oauthData } });
+                // resetOAuth is a thunk, so run it to get the actual actions
+                dispatch.withArgs(sinon.match.func).callsFake((thunk) => thunk(dispatch, getState));
+
+                await callThunk(oAuthRedirectError, 'login_required');
+                clock.tick(500);
+
+                expect(dispatch, 'to have a call satisfying', [setOAuthRequest(null)]);
+                expect(alert, 'to have a call satisfying', [expect.it('to contain', 'login_required')]);
+            } finally {
+                alert.restore();
+                clock.restore();
+            }
+        });
     });
 
     describe('#oAuthComplete()', () => {

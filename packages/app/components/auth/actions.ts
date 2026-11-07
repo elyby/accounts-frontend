@@ -26,7 +26,7 @@ import { Action as AppAction, Dispatch } from 'app/types';
 import { OAuthError, ValidationError as RequestValidationError } from 'app/services/request';
 import { CaptchaValue } from 'app/services/captcha';
 
-import { Credentials, Client, OAuthState, getCredentials } from './reducer';
+import { Credentials, Client, OAuthState, PROMPT_NONE, getCredentials } from './reducer';
 
 interface ValidationErrorLiteral {
     type: string;
@@ -320,12 +320,19 @@ export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'descriptio
             .validate(getOAuthRequest(oauthData))
             .then((resp) => {
                 const { scopes } = resp.session;
-                let { prompt } = oauthData;
+                let prompt: Array<string> | undefined;
 
-                if (prompt && !Array.isArray(prompt)) {
+                if (Array.isArray(oauthData.prompt)) {
+                    prompt = oauthData.prompt;
+                } else if (oauthData.prompt) {
                     // The values are space delimited (OpenID Connect Core 1.0 section 3.1.2.1),
                     // but initially we implemented it with comma, so keep support
-                    prompt = prompt.split(/[\s,]+/).filter(Boolean);
+                    prompt = oauthData.prompt.split(/[\s,]+/).filter(Boolean);
+                }
+
+                // Skip prompt "none" for auth flows without redirectUri (e.g. device_code)
+                if (prompt && !resp.oAuth.redirect_uri) {
+                    prompt = prompt.filter((value) => value !== PROMPT_NONE);
                 }
 
                 dispatch(setClient(resp.client));
@@ -335,17 +342,22 @@ export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'descriptio
                         description: oauthData.description,
                         loginHint: oauthData.loginHint,
                         prompt,
+                        redirectUri: resp.oAuth.redirect_uri,
                     }),
                 );
                 dispatch(setScopes(scopes));
-                localStorage.setItem(
-                    'oauthData',
-                    JSON.stringify({
-                        // @see services/authFlow/AuthFlow
-                        timestamp: Date.now(),
-                        payload: oauthData,
-                    }),
-                );
+
+                // The "none" prompt is one-shot, there is nothing to restore in case of an error
+                if (!prompt?.includes(PROMPT_NONE)) {
+                    localStorage.setItem(
+                        'oauthData',
+                        JSON.stringify({
+                            // @see services/authFlow/AuthFlow
+                            timestamp: Date.now(),
+                            payload: oauthData,
+                        }),
+                    );
+                }
             })
             .catch((error) => handleOauthParamsValidation(dispatch, error)),
     );
@@ -438,6 +450,29 @@ function handleOauthParamsValidation(dispatch: Dispatch, error: unknown): Promis
     return Promise.reject(error);
 }
 
+/**
+ * Returns the error to the client, when the authorization can't be completed.
+ * When there is no address to return the user to, the error is shown and the oauth request is reset
+ */
+export function oAuthRedirectError(error: string): AppAction<Promise<void>> {
+    return (dispatch, getState) => {
+        const redirectUri = getState().auth.oauth?.redirectUri;
+
+        if (redirectUri) {
+            const url = new URL(redirectUri);
+            url.searchParams.set('error', error);
+
+            return dispatch(redirect(url.toString()));
+        }
+
+        dispatch(resetOAuth());
+        // eslint-disable-next-line no-alert
+        setTimeout(() => alert(`Authorization failed: ${error}`), 500); // 500 ms to allow re-render
+
+        return Promise.resolve();
+    };
+}
+
 interface SetClientAction extends ReduxAction {
     type: 'set_client';
     payload: Client;
@@ -457,7 +492,7 @@ interface SetOauthAction extends ReduxAction {
     payload: OAuthState | null;
 }
 
-type SetOauthRequestPayload = Pick<OAuthState, 'params' | 'description' | 'loginHint' | 'prompt'>;
+type SetOauthRequestPayload = Pick<OAuthState, 'params' | 'description' | 'loginHint' | 'prompt' | 'redirectUri'>;
 
 // Input data is coming right from the query string, so the names
 // are the same, as used for initializing OAuth2 request
