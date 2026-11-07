@@ -323,7 +323,9 @@ export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'descriptio
                 let { prompt } = oauthData;
 
                 if (prompt && !Array.isArray(prompt)) {
-                    prompt = prompt.split(',').map((item) => item.trim());
+                    // The values are space delimited (OpenID Connect Core 1.0 section 3.1.2.1),
+                    // but initially we implemented it with comma, so keep support
+                    prompt = prompt.split(/[\s,]+/).filter(Boolean);
                 }
 
                 dispatch(setClient(resp.client));

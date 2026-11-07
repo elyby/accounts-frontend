@@ -86,6 +86,20 @@ describe('components/auth/actions', () => {
             (request.get as any).returns(Promise.resolve(resp));
         });
 
+        for (const [title, prompt] of [
+            ['space delimited', 'select_account consent'],
+            ['comma separated', 'select_account,consent'],
+            ['mixed with extra delimiters', ' select_account, consent '],
+        ]) {
+            it(`should split the ${title} prompt values`, async () => {
+                await callThunk(oAuthValidate, { ...oauthData, prompt });
+
+                expect(dispatch, 'to have a call satisfying', [
+                    { type: 'set_oauth', payload: { prompt: ['select_account', 'consent'] } },
+                ]);
+            });
+        }
+
         it('should pass the query to the api as is', async () => {
             await callThunk(oAuthValidate, oauthData);
 
