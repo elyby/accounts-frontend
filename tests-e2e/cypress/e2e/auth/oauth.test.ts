@@ -618,6 +618,88 @@ describe('OAuth', () => {
         });
     });
 
+    describe('prompt=login', () => {
+        it('should ask the logged in user to enter the password again', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login' })}`);
+
+            chooseAccount();
+
+            cy.location('pathname').should('eq', '/password');
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should ask for the second factor as well, when MFA is enabled', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login' })}`);
+
+            chooseAccount();
+
+            cy.location('pathname').should('eq', '/password');
+
+            // The test account has no MFA, so the backend's response is stubbed
+            cy.intercept('POST', '/api/authentication/login', {
+                success: false,
+                errors: { totp: 'error.totp_required' },
+            });
+
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.location('pathname').should('eq', '/mfa');
+
+            cy.intercept('POST', '/api/authentication/login', (req) => req.continue());
+
+            cy.get('[name=totp]').type('123456{enter}');
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should return to the account switcher from the password panel', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login' })}`);
+
+            chooseAccount();
+
+            cy.location('pathname').should('eq', '/password');
+            cy.get('[data-e2e-go-back]').click();
+
+            // The account stays logged in
+            chooseAccount();
+
+            cy.location('pathname').should('eq', '/password');
+        });
+
+        it('should ask for the password only once for a guest', () => {
+            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login' })}`);
+
+            cy.location('pathname').should('eq', '/login');
+            cy.get('[name=login]').type(`${account1.login}{enter}`);
+
+            cy.location('pathname').should('eq', '/password');
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+
+        it('should skip the account switcher, but still ask for the password', () => {
+            cy.login({ accounts: ['default'] });
+
+            cy.visit(
+                `/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login skip_account_selection' })}`,
+            );
+
+            cy.location('pathname').should('eq', '/password');
+            cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+            cy.url().should('equal', 'https://dev.ely.by/');
+        });
+    });
+
     describe('prompt=none', () => {
         // The client, that returns the user to the localhost:8080, which is the app itself in the tests
         const silentRequest = {

@@ -1,6 +1,7 @@
 import {
     type OAuthState,
     PROMPT_ACCOUNT_CHOOSE,
+    PROMPT_LOGIN,
     PROMPT_NONE,
     PROMPT_PERMISSIONS,
     PROMPT_SKIP_ACCOUNT_CHOOSE,
@@ -10,6 +11,7 @@ import { OAuthError, UnauthorizedError } from 'app/services/request';
 
 import AbstractState from './AbstractState';
 import LoginState from './LoginState';
+import PasswordState from './PasswordState';
 import PermissionsState from './PermissionsState';
 import ChooseAccountState from './ChooseAccountState';
 import ActivationState from './ActivationState';
@@ -137,6 +139,19 @@ export default class CompleteState extends AbstractState {
             // switcher and now we should redirect him to his profile,
             // because oauth is not available for deleted accounts
             return context.navigate('/');
+        }
+
+        // The account is already chosen, but the user must enter the password again, even when the session is still valid
+        if (hasPrompt(oauth.prompt, PROMPT_LOGIN) && !oauth.isLoginPassed) {
+            const activeAccount = getActiveAccount(context.getState());
+
+            if (!activeAccount) {
+                return context.setState(new LoginState());
+            }
+
+            context.run('forceLogin', activeAccount.email);
+
+            return context.setState(new PasswordState());
         }
 
         const data: Record<string, any> = {};

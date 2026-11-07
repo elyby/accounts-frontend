@@ -67,9 +67,14 @@ export default class PasswordState extends AbstractState {
 
     goBack(context: AuthContext): void {
         const state = context.getState();
-        const { isRelogin } = getCredentials(state);
+        const { isRelogin, isForcedLogin } = getCredentials(state);
 
-        if (isRelogin) {
+        if (isForcedLogin) {
+            // The account stays logged in, the user just goes back to choose another one
+            context.run('setLogin', null);
+            context.run('setAccountSwitcher', true);
+            context.setState(new ChooseAccountState());
+        } else if (isRelogin) {
             const availableAccounts = getAvailableAccounts(state);
             const accountToRemove = getActiveAccount(state);
 

@@ -19,6 +19,10 @@ export interface Credentials {
     rememberMe?: boolean;
     returnUrl?: string;
     isRelogin?: boolean;
+    /**
+     * The logged in user must enter the password again (prompt=login)
+     */
+    isForcedLogin?: boolean;
     isTotpRequired?: boolean;
     isActivationRequired?: boolean;
 }
@@ -50,6 +54,7 @@ export interface OauthDeviceCodeFlowParams {
  * The prompt values (OpenID Connect Core 1.0 section 3.1.2.1). See OAuthState['prompt'] for their behavior
  */
 export const PROMPT_NONE = 'none';
+export const PROMPT_LOGIN = 'login';
 export const PROMPT_PERMISSIONS = 'consent';
 export const PROMPT_ACCOUNT_CHOOSE = 'select_account';
 /**
@@ -65,6 +70,7 @@ export interface OAuthState {
      * - none - don't show any UI: when the authorization can't be completed silently, the error is returned
      *          to the client. Can't be combined with other values. Ignored, when there is no address to return the user
      *          to (e.g. the device code flow)
+     * - login - ask the user to authenticate again, even when the account is already logged in
      * - consent - forcibly prompt user for permissions acceptance
      * - select_account - show the account switcher. It's shown by default anyway, but this value wins
      *                    over skip_account_selection
@@ -81,6 +87,10 @@ export interface OAuthState {
      * Might contain query part. Absent for the device code flow.
      */
     redirectUri?: string;
+    /**
+     * The user has entered the credentials during this request, so prompt=login is satisfied
+     */
+    isLoginPassed?: boolean;
     success?: boolean;
     acceptRequired?: boolean;
 }
@@ -160,6 +170,9 @@ const oauth: Reducer<State['oauth'], OAuthAction> = (state = null, action) => {
                 ...(state as OAuthState),
                 acceptRequired: true,
             };
+        case 'set_oauth_login_passed':
+            // The user may log in outside of the oauth flow
+            return state ? { ...state, isLoginPassed: true } : state;
         default:
             return state;
     }

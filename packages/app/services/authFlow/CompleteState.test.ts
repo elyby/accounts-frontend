@@ -9,6 +9,7 @@ import AcceptRulesState from 'app/services/authFlow/AcceptRulesState';
 import FinishState from 'app/services/authFlow/FinishState';
 import PermissionsState from 'app/services/authFlow/PermissionsState';
 import ChooseAccountState from 'app/services/authFlow/ChooseAccountState';
+import PasswordState from 'app/services/authFlow/PasswordState';
 import { Account } from 'app/components/accounts/reducer';
 import { OAuthError, UnauthorizedError } from 'app/services/request';
 import AbstractState from './AbstractState';
@@ -710,6 +711,43 @@ describe('CompleteState', () => {
             });
 
             expectRun(mock, 'oAuthComplete', sinon.match(expected)).returns(Promise.resolve());
+
+            state.enter(context);
+        });
+    });
+
+    describe('forced login (prompt=login)', () => {
+        function getState(oauth: Record<string, any> = {}) {
+            return {
+                user: { isGuest: false },
+                accounts: { available: [{ id: 1, email: 'foo@ely.by' }], active: 1 },
+                auth: {
+                    credentials: {},
+                    isSwitcherEnabled: false,
+                    oauth: { params: { query: {} }, prompt: ['login'], ...oauth },
+                },
+            };
+        }
+
+        it('should ask the logged in user to enter the password again', () => {
+            context.getState.returns(getState());
+            expectRun(mock, 'forceLogin', 'foo@ely.by');
+            expectState(mock, PasswordState);
+
+            state.enter(context);
+        });
+
+        it('should complete, when the user has already logged in during the request', async () => {
+            context.getState.returns(getState({ isLoginPassed: true }));
+            expectRun(mock, 'oAuthComplete', {}).returns(Promise.resolve({ redirectUri: 'https://example.com?code=1' }));
+            expectRun(mock, 'redirect', 'https://example.com?code=1');
+
+            await state.enter(context);
+        });
+
+        it('should show the account switcher before asking for the password', () => {
+            context.getState.returns({ ...getState(), auth: { ...getState().auth, isSwitcherEnabled: true } });
+            expectState(mock, ChooseAccountState);
 
             state.enter(context);
         });

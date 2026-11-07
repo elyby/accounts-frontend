@@ -1,6 +1,6 @@
 import expect from 'app/test/unexpected';
 import auth from './reducer';
-import { setLogin, setAccountSwitcher } from './actions';
+import { setLogin, setAccountSwitcher, setOAuthLoginPassed, setOAuthRequest, forceLogin } from './actions';
 
 describe('components/auth/reducer', () => {
     describe('auth:setCredentials', () => {
@@ -10,6 +10,25 @@ describe('components/auth/reducer', () => {
             expect(auth(undefined, setLogin(expectedLogin)).credentials, 'to satisfy', {
                 login: expectedLogin,
             });
+        });
+
+        it('should force login', () => {
+            expect(auth(undefined, forceLogin('foo')).credentials, 'to equal', {
+                login: 'foo',
+                isForcedLogin: true,
+            });
+        });
+    });
+
+    describe('set_oauth_login_passed', () => {
+        it('should mark the oauth request', () => {
+            const state = auth(undefined, setOAuthRequest({ params: { query: {} } }));
+
+            expect(auth(state, setOAuthLoginPassed()).oauth, 'to satisfy', { isLoginPassed: true });
+        });
+
+        it('should do nothing without the oauth request', () => {
+            expect(auth(undefined, setOAuthLoginPassed()).oauth, 'to be null');
         });
     });
 

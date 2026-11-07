@@ -233,6 +233,13 @@ export function setLogin(login: string | null): SetCredentialsAction {
     return setCredentials(login ? { login } : null);
 }
 
+/**
+ * Asks the logged in user to perform an authentication again (prompt=login)
+ */
+export function forceLogin(login: string): SetCredentialsAction {
+    return setCredentials({ login, isForcedLogin: true });
+}
+
 export function relogin(login: string | null): AppAction {
     return (dispatch, getState) => {
         const credentials = getCredentials(getState());
@@ -554,7 +561,20 @@ export function requirePermissionsAccept(): RequestPermissionsAcceptAction {
     };
 }
 
-export type OAuthAction = SetOauthAction | SetOAuthResultAction | RequestPermissionsAcceptAction;
+interface SetOAuthLoginPassedAction extends ReduxAction {
+    type: 'set_oauth_login_passed';
+}
+
+/**
+ * Marks, that the user has entered the credentials during the current OAuth request
+ */
+export function setOAuthLoginPassed(): SetOAuthLoginPassedAction {
+    return {
+        type: 'set_oauth_login_passed',
+    };
+}
+
+export type OAuthAction = SetOauthAction | SetOAuthResultAction | RequestPermissionsAcceptAction | SetOAuthLoginPassedAction;
 
 interface SetScopesAction extends ReduxAction {
     type: 'set_scopes';
@@ -620,6 +640,7 @@ function authHandler(dispatch: Dispatch) {
             }),
         ).then((resp) => {
             dispatch(setLogin(null));
+            dispatch(setOAuthLoginPassed());
 
             return resp;
         });

@@ -16,6 +16,7 @@ import {
     requirePermissionsAccept,
     login,
     setLogin,
+    setOAuthLoginPassed,
 } from 'app/components/auth/actions';
 import { OAuthValidateResponse } from 'app/services/api/oauth';
 import { OAuthError, ValidationError } from 'app/services/request';
@@ -295,6 +296,21 @@ describe('components/auth/actions', () => {
     });
 
     describe('#login()', () => {
+        describe('when the login succeeds', () => {
+            beforeEach(() => {
+                (request.post as any).returns(Promise.resolve({ access_token: 'token', refresh_token: 'refresh' }));
+                // authenticate is a thunk
+                dispatch.withArgs(sinon.match.func).returns(Promise.resolve({ id: 1 }));
+            });
+
+            it('should mark, that the user has logged in during the oauth request', async () => {
+                await callThunk(login, { login: 'foo', password: 'bar' });
+
+                expect(dispatch, 'to have a call satisfying', [setLogin(null)]);
+                expect(dispatch, 'to have a call satisfying', [setOAuthLoginPassed()]);
+            });
+        });
+
         describe('when correct login was entered', () => {
             beforeEach(() => {
                 (request.post as any).returns(

@@ -201,6 +201,28 @@ describe('PasswordState', () => {
             state.goBack(context);
         });
 
+        it('should transition to ChooseAccountState and keep the account if this is forced login', () => {
+            context.getState.returns({
+                accounts: {
+                    active: 1,
+                    available: [{ id: 1 }],
+                },
+                auth: {
+                    credentials: {
+                        login: 'foo',
+                        isForcedLogin: true,
+                    },
+                },
+            });
+
+            // Should not run "removeAccount" or "logout"
+            expectRun(mock, 'setLogin', null);
+            expectRun(mock, 'setAccountSwitcher', true);
+            expectState(mock, ChooseAccountState);
+
+            state.goBack(context);
+        });
+
         it('should transition to ChooseAccountState if this is relogin', () => {
             context.getState.returns({
                 accounts: {
