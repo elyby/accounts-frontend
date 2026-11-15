@@ -50,6 +50,7 @@ export const availableActions = {
     resendActivation: actions.resendActivation,
     contactUs: actions.contactUs,
     setLogin: actions.setLogin,
+    clearLogin: actions.clearLogin,
     forceLogin: actions.forceLogin,
     setAccountSwitcher: actions.setAccountSwitcher,
     setErrors: actions.setErrors,

@@ -216,10 +216,10 @@ export function contactUs() {
 
 interface SetCredentialsAction extends ReduxAction {
     type: 'auth:setCredentials';
-    payload: Credentials | null;
+    payload: Credentials;
 }
 
-function setCredentials(payload: Credentials | null): SetCredentialsAction {
+function setCredentials(payload: Credentials): SetCredentialsAction {
     return {
         type: 'auth:setCredentials',
         payload,
@@ -228,10 +228,31 @@ function setCredentials(payload: Credentials | null): SetCredentialsAction {
 
 /**
  * Sets login in credentials state
- * Resets the state, when `null` is passed
  */
-export function setLogin(login: string | null): SetCredentialsAction {
-    return setCredentials(login ? { login } : null);
+export function setLogin(login: string): SetCredentialsAction {
+    return setCredentials({ login });
+}
+
+interface ClearCredentialsAction extends ReduxAction {
+    type: 'auth:clearCredentials';
+    payload: {
+        keepReturnUrl: boolean;
+    };
+}
+
+/**
+ * Resets the credentials state
+ *
+ * @param keepReturnUrl - keep the address to return the user to after the authentication (see relogin()),
+ *                        so the interrupted request (e.g. the oauth one) can be continued with another account
+ */
+export function clearLogin(keepReturnUrl: boolean = false): ClearCredentialsAction {
+    return {
+        type: 'auth:clearCredentials',
+        payload: {
+            keepReturnUrl,
+        },
+    };
 }
 
 /**
@@ -258,7 +279,7 @@ export function relogin(login: string | null): AppAction {
     };
 }
 
-export type CredentialsAction = SetCredentialsAction;
+export type CredentialsAction = SetCredentialsAction | ClearCredentialsAction;
 
 function requestTotp({
     login,
@@ -557,7 +578,7 @@ export function resetOAuth(): AppAction {
  */
 export function resetAuth(): AppAction {
     return (dispatch, getState): Promise<void> => {
-        dispatch(setLogin(null));
+        dispatch(clearLogin());
         dispatch(resetOAuth());
         // ensure current account is valid
         const activeAccount = getActiveAccount(getState());
@@ -662,7 +683,7 @@ function authHandler(dispatch: Dispatch) {
                 refreshToken: oAuthResp.refresh_token || null,
             }),
         ).then((resp) => {
-            dispatch(setLogin(null));
+            dispatch(clearLogin());
             dispatch(setOAuthLoginPassed());
 
             return resp;

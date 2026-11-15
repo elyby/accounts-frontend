@@ -62,6 +62,8 @@ describe('ChooseAccountState', () => {
 
     describe('#resolve', () => {
         it('should transition to complete if an existing account was chosen', () => {
+            context.getState.returns({ auth: { credentials: {} } });
+
             expectRun(mock, 'authenticate', sinon.match(mockAccount)).returns(Promise.resolve());
             expectRun(mock, 'setAccountSwitcher', false);
             expectState(mock, CompleteState);
@@ -69,9 +71,20 @@ describe('ChooseAccountState', () => {
             return expect(state.resolve(context, mockAccount), 'to be fulfilled');
         });
 
+        it('should continue the request interrupted by the relogin if an existing account was chosen', () => {
+            context.getState.returns({ auth: { credentials: { returnUrl: '/oauth2/v1/ely?client_id=ely' } } });
+
+            expectRun(mock, 'authenticate', sinon.match(mockAccount)).returns(Promise.resolve());
+            expectRun(mock, 'setAccountSwitcher', false);
+            expectRun(mock, 'clearLogin');
+            expectNavigate(mock, '/oauth2/v1/ely?client_id=ely');
+
+            return expect(state.resolve(context, mockAccount), 'to be fulfilled');
+        });
+
         it('should transition to login if user wants to add new account', () => {
             expectNavigate(mock, '/login');
-            expectRun(mock, 'setLogin', null);
+            expectRun(mock, 'clearLogin', true);
             expectState(mock, LoginState);
 
             // Assert nothing returned

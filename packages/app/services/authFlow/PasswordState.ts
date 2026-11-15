@@ -72,7 +72,7 @@ export default class PasswordState extends AbstractState {
         if (isForcedLogin) {
             // The account stays logged in, the user just goes back to choose another one.
             // The account chosen by the client is dropped, otherwise the switcher would be skipped again
-            context.run('setLogin', null);
+            context.run('clearLogin');
             context.run('setAccountSwitcher', true);
             context.run('resetOAuthAccountChoice');
             context.setState(new ChooseAccountState());
@@ -82,17 +82,18 @@ export default class PasswordState extends AbstractState {
 
             if (availableAccounts.length === 1 || !accountToRemove) {
                 context.run('logout');
-                context.run('setLogin', null);
+                context.run('clearLogin');
                 context.setState(new LoginState());
             } else {
                 const accountToReplace = availableAccounts.find(({ id }) => id !== accountToRemove.id);
 
                 context.run('activateAccount', accountToReplace);
                 context.run('removeAccount', accountToRemove);
+                context.run('clearLogin', true);
                 context.setState(new ChooseAccountState());
             }
         } else {
-            context.run('setLogin', null);
+            context.run('clearLogin');
             context.setState(new LoginState());
         }
     }

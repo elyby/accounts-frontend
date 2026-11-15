@@ -103,18 +103,19 @@ const error: Reducer<State['error'], ErrorAction> = (state = null, { type, paylo
     return state;
 };
 
-const credentials: Reducer<State['credentials'], CredentialsAction> = (state = {}, { type, payload }) => {
-    if (type === 'auth:setCredentials') {
-        if (payload) {
-            return {
-                ...payload,
-            };
-        }
+const credentials: Reducer<State['credentials'], CredentialsAction> = (state = {}, action) => {
+    switch (action.type) {
+        case 'auth:setCredentials':
+            return { ...action.payload };
+        case 'auth:clearCredentials':
+            if (action.payload.keepReturnUrl && state.returnUrl) {
+                return { returnUrl: state.returnUrl };
+            }
 
-        return {};
+            return {};
+        default:
+            return state;
     }
-
-    return state;
 };
 
 const isSwitcherEnabled: Reducer<State['isSwitcherEnabled'], AccountSwitcherAction> = (

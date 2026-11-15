@@ -195,7 +195,7 @@ describe('PasswordState', () => {
                 },
             });
 
-            expectRun(mock, 'setLogin', null);
+            expectRun(mock, 'clearLogin');
             expectState(mock, LoginState);
 
             state.goBack(context);
@@ -216,7 +216,7 @@ describe('PasswordState', () => {
             });
 
             // Should not run "removeAccount" or "logout"
-            expectRun(mock, 'setLogin', null);
+            expectRun(mock, 'clearLogin');
             expectRun(mock, 'setAccountSwitcher', true);
             expectRun(mock, 'resetOAuthAccountChoice');
             expectState(mock, ChooseAccountState);
@@ -241,6 +241,8 @@ describe('PasswordState', () => {
             // Should not run "setAccountSwitcher"
             expectRun(mock, 'activateAccount', { id: 2 });
             expectRun(mock, 'removeAccount', { id: 1 });
+            // The login of the removed account is dropped, but the returnUrl is kept
+            expectRun(mock, 'clearLogin', true);
             expectState(mock, ChooseAccountState);
 
             state.goBack(context);
@@ -261,7 +263,7 @@ describe('PasswordState', () => {
             });
 
             expectRun(mock, 'logout');
-            expectRun(mock, 'setLogin', null);
+            expectRun(mock, 'clearLogin');
             expectState(mock, LoginState);
 
             state.goBack(context);

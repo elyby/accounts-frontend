@@ -16,6 +16,7 @@ import {
     requirePermissionsAccept,
     login,
     setLogin,
+    clearLogin,
     setOAuthLoginPassed,
     resetOAuthAccountChoice,
 } from 'app/components/auth/actions';
@@ -344,7 +345,7 @@ describe('components/auth/actions', () => {
             it('should mark, that the user has logged in during the oauth request', async () => {
                 await callThunk(login, { login: 'foo', password: 'bar' });
 
-                expect(dispatch, 'to have a call satisfying', [setLogin(null)]);
+                expect(dispatch, 'to have a call satisfying', [clearLogin()]);
                 expect(dispatch, 'to have a call satisfying', [setOAuthLoginPassed()]);
             });
         });

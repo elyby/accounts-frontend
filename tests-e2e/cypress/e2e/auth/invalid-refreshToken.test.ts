@@ -59,8 +59,8 @@ describe('User with invalid token and refreshToken', () => {
 
         cy.get('[data-e2e-content]').contains(account2.email).should('not.exist');
 
+        // The chosen account has a valid token, so the password of the removed account isn't asked
         cy.get('[data-e2e-content]').contains(account1.username).click();
-        cy.get('[name="password"]').type(`${account2.password}{enter}`);
 
         cy.location('pathname').should('eq', '/');
         cy.contains('account preferences');
@@ -212,6 +212,33 @@ describe('User with invalid token and refreshToken', () => {
         // The user has just logged into the account, so there is nothing to choose
         cy.url().should('contain', '//dev.ely.by');
     });
+
+    for (const [title, params] of [
+        ['', {}],
+        [' even when the client has chosen the broken account', { prompt: 'skip_account_selection' }],
+    ] as const) {
+        it(`should continue oauth with another account after going back from the password panel${title}`, () => {
+            cy.visit(
+                `/oauth2/v1/ely?${new URLSearchParams({
+                    client_id: 'ely',
+                    redirect_uri: 'https://dev.ely.by/authorization/oauth',
+                    response_type: 'code',
+                    scope: 'account_info account_email',
+                    ...params,
+                })}`,
+            );
+
+            cy.url().should('contain', '/password');
+
+            // The broken account is removed and the user chooses the remaining one
+            cy.get('[data-e2e-go-back]').click();
+
+            cy.get('[data-e2e-content]').contains(account2.email).should('not.exist');
+            cy.get('[data-e2e-content]').contains(account1.email).click();
+
+            cy.url().should('contain', '//dev.ely.by');
+        });
+    }
 });
 
 function createState() {

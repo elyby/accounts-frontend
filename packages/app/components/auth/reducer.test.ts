@@ -1,6 +1,6 @@
 import expect from 'app/test/unexpected';
 import auth from './reducer';
-import { setLogin, setAccountSwitcher, setOAuthLoginPassed, setOAuthRequest, forceLogin } from './actions';
+import { setLogin, clearLogin, setAccountSwitcher, setOAuthLoginPassed, setOAuthRequest, forceLogin } from './actions';
 
 describe('components/auth/reducer', () => {
     describe('auth:setCredentials', () => {
@@ -17,6 +17,26 @@ describe('components/auth/reducer', () => {
                 login: 'foo',
                 isForcedLogin: true,
             });
+        });
+    });
+
+    describe('auth:clearCredentials', () => {
+        // The state after relogin()
+        const state = auth(undefined, {
+            type: 'auth:setCredentials',
+            payload: { login: 'foo', returnUrl: '/oauth2/v1/ely', isRelogin: true },
+        });
+
+        it('should reset the credentials', () => {
+            expect(auth(state, clearLogin()).credentials, 'to equal', {});
+        });
+
+        it('should reset the credentials, but keep the returnUrl', () => {
+            expect(auth(state, clearLogin(true)).credentials, 'to equal', { returnUrl: '/oauth2/v1/ely' });
+        });
+
+        it('should reset the credentials completely, when there is no returnUrl to keep', () => {
+            expect(auth(auth(undefined, setLogin('foo')), clearLogin(true)).credentials, 'to equal', {});
         });
     });
 
