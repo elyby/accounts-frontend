@@ -1,11 +1,12 @@
 import {
-    type OAuthState,
-    PROMPT_ACCOUNT_CHOOSE,
+    canSkipAccountSwitcher,
+    findMatchingAccount,
+    getPromptValues,
+    hasPrompt,
     PROMPT_LOGIN,
     PROMPT_NONE,
     PROMPT_PERMISSIONS,
-    PROMPT_SKIP_ACCOUNT_CHOOSE,
-} from 'app/components/auth/reducer';
+} from 'app/components/auth/prompt';
 import { getActiveAccount } from 'app/components/accounts/reducer';
 import { OAuthError, UnauthorizedError } from 'app/services/request';
 
@@ -18,25 +19,6 @@ import ActivationState from './ActivationState';
 import AcceptRulesState from './AcceptRulesState';
 import FinishState from './FinishState';
 import { AuthContext } from './AuthFlow';
-
-function toArray(input: string|Array<string>|null|undefined): Array<string> {
-    if (Array.isArray(input)) {
-        return input;
-    }
-
-    return input ? [input] : [];
-}
-
-function hasPrompt(prompt: OAuthState['prompt'], needle: string): boolean {
-    return toArray(prompt).includes(needle);
-}
-
-/**
- * The client may ask to skip the switcher. The standard select_account wins over our own extension
- */
-function canSkipAccountSwitcher(prompt: OAuthState['prompt']): boolean {
-    return hasPrompt(prompt, PROMPT_SKIP_ACCOUNT_CHOOSE) && !hasPrompt(prompt, PROMPT_ACCOUNT_CHOOSE);
-}
 
 export default class CompleteState extends AbstractState {
     isPermissionsAccepted?: boolean;
@@ -60,7 +42,7 @@ export default class CompleteState extends AbstractState {
         const isSilent = hasPrompt(oauth?.prompt, PROMPT_NONE);
 
         // Prompt "none" can't be combined with others
-        if (isSilent && toArray(oauth?.prompt).length > 1) {
+        if (isSilent && getPromptValues(oauth?.prompt).length > 1) {
             return this.returnError(context, 'invalid_request');
         }
 
@@ -97,9 +79,7 @@ export default class CompleteState extends AbstractState {
         const { loginHint } = oauth;
 
         if (loginHint) {
-            const account = accounts.available.find(
-                (item) => item.id === Number(loginHint) || item.email === loginHint || item.username === loginHint,
-            );
+            const account = findMatchingAccount(loginHint, accounts.available);
             const activeAccount = getActiveAccount(context.getState());
 
             if (account) {

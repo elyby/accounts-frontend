@@ -17,6 +17,7 @@ import {
     login,
     setLogin,
     setOAuthLoginPassed,
+    resetOAuthAccountChoice,
 } from 'app/components/auth/actions';
 import { OAuthValidateResponse } from 'app/services/api/oauth';
 import { OAuthError, ValidationError } from 'app/services/request';
@@ -292,6 +293,43 @@ describe('components/auth/actions', () => {
                 expect(error, 'to be', resp);
                 expectDispatchCalls([[requirePermissionsAccept()]]);
             });
+        });
+    });
+
+    describe('#resetOAuthAccountChoice()', () => {
+        it('should drop the account chosen by the client and keep the rest of the request', () => {
+            getState.returns({
+                auth: {
+                    oauth: {
+                        ...oauthData,
+                        prompt: ['login', 'skip_account_selection'],
+                        loginHint: 'foo@ely.by',
+                        isLoginPassed: false,
+                    },
+                },
+            });
+
+            resetOAuthAccountChoice()(dispatch, getState, undefined);
+
+            expect(dispatch, 'to have a call exhaustively satisfying', [
+                {
+                    type: 'set_oauth',
+                    payload: {
+                        ...oauthData,
+                        prompt: ['login'],
+                        loginHint: undefined,
+                        isLoginPassed: false,
+                    },
+                },
+            ]);
+        });
+
+        it('should do nothing without the oauth request', () => {
+            getState.returns({ auth: { oauth: null } });
+
+            resetOAuthAccountChoice()(dispatch, getState, undefined);
+
+            expect(dispatch, 'was not called');
         });
     });
 

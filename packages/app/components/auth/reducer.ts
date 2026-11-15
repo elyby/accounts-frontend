@@ -50,18 +50,6 @@ export interface OauthDeviceCodeFlowParams {
     userCode: string;
 }
 
-/**
- * The prompt values (OpenID Connect Core 1.0 section 3.1.2.1). See OAuthState['prompt'] for their behavior
- */
-export const PROMPT_NONE = 'none';
-export const PROMPT_LOGIN = 'login';
-export const PROMPT_PERMISSIONS = 'consent';
-export const PROMPT_ACCOUNT_CHOOSE = 'select_account';
-/**
- * Our own extension, it isn't defined by the standard
- */
-export const PROMPT_SKIP_ACCOUNT_CHOOSE = 'skip_account_selection';
-
 export interface OAuthState {
     params: OauthAuthCodeFlowParams | OauthDeviceCodeFlowParams;
     description?: string;

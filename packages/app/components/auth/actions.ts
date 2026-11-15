@@ -26,7 +26,8 @@ import { Action as AppAction, Dispatch } from 'app/types';
 import { OAuthError, ValidationError as RequestValidationError } from 'app/services/request';
 import { CaptchaValue } from 'app/services/captcha';
 
-import { Credentials, Client, OAuthState, PROMPT_NONE, getCredentials } from './reducer';
+import { Credentials, Client, OAuthState, getCredentials } from './reducer';
+import { getPromptValues, PROMPT_NONE, PROMPT_SKIP_ACCOUNT_CHOOSE } from './prompt';
 
 interface ValidationErrorLiteral {
     type: string;
@@ -519,6 +520,28 @@ export function setOAuthResult(payload: SetOAuthResultAction['payload']): SetOAu
     return {
         type: 'set_oauth_result',
         payload,
+    };
+}
+
+/**
+ * The user has rejected the account chosen by the client (skip_account_selection or login_hint)
+ * and wants to choose it manually, so the client's choice is removed from the request
+ */
+export function resetOAuthAccountChoice(): AppAction {
+    return (dispatch, getState): void => {
+        const { oauth } = getState().auth;
+
+        if (!oauth) {
+            return;
+        }
+
+        dispatch(
+            setOAuthRequest({
+                ...oauth,
+                prompt: getPromptValues(oauth.prompt).filter((value) => value !== PROMPT_SKIP_ACCOUNT_CHOOSE),
+                loginHint: undefined,
+            }),
+        );
     };
 }
 

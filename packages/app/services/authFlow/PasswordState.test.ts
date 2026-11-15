@@ -218,6 +218,7 @@ describe('PasswordState', () => {
             // Should not run "removeAccount" or "logout"
             expectRun(mock, 'setLogin', null);
             expectRun(mock, 'setAccountSwitcher', true);
+            expectRun(mock, 'resetOAuthAccountChoice');
             expectState(mock, ChooseAccountState);
 
             state.goBack(context);

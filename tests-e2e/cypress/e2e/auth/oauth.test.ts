@@ -698,6 +698,27 @@ describe('OAuth', () => {
 
             cy.url().should('equal', 'https://dev.ely.by/');
         });
+
+        for (const [title, params] of [
+            ['skip_account_selection', { prompt: 'login skip_account_selection' }],
+            ['the login_hint', { prompt: 'login', login_hint: account1.email }],
+        ] as const) {
+            it(`should allow to choose another account, when the account is chosen by ${title}`, () => {
+                cy.login({ accounts: ['default'] });
+
+                cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, ...params })}`);
+
+                cy.location('pathname').should('eq', '/password');
+                cy.get('[data-e2e-go-back]').click();
+
+                chooseAccount();
+
+                cy.location('pathname').should('eq', '/password');
+                cy.get('[name=password]').type(`${account1.password}{enter}`);
+
+                cy.url().should('equal', 'https://dev.ely.by/');
+            });
+        }
     });
 
     describe('prompt=none', () => {

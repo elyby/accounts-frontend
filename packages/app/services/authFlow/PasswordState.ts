@@ -70,9 +70,11 @@ export default class PasswordState extends AbstractState {
         const { isRelogin, isForcedLogin } = getCredentials(state);
 
         if (isForcedLogin) {
-            // The account stays logged in, the user just goes back to choose another one
+            // The account stays logged in, the user just goes back to choose another one.
+            // The account chosen by the client is dropped, otherwise the switcher would be skipped again
             context.run('setLogin', null);
             context.run('setAccountSwitcher', true);
+            context.run('resetOAuthAccountChoice');
             context.setState(new ChooseAccountState());
         } else if (isRelogin) {
             const availableAccounts = getAvailableAccounts(state);
