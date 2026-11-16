@@ -23,7 +23,7 @@ import {
 import { OAuthValidateResponse } from 'app/services/api/oauth';
 import { OAuthError, ValidationError } from 'app/services/request';
 
-import { OAuthState } from './reducer';
+import { Credentials, OAuthState } from './reducer';
 
 const oauthQuery: Record<string, string> = {
     client_id: 'client',
@@ -335,6 +335,14 @@ describe('components/auth/actions', () => {
     });
 
     describe('#login()', () => {
+        const email = 'foo@ely.by';
+
+        function setCredentialsState(credentials: Credentials) {
+            getState.returns({ auth: { credentials } });
+        }
+
+        beforeEach(() => setCredentialsState({}));
+
         describe('when the login succeeds', () => {
             beforeEach(() => {
                 (request.post as any).returns(Promise.resolve({ access_token: 'token', refresh_token: 'refresh' }));
@@ -342,11 +350,73 @@ describe('components/auth/actions', () => {
                 dispatch.withArgs(sinon.match.func).returns(Promise.resolve({ id: 1 }));
             });
 
-            it('should mark, that the user has logged in during the oauth request', async () => {
+            it('should pass the remember me flag', async () => {
+                await callThunk(login, { login: 'foo', password: 'bar', rememberMe: true });
+
+                expect(request.post, 'to have a call satisfying', [
+                    '/api/authentication/login',
+                    { login: 'foo', password: 'bar', rememberMe: true },
+                    { token: null },
+                ]);
+            });
+
+            it('should authenticate the account and mark, that the user has logged in during the oauth request', async () => {
                 await callThunk(login, { login: 'foo', password: 'bar' });
 
+                expect(dispatch, 'to have a call satisfying', [expect.it('to be a function')]);
                 expect(dispatch, 'to have a call satisfying', [clearLogin()]);
                 expect(dispatch, 'to have a call satisfying', [setOAuthLoginPassed()]);
+            });
+        });
+
+        describe('when the logged in user confirms the identity (forced login)', () => {
+            beforeEach(() => setCredentialsState({ login: email, isForcedLogin: true }));
+
+            it('should not ask to remember the account, since it creates a new session', async () => {
+                (request.post as any).returns(Promise.resolve({ access_token: 'token' }));
+
+                await callThunk(login, { login: email, password: 'bar', rememberMe: true });
+
+                expect(request.post, 'to have a call satisfying', [
+                    '/api/authentication/login',
+                    { login: email, password: 'bar', rememberMe: false },
+                    { token: null },
+                ]);
+            });
+
+            it('should keep the logged in account as is and mark, that the user has logged in', async () => {
+                (request.post as any).returns(Promise.resolve({ access_token: 'token' }));
+
+                await callThunk(login, { login: email, password: 'bar' });
+
+                expectDispatchCalls([[clearLogin()], [setOAuthLoginPassed()]]);
+            });
+
+            it('should keep the forced login, when the second factor is required', async () => {
+                (request.post as any).returns(
+                    Promise.reject(
+                        new ValidationError(new Response('{}'), {
+                            success: false,
+                            errors: { totp: 'error.totp_required' },
+                        }),
+                    ),
+                );
+                // requestTotp is a thunk, so run it to get the actual actions
+                dispatch.withArgs(sinon.match.func).callsFake((thunk) => thunk(dispatch, getState));
+
+                await callThunk(login, { login: email, password: 'bar' });
+
+                expect(dispatch, 'to have a call satisfying', [
+                    {
+                        type: 'auth:setCredentials',
+                        payload: {
+                            login: email,
+                            password: 'bar',
+                            isForcedLogin: true,
+                            isTotpRequired: true,
+                        },
+                    },
+                ]);
             });
         });
 

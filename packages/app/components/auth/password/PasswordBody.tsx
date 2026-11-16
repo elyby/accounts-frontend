@@ -20,7 +20,7 @@ export default class PasswordBody extends BaseAuthBody {
     autoFocusField = 'password';
 
     render() {
-        const { user } = this.context;
+        const { user, auth } = this.context;
 
         return (
             <div>
@@ -39,13 +39,16 @@ export default class PasswordBody extends BaseAuthBody {
                     placeholder={messages.accountPassword}
                 />
 
-                <div className={authStyles.checkboxInput}>
-                    <FormCheckbox
-                        {...this.bindField('rememberMe')}
-                        defaultChecked
-                        label={<Message {...messages.rememberMe} />}
-                    />
-                </div>
+                {/* The account is already logged in and stays as is during the forced login */}
+                {!auth.credentials.isForcedLogin && (
+                    <div className={authStyles.checkboxInput}>
+                        <FormCheckbox
+                            {...this.bindField('rememberMe')}
+                            defaultChecked
+                            label={<Message {...messages.rememberMe} />}
+                        />
+                    </div>
+                )}
             </div>
         );
     }

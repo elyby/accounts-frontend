@@ -83,9 +83,13 @@ export function login({
     totp?: string;
     rememberMe?: boolean;
 }) {
-    return wrapInLoader((dispatch) =>
-        loginEndpoint({ login, password, totp, rememberMe })
-            .then(authHandler(dispatch))
+    return wrapInLoader((dispatch, getState) => {
+        // The account is already logged in (prompt=login), so the user only confirms the identity:
+        // there is no need to create a new session or replace the account's tokens
+        const { isForcedLogin } = getCredentials(getState());
+
+        return loginEndpoint({ login, password, totp, rememberMe: isForcedLogin ? false : rememberMe })
+            .then<Account | void>(isForcedLogin ? identityConfirmationHandler(dispatch) : authHandler(dispatch))
             .catch((resp) => {
                 if (resp instanceof RequestValidationError) {
                     const { errors } = resp;
@@ -113,8 +117,8 @@ export function login({
 
                 return Promise.reject(resp);
             })
-            .catch(validationErrorsHandler(dispatch)),
-    );
+            .catch(validationErrorsHandler(dispatch));
+    });
 }
 
 export function acceptRules() {
@@ -688,6 +692,17 @@ function authHandler(dispatch: Dispatch) {
 
             return resp;
         });
+}
+
+/**
+ * Handles the credentials, that confirm the identity of the already logged in (active) account.
+ * Unlike authHandler, the current account stays as is, new accessToken isn't stored
+ */
+function identityConfirmationHandler(dispatch: Dispatch) {
+    return (): void => {
+        dispatch(clearLogin());
+        dispatch(setOAuthLoginPassed());
+    };
 }
 
 function validationErrorsHandler(dispatch: Dispatch, repeatUrl?: string): (resp: unknown) => Promise<never> {

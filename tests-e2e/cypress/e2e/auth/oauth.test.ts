@@ -620,16 +620,30 @@ describe('OAuth', () => {
 
     describe('prompt=login', () => {
         it('should ask the logged in user to enter the password again', () => {
-            cy.login({ accounts: ['default'] });
+            cy.login({ accounts: ['default'] }).then(({ accounts: [account] }) => {
+                cy.intercept('POST', '/api/authentication/login').as('login');
+                cy.intercept('POST', '/api/oauth2/v1/complete**').as('complete');
 
-            cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login' })}`);
+                cy.visit(`/oauth2/v1/ely?${new URLSearchParams({ ...defaults, prompt: 'login' })}`);
 
-            chooseAccount();
+                chooseAccount();
 
-            cy.location('pathname').should('eq', '/password');
-            cy.get('[name=password]').type(`${account1.password}{enter}`);
+                cy.location('pathname').should('eq', '/password');
+                // The account is already remembered and stays as is
+                cy.get('[name=rememberMe]').should('not.exist');
+                cy.get('[name=password]').type(`${account1.password}{enter}`);
 
-            cy.url().should('equal', 'https://dev.ely.by/');
+                // The password is checked without creating a new session
+                cy.wait('@login')
+                    .its('request.body')
+                    .should((body) => expect(new URLSearchParams(body).get('rememberMe')).to.equal('0'));
+                // The account's tokens are not replaced
+                cy.wait('@complete')
+                    .its('request.headers.authorization')
+                    .should('equal', `Bearer ${account.token}`);
+
+                cy.url().should('equal', 'https://dev.ely.by/');
+            });
         });
 
         it('should ask for the second factor as well, when MFA is enabled', () => {
@@ -651,9 +665,14 @@ describe('OAuth', () => {
 
             cy.location('pathname').should('eq', '/mfa');
 
-            cy.intercept('POST', '/api/authentication/login', (req) => req.continue());
+            cy.intercept('POST', '/api/authentication/login', (req) => req.continue()).as('loginWithTotp');
 
             cy.get('[name=totp]').type('123456{enter}');
+
+            // The second factor doesn't create a new session as well
+            cy.wait('@loginWithTotp')
+                .its('request.body')
+                .should((body) => expect(new URLSearchParams(body).get('rememberMe')).to.equal('0'));
 
             cy.url().should('equal', 'https://dev.ely.by/');
         });
@@ -681,6 +700,8 @@ describe('OAuth', () => {
             cy.get('[name=login]').type(`${account1.login}{enter}`);
 
             cy.location('pathname').should('eq', '/password');
+            // That's the regular login, so the account can be remembered
+            cy.get('[name=rememberMe]').should('be.checked');
             cy.get('[name=password]').type(`${account1.password}{enter}`);
 
             cy.url().should('equal', 'https://dev.ely.by/');
