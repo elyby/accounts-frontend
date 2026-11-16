@@ -23,7 +23,6 @@ export default class InitOAuthAuthCodeFlowState extends AbstractState {
                 params: {
                     query: oauthQuery,
                 },
-                description: query.get('description')!,
                 prompt: query.get('prompt')!,
                 loginHint: query.get('login_hint')!,
             })

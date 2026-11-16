@@ -13,7 +13,6 @@ export default class InitOAuthDeviceCodeFlowState extends AbstractState {
             try {
                 await context.run('oAuthValidate', {
                     params: { userCode },
-                    description: query.get('description')!,
                     prompt: query.get('prompt')!,
                 });
 

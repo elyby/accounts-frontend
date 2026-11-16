@@ -344,9 +344,9 @@ export function clearErrors(): SetErrorAction {
 
 export type ErrorAction = SetErrorAction;
 
-export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'description' | 'prompt' | 'loginHint'>) {
+export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'prompt' | 'loginHint'>) {
     // TODO: move to oAuth actions?
-    // auth code flow: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session&description=foo
+    // auth code flow: /oauth?client_id=ely&redirect_uri=http%3A%2F%2Fely.by&response_type=code&scope=minecraft_server_session
     // device code flow: /code?user_code=XOXOXOXO
     return wrapInLoader((dispatch) =>
         oauth
@@ -372,7 +372,6 @@ export function oAuthValidate(oauthData: Pick<OAuthState, 'params' | 'descriptio
                 dispatch(
                     setOAuthRequest({
                         params: oauthData.params,
-                        description: oauthData.description,
                         loginHint: oauthData.loginHint,
                         prompt,
                         redirectUri: resp.oAuth.redirect_uri,
@@ -440,22 +439,14 @@ export function oAuthComplete(params: { accept?: boolean } = {}) {
     );
 }
 
-function getOAuthRequest({ params, description }: OAuthState): OauthRequestData {
-    let data: OauthRequestData;
-
+function getOAuthRequest({ params }: OAuthState): OauthRequestData {
     if ('userCode' in params) {
-        data = {
+        return {
             user_code: params.userCode,
         };
-    } else {
-        data = { ...params.query };
     }
 
-    if (description) {
-        data.description = description;
-    }
-
-    return data;
+    return { ...params.query };
 }
 
 /**
@@ -525,7 +516,7 @@ interface SetOauthAction extends ReduxAction {
     payload: OAuthState | null;
 }
 
-type SetOauthRequestPayload = Pick<OAuthState, 'params' | 'description' | 'loginHint' | 'prompt' | 'redirectUri'>;
+type SetOauthRequestPayload = Pick<OAuthState, 'params' | 'loginHint' | 'prompt' | 'redirectUri'>;
 
 // Input data is coming right from the query string, so the names
 // are the same, as used for initializing OAuth2 request

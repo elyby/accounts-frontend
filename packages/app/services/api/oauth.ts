@@ -45,9 +45,7 @@ interface DeviceCodeFlowRequestData {
     user_code: string;
 }
 
-export type OauthRequestData = (AuthCodeFlowRequestData | DeviceCodeFlowRequestData) & {
-    description?: string;
-};
+export type OauthRequestData = AuthCodeFlowRequestData | DeviceCodeFlowRequestData;
 
 export interface OAuthValidateResponse {
     oAuth: {

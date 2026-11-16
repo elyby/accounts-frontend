@@ -52,7 +52,6 @@ describe('OAuthState', () => {
                     params: {
                         query: sinon.match(query),
                     },
-                    description: query.description,
                     prompt: query.prompt,
                     loginHint: query.login_hint,
                 }),

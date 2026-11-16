@@ -13,7 +13,6 @@ export default class DeviceCodeState extends AbstractState {
                 params: {
                     userCode: payload.user_code,
                 },
-                description: query.get('description')!,
                 prompt: query.get('prompt')!,
             })
             .then(() => context.setState(new CompleteState()))

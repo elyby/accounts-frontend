@@ -52,7 +52,6 @@ export interface OauthDeviceCodeFlowParams {
 
 export interface OAuthState {
     params: OauthAuthCodeFlowParams | OauthDeviceCodeFlowParams;
-    description?: string;
     /**
      * The supported values (space separated list):
      * - none - don't show any UI: when the authorization can't be completed silently, the error is returned
